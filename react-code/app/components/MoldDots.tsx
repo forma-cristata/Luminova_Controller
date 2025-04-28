@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useState, useEffect} from "react";
 import Dot from "@/app/components/Dot";
 import {SafeAreaView, StyleSheet, View} from "react-native";
 
@@ -8,24 +8,155 @@ interface ColorProps {
 
 export default function MoldDots(props: ColorProps) {
 
+    const COLOR_COUNT = props.colors.length;
+    const black = "#000000";
+
+    const [dot0Color, setLED0Color] = useState(black);
+    const [dot1Color, setLED1Color] = useState(black);
+    const [dot2Color, setLED2Color] = useState(black);
+    const [dot3Color, setLED3Color] = useState(black);
+    const [dot4Color, setLED4Color] = useState(black);
+    const [dot5Color, setLED5Color] = useState(black);
+    const [dot6Color, setLED6Color] = useState(black);
+    const [dot7Color, setLED7Color] = useState(black);
+    const [dot8Color, setLED8Color] = useState(black);
+    const [dot9Color, setLED9Color] = useState(black);
+    const [dot10Color, setLED10Color] = useState(black);
+    const [dot11Color, setLED11Color] = useState(black);
+    const [dot12Color, setLED12Color] = useState(black);
+    const [dot13Color, setLED13Color] = useState(black);
+    const [dot14Color, setLED14Color] = useState(black);
+    const [dot15Color, setLED15Color] = useState(black);
+
+    type led = (color: string) => void;
+
+    const setLed: led[] = [
+        setLED0Color, setLED1Color, setLED2Color, setLED3Color,
+        setLED4Color, setLED5Color, setLED6Color, setLED7Color,
+        setLED8Color, setLED9Color, setLED10Color, setLED11Color,
+        setLED12Color, setLED13Color, setLED14Color, setLED15Color
+    ];
+
+    const LIGHT_COUNT = setLed.length;
+    const delayTime = 1;
 
 
-    const [dot0Color, setLED0Color] = useState(props.colors[0]);
-    const [dot1Color, setLED1Color] = useState(props.colors[1]);
-    const [dot2Color, setLED2Color] = useState(props.colors[2]);
-    const [dot3Color, setLED3Color] = useState(props.colors[3]);
-    const [dot4Color, setLED4Color] = useState(props.colors[4]);
-    const [dot5Color, setLED5Color] = useState(props.colors[5]);
-    const [dot6Color, setLED6Color] = useState(props.colors[6]);
-    const [dot7Color, setLED7Color] = useState(props.colors[7]);
-    const [dot8Color, setLED8Color] = useState(props.colors[8]);
-    const [dot9Color, setLED9Color] = useState(props.colors[9]);
-    const [dot10Color, setLED10Color] = useState(props.colors[10]);
-    const [dot11Color, setLED11Color] = useState(props.colors[11]);
-    const [dot12Color, setLED12Color] = useState(props.colors[12]);
-    const [dot13Color, setLED13Color] = useState(props.colors[13]);
-    const [dot14Color, setLED14Color] = useState(props.colors[14]);
-    const [dot15Color, setLED15Color] = useState(props.colors[15]);
+    useEffect(() => {
+        let isActive = true;
+        const strobeCount1 = 2;
+        const strobeCount2 = 2;
+        const ledsPerGroup = Math.floor(LIGHT_COUNT * 3 / 4);
+
+        const animate = async () => {
+            if (!isActive) return;
+
+            // Backwards loop
+            for (let startIdx = LIGHT_COUNT - 1; startIdx >= 0; startIdx--) {
+                if (!isActive) return;
+
+                // First strobe pattern
+                for (let strobe = 0; strobe < strobeCount1; strobe++) {
+                    if (!isActive) return;
+
+                    // Light up LEDs
+                    for (let i = 0; i < ledsPerGroup; i++) {
+                        let ledIndex = startIdx + i;
+                        for (let ha = 0; ha < LIGHT_COUNT / 4; ha++) {
+                            if (!isActive) return;
+                            setLed[(ledIndex + 1) % LIGHT_COUNT](props.colors[ledIndex % COLOR_COUNT]);
+                            await new Promise(resolve => setTimeout(resolve, delayTime));
+                            setLed[ledIndex % LIGHT_COUNT](black);
+                        }
+                    }
+
+                    // Turn off LEDs
+                    for (let i = 0; i < ledsPerGroup; i++) {
+                        let ledIndex = startIdx + i;
+                        setLed[(ledIndex + 1) % LIGHT_COUNT](black);
+                        await new Promise(resolve => setTimeout(resolve, delayTime));
+                    }
+                }
+
+                // Second strobe pattern
+                for (let strobe = 0; strobe < strobeCount2; strobe++) {
+                    if (!isActive) return;
+
+                    // Light up LEDs
+                    for (let i = 0; i < ledsPerGroup; i++) {
+                        let ledIndex = startIdx + i;
+                        for (let ha = 0; ha < LIGHT_COUNT / 4; ha++) {
+                            if (!isActive) return;
+                            setLed[(ledIndex + 1) % LIGHT_COUNT](props.colors[ledIndex % COLOR_COUNT]);
+                            await new Promise(resolve => setTimeout(resolve, delayTime));
+                            setLed[ledIndex % LIGHT_COUNT](black);
+                        }
+                    }
+
+                    // Turn off LEDs
+                    for (let i = 0; i < ledsPerGroup; i++) {
+                        let ledIndex = startIdx + i;
+                        setLed[(ledIndex + 1) % LIGHT_COUNT](black);
+                        await new Promise(resolve => setTimeout(resolve, delayTime));
+                    }
+                }
+            }
+
+            // Forward loop (same patterns but reversed direction)
+            for (let startIdx = 0; startIdx < LIGHT_COUNT; startIdx++) {
+                if (!isActive) return;
+
+                // First strobe pattern
+                for (let strobe = 0; strobe < strobeCount1; strobe++) {
+                    if (!isActive) return;
+
+                    for (let i = 0; i < ledsPerGroup; i++) {
+                        let ledIndex = startIdx + i;
+                        for (let ha = 0; ha < LIGHT_COUNT / 4; ha++) {
+                            if (!isActive) return;
+                            setLed[(ledIndex + 1) % LIGHT_COUNT](props.colors[ledIndex % COLOR_COUNT]);
+                            await new Promise(resolve => setTimeout(resolve, delayTime));
+                            setLed[ledIndex % LIGHT_COUNT](black);
+                        }
+                    }
+
+                    for (let i = 0; i < ledsPerGroup; i++) {
+                        let ledIndex = startIdx + i;
+                        setLed[(ledIndex + 1) % LIGHT_COUNT](black);
+                        await new Promise(resolve => setTimeout(resolve, delayTime));
+                    }
+                }
+
+                // Second strobe pattern
+                for (let strobe = 0; strobe < strobeCount2; strobe++) {
+                    if (!isActive) return;
+
+                    for (let i = 0; i < ledsPerGroup; i++) {
+                        let ledIndex = startIdx + i;
+                        for (let ha = 0; ha < LIGHT_COUNT / 4; ha++) {
+                            if (!isActive) return;
+                            setLed[(ledIndex + 1) % LIGHT_COUNT](props.colors[ledIndex % COLOR_COUNT]);
+                            await new Promise(resolve => setTimeout(resolve, delayTime));
+                            setLed[ledIndex % LIGHT_COUNT](black);
+                        }
+                    }
+
+                    for (let i = 0; i < ledsPerGroup; i++) {
+                        let ledIndex = startIdx + i;
+                        setLed[(ledIndex + 1) % LIGHT_COUNT](black);
+                        await new Promise(resolve => setTimeout(resolve, delayTime));
+                    }
+                }
+            }
+
+            setTimeout(animate, delayTime);
+        };
+
+        animate();
+
+        return () => {
+            isActive = false;
+        };
+    }, [props.colors]);
 
     return (
         <SafeAreaView style={styles.background}>
@@ -48,8 +179,8 @@ export default function MoldDots(props: ColorProps) {
         </SafeAreaView>
     );
 
-    // No ANIMATION for still effect
-    // Will need to use passed in stuff though
+    // TRACE ONE ANIMATION
+
 
 }
 

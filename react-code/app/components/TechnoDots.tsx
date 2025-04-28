@@ -38,7 +38,7 @@ export default function TechnoDots(props: ColorProps) {
 
     const LIGHT_COUNT = setLed.length;
     const black = "#000000";
-    const delayTime = 2; //todo
+    const delayTime = 1;
 
     useEffect(() => {
         let isActive = true;

@@ -329,16 +329,13 @@ export default function Settings({navigation}: any) {
 
                 {/*See: https://reactnative.dev/docs/intro-react*/}
                 {/*Carousel Focus Item*/}
-                <TouchableOpacity onPress={() => navigation.navigate("ChooseModification", {
-                    setting: data[currentIndex % data.length]
-                })}>
+
                     <View style={styles.focusedItem}>
-                    <SettingBlock animated={true} style={styles.nothing} setting={data[currentIndex % data.length]} />
+                    <SettingBlock navigation={navigation} animated={true} style={styles.nothing} setting={data[currentIndex % data.length]} />
 {/*
                     <Text style={styles.whiteText}>{data[currentIndex % data.length].delayTime} Insert delay shower here</Text>
 */}
                     </View>
-                </TouchableOpacity>
 
                 {/*Carousel*/}
                 <View style={styles.carCont}>
@@ -353,7 +350,7 @@ export default function Settings({navigation}: any) {
                             setCurrentIndex(Math.round(absoluteProgress));
                         }}
                         renderItem={({item}: {item: number}) => (
-                            <SettingBlock animated={false} style={styles.renderItem} setting={data[item]} />
+                            <SettingBlock navigation={navigation} animated={false} style={styles.renderItem} setting={data[item]} />
                         )}
                         mode="parallax"
                         style={styles.carousel}

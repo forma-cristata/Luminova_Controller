@@ -1,4 +1,4 @@
-import {View, Text, StyleSheet} from "react-native";
+import {View, Text, StyleSheet, Button, Dimensions, TouchableOpacity} from "react-native";
 import Setting from "@/app/interface/setting-interface";
 import ColorDots from "@/app/components/ColorDots";
 import StillEffectDots from "@/app/components/StillEffectDots";
@@ -13,69 +13,130 @@ import TechnoDots from "@/app/components/TechnoDots";
 import TranceDots from "@/app/components/TranceDots";
 import TraceManyDots from "@/app/components/TraceManyDots";
 import TraceOneDots from "@/app/components/TraceOneDots";
+import {navigate} from "expo-router/build/global-state/routing";
 
-interface SettingItemProps{
-        setting: Setting,
-        style: any,
-        animated: boolean,
+interface SettingItemProps {
+    navigation: any
+    setting: Setting,
+    style: any,
+    animated: boolean,
 }
 
 
-const SettingBlock = (props: SettingItemProps) => {
+const SettingBlock = ({navigation, setting, style, animated}: SettingItemProps) => {
     // Assuming props.setting.colors is an array of color objects
 
     const dotsRendered = () => {
-        if(props.animated) {
-            switch (props.setting.flashingPattern) {
+        if (animated) {
+            switch (setting.flashingPattern) {
                 case "BLENDER":
-                    return <BlenderDots colors={props.setting.colors}/>;
+                    return <BlenderDots colors={setting.colors}/>;
                 case "CHRISTMAS":
-                    return <ChristmasDots colors={props.setting.colors}/>;
+                    return <ChristmasDots colors={setting.colors}/>;
                 case "COMFORT SONG":
-                    return <ComfortSongDots colors={props.setting.colors}/>;
+                    return <ComfortSongDots colors={setting.colors}/>;
                 case "FUNKY":
-                    return <FunkyDots colors={props.setting.colors}/>;
+                    return <FunkyDots colors={setting.colors}/>;
                 case "MOLD":
-                    return <MoldDots colors={props.setting.colors}/>;
+                    return <MoldDots colors={setting.colors}/>;
                 case "PROGRESSIVE":
-                    return <ProgressiveDots colors={props.setting.colors}/>;
+                    return <ProgressiveDots colors={setting.colors}/>;
                 case "STILL":
-                    return <StillEffectDots colors={props.setting.colors}/>;
+                    return <StillEffectDots colors={setting.colors}/>;
                 case "STROBE CHANGE":
-                    return <StrobeChangeDots colors={props.setting.colors}/>;
+                    return <StrobeChangeDots colors={setting.colors}/>;
                 case "TECHNO":
-                    return <TechnoDots colors={props.setting.colors}/>;
+                    return <TechnoDots colors={setting.colors}/>;
                 case "TRACE MANY":
-                    return <TraceManyDots colors={props.setting.colors}/>;
+                    return <TraceManyDots colors={setting.colors}/>;
                 case "TRACE ONE":
-                    return <TraceOneDots colors={props.setting.colors}/>;
+                    return <TraceOneDots colors={setting.colors}/>;
                 case "TRANCE":
-                    return <TranceDots colors={props.setting.colors}/>;
+                    return <TranceDots colors={setting.colors}/>;
                 default:
-                    return <ColorDots colors={props.setting.colors}/>;
+                    return <ColorDots colors={setting.colors}/>;
             }
-        }
-        else {
-            return <ColorDots colors={props.setting.colors}/>;
+        } else {
+            return <ColorDots colors={setting.colors}/>;
         }
     }
 
+
     return (
-        <View style={props.style}>
-            <Text style={styles.whiteText}>{props.setting.name.toLowerCase()}</Text>
+        <>
+            {/*Top Section*/}
+            {animated &&
+            (
+                <View style={style}>
+                    <Text style={styles.whiteText}>{setting.name.toLowerCase()}</Text>
 
-            {dotsRendered()}
+                    {dotsRendered()}
+                    <View style={styles.buttonsContainer}>
+                        <TouchableOpacity style={styles.styleAButton} onPress={() => {
+                            navigation.navigate("ChooseModification", {setting: setting});
+                        }}>
+                            <Text style={styles.buttons}>Edit</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.styleAButton} onPress={() => {
+                            // TODO: Send API
+                        }}>
+                            <Text style={styles.buttons}>Flash</Text>
+                        </TouchableOpacity>
+                    </View>
 
-        </View>
+                </View>
+            )}
+
+            {/*Carousel Section*/}
+            {!animated &&
+            (
+                <View style={style}>
+                    <Text style={styles.whiteText}>{setting.name.toLowerCase()}</Text>
+
+                    {dotsRendered()}
+
+                </View>
+            )}
+
+
+        </>
+
+
     );
 }
 
 const styles = StyleSheet.create({
     whiteText: {
         color: "white",
-        fontSize: 50,
+        fontSize: 70,
         fontFamily: "Thesignature",
     },
+    buttonsContainer: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        marginTop: 40,
+        width: "100%",
+        paddingHorizontal: 20,
+
+    },
+    buttons: {
+        color: "white",
+        fontSize: 40,
+        fontFamily: "Thesignature",
+
+    },
+    styleAButton: {
+        backgroundColor: "#000000",
+        borderRadius: 10,
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        marginTop: 10,
+        width: "45%",
+        alignItems: "center",
+        borderStyle: "dashed",
+        borderWidth: 2,
+        borderColor: "#ffffff",
+    }
 });
 
 export default SettingBlock;

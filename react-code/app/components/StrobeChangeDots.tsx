@@ -37,7 +37,7 @@ export default function StrobeChangeDots(props: ColorProps) {
     ];
 
     const LIGHT_COUNT = setLed.length;
-    const delayTime = 5; //TODO
+    const delayTime = 2;
     const black = "#000000";
 
     useEffect(() => {

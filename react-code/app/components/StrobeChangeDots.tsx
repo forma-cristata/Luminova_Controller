@@ -10,22 +10,24 @@ export default function StrobeChangeDots(props: ColorProps) {
 
     const COLOR_COUNT = props.colors.length;
 
-    const [dot0Color, setLED0Color] = useState(props.colors[0]);
-    const [dot1Color, setLED1Color] = useState(props.colors[1]);
-    const [dot2Color, setLED2Color] = useState(props.colors[2]);
-    const [dot3Color, setLED3Color] = useState(props.colors[3]);
-    const [dot4Color, setLED4Color] = useState(props.colors[4]);
-    const [dot5Color, setLED5Color] = useState(props.colors[5]);
-    const [dot6Color, setLED6Color] = useState(props.colors[6]);
-    const [dot7Color, setLED7Color] = useState(props.colors[7]);
-    const [dot8Color, setLED8Color] = useState(props.colors[8]);
-    const [dot9Color, setLED9Color] = useState(props.colors[9]);
-    const [dot10Color, setLED10Color] = useState(props.colors[10]);
-    const [dot11Color, setLED11Color] = useState(props.colors[11]);
-    const [dot12Color, setLED12Color] = useState(props.colors[12]);
-    const [dot13Color, setLED13Color] = useState(props.colors[13]);
-    const [dot14Color, setLED14Color] = useState(props.colors[14]);
-    const [dot15Color, setLED15Color] = useState(props.colors[15]);
+    const black = "#000000";
+
+    const [dot0Color, setLED0Color] = useState(black);
+    const [dot1Color, setLED1Color] = useState(black);
+    const [dot2Color, setLED2Color] = useState(black);
+    const [dot3Color, setLED3Color] = useState(black);
+    const [dot4Color, setLED4Color] = useState(black);
+    const [dot5Color, setLED5Color] = useState(black);
+    const [dot6Color, setLED6Color] = useState(black);
+    const [dot7Color, setLED7Color] = useState(black);
+    const [dot8Color, setLED8Color] = useState(black);
+    const [dot9Color, setLED9Color] = useState(black);
+    const [dot10Color, setLED10Color] = useState(black);
+    const [dot11Color, setLED11Color] = useState(black);
+    const [dot12Color, setLED12Color] = useState(black);
+    const [dot13Color, setLED13Color] = useState(black);
+    const [dot14Color, setLED14Color] = useState(black);
+    const [dot15Color, setLED15Color] = useState(black);
 
     type led = (color: string) => void;
 
@@ -38,7 +40,6 @@ export default function StrobeChangeDots(props: ColorProps) {
 
     const LIGHT_COUNT = setLed.length;
     const delayTime = 2;
-    const black = "#000000";
 
     useEffect(() => {
         let isActive = true;

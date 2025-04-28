@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useState, useEffect} from "react";
 import Dot from "@/app/components/Dot";
 import {SafeAreaView, StyleSheet, View} from "react-native";
 
@@ -8,7 +8,7 @@ interface ColorProps {
 
 export default function TechnoDots(props: ColorProps) {
 
-
+    const COLOR_COUNT = props.colors.length;
 
     const [dot0Color, setLED0Color] = useState(props.colors[0]);
     const [dot1Color, setLED1Color] = useState(props.colors[1]);
@@ -26,6 +26,80 @@ export default function TechnoDots(props: ColorProps) {
     const [dot13Color, setLED13Color] = useState(props.colors[13]);
     const [dot14Color, setLED14Color] = useState(props.colors[14]);
     const [dot15Color, setLED15Color] = useState(props.colors[15]);
+
+    type led = (color: string) => void;
+
+    const setLed: led[] = [
+        setLED0Color, setLED1Color, setLED2Color, setLED3Color,
+        setLED4Color, setLED5Color, setLED6Color, setLED7Color,
+        setLED8Color, setLED9Color, setLED10Color, setLED11Color,
+        setLED12Color, setLED13Color, setLED14Color, setLED15Color
+    ];
+
+    const LIGHT_COUNT = setLed.length;
+    const black = "#000000";
+    const delayTime = 2; //todo
+
+    useEffect(() => {
+        let isActive = true;
+
+        const animate = async () => {
+            if (!isActive) return;
+
+            // Initialize all LEDs to black
+            for (let i = 0; i < LIGHT_COUNT; i++) {
+                setLed[i](black);
+            }
+
+            for (let i = 0; i < COLOR_COUNT; i++) {
+                if (!isActive) return;
+                let m = (i + 1) % COLOR_COUNT;
+                let n = (i + 2) % COLOR_COUNT;
+                let o = (i + 3) % COLOR_COUNT;
+                let p = (i + 4) % COLOR_COUNT;
+
+                for (let j = 15; j >= 0; j--) {
+                    if (!isActive) return;
+                    let k = (j + 1) % LIGHT_COUNT;
+                    let l = (j + 2) % LIGHT_COUNT;
+                    let y = (j + 3) % LIGHT_COUNT;
+                    let z = (j + 4) % LIGHT_COUNT;
+
+                    for (let x = 0; x < 2; x++) {
+                        if (!isActive) return;
+
+                        setLed[j](props.colors[i]);
+                        await new Promise(resolve => setTimeout(resolve, delayTime));
+                        setLed[j](black);
+
+                        setLed[k](props.colors[m]);
+                        await new Promise(resolve => setTimeout(resolve, delayTime));
+                        setLed[k](black);
+
+                        setLed[l](props.colors[n]);
+                        await new Promise(resolve => setTimeout(resolve, delayTime));
+                        setLed[l](black);
+
+                        setLed[y](props.colors[o]);
+                        await new Promise(resolve => setTimeout(resolve, delayTime));
+                        setLed[y](black);
+
+                        setLed[z](props.colors[p]);
+                        await new Promise(resolve => setTimeout(resolve, delayTime));
+                        setLed[z](black);
+                    }
+                }
+            }
+
+            setTimeout(animate, delayTime);
+        };
+
+        animate();
+
+        return () => {
+            isActive = false;
+        };
+    }, [props.colors]);
 
     return (
         <SafeAreaView style={styles.background}>
@@ -48,8 +122,8 @@ export default function TechnoDots(props: ColorProps) {
         </SafeAreaView>
     );
 
-    // No ANIMATION for still effect
-    // Will need to use passed in stuff though
+    // TRACE ONE ANIMATION
+
 
 }
 

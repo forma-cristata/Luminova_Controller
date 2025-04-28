@@ -10,13 +10,14 @@ export default function Welcome({navigation}: any) {
 
     const [isEnabled, setIsEnabled] = useState(false);
     const toggleSwitch = () => setIsEnabled(previousState => !previousState);
+    // When switch is toggled, send on/off API
 
     return (
         <SafeAreaProvider>
             <SafeAreaView style={styles.container}>
                 <Text style={styles.text}>Hello</Text>
-                <TouchableOpacity style={styles.button} onPress={createButtonPressed}>
-                    <Text style={{color: '#ffffff', textAlign: 'center'}}>                Create               ⟩</Text>
+                <TouchableOpacity style={styles.styleAButton} onPress={createButtonPressed}>
+                    <Text style={styles.button}>Create     ⟩</Text>
                 </TouchableOpacity>
                 <Switch onValueChange={toggleSwitch} value={isEnabled}
                         trackColor={{false: '#665e73', true: '#ffffff'}}
@@ -36,19 +37,26 @@ const styles = StyleSheet.create({
         backgroundColor: '#000000',
     },
     text: {
-        marginBottom: "30%",
+        marginBottom: "20%",
         fontFamily: "Thesignature",
         fontSize: 130,
         color: "#ffffff",
     },
     button: {
-        width: "50%",
-        height: 40,
-
-        backgroundColor: "#000000",
-        marginBottom: "30%",
-        alignItems: "center",
-        justifyContent: "center",
+        color: "white",
+        fontSize: 40,
+        fontFamily: "Thesignature",
     },
     switch: {},
+    styleAButton: {
+        marginBottom: "20%",
+        backgroundColor: "#000000",
+        borderRadius: 10,
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        alignItems: "center",
+        borderStyle: "dashed",
+        borderWidth: 2,
+        borderColor: "#ffffff",
+    }
 });

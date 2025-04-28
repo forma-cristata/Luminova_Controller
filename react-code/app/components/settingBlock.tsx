@@ -17,6 +17,7 @@ import TraceOneDots from "@/app/components/TraceOneDots";
 interface SettingItemProps{
         setting: Setting,
         style: any,
+        animated: boolean,
 }
 
 
@@ -24,33 +25,38 @@ const SettingBlock = (props: SettingItemProps) => {
     // Assuming props.setting.colors is an array of color objects
 
     const dotsRendered = () => {
-        switch (props.setting.flashingPattern) {
-            case "BLENDER":
-                return <BlenderDots colors={props.setting.colors}/>;
-            case "CHRISTMAS":
-                return <ChristmasDots colors={props.setting.colors}/>;
-            case "COMFORT SONG":
-                return <ComfortSongDots colors={props.setting.colors}/>;
-            case "FUNKY":
-                return <FunkyDots colors={props.setting.colors}/>;
-            case "MOLD":
-                return <MoldDots colors={props.setting.colors}/>;
-            case "PROGRESSIVE":
-                return <ProgressiveDots colors={props.setting.colors}/>;
-            case "STILL":
-                return <StillEffectDots colors={props.setting.colors}/>;
-            case "STROBE CHANGE":
-                return <StrobeChangeDots colors={props.setting.colors}/>;
-            case "TECHNO":
-                return <TechnoDots colors={props.setting.colors}/>;
-            case "TRACE MANY":
-                return <TraceManyDots colors={props.setting.colors}/>;
-            case "TRACE ONE":
-                return <TraceOneDots colors={props.setting.colors}/>;
-            case "TRANCE":
-                return <TranceDots colors={props.setting.colors}/>;
-            default:
-                return <ColorDots colors={props.setting.colors}/>;
+        if(props.animated) {
+            switch (props.setting.flashingPattern) {
+                case "BLENDER":
+                    return <BlenderDots colors={props.setting.colors}/>;
+                case "CHRISTMAS":
+                    return <ChristmasDots colors={props.setting.colors}/>;
+                case "COMFORT SONG":
+                    return <ComfortSongDots colors={props.setting.colors}/>;
+                case "FUNKY":
+                    return <FunkyDots colors={props.setting.colors}/>;
+                case "MOLD":
+                    return <MoldDots colors={props.setting.colors}/>;
+                case "PROGRESSIVE":
+                    return <ProgressiveDots colors={props.setting.colors}/>;
+                case "STILL":
+                    return <StillEffectDots colors={props.setting.colors}/>;
+                case "STROBE CHANGE":
+                    return <StrobeChangeDots colors={props.setting.colors}/>;
+                case "TECHNO":
+                    return <TechnoDots colors={props.setting.colors}/>;
+                case "TRACE MANY":
+                    return <TraceManyDots colors={props.setting.colors}/>;
+                case "TRACE ONE":
+                    return <TraceOneDots colors={props.setting.colors}/>;
+                case "TRANCE":
+                    return <TranceDots colors={props.setting.colors}/>;
+                default:
+                    return <ColorDots colors={props.setting.colors}/>;
+            }
+        }
+        else {
+            return <ColorDots colors={props.setting.colors}/>;
         }
     }
 

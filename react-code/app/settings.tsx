@@ -333,7 +333,7 @@ export default function Settings({navigation}: any) {
                     setting: data[currentIndex % data.length]
                 })}>
                     <View style={styles.focusedItem}>
-                    <SettingBlock style={styles.nothing} setting={data[currentIndex % data.length]} />
+                    <SettingBlock animated={true} style={styles.nothing} setting={data[currentIndex % data.length]} />
 {/*
                     <Text style={styles.whiteText}>{data[currentIndex % data.length].delayTime} Insert delay shower here</Text>
 */}
@@ -351,10 +351,9 @@ export default function Settings({navigation}: any) {
                         onProgressChange={(offset, absoluteProgress) => {
                             progress.value = offset;
                             setCurrentIndex(Math.round(absoluteProgress));
-                            console.log('Current focused item:', data[currentIndex]);
                         }}
                         renderItem={({item}: {item: number}) => (
-                            <SettingBlock style={styles.renderItem} setting={data[item]} />
+                            <SettingBlock animated={false} style={styles.renderItem} setting={data[item]} />
                         )}
                         mode="parallax"
                         style={styles.carousel}

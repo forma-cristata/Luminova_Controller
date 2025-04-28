@@ -37,7 +37,7 @@ export default function ComfortSongDots(props: ColorProps) {
     ];
 
     const LIGHT_COUNT = setLed.length;
-    const delayTime = 5; //TODO
+    const delayTime = 3;
     const patternIndices= [1, 2, 3, 2, 4, 3, 2, 1, 0, 1, 2, 1, 3, 2, 1, 0 ];
     const pattern2Indices= [7, 8, 9, 8, 10, 9, 8, 7, 6, 7, 8, 7, 9, 8, 7, 6];
     const pattern3Indices= [13, 14, 15, 14, 16, 15, 14, 13, 12, 13, 14, 13, 15, 14, 13, 12];

@@ -9,7 +9,7 @@ export default function FlashingPatternEditor({ route, navigation }: Props) {
     const { setting } = route.params;
 
     return (
-        <SafeAreaView>
+        <SafeAreaView  style={styles.container}>
             <View style={styles.backButton}>
                 <TouchableOpacity onPress={() => navigation.navigate("ChooseModification", { setting })}>
                     <Text style={styles.backB}>    ⟨    </Text>
@@ -19,6 +19,10 @@ export default function FlashingPatternEditor({ route, navigation }: Props) {
     );
 }
 const styles=StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: "#000000",
+    },
     backButton: {
         position: "absolute",
         top: 50,

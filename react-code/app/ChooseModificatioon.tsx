@@ -64,7 +64,7 @@ export default function ChooseModificatioon({navigation, route}: any) {
                     <Text style={styles.whiteText}>Flashing Pattern</Text>
 
                     <View style={styles.dotContainer}>
-                        <TouchableOpacity onPress={() => navigation.navigate("ColorEditor", {setting: setting})}>
+                        <TouchableOpacity onPress={() => navigation.navigate("FlashingPatternEditor", {setting: setting})}>
                             {modeDots()}
                         </TouchableOpacity>
                     </View>

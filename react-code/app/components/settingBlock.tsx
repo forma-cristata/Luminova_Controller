@@ -91,7 +91,7 @@ const SettingBlock = ({navigation, setting, style, animated}: SettingItemProps) 
             {!animated &&
             (
                 <View style={style}>
-                    <Text style={styles.whiteText}>{setting.name.toLowerCase()}</Text>
+                    <Text style={styles.whiteTextSmaller}>{setting.name.toLowerCase()}</Text>
 
                     {dotsRendered()}
 
@@ -108,7 +108,12 @@ const SettingBlock = ({navigation, setting, style, animated}: SettingItemProps) 
 const styles = StyleSheet.create({
     whiteText: {
         color: "white",
-        fontSize: 70,
+        fontSize: 80,
+        fontFamily: "Thesignature",
+    },
+    whiteTextSmaller: {
+        color: "white",
+        fontSize: 60,
         fontFamily: "Thesignature",
     },
     buttonsContainer: {
@@ -122,7 +127,7 @@ const styles = StyleSheet.create({
     buttons: {
         color: "white",
         fontSize: 40,
-        fontFamily: "Thesignature",
+        fontFamily: "Clearlight-lJlq",
 
     },
     styleAButton: {

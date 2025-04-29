@@ -30,6 +30,7 @@
         // Returns [loaded, error] state to handle font loading
         const [loaded, error] = useFonts({
             'Thesignature': require('../assets/fonts/Thesignature.ttf'),
+            'Clearlight-lJlq': require('../assets/fonts/Clearlight-lJlq.ttf'),
         });
 
         // Effect hook to hide splash screen once fonts are loaded or if there's an error

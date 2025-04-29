@@ -200,7 +200,7 @@ export default function ColorEditor({navigation, route}: any) {
                         onValueChange={value => {
                             if (selectedDot !== null) {
                                 setHue(value);
-                                updateColor(value, 100 - whiteBalance, brightness);
+                                updateColor(value, 100 - whiteBalance, brightness); // Here
                             }
                         }}
                         onSlidingComplete={value => {
@@ -222,7 +222,7 @@ export default function ColorEditor({navigation, route}: any) {
                         onValueChange={value => {
                             if (selectedDot !== null) {
                                 setBrightness(value);
-                                updateColor(hue, 100 - whiteBalance, value);
+                                updateColor(hue, 100 - whiteBalance, value); // Here
                             }
                         }}
                         onSlidingComplete={value => {
@@ -244,7 +244,7 @@ export default function ColorEditor({navigation, route}: any) {
                         onValueChange={value => {
                             if (selectedDot !== null) {
                                 setWhiteBalance(value);
-                                updateColor(hue, 100 - value, brightness);
+                                updateColor(hue, 100 - value, brightness); // Here
                             }
                         }}
                         onSlidingComplete={value => {
@@ -331,8 +331,9 @@ const styles = StyleSheet.create({
     },
     sliderText: {
         color: "white",
-        fontSize: 20 * scale,
-        fontFamily: "Thesignature",
+        fontSize: 22 * scale,
+        fontFamily: "Clearlight-lJlq",
+        letterSpacing: 2,
     },
     hexContainer: {
         flexDirection: 'row',
@@ -347,8 +348,9 @@ const styles = StyleSheet.create({
     },
     hexInput: {
         color: 'white',
-        fontSize: 20 * scale,
-        fontFamily: "Thesignature",
+        fontSize: 22 * scale,
+        fontFamily: "Clearlight-lJlq",
+        letterSpacing: 3,
         borderBottomWidth: 1,
         borderBottomColor: 'white',
         paddingVertical: 4,
@@ -378,6 +380,8 @@ const styles = StyleSheet.create({
     button: {
         color: "white",
         fontSize: 30 * scale,
-        fontFamily: "Thesignature",
+        fontFamily: "Clearlight-lJlq",
+        letterSpacing: 2,
+
     }
 });

@@ -6,14 +6,17 @@
     import * as SplashScreen from "expo-splash-screen";
     import ChooseModificatioon from "@/app/ChooseModificatioon";
     import ColorEditor from "@/app/ColorEditor";
+    import FlashingPatternEditor from "@/app/FlashingPatternEditor";
+    import Setting from "@/app/interface/setting-interface";
 
     // TypeScript type definition for the navigation stack parameters
     // Currently both screens don't require any parameters
     export type RootStackParamList = {
         Welcome: undefined;
         Settings: undefined;
-        ChooseModification: undefined;
-        ColorEditor: undefined;
+        ChooseModification: { setting: Setting };
+        ColorEditor: { setting: Setting };
+        FlashingPatternEditor: { setting: Setting };
     }
 
     // Create a navigation stack with our defined parameter types
@@ -69,6 +72,7 @@
                 <Stack.Screen name="Settings" component={Settings} />
                 <Stack.Screen name="ChooseModification" component={ChooseModificatioon} />
                 <Stack.Screen name="ColorEditor" component={ColorEditor} />
+                <Stack.Screen name="FlashingPatternEditor" component={FlashingPatternEditor} />
             </Stack.Navigator>
         );
     }

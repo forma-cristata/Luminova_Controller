@@ -14,6 +14,7 @@ import TranceDots from "@/app/components/TranceDots";
 import TraceManyDots from "@/app/components/TraceManyDots";
 import TraceOneDots from "@/app/components/TraceOneDots";
 import {navigate} from "expo-router/build/global-state/routing";
+import {IP} from "@/app/configurations/constants";
 
 interface SettingItemProps {
     navigation: any
@@ -62,6 +63,39 @@ const SettingBlock = ({navigation, setting, style, animated}: SettingItemProps) 
     }
 
 
+    const effectNumber = (flashingPattern: string) => {
+        switch (flashingPattern) {
+            case "STILL":
+                return 6;
+            case "TRACE ONE":
+                return 10;
+            case "TRACE MANY":
+                return 9;
+            case "PROGRESSIVE":
+                return 5;
+            case "STROBE CHANGE":
+                return 7;
+            case "COMFORT SONG":
+                return 2;
+            case "BLENDER":
+                return 0;
+            case "TECHNO":
+                return 8;
+            case "TRANCE":
+                return 11;
+            case "MOLD":
+                return 4;
+            case "FUNKY":
+                return 3;
+            case "CHRISTMAS":
+                return 1;
+            default:
+                return 6;
+        }
+    }
+
+
+
     return (
         <>
             {/*Top Section*/}
@@ -78,7 +112,22 @@ const SettingBlock = ({navigation, setting, style, animated}: SettingItemProps) 
                             <Text style={styles.buttons}>Edit</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.styleAButton} onPress={() => {
-                            // TODO: Send API
+                            fetch(`http://${IP}/api/config`, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({
+                                    delayTime: setting.delayTime,
+                                    effectNumber: effectNumber(setting.flashingPattern),
+                                    whiteValues: setting.whiteValues,
+                                    brightnessValues: setting.brightnessValues,
+                                    colors: setting.colors,
+                                })
+                            })
+                                .then(response => response.json())
+                                .then(data => console.log("success: ", data))
+                                .catch(error => console.error('Error: ', error));
                         }}>
                             <Text style={styles.buttons}>Flash</Text>
                         </TouchableOpacity>

@@ -312,6 +312,9 @@ export default function Settings({navigation}: any) {
     // Read from file
     // for each item in data, push the index to primKey
 
+
+
+
     return (
         <SafeAreaView style={styles.container}>
             {/*Back Button*/}

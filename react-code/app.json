@@ -8,11 +8,6 @@
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
-    "doctor": {
-      "reactNativeDirectoryCheck": {
-        "exclude": ["react-native-snap-carousel"]
-      }
-    },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.formacristata.reactcode",

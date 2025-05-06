@@ -51,13 +51,28 @@ export default function ComfortSongDots(props: ColorProps) {
             if (!isActive) return;
 
             for (let x = 0; x < COLOR_COUNT; x++) {
-                for (let i = 0; i < delayTime; i++) {
+                for (let i = 0; i < delayTime / 2; i++) {
                     if (!isActive) return;
 
-                    setLed[patternIndices[x] % LIGHT_COUNT](props.colors[x]);
-                    setLed[pattern2Indices[x] % LIGHT_COUNT](props.colors[x]);
-                    setLed[pattern3Indices[x] % LIGHT_COUNT](props.colors[x]);
-                    await new Promise(resolve => setTimeout(resolve, 5));
+                    let index1 = patternIndices[x % LIGHT_COUNT] % LIGHT_COUNT;
+                    let index2 = pattern2Indices[x % LIGHT_COUNT] % LIGHT_COUNT;
+                    let index3 = pattern3Indices[x % LIGHT_COUNT] % LIGHT_COUNT;
+
+                    if (index1 < 0) index1 += LIGHT_COUNT;
+                    if (index2 < 0) index2 += LIGHT_COUNT;
+                    if (index3 < 0) index3 += LIGHT_COUNT;
+
+                    setLed[index1](props.colors[x % LIGHT_COUNT]);
+                    setLed[index2](props.colors[x % LIGHT_COUNT]);
+                    setLed[index3](props.colors[x % LIGHT_COUNT]);
+                    
+                    await new Promise(resolve => setTimeout(resolve, 2));
+
+                    setLed[index1](black);
+                    setLed[index2](black);
+                    setLed[index3](black);
+
+                    await new Promise(resolve => setTimeout(resolve, 2));
                 }
             }
 

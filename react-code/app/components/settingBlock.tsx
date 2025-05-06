@@ -24,35 +24,36 @@ interface SettingItemProps {
 }
 
 
+
 const SettingBlock = ({navigation, setting, style, animated}: SettingItemProps) => {
     // Assuming props.setting.colors is an array of color objects
 
     const dotsRendered = () => {
         if (animated) {
             switch (setting.flashingPattern) {
-                case "BLENDER":
+                case "0":
                     return <BlenderDots colors={setting.colors}/>;
-                case "CHRISTMAS":
+                case "1":
                     return <ChristmasDots colors={setting.colors}/>;
-                case "COMFORT SONG":
+                case "2":
                     return <ComfortSongDots colors={setting.colors}/>;
-                case "FUNKY":
+                case "3":
                     return <FunkyDots colors={setting.colors}/>;
-                case "MOLD":
+                case "4":
                     return <MoldDots colors={setting.colors}/>;
-                case "PROGRESSIVE":
+                case "5":
                     return <ProgressiveDots colors={setting.colors}/>;
-                case "STILL":
+                case "6":
                     return <StillEffectDots colors={setting.colors}/>;
-                case "STROBE CHANGE":
+                case "7":
                     return <StrobeChangeDots colors={setting.colors}/>;
-                case "TECHNO":
+                case "8":
                     return <TechnoDots colors={setting.colors}/>;
-                case "TRACE MANY":
+                case "9":
                     return <TraceManyDots colors={setting.colors}/>;
-                case "TRACE ONE":
+                case "10":
                     return <TraceOneDots colors={setting.colors}/>;
-                case "TRANCE":
+                case "11":
                     return <TranceDots colors={setting.colors}/>;
                 default:
                     return <ColorDots colors={setting.colors}/>;
@@ -64,34 +65,7 @@ const SettingBlock = ({navigation, setting, style, animated}: SettingItemProps) 
 
 
     const effectNumber = (flashingPattern: string) => {
-        switch (flashingPattern) {
-            case "STILL":
-                return 6;
-            case "TRACE ONE":
-                return 10;
-            case "TRACE MANY":
-                return 9;
-            case "PROGRESSIVE":
-                return 5;
-            case "STROBE CHANGE":
-                return 7;
-            case "COMFORT SONG":
-                return 2;
-            case "BLENDER":
-                return 0;
-            case "TECHNO":
-                return 8;
-            case "TRANCE":
-                return 11;
-            case "MOLD":
-                return 4;
-            case "FUNKY":
-                return 3;
-            case "CHRISTMAS":
-                return 1;
-            default:
-                return 6;
-        }
+        return parseInt(flashingPattern);
     }
 
 

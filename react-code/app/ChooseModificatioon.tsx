@@ -22,29 +22,29 @@ export default function ChooseModificatioon({navigation, route}: any) {
     const setting = route.params?.setting as Setting;
     const modeDots = () => {
         switch (setting!.flashingPattern) {
-            case "BLENDER":
+            case "0":
                 return <BlenderDots colors={setting.colors}/>;
-            case "CHRISTMAS":
+            case "1":
                 return <ChristmasDots colors={setting.colors}/>;
-            case "COMFORT SONG":
+            case "2":
                 return <ComfortSongDots colors={setting.colors}/>;
-            case "FUNKY":
+            case "3":
                 return <FunkyDots colors={setting.colors}/>;
-            case "MOLD":
+            case "4":
                 return <MoldDots colors={setting.colors}/>;
-            case "PROGRESSIVE":
+            case "5":
                 return <ProgressiveDots colors={setting.colors}/>;
-            case "STILL":
+            case "6":
                 return <StillEffectDots colors={setting.colors}/>;
-            case "STROBE CHANGE":
+            case "7":
                 return <StrobeChangeDots colors={setting.colors}/>;
-            case "TECHNO":
+            case "8":
                 return <TechnoDots colors={setting.colors}/>;
-            case "TRACE MANY":
+            case "9":
                 return <TraceManyDots colors={setting.colors}/>;
-            case "TRACE ONE":
+            case "10":
                 return <TraceOneDots colors={setting.colors}/>;
-            case "TRANCE":
+            case "11":
                 return <TranceDots colors={setting.colors}/>;
             default:
                 return <ColorDots colors={setting.colors}/>;

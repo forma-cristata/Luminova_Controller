@@ -88,9 +88,7 @@ export default function MoldDots(props: ColorProps) {
                             if (!isActive) return;
                             setLed[(ledIndex + 1) % LIGHT_COUNT](props.colors[(ledIndex + ha) % COLOR_COUNT]);
                             await new Promise(resolve => setTimeout(resolve, delayTime / 2));
-
                             setLed[ledIndex % LIGHT_COUNT](black);
-
                         }
                     }
 

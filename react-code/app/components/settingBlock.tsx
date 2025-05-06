@@ -26,7 +26,10 @@ interface SettingItemProps {
 
 
 const SettingBlock = ({navigation, setting, style, animated}: SettingItemProps) => {
-    // Assuming props.setting.colors is an array of color objects
+
+
+
+
 
     const dotsRendered = () => {
         if (animated) {
@@ -42,7 +45,7 @@ const SettingBlock = ({navigation, setting, style, animated}: SettingItemProps) 
                 case "4":
                     return <MoldDots colors={setting.colors}/>;
                 case "5":
-                    return <ProgressiveDots colors={setting.colors}/>;
+                    return <ProgressiveDots navigation={navigation} setting={setting}/>;
                 case "6":
                     return <StillEffectDots colors={setting.colors}/>;
                 case "7":

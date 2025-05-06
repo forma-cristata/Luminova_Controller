@@ -1,14 +1,16 @@
 import {useState, useEffect} from "react";
 import Dot from "@/app/components/Dot";
 import {SafeAreaView, StyleSheet, View} from "react-native";
+import Setting from "@/app/interface/setting-interface";
 
-interface ColorProps {
-    colors: string[],
+interface SettingItemProps {
+    navigation: any
+    setting: Setting,
 }
 
-export default function ProgressiveDots(props: ColorProps) {
+export default function ProgressiveDots({navigation, setting}: SettingItemProps) {
 
-    const COLOR_COUNT = props.colors.length;
+    const COLOR_COUNT = setting.colors.length;
 
     const black = "#000000";
 
@@ -53,17 +55,17 @@ export default function ProgressiveDots(props: ColorProps) {
 
                    let ledIndex = (j + i) % LIGHT_COUNT;
                    let ledIndex2 = (j + i + 1) % LIGHT_COUNT;
-                   setLed[ledIndex](props.colors[j]);
-                   setLed[ledIndex2](props.colors[j]);
+                   setLed[ledIndex](setting.colors[j]);
+                   setLed[ledIndex2](setting.colors[j]);
 
-                   await new Promise(resolve => setTimeout(resolve, 14));
+                   await new Promise(resolve => setTimeout(resolve, setting.delayTime));
 
                    ledIndex = (j + i + 1) % LIGHT_COUNT;
                    ledIndex2 = (j + i + 2) % LIGHT_COUNT;
-                   setLed[ledIndex](props.colors[j]);
-                   setLed[ledIndex2](props.colors[j]);
+                   setLed[ledIndex](setting.colors[j]);
+                   setLed[ledIndex2](setting.colors[j]);
 
-                   await new Promise(resolve => setTimeout(resolve, 14));
+                   await new Promise(resolve => setTimeout(resolve, setting.delayTime));
                }
            }
 
@@ -75,7 +77,7 @@ export default function ProgressiveDots(props: ColorProps) {
        return () => {
            isActive = false;
        };
-   }, [props.colors]);
+   }, [setting.colors]);
 
     return (
         <SafeAreaView style={styles.background}>

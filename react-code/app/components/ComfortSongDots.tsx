@@ -65,7 +65,7 @@ export default function ComfortSongDots(props: ColorProps) {
                     setLed[index1](props.colors[x % LIGHT_COUNT]);
                     setLed[index2](props.colors[x % LIGHT_COUNT]);
                     setLed[index3](props.colors[x % LIGHT_COUNT]);
-                    
+
                     await new Promise(resolve => setTimeout(resolve, 2));
 
                     setLed[index1](black);

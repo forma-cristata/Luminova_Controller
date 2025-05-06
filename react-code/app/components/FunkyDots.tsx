@@ -54,7 +54,6 @@ export default function FunkyDots(props: ColorProps) {
         const animate = async () => {
             if (!isActive) return;
 
-            await new Promise(resolve => setTimeout(resolve, delayTime / 4));
 
             for (let strobe = 0; strobe < strobeCount1; strobe++) {
                 if (!isActive) return;
@@ -65,7 +64,8 @@ export default function FunkyDots(props: ColorProps) {
                     setLed[(ledIndex + 1) % LIGHT_COUNT](props.colors[ledIndex % COLOR_COUNT]);
                 }
 
-                await new Promise(resolve => setTimeout(resolve, delayTime / 12));
+
+
 
                 for (let i = 0; i < ledsPerGroup; i++) {
                     let ledIndex = random(0, LIGHT_COUNT);
@@ -73,6 +73,7 @@ export default function FunkyDots(props: ColorProps) {
                     setLed[(ledIndex + 1) % LIGHT_COUNT](black);
                 }
             }
+
 
             for (let strobe = 0; strobe < strobeCount2; strobe++) {
                 if (!isActive) return;
@@ -83,19 +84,17 @@ export default function FunkyDots(props: ColorProps) {
                     setLed[(ledIndex + 1) % LIGHT_COUNT](props.colors[ledIndex % COLOR_COUNT]);
                 }
 
-                await new Promise(resolve => setTimeout(resolve, delayTime / 12));
+
+
 
                 for (let i = 0; i < ledsPerGroup; i++) {
                     await new Promise(resolve => setTimeout(resolve, delayTime / 12));
-                    for (let j = 0; j < ledsPerGroup; j++) {
-                        await new Promise(resolve => setTimeout(resolve, delayTime / 12));
-                        let ledIndex = random(0, LIGHT_COUNT);
-                        setLed[(ledIndex + 1) % LIGHT_COUNT](black);
-                    }
+                    let ledIndex = random(0, LIGHT_COUNT);
+                    setLed[(ledIndex + 1) % LIGHT_COUNT](black);
                 }
             }
 
-            setTimeout(animate, delayTime);
+            setTimeout(animate, 0);
         };
 
         animate();

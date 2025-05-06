@@ -63,7 +63,7 @@ export default function StrobeChangeDots(props: ColorProps) {
                 }
             }
 
-            setTimeout(animate, 3);
+            setTimeout(animate, 0);
         };
 
         animate();

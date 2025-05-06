@@ -23,8 +23,6 @@ export default function ColorEditor({navigation, route}: any) {
     const [hasChanges, setHasChanges] = useState(false);
 
 
-
-
     const hexToRgb = (hex: string) => {
         const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
         return result ? {

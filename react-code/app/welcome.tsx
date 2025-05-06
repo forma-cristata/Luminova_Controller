@@ -100,9 +100,12 @@ const styles = StyleSheet.create({
         fontSize: 40,
         fontFamily: "Thesignature",
     },
-    switch: {},
+    switch: {
+        transformOrigin: "center",
+        transform: "scale(1.5)",
+    },
     styleAButton: {
-        marginBottom: "20%",
+        marginBottom: "25%",
         backgroundColor: "#000000",
         borderRadius: 10,
         paddingVertical: 10,

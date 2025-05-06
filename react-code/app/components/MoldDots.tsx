@@ -126,7 +126,6 @@ export default function MoldDots(props: ColorProps) {
                     for (let i = 0; i < ledsPerGroup; i++) {
                         let ledIndex = startIdx + i;
                         setLed[(ledIndex + 1) % LIGHT_COUNT](black);
-                        await new Promise(resolve => setTimeout(resolve, delayTime / 2));
                     }
                 }
 

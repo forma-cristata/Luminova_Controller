@@ -3,14 +3,21 @@ import {Dimensions, SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from
 import ColorDotsEditorEdition from "@/app/components/ColorDotEditorEdition";
 import Slider from "@react-native-community/slider";
 import {useState} from "react";
+import {useThrottle} from "expo-dev-launcher/bundle/hooks/useDebounce";
 
 export default function ColorEditor({navigation, route}: any) {
     const setting = route.params?.setting;
     const [colors, setColors] = useState([...setting.colors]);
     const [selectedDot, setSelectedDot] = useState<number | null>(null);
     const [hue, setHue] = useState(0);
+    const throttledHue = useThrottle(hue);
+
     const [brightness, setBrightness] = useState(100);
+    const throttledBrightness = useThrottle(brightness);
+
     const [whiteBalance, setWhiteBalance] = useState(0);
+    const throttledWhiteBalance = useThrottle(whiteBalance);
+
     const [hexInput, setHexInput] = useState('');
     const [colorHistory, setColorHistory] = useState<string[][]>([]);
     const [hasChanges, setHasChanges] = useState(false);

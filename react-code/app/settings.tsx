@@ -21,13 +21,6 @@ export default function Settings({navigation}: any) {
     const progress = useSharedValue<number>(0);
     const [currentIndex, setCurrentIndex] = React.useState(0);
 
-    // TODO
-    // Read from file
-    // for each item in data, push the index to primKey
-    console.log(data);
-
-
-
     return (
         <SafeAreaView style={styles.container}>
             {/*Back Button*/}

@@ -47,31 +47,50 @@ export default function ChristmasDots(props: ColorProps) {
         const animate = async () => {
             for (let xy = 0; xy < COLOR_COUNT; xy++) {
                 if (!isActive) return;
+                let f = 0;
 
                 for (let j = 0; j < LIGHT_COUNT; j += 2) {
                     if (!isActive) return;
+/*
                     await new Promise(resolve => setTimeout(resolve, delayTime));
+*/
+                    await new Promise(resolve => setTimeout(resolve, delayTime/16));
+
 
                     setLed[j](props.colors[xy]);
                     if (j === 8) {
-                        setLed[j](props.colors[(xy + 1) % COLOR_COUNT]);
+                        f = (xy+1) % COLOR_COUNT;
+                        await new Promise(resolve => setTimeout(resolve, delayTime/16));
+                        setLed[j % LIGHT_COUNT](props.colors[f]);
                     }
                     if (j === 12) {
-                        setLed[j](props.colors[(xy + 2) % COLOR_COUNT]);
+                        f = (xy+2) % COLOR_COUNT;
+                        await new Promise(resolve => setTimeout(resolve, delayTime/16));
+                        setLed[j % LIGHT_COUNT](props.colors[f]);
                     }
-                    setLed[(j + 1) % LIGHT_COUNT](props.colors[(xy + 3) % LIGHT_COUNT]);
+                    f = (xy + 3) % COLOR_COUNT;
+                    let nextLed = (j+1) % LIGHT_COUNT;
+
+                    await new Promise(resolve => setTimeout(resolve, delayTime * 3));
+
+                    setLed[nextLed](props.colors[f]);
                 }
 
                 for (let j = 1; j < LIGHT_COUNT; j += 2) {
                     if (!isActive) return;
-                    await new Promise(resolve => setTimeout(resolve, delayTime));
+                    await new Promise(resolve => setTimeout(resolve, delayTime * 3));
 
-                    setLed[j](props.colors[xy]);
-                    setLed[j - 1](props.colors[(xy + 3) % COLOR_COUNT]);
+                    setLed[j % LIGHT_COUNT](props.colors[xy]);
+
+                    f = (xy+3) % COLOR_COUNT;
+                    let prevLed = (j - 1 + LIGHT_COUNT) % LIGHT_COUNT
+                    setLed[prevLed](props.colors[f]);
+                    await new Promise(resolve => setTimeout(resolve, delayTime * 3));
+
                 }
             }
 
-            setTimeout(animate, delayTime);
+            setTimeout(animate, 0);
         };
 
         animate();

@@ -54,14 +54,14 @@ export default function BlenderDots(props: ColorProps) {
             for (let i = 0; i < LIGHT_COUNT; i++) {
                 if (!isActive) return;
                 let colorIndex = (i + colorOffset) % COLOR_COUNT;
+                await new Promise(resolve => setTimeout(resolve, delayTime / 8));
                 setLed[i](props.colors[colorIndex]);
-                await new Promise(resolve => setTimeout(resolve, delayTime));
             }
 
-            setTimeout(animate, delayTime);
+            setTimeout(animate, 0);
         };
 
-        animate();
+        animate().then(() => {});
 
         return () => {
             isActive = false;

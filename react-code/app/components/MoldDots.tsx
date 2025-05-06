@@ -61,47 +61,49 @@ export default function MoldDots(props: ColorProps) {
                     // Light up LEDs
                     for (let i = 0; i < ledsPerGroup; i++) {
                         let ledIndex = startIdx + i;
-                        for (let ha = 0; ha < LIGHT_COUNT / 4; ha++) {
+                        for (let ha = 0; ha < 4; ha++) {
                             if (!isActive) return;
                             setLed[(ledIndex + 1) % LIGHT_COUNT](props.colors[ledIndex % COLOR_COUNT]);
-                            await new Promise(resolve => setTimeout(resolve, delayTime));
+                            await new Promise(resolve => setTimeout(resolve, delayTime * 2));
                             setLed[ledIndex % LIGHT_COUNT](black);
                         }
                     }
 
-                    // Turn off LEDs
+                    // Turn off LEDs with a slight delay for better effect
                     for (let i = 0; i < ledsPerGroup; i++) {
                         let ledIndex = startIdx + i;
                         setLed[(ledIndex + 1) % LIGHT_COUNT](black);
-                        await new Promise(resolve => setTimeout(resolve, delayTime));
                     }
                 }
 
-                // Second strobe pattern
+
+                // Second strobe pattern - faster with more intensity
                 for (let strobe = 0; strobe < strobeCount2; strobe++) {
                     if (!isActive) return;
 
-                    // Light up LEDs
+                    // Light up LEDs with a wave-like pattern
                     for (let i = 0; i < ledsPerGroup; i++) {
                         let ledIndex = startIdx + i;
-                        for (let ha = 0; ha < LIGHT_COUNT / 4; ha++) {
+                        for (let ha = 0; ha < 4; ha++) {
                             if (!isActive) return;
-                            setLed[(ledIndex + 1) % LIGHT_COUNT](props.colors[ledIndex % COLOR_COUNT]);
-                            await new Promise(resolve => setTimeout(resolve, delayTime));
+                            setLed[(ledIndex + 1) % LIGHT_COUNT](props.colors[(ledIndex + ha) % COLOR_COUNT]);
+                            await new Promise(resolve => setTimeout(resolve, delayTime / 2));
+
                             setLed[ledIndex % LIGHT_COUNT](black);
+
                         }
                     }
 
-                    // Turn off LEDs
+                    // Quick fade out
                     for (let i = 0; i < ledsPerGroup; i++) {
                         let ledIndex = startIdx + i;
                         setLed[(ledIndex + 1) % LIGHT_COUNT](black);
-                        await new Promise(resolve => setTimeout(resolve, delayTime));
                     }
                 }
+
             }
 
-            // Forward loop (same patterns but reversed direction)
+            // Forward loop
             for (let startIdx = 0; startIdx < LIGHT_COUNT; startIdx++) {
                 if (!isActive) return;
 
@@ -111,48 +113,56 @@ export default function MoldDots(props: ColorProps) {
 
                     for (let i = 0; i < ledsPerGroup; i++) {
                         let ledIndex = startIdx + i;
-                        for (let ha = 0; ha < LIGHT_COUNT / 4; ha++) {
+                        for (let ha = 0; ha < 4; ha++) {
                             if (!isActive) return;
+                            // Safe array access with modulo
                             setLed[(ledIndex + 1) % LIGHT_COUNT](props.colors[ledIndex % COLOR_COUNT]);
-                            await new Promise(resolve => setTimeout(resolve, delayTime));
+                            await new Promise(resolve => setTimeout(resolve, delayTime * 2));
                             setLed[ledIndex % LIGHT_COUNT](black);
                         }
                     }
 
+                    // Fade out with cascade effect
                     for (let i = 0; i < ledsPerGroup; i++) {
                         let ledIndex = startIdx + i;
                         setLed[(ledIndex + 1) % LIGHT_COUNT](black);
-                        await new Promise(resolve => setTimeout(resolve, delayTime));
+                        await new Promise(resolve => setTimeout(resolve, delayTime / 2));
                     }
                 }
 
-                // Second strobe pattern
+
+                // Second strobe pattern - more visually interesting
                 for (let strobe = 0; strobe < strobeCount2; strobe++) {
                     if (!isActive) return;
 
                     for (let i = 0; i < ledsPerGroup; i++) {
                         let ledIndex = startIdx + i;
-                        for (let ha = 0; ha < LIGHT_COUNT / 4; ha++) {
+                        for (let ha = 0; ha < 4; ha++) {
                             if (!isActive) return;
-                            setLed[(ledIndex + 1) % LIGHT_COUNT](props.colors[ledIndex % COLOR_COUNT]);
-                            await new Promise(resolve => setTimeout(resolve, delayTime));
+
+                            // Create color variation based on position
+                            setLed[(ledIndex + 1) % LIGHT_COUNT](props.colors[(ledIndex + ha) % COLOR_COUNT]);
+                            await new Promise(resolve => setTimeout(resolve, delayTime / 2));
+
                             setLed[ledIndex % LIGHT_COUNT](black);
                         }
                     }
 
+                    // Quick simultaneous turn off
                     for (let i = 0; i < ledsPerGroup; i++) {
                         let ledIndex = startIdx + i;
                         setLed[(ledIndex + 1) % LIGHT_COUNT](black);
-                        await new Promise(resolve => setTimeout(resolve, delayTime));
                     }
                 }
+
             }
 
-            setTimeout(animate, delayTime);
+            // Continue animation loop with small break between cycles
+            setTimeout(animate, 0);
         };
 
-        animate();
 
+        animate();
         return () => {
             isActive = false;
         };

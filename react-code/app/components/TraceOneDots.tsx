@@ -42,12 +42,8 @@ export default function TraceOneDots(props: ColorProps) {
 
     useEffect(() => {
         let isActive = true;
-        let position = 0;
-        let colorIndex = 0;
         const delayTime = 20;
 
-        // Initialize all dots with first color
-        setLed.forEach(led => led(props.colors[0]));
 
         const waterfall = async () => {
             if (!isActive) return;

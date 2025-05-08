@@ -44,56 +44,55 @@ export default function TranceDots(props: ColorProps) {
 
     useEffect(() => {
         let isActive = true;
-        const sc1 = 4;
-        const sc2 = 2;
-        const ls = 3;
 
         const animate = async () => {
             if (!isActive) return;
 
-            for (let j = 0; j < LIGHT_COUNT; j++) {
-                if (!isActive) return;
-
-                // First pattern with sc1 repeats
-                for (let k = 0; k < sc1; k++) {
-                    if (!isActive) return;
-
-                    // Light up LEDs
-                    for (let i = 0; i < ls; i++) {
-                        let li = (j + i) % LIGHT_COUNT;
-                        setLed[li](props.colors[li % COLOR_COUNT]);
+            let sc1 = 4;
+            let sc2 = 2;
+            let ls = 3;
+            for(let j = 0; j < LIGHT_COUNT; j++) {
+                for(let k = 0; k < sc1; k++) {
+                    for(let i = 0; i < ls; i++) {
+                        let li = j+i;
+                        if(li < LIGHT_COUNT)
+                        {
+                            setLed[(li+1) % LIGHT_COUNT](props.colors[li % COLOR_COUNT]);
+                        }
                     }
                     await new Promise(resolve => setTimeout(resolve, delayTime));
 
-                    // Turn off LEDs
-                    for (let i = 0; i < ls; i++) {
-                        let ledIndex = (j + i) % LIGHT_COUNT;
-                        setLed[ledIndex](black);
+                    for(let i = 0; i < ls; i++) {
+                        let ledIndex = j + i;
+                        if(ledIndex < LIGHT_COUNT)
+                        {
+                            setLed[(ledIndex+1) % LIGHT_COUNT](black);
+                        }
                     }
+
                     await new Promise(resolve => setTimeout(resolve, delayTime));
                 }
 
-                // Second pattern with sc2 repeats
-                for (let strobe = 0; strobe < sc2; strobe++) {
-                    if (!isActive) return;
-
-                    // Light up LEDs
-                    for (let i = 0; i < ls; i++) {
-                        let ledIndex = (j + i) % LIGHT_COUNT;
-                        setLed[ledIndex](props.colors[ledIndex % COLOR_COUNT]);
+                for(let strobe = 0; strobe < sc2; strobe++) {
+                    for(let i = 0; i < ls; i++) {
+                        let ledIndex = j+i;
+                        if(ledIndex < LIGHT_COUNT) {
+                            setLed[(ledIndex+1) % LIGHT_COUNT](props.colors[ledIndex % COLOR_COUNT]);
+                        }
                     }
                     await new Promise(resolve => setTimeout(resolve, delayTime));
 
-                    // Turn off LEDs
-                    for (let i = 0; i < ls; i++) {
-                        let ledIndex = (j + i) % LIGHT_COUNT;
-                        setLed[ledIndex](black);
+                    for(let i = 0; i < ls; i++) {
+                        let ledIndex = j+i;
+                        if(ledIndex < LIGHT_COUNT) {
+                            setLed[(ledIndex+1) % LIGHT_COUNT](black);
+                        }
                     }
                     await new Promise(resolve => setTimeout(resolve, delayTime));
                 }
             }
 
-            setTimeout(animate, delayTime);
+            setTimeout(animate, 0);
         };
 
         animate();

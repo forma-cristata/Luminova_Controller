@@ -33,7 +33,7 @@ export default function ChooseModificatioon({navigation, route}: any) {
             case "4":
                 return <MoldDots colors={setting.colors}/>;
             case "5":
-                return <ProgressiveDots colors={setting.colors}/>;
+                return <ProgressiveDots navigation={navigation} setting={setting}/>;
             case "6":
                 return <StillEffectDots colors={setting.colors}/>;
             case "7":

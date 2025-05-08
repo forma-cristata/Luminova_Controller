@@ -91,7 +91,6 @@ export default function TechnoDots(props: ColorProps) {
                     }
                 }
             }
-
             setTimeout(animate, delayTime);
         };
 

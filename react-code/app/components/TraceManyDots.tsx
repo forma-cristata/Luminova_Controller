@@ -38,6 +38,7 @@ export default function TraceManyDots(props: ColorProps) {
     ];
 
     const LIGHT_COUNT = setLed.length;
+    let delayTime = 3;
 
 
     useEffect(() => {
@@ -58,16 +59,16 @@ export default function TraceManyDots(props: ColorProps) {
                     let colInd2 = ((i+2) % COLOR_COUNT);
 
                     setLed[offset](props.colors[colInd1]);
-                    await new Promise(resolve => setTimeout(resolve, 15));
+                    await new Promise(resolve => setTimeout(resolve, delayTime));
 
                     offset = (i + j*2 + 8) % LIGHT_COUNT;
                     setLed[offset](props.colors[colInd2]);
-                    await new Promise(resolve => setTimeout(resolve, 15));
+                    await new Promise(resolve => setTimeout(resolve, delayTime));
                 }
             }
 
             // Schedule next animation
-            setTimeout(animate, 15);
+            setTimeout(animate, 0);
         };
 
         animate();

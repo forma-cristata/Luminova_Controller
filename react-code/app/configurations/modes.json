@@ -1,7 +1,7 @@
 {
   "settings": [
     {
-      "name": "Stasis",
+      "name": "Still",
       "colors": [
         "#ff0000", "#ff4400", "#ff6a00", "#ff9100", "#ffee00",
         "#00ff1e", "#00ff44", "#00ff95", "#00ffff", "#0088ff",
@@ -13,7 +13,7 @@
       "delayTime": 3
     },
     {
-      "name": "Trace One",
+      "name": "Medusa",
       "colors": [
         "#FF3366", "#FF6B3D", "#FF9F33", "#FFD433", "#B4DE2C",
         "#44D492", "#2CC4DE", "#3399FF", "#5B7CFF", "#8A5CFF",
@@ -25,7 +25,7 @@
       "delayTime": 3
     },
     {
-      "name": "Trace Many",
+      "name": "Lapis Lazuli",
       "colors": [
         "#A10000", "#CD3400", "#AC132A", "#131534",
         "#470023", "#D72300", "#CD260F", "#BE2852",
@@ -38,7 +38,7 @@
       "delayTime": 3
     },
     {
-      "name": "Progressive",
+      "name": "Cortez",
       "colors": [
         "#FF0000",
         "#FF5501",
@@ -63,7 +63,7 @@
       "delayTime": 3
     },
     {
-      "name": "Strobe Change",
+      "name": "The Underground",
       "colors": [
         "#FF5F6D",
         "#FF817E",
@@ -88,7 +88,7 @@
       "delayTime": 3
     },
     {
-      "name": "Comfort Song",
+      "name": "The Piano Man",
       "colors": [
         "#FF003C",
         "#00FF3C",
@@ -113,7 +113,7 @@
       "delayTime": 3
     },
     {
-      "name": "Blender",
+      "name": "Stuck in a Blender",
       "colors": [
         "#FF00FF",
         "#000000",
@@ -138,7 +138,7 @@
       "delayTime": 3
     },
     {
-      "name": "Techno",
+      "name": "Berghain Bitte",
       "colors": [
         "#00BFFF",
         "#FF8C00",
@@ -163,7 +163,7 @@
       "delayTime": 2
     },
     {
-      "name": "Trance",
+      "name": "State of Trance",
       "colors": ["#00FF00", "#00C800", "#006400", "#009600", "#003200", "#00FF00", "#00B400", "#00E600", "#005A00", "#003200", "#00B400", "#00D200", "#000000", "#007800", "#006400", "#00FF00"],
       "whiteValues": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       "brightnessValues": [255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255],
@@ -171,7 +171,7 @@
       "delayTime": 3
     },
     {
-      "name": "Mold",
+      "name": "Decay",
       "colors": [
         "#FF4C00",
         "#6F00FF",
@@ -196,7 +196,7 @@
       "delayTime": 3
     },
     {
-      "name": "Funky",
+      "name": "Feel the Funk",
       "colors": [
         "#2E8B57",
         "#1B4D3E",
@@ -221,7 +221,7 @@
       "delayTime": 3
     },
     {
-      "name": "Christmas",
+      "name": "Smolder",
       "colors": [
         "#FF1493", 
         "#FF69B4", 

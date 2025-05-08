@@ -44,30 +44,28 @@ export default function TraceOneDots(props: ColorProps) {
         let isActive = true;
         let position = 0;
         let colorIndex = 0;
-        const delay = 20;
+        const delayTime = 20;
 
         // Initialize all dots with first color
         setLed.forEach(led => led(props.colors[0]));
 
         const waterfall = async () => {
             if (!isActive) return;
+            for(let kc = 0; kc < LIGHT_COUNT; kc++)
+            {
+                for(let i = 0; i < LIGHT_COUNT; i++) {
+                    setLed[i](props.colors[kc]);
+                }
 
-            // Light up current dot with current color
-            setLed[position](props.colors[colorIndex]);
-
-            // Wait 20ms then reset to first color
-            await new Promise(resolve => setTimeout(resolve, delay));
-            if (!isActive) return;
-            setLed[position](props.colors[0]);
-
-            // Move to next position and update color index
-            position = (position + 1) % LIGHT_COUNT;
-            if (position === 0) {
-                colorIndex = (colorIndex + 1) % COLOR_COUNT;
+                for(let i = 0; i < COLOR_COUNT; i++) {
+                    for(let j = 0; j < LIGHT_COUNT; j++) {
+                        setLed[j](props.colors[i]);
+                        await new Promise(resolve => setTimeout(resolve, delayTime));
+                        setLed[j](props.colors[kc]);
+                    }
+                }
             }
-
-            // Schedule next waterfall
-            setTimeout(waterfall, delay);
+            setTimeout(waterfall, 0);
         };
 
         waterfall();

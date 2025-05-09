@@ -1,14 +1,17 @@
 import {useState, useEffect} from "react";
 import Dot from "@/app/components/Dot";
 import {SafeAreaView, StyleSheet, View} from "react-native";
+import Setting from "@/app/interface/setting-interface";
 
-interface ColorProps {
-    colors: string[],
+interface SettingItemProps {
+    navigation: any
+    setting: Setting,
 }
 
-export default function ComfortSongDots(props: ColorProps) {
 
-    const COLOR_COUNT = props.colors.length;
+export default function ComfortSongDots({navigation, setting}: SettingItemProps) {
+
+    const COLOR_COUNT = setting.colors.length;
 
     const black = "#000000";
 
@@ -39,7 +42,6 @@ export default function ComfortSongDots(props: ColorProps) {
     ];
 
     const LIGHT_COUNT = setLed.length;
-    const delayTime = 3;
     const patternIndices= [1, 2, 3, 2, 4, 3, 2, 1, 0, 1, 2, 1, 3, 2, 1, 0 ];
     const pattern2Indices= [7, 8, 9, 8, 10, 9, 8, 7, 6, 7, 8, 7, 9, 8, 7, 6];
     const pattern3Indices= [13, 14, 15, 14, 16, 15, 14, 13, 12, 13, 14, 13, 15, 14, 13, 12];
@@ -51,7 +53,7 @@ export default function ComfortSongDots(props: ColorProps) {
             if (!isActive) return;
 
             for (let x = 0; x < COLOR_COUNT; x++) {
-                for (let i = 0; i < delayTime / 2; i++) {
+                for (let i = 0; i < setting.delayTime / 2; i++) {
                     if (!isActive) return;
 
                     let index1 = patternIndices[x % LIGHT_COUNT] % LIGHT_COUNT;
@@ -62,9 +64,9 @@ export default function ComfortSongDots(props: ColorProps) {
                     if (index2 < 0) index2 += LIGHT_COUNT;
                     if (index3 < 0) index3 += LIGHT_COUNT;
 
-                    setLed[index1](props.colors[x % LIGHT_COUNT]);
-                    setLed[index2](props.colors[x % LIGHT_COUNT]);
-                    setLed[index3](props.colors[x % LIGHT_COUNT]);
+                    setLed[index1](setting.colors[x % LIGHT_COUNT]);
+                    setLed[index2](setting.colors[x % LIGHT_COUNT]);
+                    setLed[index3](setting.colors[x % LIGHT_COUNT]);
 
                     await new Promise(resolve => setTimeout(resolve, 2));
 
@@ -84,7 +86,7 @@ export default function ComfortSongDots(props: ColorProps) {
         return () => {
             isActive = false;
         };
-    }, [props.colors]);
+    }, [setting.colors]);
 
     return (
         <SafeAreaView style={styles.background}>

@@ -23,29 +23,29 @@ export default function ChooseModificatioon({navigation, route}: any) {
     const modeDots = () => {
         switch (setting!.flashingPattern) {
             case "0":
-                return <BlenderDots colors={setting.colors}/>;
+                return <BlenderDots navigation={navigation} setting={setting}/>;
             case "1":
-                return <ChristmasDots colors={setting.colors}/>;
+                return <ChristmasDots navigation={navigation} setting={setting}/>;
             case "2":
-                return <ComfortSongDots colors={setting.colors}/>;
+                return <ComfortSongDots navigation={navigation} setting={setting}/>;
             case "3":
-                return <FunkyDots colors={setting.colors}/>;
+                return <FunkyDots navigation={navigation} setting={setting}/>;
             case "4":
-                return <MoldDots colors={setting.colors}/>;
+                return <MoldDots navigation={navigation} setting={setting}/>;
             case "5":
                 return <ProgressiveDots navigation={navigation} setting={setting}/>;
             case "6":
-                return <StillEffectDots colors={setting.colors}/>;
+                return <StillEffectDots navigation={navigation} setting={setting}/>;
             case "7":
-                return <StrobeChangeDots colors={setting.colors}/>;
+                return <StrobeChangeDots navigation={navigation} setting={setting}/>;
             case "8":
-                return <TechnoDots colors={setting.colors}/>;
+                return <TechnoDots navigation={navigation} setting={setting}/>;
             case "9":
-                return <TraceManyDots colors={setting.colors}/>;
+                return <TraceManyDots navigation={navigation} setting={setting}/>;
             case "10":
-                return <TraceOneDots colors={setting.colors}/>;
+                return <TraceOneDots navigation={navigation} setting={setting}/>;
             case "11":
-                return <TranceDots colors={setting.colors}/>;
+                return <TranceDots navigation={navigation} setting={setting}/>;
             default:
                 return <ColorDots colors={setting.colors}/>;
         }

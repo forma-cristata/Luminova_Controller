@@ -1,14 +1,16 @@
 import {useState, useEffect} from "react";
 import Dot from "@/app/components/Dot";
 import {SafeAreaView, StyleSheet, View} from "react-native";
+import Setting from "@/app/interface/setting-interface";
 
-interface ColorProps {
-    colors: string[],
+interface SettingItemProps {
+    navigation: any
+    setting: Setting,
 }
 
-export default function FunkyDots(props: ColorProps) {
+export default function FunkyDots({navigation, setting}: SettingItemProps) {
 
-    const COLOR_COUNT = props.colors.length;
+    const COLOR_COUNT = setting.colors.length;
     const black = "#000000";
 
     const [dot0Color, setLED0Color] = useState(black);
@@ -38,7 +40,6 @@ export default function FunkyDots(props: ColorProps) {
     ];
 
     const LIGHT_COUNT = setLed.length;
-    const delayTime = 1;
 
 
     useEffect(() => {
@@ -60,8 +61,8 @@ export default function FunkyDots(props: ColorProps) {
 
                 for (let i = 0; i < ledsPerGroup; i++) {
                     let ledIndex = random(0, LIGHT_COUNT);
-                    await new Promise(resolve => setTimeout(resolve, delayTime / 12));
-                    setLed[(ledIndex + 1) % LIGHT_COUNT](props.colors[ledIndex % COLOR_COUNT]);
+                    await new Promise(resolve => setTimeout(resolve, setting.delayTime / 12));
+                    setLed[(ledIndex + 1) % LIGHT_COUNT](setting.colors[ledIndex % COLOR_COUNT]);
                 }
 
 
@@ -69,7 +70,7 @@ export default function FunkyDots(props: ColorProps) {
 
                 for (let i = 0; i < ledsPerGroup; i++) {
                     let ledIndex = random(0, LIGHT_COUNT);
-                    await new Promise(resolve => setTimeout(resolve, delayTime / 8));
+                    await new Promise(resolve => setTimeout(resolve, setting.delayTime / 8));
                     setLed[(ledIndex + 1) % LIGHT_COUNT](black);
                 }
             }
@@ -79,16 +80,16 @@ export default function FunkyDots(props: ColorProps) {
                 if (!isActive) return;
 
                 for (let i = 0; i < ledsPerGroup; i++) {
-                    await new Promise(resolve => setTimeout(resolve, delayTime / 12));
+                    await new Promise(resolve => setTimeout(resolve, setting.delayTime / 12));
                     let ledIndex = random(0, LIGHT_COUNT);
-                    setLed[(ledIndex + 1) % LIGHT_COUNT](props.colors[ledIndex % COLOR_COUNT]);
+                    setLed[(ledIndex + 1) % LIGHT_COUNT](setting.colors[ledIndex % COLOR_COUNT]);
                 }
 
 
 
 
                 for (let i = 0; i < ledsPerGroup; i++) {
-                    await new Promise(resolve => setTimeout(resolve, delayTime / 12));
+                    await new Promise(resolve => setTimeout(resolve, setting.delayTime / 12));
                     let ledIndex = random(0, LIGHT_COUNT);
                     setLed[(ledIndex + 1) % LIGHT_COUNT](black);
                 }
@@ -102,7 +103,7 @@ export default function FunkyDots(props: ColorProps) {
         return () => {
             isActive = false;
         };
-    }, [props.colors]);
+    }, [setting.colors]);
 
     return (
         <SafeAreaView style={styles.background}>

@@ -1,14 +1,16 @@
 import {useState, useEffect} from "react";
 import Dot from "@/app/components/Dot";
 import {SafeAreaView, StyleSheet, View} from "react-native";
+import Setting from "@/app/interface/setting-interface";
 
-interface ColorProps {
-    colors: string[],
+interface SettingItemsetting {
+    navigation: any
+    setting: Setting,
 }
 
-export default function TranceDots(props: ColorProps) {
+export default function TranceDots({navigation, setting}: SettingItemsetting) {
 
-    const COLOR_COUNT = props.colors.length;
+    const COLOR_COUNT = setting.colors.length;
 
     const black = "#000000";
 
@@ -39,7 +41,6 @@ export default function TranceDots(props: ColorProps) {
     ];
 
     const LIGHT_COUNT = setLed.length;
-    const delayTime = 1;
 
 
     useEffect(() => {
@@ -57,10 +58,10 @@ export default function TranceDots(props: ColorProps) {
                         let li = j+i;
                         if(li < LIGHT_COUNT)
                         {
-                            setLed[(li+1) % LIGHT_COUNT](props.colors[li % COLOR_COUNT]);
+                            setLed[(li+1) % LIGHT_COUNT](setting.colors[li % COLOR_COUNT]);
                         }
                     }
-                    await new Promise(resolve => setTimeout(resolve, delayTime));
+                    await new Promise(resolve => setTimeout(resolve, setting.delayTime));
 
                     for(let i = 0; i < ls; i++) {
                         let ledIndex = j + i;
@@ -70,17 +71,17 @@ export default function TranceDots(props: ColorProps) {
                         }
                     }
 
-                    await new Promise(resolve => setTimeout(resolve, delayTime));
+                    await new Promise(resolve => setTimeout(resolve, setting.delayTime));
                 }
 
                 for(let strobe = 0; strobe < sc2; strobe++) {
                     for(let i = 0; i < ls; i++) {
                         let ledIndex = j+i;
                         if(ledIndex < LIGHT_COUNT) {
-                            setLed[(ledIndex+1) % LIGHT_COUNT](props.colors[ledIndex % COLOR_COUNT]);
+                            setLed[(ledIndex+1) % LIGHT_COUNT](setting.colors[ledIndex % COLOR_COUNT]);
                         }
                     }
-                    await new Promise(resolve => setTimeout(resolve, delayTime));
+                    await new Promise(resolve => setTimeout(resolve, setting.delayTime));
 
                     for(let i = 0; i < ls; i++) {
                         let ledIndex = j+i;
@@ -88,7 +89,7 @@ export default function TranceDots(props: ColorProps) {
                             setLed[(ledIndex+1) % LIGHT_COUNT](black);
                         }
                     }
-                    await new Promise(resolve => setTimeout(resolve, delayTime));
+                    await new Promise(resolve => setTimeout(resolve, setting.delayTime));
                 }
             }
 
@@ -100,7 +101,7 @@ export default function TranceDots(props: ColorProps) {
         return () => {
             isActive = false;
         };
-    }, [props.colors]);
+    }, [setting.colors]);
 
     return (
         <SafeAreaView style={styles.background}>

@@ -1,14 +1,16 @@
 import {useState, useEffect} from "react";
 import Dot from "@/app/components/Dot";
 import {SafeAreaView, StyleSheet, View} from "react-native";
+import Setting from "@/app/interface/setting-interface";
 
-interface ColorProps {
-    colors: string[],
+interface SettingItemProps {
+    navigation: any
+    setting: Setting,
 }
 
-export default function StrobeChangeDots(props: ColorProps) {
+export default function StrobeChangeDots({navigation, setting}: SettingItemProps) {
 
-    const COLOR_COUNT = props.colors.length;
+    const COLOR_COUNT = setting.colors.length;
 
     const black = "#000000";
 
@@ -39,7 +41,6 @@ export default function StrobeChangeDots(props: ColorProps) {
     ];
 
     const LIGHT_COUNT = setLed.length;
-    const delayTime = 2;
 
     useEffect(() => {
         let isActive = true;
@@ -52,12 +53,12 @@ export default function StrobeChangeDots(props: ColorProps) {
                     if (!isActive) return;
 
                     let offset = (i + j * 2) % LIGHT_COUNT;
-                    for (let k = 0; k < delayTime * 2; k++) {
+                    for (let k = 0; k < setting.delayTime * 2; k++) {
                         if (!isActive) return;
 
                         setLed[offset](black);
                         await new Promise(resolve => setTimeout(resolve, 3));
-                        setLed[offset](props.colors[i]);
+                        setLed[offset](setting.colors[i]);
                         await new Promise(resolve => setTimeout(resolve, 3));
                     }
                 }
@@ -71,7 +72,7 @@ export default function StrobeChangeDots(props: ColorProps) {
         return () => {
             isActive = false;
         };
-    }, [props.colors]);
+    }, [setting.colors]);
 
     return (
         <SafeAreaView style={styles.background}>

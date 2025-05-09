@@ -1,14 +1,16 @@
 import {useState, useEffect} from "react";
 import Dot from "@/app/components/Dot";
 import {SafeAreaView, StyleSheet, View} from "react-native";
+import Setting from "@/app/interface/setting-interface";
 
-interface ColorProps {
-    colors: string[],
+interface SettingItemProps {
+    navigation: any
+    setting: Setting
 }
 
-export default function BlenderDots(props: ColorProps) {
+export default function BlenderDots({navigation, setting}: SettingItemProps) {
 
-    const COLOR_COUNT = props.colors.length;
+    const COLOR_COUNT = setting.colors.length;
 
     const black = "#000000";
 
@@ -39,7 +41,6 @@ export default function BlenderDots(props: ColorProps) {
     ];
 
     const LIGHT_COUNT = setLed.length;
-    const delayTime = 2;
 
 
     useEffect(() => {
@@ -54,8 +55,8 @@ export default function BlenderDots(props: ColorProps) {
             for (let i = 0; i < LIGHT_COUNT; i++) {
                 if (!isActive) return;
                 let colorIndex = (i + colorOffset) % COLOR_COUNT;
-                await new Promise(resolve => setTimeout(resolve, delayTime / 8));
-                setLed[i](props.colors[colorIndex]);
+                await new Promise(resolve => setTimeout(resolve, setting.delayTime / 8));
+                setLed[i](setting.colors[colorIndex]);
             }
 
             setTimeout(animate, 0);
@@ -66,7 +67,7 @@ export default function BlenderDots(props: ColorProps) {
         return () => {
             isActive = false;
         };
-    }, [props.colors]);
+    }, [setting.colors]);
 
     return (
         <SafeAreaView style={styles.background}>

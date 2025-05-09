@@ -1,14 +1,16 @@
 import {useState, useEffect} from "react";
 import Dot from "@/app/components/Dot";
 import {SafeAreaView, StyleSheet, View} from "react-native";
+import Setting from "@/app/interface/setting-interface";
 
-interface ColorProps {
-    colors: string[],
+interface SettingItemProps {
+    navigation: any
+    setting: Setting,
 }
 
-export default function ChristmasDots(props: ColorProps) {
+export default function ChristmasDots({navigation, setting}: SettingItemProps) {
 
-    const COLOR_COUNT = props.colors.length;
+    const COLOR_COUNT = setting.colors.length;
 
     const black = "#000000";
 
@@ -39,7 +41,6 @@ export default function ChristmasDots(props: ColorProps) {
     ];
 
     const LIGHT_COUNT = setLed.length;
-    const delayTime = 10;
 
     useEffect(() => {
         let isActive = true;
@@ -52,40 +53,40 @@ export default function ChristmasDots(props: ColorProps) {
                 for (let j = 0; j < LIGHT_COUNT; j += 2) {
                     if (!isActive) return;
 /*
-                    await new Promise(resolve => setTimeout(resolve, delayTime));
+                    await new Promise(resolve => setTimeout(resolve, setting.delayTime));
 */
-                    await new Promise(resolve => setTimeout(resolve, delayTime/16));
+                    await new Promise(resolve => setTimeout(resolve, setting.delayTime/16));
 
 
-                    setLed[j](props.colors[xy]);
+                    setLed[j](setting.colors[xy]);
                     if (j === 8) {
                         f = (xy+1) % COLOR_COUNT;
-                        await new Promise(resolve => setTimeout(resolve, delayTime/16));
-                        setLed[j % LIGHT_COUNT](props.colors[f]);
+                        await new Promise(resolve => setTimeout(resolve, setting.delayTime/16));
+                        setLed[j % LIGHT_COUNT](setting.colors[f]);
                     }
                     if (j === 12) {
                         f = (xy+2) % COLOR_COUNT;
-                        await new Promise(resolve => setTimeout(resolve, delayTime/16));
-                        setLed[j % LIGHT_COUNT](props.colors[f]);
+                        await new Promise(resolve => setTimeout(resolve, setting.delayTime/16));
+                        setLed[j % LIGHT_COUNT](setting.colors[f]);
                     }
                     f = (xy + 3) % COLOR_COUNT;
                     let nextLed = (j+1) % LIGHT_COUNT;
 
-                    await new Promise(resolve => setTimeout(resolve, delayTime * 3));
+                    await new Promise(resolve => setTimeout(resolve, setting.delayTime * 3));
 
-                    setLed[nextLed](props.colors[f]);
+                    setLed[nextLed](setting.colors[f]);
                 }
 
                 for (let j = 1; j < LIGHT_COUNT; j += 2) {
                     if (!isActive) return;
-                    await new Promise(resolve => setTimeout(resolve, delayTime * 3));
+                    await new Promise(resolve => setTimeout(resolve, setting.delayTime * 3));
 
-                    setLed[j % LIGHT_COUNT](props.colors[xy]);
+                    setLed[j % LIGHT_COUNT](setting.colors[xy]);
 
                     f = (xy+3) % COLOR_COUNT;
                     let prevLed = (j - 1 + LIGHT_COUNT) % LIGHT_COUNT
-                    setLed[prevLed](props.colors[f]);
-                    await new Promise(resolve => setTimeout(resolve, delayTime * 3));
+                    setLed[prevLed](setting.colors[f]);
+                    await new Promise(resolve => setTimeout(resolve, setting.delayTime * 3));
 
                 }
             }
@@ -98,7 +99,7 @@ export default function ChristmasDots(props: ColorProps) {
         return () => {
             isActive = false;
         };
-    }, [props.colors]);
+    }, [setting.colors]);
 
     return (
         <SafeAreaView style={styles.background}>

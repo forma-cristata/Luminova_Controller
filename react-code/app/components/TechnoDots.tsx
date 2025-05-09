@@ -1,14 +1,16 @@
 import {useState, useEffect} from "react";
 import Dot from "@/app/components/Dot";
 import {SafeAreaView, StyleSheet, View} from "react-native";
+import Setting from "@/app/interface/setting-interface";
 
-interface ColorProps {
-    colors: string[],
+interface SettingItemProps {
+    navigation: any
+    setting: Setting,
 }
 
-export default function TechnoDots(props: ColorProps) {
+export default function TechnoDots({navigation, setting}: SettingItemProps) {
 
-    const COLOR_COUNT = props.colors.length;
+    const COLOR_COUNT = setting.colors.length;
 
     const black = "#000000";
 
@@ -39,7 +41,6 @@ export default function TechnoDots(props: ColorProps) {
     ];
 
     const LIGHT_COUNT = setLed.length;
-    const delayTime = 1;
 
     useEffect(() => {
         let isActive = true;
@@ -69,29 +70,29 @@ export default function TechnoDots(props: ColorProps) {
                     for (let x = 0; x < 2; x++) {
                         if (!isActive) return;
 
-                        setLed[j](props.colors[i]);
-                        await new Promise(resolve => setTimeout(resolve, delayTime));
+                        setLed[j](setting.colors[i]);
+                        await new Promise(resolve => setTimeout(resolve, setting.delayTime));
                         setLed[j](black);
 
-                        setLed[k](props.colors[m]);
-                        await new Promise(resolve => setTimeout(resolve, delayTime));
+                        setLed[k](setting.colors[m]);
+                        await new Promise(resolve => setTimeout(resolve, setting.delayTime));
                         setLed[k](black);
 
-                        setLed[l](props.colors[n]);
-                        await new Promise(resolve => setTimeout(resolve, delayTime));
+                        setLed[l](setting.colors[n]);
+                        await new Promise(resolve => setTimeout(resolve, setting.delayTime));
                         setLed[l](black);
 
-                        setLed[y](props.colors[o]);
-                        await new Promise(resolve => setTimeout(resolve, delayTime));
+                        setLed[y](setting.colors[o]);
+                        await new Promise(resolve => setTimeout(resolve, setting.delayTime));
                         setLed[y](black);
 
-                        setLed[z](props.colors[p]);
-                        await new Promise(resolve => setTimeout(resolve, delayTime));
+                        setLed[z](setting.colors[p]);
+                        await new Promise(resolve => setTimeout(resolve, setting.delayTime));
                         setLed[z](black);
                     }
                 }
             }
-            setTimeout(animate, delayTime);
+            setTimeout(animate, setting.delayTime);
         };
 
         animate();
@@ -99,7 +100,7 @@ export default function TechnoDots(props: ColorProps) {
         return () => {
             isActive = false;
         };
-    }, [props.colors]);
+    }, [setting.colors]);
 
     return (
         <SafeAreaView style={styles.background}>

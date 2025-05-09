@@ -1,14 +1,16 @@
 import {useState, useEffect} from "react";
 import Dot from "@/app/components/Dot";
 import {SafeAreaView, StyleSheet, View} from "react-native";
+import Setting from "@/app/interface/setting-interface";
 
-interface ColorProps {
-    colors: string[],
+interface SettingItemsetting {
+    navigation: any
+    setting: Setting,
 }
 
-export default function TraceOneDots(props: ColorProps) {
+export default function TraceOneDots({navigation, setting}: SettingItemsetting) {
 
-    const COLOR_COUNT = props.colors.length;
+    const COLOR_COUNT = setting.colors.length;
     const black = "#000000";
 
     const [dot0Color, setLED0Color] = useState(black);
@@ -42,7 +44,6 @@ export default function TraceOneDots(props: ColorProps) {
 
     useEffect(() => {
         let isActive = true;
-        const delayTime = 20;
 
 
         const waterfall = async () => {
@@ -50,14 +51,14 @@ export default function TraceOneDots(props: ColorProps) {
             for(let kc = 0; kc < LIGHT_COUNT; kc++)
             {
                 for(let i = 0; i < LIGHT_COUNT; i++) {
-                    setLed[i](props.colors[kc]);
+                    setLed[i](setting.colors[kc]);
                 }
 
                 for(let i = 0; i < COLOR_COUNT; i++) {
                     for(let j = 0; j < LIGHT_COUNT; j++) {
-                        setLed[j](props.colors[i]);
-                        await new Promise(resolve => setTimeout(resolve, delayTime));
-                        setLed[j](props.colors[kc]);
+                        setLed[j](setting.colors[i]);
+                        await new Promise(resolve => setTimeout(resolve, setting.delayTime));
+                        setLed[j](setting.colors[kc]);
                     }
                 }
             }
@@ -69,7 +70,7 @@ export default function TraceOneDots(props: ColorProps) {
         return () => {
             isActive = false;
         };
-    }, [props.colors]);
+    }, [setting.colors]);
 
     return (
         <SafeAreaView style={styles.background}>

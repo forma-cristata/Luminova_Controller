@@ -1,14 +1,16 @@
 import {useState, useEffect} from "react";
 import Dot from "@/app/components/Dot";
 import {SafeAreaView, StyleSheet, View} from "react-native";
+import Setting from "@/app/interface/setting-interface";
 
-interface ColorProps {
-    colors: string[],
+interface SettingItemProps {
+    navigation: any
+    setting: Setting,
 }
 
-export default function MoldDots(props: ColorProps) {
+export default function MoldDots({navigation, setting}: SettingItemProps) {
 
-    const COLOR_COUNT = props.colors.length;
+    const COLOR_COUNT = setting.colors.length;
     const black = "#000000";
 
     const [dot0Color, setLED0Color] = useState(black);
@@ -38,7 +40,6 @@ export default function MoldDots(props: ColorProps) {
     ];
 
     const LIGHT_COUNT = setLed.length;
-    const delayTime = 1;
 
 
     useEffect(() => {
@@ -63,8 +64,8 @@ export default function MoldDots(props: ColorProps) {
                         let ledIndex = startIdx + i;
                         for (let ha = 0; ha < 4; ha++) {
                             if (!isActive) return;
-                            setLed[(ledIndex + 1) % LIGHT_COUNT](props.colors[ledIndex % COLOR_COUNT]);
-                            await new Promise(resolve => setTimeout(resolve, delayTime * 2));
+                            setLed[(ledIndex + 1) % LIGHT_COUNT](setting.colors[ledIndex % COLOR_COUNT]);
+                            await new Promise(resolve => setTimeout(resolve, setting.delayTime * 2));
                             setLed[ledIndex % LIGHT_COUNT](black);
                         }
                     }
@@ -86,8 +87,8 @@ export default function MoldDots(props: ColorProps) {
                         let ledIndex = startIdx + i;
                         for (let ha = 0; ha < 4; ha++) {
                             if (!isActive) return;
-                            setLed[(ledIndex + 1) % LIGHT_COUNT](props.colors[(ledIndex + ha) % COLOR_COUNT]);
-                            await new Promise(resolve => setTimeout(resolve, delayTime / 2));
+                            setLed[(ledIndex + 1) % LIGHT_COUNT](setting.colors[(ledIndex + ha) % COLOR_COUNT]);
+                            await new Promise(resolve => setTimeout(resolve, setting.delayTime / 2));
                             setLed[ledIndex % LIGHT_COUNT](black);
                         }
                     }
@@ -114,8 +115,8 @@ export default function MoldDots(props: ColorProps) {
                         for (let ha = 0; ha < 4; ha++) {
                             if (!isActive) return;
                             // Safe array access with modulo
-                            setLed[(ledIndex + 1) % LIGHT_COUNT](props.colors[ledIndex % COLOR_COUNT]);
-                            await new Promise(resolve => setTimeout(resolve, delayTime * 2));
+                            setLed[(ledIndex + 1) % LIGHT_COUNT](setting.colors[ledIndex % COLOR_COUNT]);
+                            await new Promise(resolve => setTimeout(resolve, setting.delayTime * 2));
                             setLed[ledIndex % LIGHT_COUNT](black);
                         }
                     }
@@ -138,8 +139,8 @@ export default function MoldDots(props: ColorProps) {
                             if (!isActive) return;
 
                             // Create color variation based on position
-                            setLed[(ledIndex + 1) % LIGHT_COUNT](props.colors[(ledIndex + ha) % COLOR_COUNT]);
-                            await new Promise(resolve => setTimeout(resolve, delayTime / 2));
+                            setLed[(ledIndex + 1) % LIGHT_COUNT](setting.colors[(ledIndex + ha) % COLOR_COUNT]);
+                            await new Promise(resolve => setTimeout(resolve, setting.delayTime / 2));
 
                             setLed[ledIndex % LIGHT_COUNT](black);
                         }
@@ -163,7 +164,7 @@ export default function MoldDots(props: ColorProps) {
         return () => {
             isActive = false;
         };
-    }, [props.colors]);
+    }, [setting.colors]);
 
     return (
         <SafeAreaView style={styles.background}>

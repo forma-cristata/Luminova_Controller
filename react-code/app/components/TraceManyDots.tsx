@@ -1,14 +1,16 @@
 import {useState, useEffect} from "react";
 import Dot from "@/app/components/Dot";
 import {SafeAreaView, StyleSheet, View} from "react-native";
+import Setting from "@/app/interface/setting-interface";
 
-interface ColorProps {
-    colors: string[],
+interface SettingItemsetting {
+    navigation: any
+    setting: Setting,
 }
 
-export default function TraceManyDots(props: ColorProps) {
+export default function TraceManyDots({navigation, setting}: SettingItemsetting) {
 
-    const COLOR_COUNT = props.colors.length;
+    const COLOR_COUNT = setting.colors.length;
     const black = "#000000";
 
     const [dot0Color, setLED0Color] = useState(black);
@@ -38,7 +40,6 @@ export default function TraceManyDots(props: ColorProps) {
     ];
 
     const LIGHT_COUNT = setLed.length;
-    let delayTime = 3;
 
 
     useEffect(() => {
@@ -49,7 +50,7 @@ export default function TraceManyDots(props: ColorProps) {
 
             // Set all LEDs to black
             for (let i = 0; i < LIGHT_COUNT; i++) {
-                setLed[i](props.colors[0]);
+                setLed[i](setting.colors[0]);
             }
 
             for (let i = 0; i < LIGHT_COUNT; i++) {
@@ -58,12 +59,12 @@ export default function TraceManyDots(props: ColorProps) {
                     let colInd1 = ((i+1) % (COLOR_COUNT / 2));
                     let colInd2 = ((i+2) % COLOR_COUNT);
 
-                    setLed[offset](props.colors[colInd1]);
-                    await new Promise(resolve => setTimeout(resolve, delayTime));
+                    setLed[offset](setting.colors[colInd1]);
+                    await new Promise(resolve => setTimeout(resolve, setting.delayTime));
 
                     offset = (i + j*2 + 8) % LIGHT_COUNT;
-                    setLed[offset](props.colors[colInd2]);
-                    await new Promise(resolve => setTimeout(resolve, delayTime));
+                    setLed[offset](setting.colors[colInd2]);
+                    await new Promise(resolve => setTimeout(resolve, setting.delayTime));
                 }
             }
 
@@ -76,7 +77,7 @@ export default function TraceManyDots(props: ColorProps) {
         return () => {
             isActive = false;
         };
-    }, [props.colors]);
+    }, [setting.colors]);
 
     return (
         <SafeAreaView style={styles.background}>

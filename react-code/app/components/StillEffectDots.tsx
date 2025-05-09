@@ -10,8 +10,8 @@ interface SettingItemProps {
 
 export default function StillEffectDots({navigation, setting}: SettingItemProps) {
 
-    
-    
+    const black = "#000000";
+
     const [dot0Color, setLED0Color] = useState(setting.colors[0]);
     const [dot1Color, setLED1Color] = useState(setting.colors[1]);
     const [dot2Color, setLED2Color] = useState(setting.colors[2]);

@@ -15,8 +15,8 @@ export default function ColorEditor({navigation, route}: any) {
     const [brightness, setBrightness] = useState(100);
     const throttledBrightness = useThrottle(brightness);
 
-    const [whiteBalance, setWhiteBalance] = useState(0);
-    const throttledWhiteBalance = useThrottle(whiteBalance);
+    const [saturation, setSaturation] = useState(0);
+    const throttledSaturation = useThrottle(saturation);
 
     const [hexInput, setHexInput] = useState('');
     const [colorHistory, setColorHistory] = useState<string[][]>([]);
@@ -101,7 +101,7 @@ export default function ColorEditor({navigation, route}: any) {
             const hsv = rgbToHsv(rgb.r, rgb.g, rgb.b);
             setHue(hsv.h);
             setBrightness(hsv.v);
-            setWhiteBalance(100 - hsv.s);
+            setSaturation(hsv.s);
         }
     };
 
@@ -122,7 +122,7 @@ export default function ColorEditor({navigation, route}: any) {
                 const hsv = rgbToHsv(rgb.r, rgb.g, rgb.b);
                 setHue(hsv.h);
                 setBrightness(hsv.v);
-                setWhiteBalance(100 - hsv.s);
+                setSaturation(hsv.s);
             }
         }
     };
@@ -139,16 +139,16 @@ export default function ColorEditor({navigation, route}: any) {
                     const hsv = rgbToHsv(rgb.r, rgb.g, rgb.b);
                     setHue(hsv.h);
                     setBrightness(hsv.v);
-                    setWhiteBalance(100 - hsv.s);
+                    setSaturation(hsv.s);
                 }
             }
         }
     };
 
     const handleSave = () => {
-/*
+
         setting.colors = [...colors];
-*/
+
         navigation.navigate("Settings", { setting });
     };
 
@@ -205,15 +205,37 @@ export default function ColorEditor({navigation, route}: any) {
                         onValueChange={value => {
                             if (selectedDot !== null) {
                                 setHue(value);
-                                updateColor(value, 100 - whiteBalance, brightness); // Here
+                                updateColor(value, saturation, brightness); // Here
                             }
                         }}
                         onSlidingComplete={value => {
                             if (selectedDot !== null) {
-                                handleSliderComplete(value, 100 - whiteBalance, brightness);
+                                handleSliderComplete(value, saturation, brightness);
                             }
                         }}
                         minimumTrackTintColor="#ff0000"
+                        maximumTrackTintColor="#ffffff"
+                    />
+                </View>
+                <View style={styles.sliderRow}>
+                    <Text style={styles.sliderText}>Saturation: {Math.round(saturation)}%</Text>
+                    <Slider
+                        style={[styles.slider, { opacity: selectedDot !== null ? 1 : 0.5 }]}
+                        minimumValue={0}
+                        maximumValue={100}
+                        value={saturation}
+                        onValueChange={value => {
+                            if (selectedDot !== null) {
+                                setSaturation(value);
+                                updateColor(hue, value, brightness); // Inverse of saturation
+                            }
+                        }}
+                        onSlidingComplete={value => {
+                            if (selectedDot !== null) {
+                                handleSliderComplete(hue, value, brightness);
+                            }
+                        }}
+                        minimumTrackTintColor="#cccccc"
                         maximumTrackTintColor="#ffffff"
                     />
                 </View>
@@ -227,40 +249,19 @@ export default function ColorEditor({navigation, route}: any) {
                         onValueChange={value => {
                             if (selectedDot !== null) {
                                 setBrightness(value);
-                                updateColor(hue, 100 - whiteBalance, value); // Here
+                                updateColor(hue, saturation, value); // Here
                             }
                         }}
                         onSlidingComplete={value => {
                             if (selectedDot !== null) {
-                                handleSliderComplete(hue, 100 - whiteBalance, value);
+                                handleSliderComplete(hue, saturation, value);
                             }
                         }}
                         minimumTrackTintColor="#333333"
                         maximumTrackTintColor="#ffffff"
                     />
                 </View>
-                <View style={styles.sliderRow}>
-                    <Text style={styles.sliderText}>White: {Math.round(whiteBalance)}%</Text>
-                    <Slider
-                        style={[styles.slider, { opacity: selectedDot !== null ? 1 : 0.5 }]}
-                        minimumValue={0}
-                        maximumValue={100}
-                        value={whiteBalance}
-                        onValueChange={value => {
-                            if (selectedDot !== null) {
-                                setWhiteBalance(value);
-                                updateColor(hue, 100 - value, brightness); // Here
-                            }
-                        }}
-                        onSlidingComplete={value => {
-                            if (selectedDot !== null) {
-                                handleSliderComplete(hue, 100 - value, brightness);
-                            }
-                        }}
-                        minimumTrackTintColor="#cccccc"
-                        maximumTrackTintColor="#ffffff"
-                    />
-                </View>
+
             </View>
 
             <View style={styles.buttonContainer}>
@@ -355,6 +356,7 @@ const styles = StyleSheet.create({
         color: 'white',
         fontSize: 22 * scale,
         fontFamily: "Clearlight-lJlq",
+        textTransform: "uppercase",
         letterSpacing: 3,
         borderBottomWidth: 1,
         borderBottomColor: 'white',

@@ -169,7 +169,7 @@ export default function ColorEditor({navigation, route}: any) {
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.backButton}>
-                <TouchableOpacity onPress={() => navigation.navigate("ChooseModification", { setting })}>
+                <TouchableOpacity onPress={() => navigation.goBack()}>
                     <Text style={styles.backB}>    ⟨    </Text>
                 </TouchableOpacity>
             </View>

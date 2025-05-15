@@ -9,7 +9,7 @@ import SettingBlock from "@/app/components/settingBlock";
 
 import jsonData from './configurations/modes.json';
 console.log("jsonData: " + jsonData);
-
+// If settings has changed, save the json file back.
 const data = jsonData.settings as Setting[];
 
 let primKey: number[] = Array.from({ length: data.length }, (_, i) => i);
@@ -25,7 +25,7 @@ export default function Settings({navigation}: any) {
         <SafeAreaView style={styles.container}>
             {/*Back Button*/}
             <View style={styles.backButton}>
-            <TouchableOpacity onPress={() => navigation.navigate("Welcome")}>
+            <TouchableOpacity onPress={() => navigation.goBack()}>
                 <Text style={styles.backB}>    ⟨    </Text>
             </TouchableOpacity>
             </View>

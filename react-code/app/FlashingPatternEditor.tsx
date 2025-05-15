@@ -3,15 +3,22 @@ import {Dimensions, SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@/app/index';
 
-type Props = NativeStackScreenProps<RootStackParamList, 'FlashingPatternEditor'>;
 
-export default function FlashingPatternEditor({ route, navigation }: Props) {
-    const { setting } = route.params;
+/**
+ * This page should edit:
+ *      The effect number - everything else should be disabled until the user has selected a setting other than STILL (6)
+ *      Then...
+ *      The delayTime - this should be a ratio of the value the user chooses.
+ *          The user should choose the 'speed'
+ *          The greater the speed, the shorter the delay time.*/
+
+export default function FlashingPatternEditor({ route, navigation }: any) {
+    const setting  = route.params?.setting;
 
     return (
         <SafeAreaView  style={styles.container}>
             <View style={styles.backButton}>
-                <TouchableOpacity onPress={() => navigation.navigate("ChooseModification", { setting })}>
+                <TouchableOpacity onPress={() => navigation.goBack()}>
                     <Text style={styles.backB}>    ⟨    </Text>
                 </TouchableOpacity>
             </View>

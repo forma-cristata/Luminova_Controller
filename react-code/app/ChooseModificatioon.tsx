@@ -55,7 +55,7 @@ export default function ChooseModificatioon({navigation, route}: any) {
         <SafeAreaView style={styles.container}>
             {/*Back Button*/}
             <View style={styles.backButton}>
-                <TouchableOpacity onPress={() => navigation.navigate("Settings")}>
+                <TouchableOpacity onPress={() => navigation.goBack()}>
                     <Text style={styles.backB}>    ⟨    </Text>
                 </TouchableOpacity>
             </View>

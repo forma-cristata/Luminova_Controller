@@ -20,66 +20,57 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
     const [BPM, setBPM] = React.useState(0);
 
     const calculateBPM = (delayTime: number) : string => {
-        // TODO: Implement the actual calculation for BPM based on delayTime
-
-        // delayTime is in milliseconds, convert to minutes
-        const minutes = delayTime / 60000;
-        const beats = 0;
 
         switch(setting.flashingPattern) {
-            // TODO: Counting machine instructions should give a rough translation
             case 0:
                 // Stuck in a blender
-                // BPM = (60000 / (16 * delayTime / 8))
-                break;
+                return (30000 / delayTime).toString();
             case 1:
                 // Smolder
                 // BPM = 60000 / (16 * delayTime * 72.5)
-                break;
+                return (60000 / (16 * delayTime * 72.5)).toString();
             case 2:
                 // The Piano Man
                 // BPM = (60000 ms/min) / 16 * (setting.delayTime / 2) * 4ms
-                break;
+                return (60000 / (16 * (delayTime / 2) * 4)).toString();
             case 3:
                 // Feel the Funk
                 // BPM = 60000 / (delayTime * 1.4996)
-                break;
+                return (60000 / (delayTime * 1.4996)).toString();
             case 4:
                 // Decay
                 // BPM = 125 / delayTime
-                break;
+                return (125 / delayTime).toString();
             case 5:
                 // Cortez
                 // Total cycle time =
                 // BPM = 60000 / (16 * 16 * delayTime * 2)
-                break;
+                return (60000 / (16 * 16 * delayTime * 2)).toString();
             case 7:
                 // The Underground
                 // BPM = 60000 / (16 * 16 * setting.delayTime * 6)
-                break;
+                return (60000 / (16 * 16 * delayTime * 6)).toString();
             case 8:
                 // Berghain Bitte
                 // BPM = 60000 / (16 × 16 × 2 × 5 × setting.delayTime)
-                break;
+                return (60000 / (16 * 16 * 2 * 5 * delayTime)).toString();
             case 9:
                 // Lapis Lazuli
                 // BPM = (60000) ÷ (256 × setting.delayTime)
-                break;
+                return (60000 / (256 * delayTime)).toString();
             case 10:
                 // Medusa
                 // BPM = 60000 / (16 × 4 × 16 × setting.delayTime)
-                break;
+                return (60000 / (16 * 4 * 16 * delayTime)).toString();
             case 11:
                 // State of Trance
                 // BPM = 312.5 / setting.delayTime
-                break;
+                return (312.5 / delayTime).toString();
             default:
                 // Still (replaces case 6)
                 // No BPM calculation needed
-                break;
+                return "0";
         }
-
-        return ""
     }
 
     return (

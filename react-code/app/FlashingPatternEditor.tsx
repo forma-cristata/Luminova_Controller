@@ -5,6 +5,19 @@ import { RootStackParamList } from '@/app/index';
 import ColorDotsEditorEdition from "@/app/components/ColorDotEditorEdition";
 import Slider from "@react-native-community/slider";
 import React from "react";
+import BlenderDots from "@/app/components/BlenderDots";
+import ChristmasDots from "@/app/components/ChristmasDots";
+import ComfortSongDots from "@/app/components/ComfortSongDots";
+import FunkyDots from "@/app/components/FunkyDots";
+import MoldDots from "@/app/components/MoldDots";
+import ProgressiveDots from "@/app/components/ProgressiveDots";
+import StillEffectDots from "@/app/components/StillEffectDots";
+import StrobeChangeDots from "@/app/components/StrobeChangeDots";
+import TechnoDots from "@/app/components/TechnoDots";
+import TraceManyDots from "@/app/components/TraceManyDots";
+import TraceOneDots from "@/app/components/TraceOneDots";
+import TranceDots from "@/app/components/TranceDots";
+import ColorDots from "@/app/components/ColorDots";
 
 
 /**
@@ -73,6 +86,101 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
         }
     }
 
+    const calculateDelayTime = (BPM: number) : number => {
+
+        switch(setting.flashingPattern) {
+            case 0:
+                // Stuck in a blender
+                return (30000 / BPM);
+            case 1:
+                // Smolder
+                // BPM = 60000 / (16 * delayTime * 72.5)
+                return (60000 / (16 * BPM * 72.5));
+            case 2:
+                // The Piano Man
+                // BPM = (60000 ms/min) / 16 * (setting.delayTime / 2) * 4ms
+                return (60000 / (16 * (BPM / 2) * 4));
+            case 3:
+                // Feel the Funk
+                // BPM = 60000 / (delayTime * 1.4996)
+                return (60000 / (BPM * 1.4996));
+            case 4:
+                // Decay
+                // BPM = 125 / delayTime
+                return (125 / BPM);
+            case 5:
+                // Cortez
+                // Total cycle time =
+                // BPM = 60000 / (16 * 16 * delayTime * 2)
+                return (60000 / (16 * 16 * BPM * 2));
+            case 7:
+                // The Underground
+                // BPM = 60000 / (16 * 16 * setting.delayTime * 6)
+                return (60000 / (16 * 16 * BPM * 6));
+            case 8:
+                // Berghain Bitte
+                // BPM = 60000 / (16 × 16 × 2 × 5 × setting.delayTime)
+                return (60000 / (16 * 16 * 2 * 5 * BPM));
+            case 9:
+                // Lapis Lazuli
+                // BPM = (60000) ÷ (256 × setting.delayTime)
+                return (60000 / (256 * BPM));
+            case 10:
+                // Medusa
+                // BPM = 60000 / (16 × 4 × 16 × setting.delayTime)
+                return (60000 / (16 * 4 * 16 * BPM));
+            case 11:
+                // State of Trance
+                // BPM = 312.5 / setting.delayTime
+                return (312.5 / BPM);
+            default:
+                // Still (replaces case 6)
+                // No BPM calculation needed
+                return 0;
+        }
+    }
+
+    const modeDots = () => {
+        const settingDelaySwitch = calculateDelayTime(BPM);
+        const newSetting = {
+            name: setting.name,
+            colors: setting.colors,
+            whiteValues: setting.whiteValues,
+            brightnessValues: setting.brightnessValues,
+            flashingPattern: setting.flashingPattern,
+            delayTime: settingDelaySwitch,
+        }
+
+        switch (setting!.flashingPattern) {
+            case "0":
+                return <BlenderDots navigation={navigation} setting={newSetting}/>;
+            case "1":
+                return <ChristmasDots navigation={navigation} setting={newSetting}/>;
+            case "2":
+                return <ComfortSongDots navigation={navigation} setting={newSetting}/>;
+            case "3":
+                return <FunkyDots navigation={navigation} setting={newSetting}/>;
+            case "4":
+                return <MoldDots navigation={navigation} setting={newSetting}/>;
+            case "5":
+                return <ProgressiveDots navigation={navigation} setting={newSetting}/>;
+            case "6":
+                return <StillEffectDots navigation={navigation} setting={newSetting}/>;
+            case "7":
+                return <StrobeChangeDots navigation={navigation} setting={newSetting}/>;
+            case "8":
+                return <TechnoDots navigation={navigation} setting={newSetting}/>;
+            case "9":
+                return <TraceManyDots navigation={navigation} setting={newSetting}/>;
+            case "10":
+                return <TraceOneDots navigation={navigation} setting={newSetting}/>;
+            case "11":
+                return <TranceDots navigation={navigation} setting={newSetting}/>;
+            default:
+                return <ColorDots colors={setting.colors}/>;
+        }
+    }
+
     return (
         <SafeAreaView  style={styles.container}>
             <View style={styles.backButton}>
@@ -81,16 +189,11 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
                 </TouchableOpacity>
             </View>
             <Text style={styles.whiteText}>{setting.name}</Text>
-            {/*<ColorDotsEditorEdition
-                colors={colors}
-                onDotSelect={handleDotSelect}
-                selectedDot={selectedDot}
-                key={colors.join(',')} // Force re-render when colors change
-            />
 
-            TODO: This needs edited to show the animation the same way as in ChooseModification
 
-            */}
+            <View>
+                {modeDots()}
+            </View>
 
             <View style={styles.fpContainer}>
                 <Text style={styles.flashingPatternText}>TODO</Text>

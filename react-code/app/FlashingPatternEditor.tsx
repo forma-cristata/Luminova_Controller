@@ -30,19 +30,15 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
             // TODO: Counting machine instructions should give a rough translation
             case 0:
                 // Stuck in a blender
-                /*If setting.delayTime is 100ms
-                Each LED update takes 12.5ms (100/8)
-                Full cycle of 16 LEDs = 16 * 12.5 = 200ms
-                BPM = (60000ms/200ms) = 300 BPM*/
+                // BPM = (60000 / (16 * delayTime / 8))
                 break;
             case 1:
                 // Smolder
-                // BPM = 60000 / (COLOR_COUNT * delayTime * 72.5)
+                // BPM = 60000 / (16 * delayTime * 72.5)
                 break;
             case 2:
                 // The Piano Man
-                // cycleTime = COLOR_COUNT * (setting.delayTime / 2) * 4ms
-                // BPM = (60000 ms/min) / cycleTime
+                // BPM = (60000 ms/min) / 16 * (setting.delayTime / 2) * 4ms
                 break;
             case 3:
                 // Feel the Funk
@@ -50,29 +46,28 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
                 break;
             case 4:
                 // Decay
-                // BPM = (60000 ms/min) / (480 * delayTime ms/cycle)
-                //     = 125 / delayTime
+                // BPM = 125 / delayTime
                 break;
             case 5:
                 // Cortez
-                // Total cycle time = LIGHT_COUNT * COLOR_COUNT * delayTime * 2
-                // BPM = 60000 / (total cycle time)
+                // Total cycle time =
+                // BPM = 60000 / (16 * 16 * delayTime * 2)
                 break;
             case 7:
                 // The Underground
-                // Therefore, BPM = 60000 / (COLOR_COUNT * LIGHT_COUNT * setting.delayTime * 6)
+                // BPM = 60000 / (16 * 16 * setting.delayTime * 6)
                 break;
             case 8:
                 // Berghain Bitte
-                // BPM = 60000 / (COLOR_COUNT × 16 × 2 × 5 × setting.delayTime)
+                // BPM = 60000 / (16 × 16 × 2 × 5 × setting.delayTime)
                 break;
             case 9:
                 // Lapis Lazuli
-                // BPM = (60000 ms/minute) ÷ (256 × setting.delayTime)
+                // BPM = (60000) ÷ (256 × setting.delayTime)
                 break;
             case 10:
                 // Medusa
-                // BPM = 60000 / (16 × 4 × 16 × 100) = 0.586 BPM
+                // BPM = 60000 / (16 × 4 × 16 × setting.delayTime)
                 break;
             case 11:
                 // State of Trance

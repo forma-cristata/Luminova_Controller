@@ -215,16 +215,16 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 
             <View style={styles.sliderContainer}>
                 <View style={styles.sliderRow}>
-                    <Text style={styles.sliderText}>Speed: {calculateBPM(setting.delayTime)} bpm</Text>
+                    <Text style={styles.sliderText}>Speed: {BPM.toFixed(0)} bpm</Text>
                     <Slider
                         style={styles.slider}
                         minimumValue={0}
                         maximumValue={200}
                         value={BPM}
-                        /*
-                        TODO:
-                            onValueChange={ value => {
-                            onSlidingComplete={}}*/
+                        onValueChange={ value => {
+                            setBPM(value);
+                            setting.delayTime = calculateDelayTime(value);
+                        }}
                         minimumTrackTintColor="#ff0000"
                         maximumTrackTintColor="#ffffff"
                     />

@@ -4,7 +4,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@/app/index';
 import ColorDotsEditorEdition from "@/app/components/ColorDotEditorEdition";
 import Slider from "@react-native-community/slider";
-import React from "react";
+import React, {useEffect} from "react";
 import BlenderDots from "@/app/components/BlenderDots";
 import ChristmasDots from "@/app/components/ChristmasDots";
 import ComfortSongDots from "@/app/components/ComfortSongDots";
@@ -31,54 +31,60 @@ import ColorDots from "@/app/components/ColorDots";
 export default function FlashingPatternEditor({ route, navigation }: any) {
     const setting  = route.params?.setting;
     const [BPM, setBPM] = React.useState(0);
+    const [delayTime, setDelayTime] = useState(setting.delayTime);
+
+    useEffect(() => {
+        const initialBpm = parseFloat(calculateBPM(setting.delayTime));
+        setBPM(isNaN(initialBpm) ? 0 : initialBpm);
+    }, []);
 
     const calculateBPM = (delayTime: number) : string => {
 
         switch(setting.flashingPattern) {
             case 0:
                 // Stuck in a blender
-                return (30000 / delayTime).toString();
+                return (30000 / (4 * delayTime)).toString();
             case 1:
                 // Smolder
                 // BPM = 60000 / (16 * delayTime * 72.5)
-                return (60000 / (16 * delayTime * 72.5)).toString();
+                return (60000 / (64 * delayTime * 72.5)).toString();
             case 2:
                 // The Piano Man
                 // BPM = (60000 ms/min) / 16 * (setting.delayTime / 2) * 4ms
-                return (60000 / (16 * (delayTime / 2) * 4)).toString();
+                return (60000 / (64 * (delayTime / 2) * 4)).toString();
             case 3:
                 // Feel the Funk
                 // BPM = 60000 / (delayTime * 1.4996)
-                return (60000 / (delayTime * 1.4996)).toString();
+                return (15000 / (delayTime * 1.4996)).toString();
             case 4:
                 // Decay
                 // BPM = 125 / delayTime
-                return (125 / delayTime).toString();
+                return (125 / (4 * delayTime)).toString();
             case 5:
                 // Cortez
                 // Total cycle time =
                 // BPM = 60000 / (16 * 16 * delayTime * 2)
-                return (60000 / (16 * 16 * delayTime * 2)).toString();
+                return (60000 / (16 * 64 * delayTime * 2)).toString();
             case 7:
                 // The Underground
                 // BPM = 60000 / (16 * 16 * setting.delayTime * 6)
-                return (60000 / (16 * 16 * delayTime * 6)).toString();
+                return (60000 / (16 * 64 * delayTime * 6)).toString();
             case 8:
                 // Berghain Bitte
                 // BPM = 60000 / (16 × 16 × 2 × 5 × setting.delayTime)
-                return (60000 / (16 * 16 * 2 * 5 * delayTime)).toString();
+                return (60000 / (16 * 64 * 2 * 5 * delayTime)).toString();
             case 9:
                 // Lapis Lazuli
                 // BPM = (60000) ÷ (256 × setting.delayTime)
-                return (60000 / (256 * delayTime)).toString();
+                return (15000 / (256 * delayTime)).toString();
             case 10:
                 // Medusa
                 // BPM = 60000 / (16 × 4 × 16 × setting.delayTime)
-                return (60000 / (16 * 4 * 16 * delayTime)).toString();
+                return (15000 / (16 * 4 * 16 * delayTime)).toString();
             case 11:
                 // State of Trance
                 // BPM = 312.5 / setting.delayTime
-                return (312.5 / delayTime).toString();
+                return (312.5 / (4 * delayTime)).toString();
             default:
                 // Still (replaces case 6)
                 // No BPM calculation needed
@@ -91,48 +97,48 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
         switch(setting.flashingPattern) {
             case 0:
                 // Stuck in a blender
-                return (30000 / BPM);
+                return (30000 / (4 * BPM));
             case 1:
                 // Smolder
                 // BPM = 60000 / (16 * delayTime * 72.5)
-                return (60000 / (16 * BPM * 72.5));
+                return (60000 / (64 * BPM * 72.5));
             case 2:
                 // The Piano Man
                 // BPM = (60000 ms/min) / 16 * (setting.delayTime / 2) * 4ms
-                return (60000 / (16 * (BPM / 2) * 4));
+                return (60000 / (64 * (BPM / 2) * 4));
             case 3:
                 // Feel the Funk
                 // BPM = 60000 / (delayTime * 1.4996)
-                return (60000 / (BPM * 1.4996));
+                return (15000 / (BPM * 1.4996));
             case 4:
                 // Decay
                 // BPM = 125 / delayTime
-                return (125 / BPM);
+                return (125 / (4 * BPM));
             case 5:
                 // Cortez
                 // Total cycle time =
                 // BPM = 60000 / (16 * 16 * delayTime * 2)
-                return (60000 / (16 * 16 * BPM * 2));
+                return (60000 / (16 * 64 * BPM * 2));
             case 7:
                 // The Underground
                 // BPM = 60000 / (16 * 16 * setting.delayTime * 6)
-                return (60000 / (16 * 16 * BPM * 6));
+                return (60000 / (16 * 64 * BPM * 6));
             case 8:
                 // Berghain Bitte
                 // BPM = 60000 / (16 × 16 × 2 × 5 × setting.delayTime)
-                return (60000 / (16 * 16 * 2 * 5 * BPM));
+                return (60000 / (16 * 64 * 2 * 5 * BPM));
             case 9:
                 // Lapis Lazuli
                 // BPM = (60000) ÷ (256 × setting.delayTime)
-                return (60000 / (256 * BPM));
+                return (15000 / (256 * BPM));
             case 10:
                 // Medusa
                 // BPM = 60000 / (16 × 4 × 16 × setting.delayTime)
-                return (60000 / (16 * 4 * 16 * BPM));
+                return (15000 / (16 * 4 * 16 * BPM));
             case 11:
                 // State of Trance
                 // BPM = 312.5 / setting.delayTime
-                return (312.5 / BPM);
+                return (312.5 / (4 * BPM));
             default:
                 // Still (replaces case 6)
                 // No BPM calculation needed
@@ -141,14 +147,9 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
     }
 
     const modeDots = () => {
-        const settingDelaySwitch = calculateDelayTime(BPM);
         const newSetting = {
-            name: setting.name,
-            colors: setting.colors,
-            whiteValues: setting.whiteValues,
-            brightnessValues: setting.brightnessValues,
-            flashingPattern: setting.flashingPattern,
-            delayTime: settingDelaySwitch,
+            ...setting,
+            delayTime: delayTime,
         }
 
         switch (setting!.flashingPattern) {
@@ -223,7 +224,9 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
                         value={BPM}
                         onValueChange={ value => {
                             setBPM(value);
-                            setting.delayTime = calculateDelayTime(value);
+                            const newDelayTime = calculateDelayTime(value);
+                            setDelayTime(newDelayTime);
+                            setting.delayTime = newDelayTime;
                         }}
                         minimumTrackTintColor="#ff0000"
                         maximumTrackTintColor="#ffffff"

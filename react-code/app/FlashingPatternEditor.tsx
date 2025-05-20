@@ -31,7 +31,7 @@ import ColorDots from "@/app/components/ColorDots";
 export default function FlashingPatternEditor({ route, navigation }: any) {
     const setting  = route.params?.setting;
     const [BPM, setBPM] = React.useState(0);
-    const [delayTime, setDelayTime] = useState(setting.delayTime);
+    const [delayTime, setDelayTime] = React.useState(setting.delayTime);
 
     useEffect(() => {
         const initialBpm = parseFloat(calculateBPM(setting.delayTime));
@@ -39,111 +39,11 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
     }, []);
 
     const calculateBPM = (delayTime: number) : string => {
-
-        switch(setting.flashingPattern) {
-            case 0:
-                // Stuck in a blender
-                return (30000 / (4 * delayTime)).toString();
-            case 1:
-                // Smolder
-                // BPM = 60000 / (16 * delayTime * 72.5)
-                return (60000 / (64 * delayTime * 72.5)).toString();
-            case 2:
-                // The Piano Man
-                // BPM = (60000 ms/min) / 16 * (setting.delayTime / 2) * 4ms
-                return (60000 / (64 * (delayTime / 2) * 4)).toString();
-            case 3:
-                // Feel the Funk
-                // BPM = 60000 / (delayTime * 1.4996)
-                return (15000 / (delayTime * 1.4996)).toString();
-            case 4:
-                // Decay
-                // BPM = 125 / delayTime
-                return (125 / (4 * delayTime)).toString();
-            case 5:
-                // Cortez
-                // Total cycle time =
-                // BPM = 60000 / (16 * 16 * delayTime * 2)
-                return (60000 / (16 * 64 * delayTime * 2)).toString();
-            case 7:
-                // The Underground
-                // BPM = 60000 / (16 * 16 * setting.delayTime * 6)
-                return (60000 / (16 * 64 * delayTime * 6)).toString();
-            case 8:
-                // Berghain Bitte
-                // BPM = 60000 / (16 × 16 × 2 × 5 × setting.delayTime)
-                return (60000 / (16 * 64 * 2 * 5 * delayTime)).toString();
-            case 9:
-                // Lapis Lazuli
-                // BPM = (60000) ÷ (256 × setting.delayTime)
-                return (15000 / (256 * delayTime)).toString();
-            case 10:
-                // Medusa
-                // BPM = 60000 / (16 × 4 × 16 × setting.delayTime)
-                return (15000 / (16 * 4 * 16 * delayTime)).toString();
-            case 11:
-                // State of Trance
-                // BPM = 312.5 / setting.delayTime
-                return (312.5 / (4 * delayTime)).toString();
-            default:
-                // Still (replaces case 6)
-                // No BPM calculation needed
-                return "0";
-        }
+        return ((60000 / (64 * delayTime))).toFixed(0);
     }
 
-    const calculateDelayTime = (BPM: number) : number => {
-
-        switch(setting.flashingPattern) {
-            case 0:
-                // Stuck in a blender
-                return (30000 / (4 * BPM));
-            case 1:
-                // Smolder
-                // BPM = 60000 / (16 * delayTime * 72.5)
-                return (60000 / (64 * BPM * 72.5));
-            case 2:
-                // The Piano Man
-                // BPM = (60000 ms/min) / 16 * (setting.delayTime / 2) * 4ms
-                return (60000 / (64 * (BPM / 2) * 4));
-            case 3:
-                // Feel the Funk
-                // BPM = 60000 / (delayTime * 1.4996)
-                return (15000 / (BPM * 1.4996));
-            case 4:
-                // Decay
-                // BPM = 125 / delayTime
-                return (125 / (4 * BPM));
-            case 5:
-                // Cortez
-                // Total cycle time =
-                // BPM = 60000 / (16 * 16 * delayTime * 2)
-                return (60000 / (16 * 64 * BPM * 2));
-            case 7:
-                // The Underground
-                // BPM = 60000 / (16 * 16 * setting.delayTime * 6)
-                return (60000 / (16 * 64 * BPM * 6));
-            case 8:
-                // Berghain Bitte
-                // BPM = 60000 / (16 × 16 × 2 × 5 × setting.delayTime)
-                return (60000 / (16 * 64 * 2 * 5 * BPM));
-            case 9:
-                // Lapis Lazuli
-                // BPM = (60000) ÷ (256 × setting.delayTime)
-                return (15000 / (256 * BPM));
-            case 10:
-                // Medusa
-                // BPM = 60000 / (16 × 4 × 16 × setting.delayTime)
-                return (15000 / (16 * 4 * 16 * BPM));
-            case 11:
-                // State of Trance
-                // BPM = 312.5 / setting.delayTime
-                return (312.5 / (4 * BPM));
-            default:
-                // Still (replaces case 6)
-                // No BPM calculation needed
-                return 0;
-        }
+    const calculateDelayTime = (bpm: number) : number => {
+        return (60000 / (64 * bpm));
     }
 
     const modeDots = () => {
@@ -152,33 +52,33 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
             delayTime: delayTime,
         }
 
-        switch (setting!.flashingPattern) {
+        switch (setting.flashingPattern) {
             case "0":
-                return <BlenderDots navigation={navigation} setting={newSetting}/>;
+                return <BlenderDots navigation={navigation} setting={newSetting} key={delayTime}/>;
             case "1":
-                return <ChristmasDots navigation={navigation} setting={newSetting}/>;
+                return <ChristmasDots navigation={navigation} setting={newSetting} key={delayTime}/>;
             case "2":
-                return <ComfortSongDots navigation={navigation} setting={newSetting}/>;
+                return <ComfortSongDots navigation={navigation} setting={newSetting} key={delayTime}/>;
             case "3":
-                return <FunkyDots navigation={navigation} setting={newSetting}/>;
+                return <FunkyDots navigation={navigation} setting={newSetting} key={delayTime}/>;
             case "4":
-                return <MoldDots navigation={navigation} setting={newSetting}/>;
+                return <MoldDots navigation={navigation} setting={newSetting} key={delayTime}/>;
             case "5":
-                return <ProgressiveDots navigation={navigation} setting={newSetting}/>;
+                return <ProgressiveDots navigation={navigation} setting={newSetting} key={delayTime}/>;
             case "6":
-                return <StillEffectDots navigation={navigation} setting={newSetting}/>;
+                return <StillEffectDots navigation={navigation} setting={newSetting} key={delayTime}/>;
             case "7":
-                return <StrobeChangeDots navigation={navigation} setting={newSetting}/>;
+                return <StrobeChangeDots navigation={navigation} setting={newSetting} key={delayTime}/>;
             case "8":
-                return <TechnoDots navigation={navigation} setting={newSetting}/>;
+                return <TechnoDots navigation={navigation} setting={newSetting} key={delayTime}/>;
             case "9":
-                return <TraceManyDots navigation={navigation} setting={newSetting}/>;
+                return <TraceManyDots navigation={navigation} setting={newSetting} key={delayTime}/>;
             case "10":
-                return <TraceOneDots navigation={navigation} setting={newSetting}/>;
+                return <TraceOneDots navigation={navigation} setting={newSetting} key={delayTime}/>;
             case "11":
-                return <TranceDots navigation={navigation} setting={newSetting}/>;
+                return <TranceDots navigation={navigation} setting={newSetting} key={delayTime}/>;
             default:
-                return <ColorDots colors={setting.colors}/>;
+                return <ColorDots colors={setting.colors} key={delayTime}/>;
         }
     }
 
@@ -197,7 +97,7 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
             </View>
 
             <View style={styles.fpContainer}>
-                <Text style={styles.flashingPatternText}>TODO</Text>
+                <Text style={styles.flashingPatternText}>{delayTime}</Text>
                 {/*<Text style={styles.sliderText}>Hex: #</Text>
                 <TextInput
                     style={[styles.hexInput]}
@@ -219,14 +119,16 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
                     <Text style={styles.sliderText}>Speed: {BPM.toFixed(0)} bpm</Text>
                     <Slider
                         style={styles.slider}
-                        minimumValue={0}
-                        maximumValue={200}
+                        minimumValue={40}
+                        maximumValue={180}
                         value={BPM}
-                        onValueChange={ value => {
+                        onValueChange={value => {
                             setBPM(value);
                             const newDelayTime = calculateDelayTime(value);
                             setDelayTime(newDelayTime);
+/*
                             setting.delayTime = newDelayTime;
+*/
                         }}
                         minimumTrackTintColor="#ff0000"
                         maximumTrackTintColor="#ffffff"

@@ -69,7 +69,7 @@ export default function ProgressiveDots({navigation, setting}: SettingItemProps)
                }
            }
 
-           setTimeout(animate, 14);
+           setTimeout(animate, 0);
        };
 
        animate();
@@ -77,7 +77,7 @@ export default function ProgressiveDots({navigation, setting}: SettingItemProps)
        return () => {
            isActive = false;
        };
-   }, [setting.colors]);
+   }, [setting.colors, setting.delayTime]);
 
     return (
         <SafeAreaView style={styles.background}>

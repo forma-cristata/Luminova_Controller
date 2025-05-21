@@ -30,7 +30,6 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
     const [BPM, setBPM] = React.useState(0);
     const [initialDelayTime] = React.useState(setting.delayTime);
     const [delayTime, setDelayTime] = React.useState(setting.delayTime);
-    // In FlashingPatternEditor.tsx
     const [flashingPattern, setFlashingPattern] = React.useState(setting.flashingPattern);
 
     useEffect(() => {
@@ -46,7 +45,7 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
         return (60000 / (64 * bpm));
     }
 
-    function modeDots() {
+    const modeDots = () => {
         const newSetting = {
             ...setting,
             delayTime: delayTime,
@@ -55,31 +54,31 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 
         switch (flashingPattern) {
             case "0":
-                return <BlenderDots navigation={navigation} setting={setting} />;
+                return <BlenderDots navigation={navigation} setting={newSetting} key={`${flashingPattern}-${delayTime}`}/>;
             case "1":
-                return <ChristmasDots navigation={navigation} setting={setting} />;
+                return <ChristmasDots navigation={navigation} setting={newSetting} key={`${flashingPattern}-${delayTime}`}/>;
             case "2":
-                return <ComfortSongDots navigation={navigation} setting={setting} />;
+                return <ComfortSongDots navigation={navigation} setting={newSetting} key={`${flashingPattern}-${delayTime}`}/>;
             case "3":
-                return <FunkyDots navigation={navigation} setting={setting} />;
+                return <FunkyDots navigation={navigation} setting={newSetting} key={`${flashingPattern}-${delayTime}`}/>;
             case "4":
-                return <MoldDots navigation={navigation} setting={setting} />;
+                return <MoldDots navigation={navigation} setting={newSetting} key={`${flashingPattern}-${delayTime}`}/>;
             case "5":
-                return <ProgressiveDots navigation={navigation} setting={setting} />;
+                return <ProgressiveDots navigation={navigation} setting={newSetting} key={`${flashingPattern}-${delayTime}`}/>;
             case "6":
-                return <StillEffectDots navigation={navigation} setting={setting} />;
+                return <StillEffectDots navigation={navigation} setting={newSetting} key={`${flashingPattern}-${delayTime}`}/>;
             case "7":
-                return <StrobeChangeDots navigation={navigation} setting={setting} />;
+                return <StrobeChangeDots navigation={navigation} setting={newSetting} key={`${flashingPattern}-${delayTime}`}/>;
             case "8":
-                return <TechnoDots navigation={navigation} setting={setting} />;
+                return <TechnoDots navigation={navigation} setting={newSetting} key={`${flashingPattern}-${delayTime}`}/>;
             case "9":
-                return <TraceManyDots navigation={navigation} setting={setting} />;
+                return <TraceManyDots navigation={navigation} setting={newSetting} key={`${flashingPattern}-${delayTime}`}/>;
             case "10":
-                return <TraceOneDots navigation={navigation} setting={setting} />;
+                return <TraceOneDots navigation={navigation} setting={newSetting} key={`${flashingPattern}-${delayTime}`}/>;
             case "11":
-                return <TranceDots navigation={navigation} setting={setting} />;
+                return <TranceDots navigation={navigation} setting={newSetting} key={`${flashingPattern}-${delayTime}`}/>;
             default:
-                return <ColorDots colors={setting.colors} />;
+                return <ColorDots colors={setting.colors} key={`${flashingPattern}-${delayTime}`}/>;
         }
     }
 

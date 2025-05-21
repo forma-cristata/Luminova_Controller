@@ -101,7 +101,7 @@ export default function TranceDots({navigation, setting}: SettingItemsetting) {
         return () => {
             isActive = false;
         };
-    }, [setting.colors]);
+    }, [setting.colors, setting.delayTime]);
 
     return (
         <SafeAreaView style={styles.background}>

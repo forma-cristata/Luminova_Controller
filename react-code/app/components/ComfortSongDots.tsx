@@ -86,7 +86,7 @@ export default function ComfortSongDots({navigation, setting}: SettingItemProps)
         return () => {
             isActive = false;
         };
-    }, [setting.colors]);
+    }, [setting.colors, setting.delayTime]);
 
     return (
         <SafeAreaView style={styles.background}>

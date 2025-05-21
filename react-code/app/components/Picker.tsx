@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Dimensions } from 'react-native';
 
 // Define the flashing pattern options
@@ -17,26 +17,27 @@ const FLASHING_PATTERNS = [
   { id: "7", name: "The Underground" },
 ];
 
-/*
-* Berghain
-* Cortez
-* Decay
-* Feel the Funk
-* Lapis Lazuli
-* Medusa
-* The Piano Man
-* Smolder
-* State of Trance
-* Still
-* Stuck
-* The Underground
-* */
-
-
 const { width, height } = Dimensions.get('window');
 const scale = Math.min(width, height) / 375; // Base scale factor
 
 export default function Picker({ navigation, setting, selectedPattern, setSelectedPattern }: any) {
+  const scrollViewRef = useRef<ScrollView>(null);
+
+  useEffect(() => {
+    if (scrollViewRef.current) {
+      const selectedIndex = FLASHING_PATTERNS.findIndex(p => p.id === selectedPattern);
+      if (selectedIndex !== -1) {
+        // Estimate height of each item (padding + text + borders)
+        const itemHeight = 12 * 2 * scale + 25 * scale + 2;
+        setTimeout(() => {
+          scrollViewRef.current?.scrollTo({
+            y: selectedIndex * itemHeight - (0.5 * itemHeight),
+            animated: false
+          });
+        }, 100);
+      }
+    }
+  }, [selectedPattern]);
 
   const handlePatternSelect = (patternId: string) => {
     setSelectedPattern(patternId);
@@ -46,11 +47,9 @@ export default function Picker({ navigation, setting, selectedPattern, setSelect
 
   return (
     <View style={styles.container}>
-{/*
-      <Text style={styles.label}>Flashing Pattern</Text>
-*/}
       <View style={styles.pickerContainer}>
         <ScrollView
+          ref={scrollViewRef}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.scrollContent}
         >
@@ -76,7 +75,6 @@ export default function Picker({ navigation, setting, selectedPattern, setSelect
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,

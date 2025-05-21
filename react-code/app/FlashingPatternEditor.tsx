@@ -31,6 +31,7 @@ import ColorDots from "@/app/components/ColorDots";
 export default function FlashingPatternEditor({ route, navigation }: any) {
     const setting  = route.params?.setting;
     const [BPM, setBPM] = React.useState(0);
+    const [initialDelayTime] = React.useState(setting.delayTime);
     const [delayTime, setDelayTime] = React.useState(setting.delayTime);
 
     useEffect(() => {
@@ -97,7 +98,7 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
             </View>
 
             <View style={styles.fpContainer}>
-                <Text style={styles.flashingPatternText}>{delayTime}</Text>
+                <Text style={styles.flashingPatternText}>{setting.delayTime}</Text>
                 {/*<Text style={styles.sliderText}>Hex: #</Text>
                 <TextInput
                     style={[styles.hexInput]}
@@ -141,26 +142,27 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
                 <View style={styles.buttonRow}>
                     <TouchableOpacity
                         style={styles.styleAButton}
-/*
-                        TODO: onPress={}
-*/
-/*
-                        TODO: disabled={}
-*/
+                        onPress={() => {
+                            setDelayTime(initialDelayTime);
+                            setBPM(parseFloat(calculateBPM(initialDelayTime)));
+                        }}
+                        disabled={delayTime === initialDelayTime}
                     >
                         <Text style={styles.button}>Reset</Text>
                     </TouchableOpacity>
 
-                    <TouchableOpacity
-                        style={styles.styleAButton}
-                        /*
-                        TODO:
-                            onPress={}
-                            disabled={}
-                        */
-                    >
-                        <Text style={styles.button}>Save</Text>
-                    </TouchableOpacity>
+
+
+                  <TouchableOpacity
+                      style={styles.styleAButton}
+                      onPress={() => {
+                          setting.delayTime = delayTime;
+                          navigation.goBack();
+                      }}
+                      disabled={delayTime === initialDelayTime}
+                  >
+                      <Text style={styles.button}>Save</Text>
+                  </TouchableOpacity>
                 </View>
             </View>
         </SafeAreaView>

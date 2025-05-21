@@ -1,8 +1,4 @@
-import Setting from "@/app/interface/setting-interface";
-import {Dimensions, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View} from "react-native";
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { RootStackParamList } from '@/app/index';
-import ColorDotsEditorEdition from "@/app/components/ColorDotEditorEdition";
+import {Dimensions, SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import Slider from "@react-native-community/slider";
 import React, {useEffect} from "react";
 import BlenderDots from "@/app/components/BlenderDots";
@@ -18,6 +14,7 @@ import TraceManyDots from "@/app/components/TraceManyDots";
 import TraceOneDots from "@/app/components/TraceOneDots";
 import TranceDots from "@/app/components/TranceDots";
 import ColorDots from "@/app/components/ColorDots";
+import Picker from "@/app/components/Picker";
 
 
 /**
@@ -98,7 +95,8 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
             </View>
 
             <View style={styles.fpContainer}>
-                <Text style={styles.flashingPatternText}>{setting.delayTime}</Text>
+                {/*<Text style={styles.flashingPatternText}>{setting.delayTime}</Text>*/}
+                <Picker navigation={navigation} setting={setting} />
                 {/*<Text style={styles.sliderText}>Hex: #</Text>
                 <TextInput
                     style={[styles.hexInput]}

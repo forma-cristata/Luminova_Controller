@@ -55,7 +55,7 @@ export default function BlenderDots({navigation, setting}: SettingItemProps) {
             for (let i = 0; i < LIGHT_COUNT; i++) {
                 if (!isActive) return;
                 let colorIndex = (i + colorOffset) % COLOR_COUNT;
-                await new Promise(resolve => setTimeout(resolve, setting.delayTime / 8));
+                await new Promise(resolve => setTimeout(resolve, setting.delayTime));
                 setLed[i](setting.colors[colorIndex]);
             }
 

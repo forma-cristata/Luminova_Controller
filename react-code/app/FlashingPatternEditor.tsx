@@ -30,6 +30,8 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
     const [BPM, setBPM] = React.useState(0);
     const [initialDelayTime] = React.useState(setting.delayTime);
     const [delayTime, setDelayTime] = React.useState(setting.delayTime);
+    // In FlashingPatternEditor.tsx
+    const [flashingPattern, setFlashingPattern] = React.useState(setting.flashingPattern);
 
     useEffect(() => {
         const initialBpm = parseFloat(calculateBPM(setting.delayTime));
@@ -44,39 +46,40 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
         return (60000 / (64 * bpm));
     }
 
-    const modeDots = () => {
+    function modeDots() {
         const newSetting = {
             ...setting,
             delayTime: delayTime,
+            flashingPattern: flashingPattern,
         }
 
-        switch (setting.flashingPattern) {
+        switch (flashingPattern) {
             case "0":
-                return <BlenderDots navigation={navigation} setting={newSetting} key={delayTime}/>;
+                return <BlenderDots navigation={navigation} setting={setting} />;
             case "1":
-                return <ChristmasDots navigation={navigation} setting={newSetting} key={delayTime}/>;
+                return <ChristmasDots navigation={navigation} setting={setting} />;
             case "2":
-                return <ComfortSongDots navigation={navigation} setting={newSetting} key={delayTime}/>;
+                return <ComfortSongDots navigation={navigation} setting={setting} />;
             case "3":
-                return <FunkyDots navigation={navigation} setting={newSetting} key={delayTime}/>;
+                return <FunkyDots navigation={navigation} setting={setting} />;
             case "4":
-                return <MoldDots navigation={navigation} setting={newSetting} key={delayTime}/>;
+                return <MoldDots navigation={navigation} setting={setting} />;
             case "5":
-                return <ProgressiveDots navigation={navigation} setting={newSetting} key={delayTime}/>;
+                return <ProgressiveDots navigation={navigation} setting={setting} />;
             case "6":
-                return <StillEffectDots navigation={navigation} setting={newSetting} key={delayTime}/>;
+                return <StillEffectDots navigation={navigation} setting={setting} />;
             case "7":
-                return <StrobeChangeDots navigation={navigation} setting={newSetting} key={delayTime}/>;
+                return <StrobeChangeDots navigation={navigation} setting={setting} />;
             case "8":
-                return <TechnoDots navigation={navigation} setting={newSetting} key={delayTime}/>;
+                return <TechnoDots navigation={navigation} setting={setting} />;
             case "9":
-                return <TraceManyDots navigation={navigation} setting={newSetting} key={delayTime}/>;
+                return <TraceManyDots navigation={navigation} setting={setting} />;
             case "10":
-                return <TraceOneDots navigation={navigation} setting={newSetting} key={delayTime}/>;
+                return <TraceOneDots navigation={navigation} setting={setting} />;
             case "11":
-                return <TranceDots navigation={navigation} setting={newSetting} key={delayTime}/>;
+                return <TranceDots navigation={navigation} setting={setting} />;
             default:
-                return <ColorDots colors={setting.colors} key={delayTime}/>;
+                return <ColorDots colors={setting.colors} />;
         }
     }
 
@@ -96,8 +99,12 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 
             <View style={styles.fpContainer}>
                 {/*<Text style={styles.flashingPatternText}>{setting.delayTime}</Text>*/}
-                <Picker navigation={navigation} setting={setting} />
-                {/*<Text style={styles.sliderText}>Hex: #</Text>
+                <Picker
+                    navigation={navigation}
+                    setting={setting}
+                    selectedPattern={flashingPattern}
+                    setSelectedPattern={setFlashingPattern}
+                />                {/*<Text style={styles.sliderText}>Hex: #</Text>
                 <TextInput
                     style={[styles.hexInput]}
                     value={hexInput}

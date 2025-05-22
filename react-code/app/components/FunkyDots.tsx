@@ -55,47 +55,53 @@ export default function FunkyDots({navigation, setting}: SettingItemProps) {
         const animate = async () => {
             if (!isActive) return;
 
+            for (let colorer = 0; colorer < COLOR_COUNT; colorer++) {
+                for (let strobe = 0; strobe < strobeCount1; strobe++) {
+                    if (!isActive) return;
 
-            for (let strobe = 0; strobe < strobeCount1; strobe++) {
-                if (!isActive) return;
-
-                await new Promise(resolve => setTimeout(resolve, setting.delayTime * 16));
+                    await new Promise(resolve => setTimeout(resolve, setting.delayTime * 12));
 
 
-                for (let i = 0; i < ledsPerGroup; i++) {
-                    let ledIndex = random(0, LIGHT_COUNT);
-                    setLed[(ledIndex + 1) % LIGHT_COUNT](setting.colors[ledIndex % COLOR_COUNT]);
+                    for (let i = 0; i < ledsPerGroup; i++) {
+                        let ledIndex = random(0, LIGHT_COUNT);
+                        setLed[(ledIndex + 1) % LIGHT_COUNT](setting.colors[(ledIndex+colorer) % COLOR_COUNT]);
+                        await new Promise(resolve => setTimeout(resolve, setting.delayTime));
+                    }
+
+                    await new Promise(resolve => setTimeout(resolve, setting.delayTime * 12));
+
+
+                    for (let i = 0; i < ledsPerGroup; i++) {
+                        let ledIndex = random(0, LIGHT_COUNT);
+                        setLed[(ledIndex + 1) % LIGHT_COUNT](black);
+                        await new Promise(resolve => setTimeout(resolve, setting.delayTime));
+
+                    }
                 }
 
-                await new Promise(resolve => setTimeout(resolve, setting.delayTime * 16));
+
+                for (let strobe = 0; strobe < strobeCount2; strobe++) {
+                    if (!isActive) return;
+
+                    await new Promise(resolve => setTimeout(resolve, setting.delayTime * 12));
 
 
+                    for (let i = 0; i < ledsPerGroup; i++) {
+                        let ledIndex = random(0, LIGHT_COUNT);
+                        setLed[(ledIndex + 1) % LIGHT_COUNT](setting.colors[(ledIndex + colorer) % COLOR_COUNT]);
+                        await new Promise(resolve => setTimeout(resolve, setting.delayTime));
 
-                for (let i = 0; i < ledsPerGroup; i++) {
-                    let ledIndex = random(0, LIGHT_COUNT);
-                    setLed[(ledIndex + 1) % LIGHT_COUNT](black);
-                }
-            }
+                    }
 
-
-            for (let strobe = 0; strobe < strobeCount2; strobe++) {
-                if (!isActive) return;
-
-                await new Promise(resolve => setTimeout(resolve, setting.delayTime * 16));
+                    await new Promise(resolve => setTimeout(resolve, setting.delayTime * 12));
 
 
-                for (let i = 0; i < ledsPerGroup; i++) {
-                    let ledIndex = random(0, LIGHT_COUNT);
-                    setLed[(ledIndex + 1) % LIGHT_COUNT](setting.colors[ledIndex % COLOR_COUNT]);
-                }
+                    for (let i = 0; i < ledsPerGroup; i++) {
+                        let ledIndex = random(0, LIGHT_COUNT);
+                        setLed[(ledIndex + 1) % LIGHT_COUNT](black);
+                        await new Promise(resolve => setTimeout(resolve, setting.delayTime));
 
-                await new Promise(resolve => setTimeout(resolve, setting.delayTime * 16));
-
-
-
-                for (let i = 0; i < ledsPerGroup; i++) {
-                    let ledIndex = random(0, LIGHT_COUNT);
-                    setLed[(ledIndex + 1) % LIGHT_COUNT](black);
+                    }
                 }
             }
 

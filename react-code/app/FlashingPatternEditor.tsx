@@ -15,6 +15,7 @@ import TraceOneDots from "@/app/components/TraceOneDots";
 import TranceDots from "@/app/components/TranceDots";
 import ColorDots from "@/app/components/ColorDots";
 import Picker from "@/app/components/Picker";
+import {useThrottle} from "expo-dev-launcher/bundle/hooks/useDebounce";
 
 
 /**
@@ -27,10 +28,16 @@ import Picker from "@/app/components/Picker";
 
 export default function FlashingPatternEditor({ route, navigation }: any) {
     const setting  = route.params?.setting;
-    const [BPM, setBPM] = React.useState(0);
+
     const [initialDelayTime] = React.useState(setting.delayTime);
+    const [initialFlashingPattern] = React.useState(setting.flashingPattern);
+
+    const [BPM, setBPM] = React.useState(0);
+    const throttledBPM = useThrottle(BPM);
     const [delayTime, setDelayTime] = React.useState(setting.delayTime);
+    const throttledDelayTime = useThrottle(delayTime);
     const [flashingPattern, setFlashingPattern] = React.useState(setting.flashingPattern);
+    const throttledFlashingPattern = useThrottle(flashingPattern);
 
     useEffect(() => {
         const initialBpm = parseFloat(calculateBPM(setting.delayTime));
@@ -149,8 +156,9 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
                         onPress={() => {
                             setDelayTime(initialDelayTime);
                             setBPM(parseFloat(calculateBPM(initialDelayTime)));
+                            setFlashingPattern(initialFlashingPattern);
                         }}
-                        disabled={delayTime === initialDelayTime}
+                        disabled={delayTime === initialDelayTime && flashingPattern === initialFlashingPattern}
                     >
                         <Text style={styles.button}>Reset</Text>
                     </TouchableOpacity>

@@ -49,47 +49,28 @@ export default function TranceDots({navigation, setting}: SettingItemsetting) {
         const animate = async () => {
             if (!isActive) return;
 
-            let sc1 = 4;
+            let sc1 = 2;
             let sc2 = 2;
-            let ls = 3;
+            let ls = 4;
             for(let j = 0; j < LIGHT_COUNT; j++) {
                 for(let k = 0; k < sc1; k++) {
                     for(let i = 0; i < ls; i++) {
                         let li = j+i;
-                        if(li < LIGHT_COUNT)
-                        {
-                            setLed[(li+1) % LIGHT_COUNT](setting.colors[li % COLOR_COUNT]);
-                        }
+                        setLed[(li+1) % LIGHT_COUNT](setting.colors[li % COLOR_COUNT]);
+                        await new Promise(resolve => setTimeout(resolve, setting.delayTime * 4));
+                        setLed[(li+1) % LIGHT_COUNT](black);
+                        await new Promise(resolve => setTimeout(resolve, setting.delayTime * 4));
                     }
-                    await new Promise(resolve => setTimeout(resolve, setting.delayTime));
-
-                    for(let i = 0; i < ls; i++) {
-                        let ledIndex = j + i;
-                        if(ledIndex < LIGHT_COUNT)
-                        {
-                            setLed[(ledIndex+1) % LIGHT_COUNT](black);
-                        }
-                    }
-
-                    await new Promise(resolve => setTimeout(resolve, setting.delayTime));
                 }
 
                 for(let strobe = 0; strobe < sc2; strobe++) {
                     for(let i = 0; i < ls; i++) {
                         let ledIndex = j+i;
-                        if(ledIndex < LIGHT_COUNT) {
-                            setLed[(ledIndex+1) % LIGHT_COUNT](setting.colors[ledIndex % COLOR_COUNT]);
-                        }
+                        setLed[(ledIndex+1) % LIGHT_COUNT](setting.colors[ledIndex % COLOR_COUNT]);
+                        await new Promise(resolve => setTimeout(resolve, setting.delayTime * 4));
+                        setLed[(ledIndex+1) % LIGHT_COUNT](black);
+                        await new Promise(resolve => setTimeout(resolve, setting.delayTime * 4));
                     }
-                    await new Promise(resolve => setTimeout(resolve, setting.delayTime));
-
-                    for(let i = 0; i < ls; i++) {
-                        let ledIndex = j+i;
-                        if(ledIndex < LIGHT_COUNT) {
-                            setLed[(ledIndex+1) % LIGHT_COUNT](black);
-                        }
-                    }
-                    await new Promise(resolve => setTimeout(resolve, setting.delayTime));
                 }
             }
 

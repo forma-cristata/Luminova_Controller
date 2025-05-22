@@ -71,23 +71,23 @@ export default function TechnoDots({navigation, setting}: SettingItemProps) {
                         if (!isActive) return;
 
                         setLed[j](setting.colors[i]);
-                        await new Promise(resolve => setTimeout(resolve, setting.delayTime));
+                        await new Promise(resolve => setTimeout(resolve, setting.delayTime * 2));
                         setLed[j](black);
 
                         setLed[k](setting.colors[m]);
-                        await new Promise(resolve => setTimeout(resolve, setting.delayTime));
+                        await new Promise(resolve => setTimeout(resolve, setting.delayTime * 2));
                         setLed[k](black);
 
                         setLed[l](setting.colors[n]);
-                        await new Promise(resolve => setTimeout(resolve, setting.delayTime));
+                        await new Promise(resolve => setTimeout(resolve, setting.delayTime * 2));
                         setLed[l](black);
 
                         setLed[y](setting.colors[o]);
-                        await new Promise(resolve => setTimeout(resolve, setting.delayTime));
+                        await new Promise(resolve => setTimeout(resolve, setting.delayTime * 2));
                         setLed[y](black);
 
                         setLed[z](setting.colors[p]);
-                        await new Promise(resolve => setTimeout(resolve, setting.delayTime));
+                        await new Promise(resolve => setTimeout(resolve, setting.delayTime * 2));
                         setLed[z](black);
                     }
                 }

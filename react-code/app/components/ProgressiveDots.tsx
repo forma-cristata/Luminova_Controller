@@ -58,14 +58,14 @@ export default function ProgressiveDots({navigation, setting}: SettingItemProps)
                    setLed[ledIndex](setting.colors[j]);
                    setLed[ledIndex2](setting.colors[j]);
 
-                   await new Promise(resolve => setTimeout(resolve, setting.delayTime));
+                   await new Promise(resolve => setTimeout(resolve, setting.delayTime * 2));
 
                    ledIndex = (j + i + 1) % LIGHT_COUNT;
                    ledIndex2 = (j + i + 2) % LIGHT_COUNT;
                    setLed[ledIndex](setting.colors[j]);
                    setLed[ledIndex2](setting.colors[j]);
 
-                   await new Promise(resolve => setTimeout(resolve, setting.delayTime));
+                   await new Promise(resolve => setTimeout(resolve, setting.delayTime * 2));
                }
            }
 

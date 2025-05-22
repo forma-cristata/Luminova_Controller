@@ -60,11 +60,11 @@ export default function TraceManyDots({navigation, setting}: SettingItemsetting)
                     let colInd2 = ((i+2) % COLOR_COUNT);
 
                     setLed[offset](setting.colors[colInd1]);
-                    await new Promise(resolve => setTimeout(resolve, setting.delayTime));
+                    await new Promise(resolve => setTimeout(resolve, setting.delayTime * 2));
 
                     offset = (i + j*2 + 8) % LIGHT_COUNT;
                     setLed[offset](setting.colors[colInd2]);
-                    await new Promise(resolve => setTimeout(resolve, setting.delayTime));
+                    await new Promise(resolve => setTimeout(resolve, setting.delayTime * 2));
                 }
             }
 

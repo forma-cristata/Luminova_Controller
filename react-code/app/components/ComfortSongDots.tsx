@@ -53,7 +53,7 @@ export default function ComfortSongDots({navigation, setting}: SettingItemProps)
             if (!isActive) return;
 
             for (let x = 0; x < COLOR_COUNT; x++) {
-                for (let i = 0; i < setting.delayTime / 2; i++) {
+                for (let i = 0; i < 2; i++) {
                     if (!isActive) return;
 
                     let index1 = patternIndices[x % LIGHT_COUNT] % LIGHT_COUNT;
@@ -65,20 +65,21 @@ export default function ComfortSongDots({navigation, setting}: SettingItemProps)
                     if (index3 < 0) index3 += LIGHT_COUNT;
 
                     setLed[index1](setting.colors[x % LIGHT_COUNT]);
-                    setLed[index2](setting.colors[x % LIGHT_COUNT]);
-                    setLed[index3](setting.colors[x % LIGHT_COUNT]);
-
-                    await new Promise(resolve => setTimeout(resolve, 2));
-
+                    await new Promise(resolve => setTimeout(resolve, setting.delayTime * 4));
                     setLed[index1](black);
+
+                    setLed[index2](setting.colors[x % LIGHT_COUNT]);
+                    await new Promise(resolve => setTimeout(resolve, setting.delayTime * 4));
                     setLed[index2](black);
+
+                    setLed[index3](setting.colors[x % LIGHT_COUNT]);
+                    await new Promise(resolve => setTimeout(resolve, setting.delayTime * 4));
                     setLed[index3](black);
 
-                    await new Promise(resolve => setTimeout(resolve, 2));
                 }
             }
 
-            setTimeout(animate, 5);
+            setTimeout(animate, setting.delayTime);
         };
 
         animate();

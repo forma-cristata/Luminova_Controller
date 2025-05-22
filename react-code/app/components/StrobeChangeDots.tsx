@@ -53,15 +53,18 @@ export default function StrobeChangeDots({navigation, setting}: SettingItemProps
                     if (!isActive) return;
 
                     let offset = (i + j * 2) % LIGHT_COUNT;
-                    for (let k = 0; k < setting.delayTime * 2; k++) {
+                    for (let k = 0; k < 2; k++) {
                         if (!isActive) return;
 
                         setLed[offset](black);
-                        await new Promise(resolve => setTimeout(resolve, 3));
+                        await new Promise(resolve => setTimeout(resolve, setting.delayTime));
                         setLed[offset](setting.colors[i]);
-                        await new Promise(resolve => setTimeout(resolve, 3));
                     }
+                    await new Promise(resolve => setTimeout(resolve, setting.delayTime * 2));
+
                 }
+                await new Promise(resolve => setTimeout(resolve, setting.delayTime * 2));
+
             }
 
             setTimeout(animate, 0);

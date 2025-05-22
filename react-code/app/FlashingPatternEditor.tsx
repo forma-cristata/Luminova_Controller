@@ -152,7 +152,7 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
             <View style={styles.buttonContainer}>
                 <View style={styles.buttonRow}>
                     <TouchableOpacity
-                        style={styles.styleAButton}
+                        style={[styles.styleAButton, { opacity: (delayTime !== initialDelayTime || flashingPattern !== initialFlashingPattern) ? 1 : 0.5 }]}
                         onPress={() => {
                             setDelayTime(initialDelayTime);
                             setBPM(parseFloat(calculateBPM(initialDelayTime)));
@@ -163,15 +163,20 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
                         <Text style={styles.button}>Reset</Text>
                     </TouchableOpacity>
 
-
+                    <TouchableOpacity
+                        style={styles.styleAButton}
+                        /*onPress={}TODO*/
+                    >
+                        <Text style={styles.button}>Preview</Text>
+                    </TouchableOpacity>
 
                   <TouchableOpacity
-                      style={styles.styleAButton}
+                      style={[styles.styleAButton, { opacity: delayTime !== initialDelayTime ? 1 : 0.5 }]}
                       onPress={() => {
                           setting.delayTime = delayTime;
                           navigation.goBack();
                       }}
-                      disabled={delayTime === initialDelayTime}
+                      disabled={delayTime === initialDelayTime && flashingPattern === initialFlashingPattern}
                   >
                       <Text style={styles.button}>Save</Text>
                   </TouchableOpacity>
@@ -273,11 +278,11 @@ const styles=StyleSheet.create({
         borderStyle: "dashed",
         borderWidth: 2,
         borderColor: "#ffffff",
-        width: "48%",
+        width: "30%",
     },
     button: {
         color: "white",
-        fontSize: 30 * scale,
+        fontSize: 25 * scale,
         fontFamily: "Clearlight-lJlq",
         letterSpacing: 2,
 

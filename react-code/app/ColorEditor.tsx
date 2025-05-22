@@ -275,6 +275,13 @@ export default function ColorEditor({navigation, route}: any) {
                     </TouchableOpacity>
 
                     <TouchableOpacity
+                        style={styles.styleAButton}
+                        /*onPress={}TODO*/
+                    >
+                        <Text style={styles.button}>Preview</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
                         style={[styles.styleAButton, { opacity: hasChanges ? 1 : 0.5 }]}
                         onPress={handleSave}
                         disabled={!hasChanges}
@@ -382,11 +389,11 @@ const styles = StyleSheet.create({
         borderStyle: "dashed",
         borderWidth: 2,
         borderColor: "#ffffff",
-        width: "48%",
+        width: "30%",
     },
     button: {
         color: "white",
-        fontSize: 30 * scale,
+        fontSize: 25 * scale,
         fontFamily: "Clearlight-lJlq",
         letterSpacing: 2,
 

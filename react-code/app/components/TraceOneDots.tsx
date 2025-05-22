@@ -57,7 +57,7 @@ export default function TraceOneDots({navigation, setting}: SettingItemsetting) 
                 for(let i = 0; i < COLOR_COUNT; i++) {
                     for(let j = 0; j < LIGHT_COUNT; j++) {
                         setLed[j](setting.colors[i]);
-                        await new Promise(resolve => setTimeout(resolve, setting.delayTime));
+                        await new Promise(resolve => setTimeout(resolve, setting.delayTime * 2));
                         setLed[j](setting.colors[kc]);
                     }
                 }

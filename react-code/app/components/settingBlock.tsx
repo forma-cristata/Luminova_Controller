@@ -26,7 +26,9 @@ interface SettingItemProps {
 
 
 const SettingBlock = ({navigation, setting, style, animated}: SettingItemProps) => {
-
+    if(!setting){
+        return null;
+    }
 
 
 

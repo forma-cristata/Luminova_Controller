@@ -4,6 +4,7 @@ import ColorDotsEditorEdition from "@/app/components/ColorDotEditorEdition";
 import Slider from "@react-native-community/slider";
 import {useState} from "react";
 import {useThrottle} from "expo-dev-launcher/bundle/hooks/useDebounce";
+import {loadData, saveData} from "@/app/settings";
 
 export default function ColorEditor({navigation, route}: any) {
     const setting = route.params?.setting;
@@ -145,11 +146,14 @@ export default function ColorEditor({navigation, route}: any) {
         }
     };
 
-    const handleSave = () => {
+    const handleSave = async () => {
 
         setting.colors = [...colors];
+        const settings = await loadData();
 
-        navigation.navigate("Settings", { setting });
+        const updatedSettings = settings!.map(s => s.name === setting.name ? {...s, colors: [...colors]} : s);
+        await saveData(updatedSettings);
+        navigation.navigate("Settings", {setting});
     };
 
     const handleSliderComplete = (h: number, s: number, v: number) => {

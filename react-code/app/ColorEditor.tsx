@@ -31,6 +31,7 @@ export default function ColorEditor({navigation, route}: any) {
     const [hasChanges, setHasChanges] = useState(false);
 
     const startY = useSharedValue(0);
+    const startX = useSharedValue(0);
 
 
     const hexToRgb = (hex: string) => {
@@ -203,23 +204,80 @@ export default function ColorEditor({navigation, route}: any) {
         setColors(newColors);
         setColorHistory([...colorHistory, [...colors]]);
         setHasChanges(true);
+    };
+
+    const handleReverseTopRow = () => {
+        /*if(pixels > 200 && < 260)*/
+        const newColors = [...colors];
+        for (let i = 0; i < 8; i++) {
+            newColors[i] = colors[7 - i];
+        }
+
+        setColors(newColors);
+        setColorHistory([...colorHistory, [...colors]]);
+        setHasChanges(true);
     }
+
+    const handleReverseBottomRow = () => {
+        const newColors = [...colors];
+        for (let i = 0; i < 8; i++) {
+            newColors[i+8] = colors[15 - i];
+        }
+
+        setColors(newColors);
+        setColorHistory([...colorHistory, [...colors]]);
+        setHasChanges(true);
+    }
+
 
     const panGestureEvent = useAnimatedGestureHandler({
         onStart: (event) => {
             startY.value = event.absoluteY;
+            startX.value = event.absoluteX;
         },
+        onActive: (event) => {},
         onEnd: (event) => {
-            const deltaY = event.absoluteY - startY.value;
+            const initY = startY.value;
+            const initX = startX.value;
+            const deltaY = event.absoluteY - initY;
+            const deltaX = event.absoluteX - initX;
 
-            if (deltaY > 50) {
-                // Swiped down - copy from top to bottom
-                runOnJS(handleCopyToBottom)();
-            } else if (deltaY < -50) {
-                // Swiped up - copy from bottom to top
-                runOnJS(handleCopyToTop)();
+            if((Math.abs(deltaX)) < 50) {
+                if (deltaY > 100) {
+                    // Swiped down - copy from top to bottom
+                    runOnJS(handleCopyToBottom)();
+                }
+                else if (deltaY < -100) {
+                    // Swiped up - copy from bottom to top
+                    runOnJS(handleCopyToTop)();
+                }
             }
+            else{
+                if(Math.abs(deltaY) < 100) {
+                    if (startY.value > 180 && startY.value < 260) {
+                        // Swiped right - reverse colors
+                        runOnJS(handleReverseTopRow)();
+                    }
+                    else if (startY.value > 260 && startY.value < 360) {
+                        // Swiped left - reverse colors
+                        runOnJS(handleReverseBottomRow)();
+                        console.log("Reversed bottom row");
+                    }
+                }
+
+            }
+            startY.value = 0;
+            startX.value = 0;
+
         },
+        onFinish: () => {
+            startY.value = 0;
+            startX.value = 0;
+        },
+        onCancel: () => {
+            startY.value = 0;
+            startX.value = 0;
+        }
     });
 
 

@@ -5,7 +5,13 @@ import Slider from "@react-native-community/slider";
 import {useState} from "react";
 import {useThrottle} from "expo-dev-launcher/bundle/hooks/useDebounce";
 import {loadData, saveData} from "@/app/settings";
-import {KeyboardState} from "react-native-reanimated";
+import { GestureResponderEvent } from "react-native";
+import { GestureHandlerRootView, PanGestureHandler } from "react-native-gesture-handler";
+import Animated, {
+    useAnimatedGestureHandler,
+    useSharedValue,
+    runOnJS
+} from 'react-native-reanimated';
 
 export default function ColorEditor({navigation, route}: any) {
     const setting = route.params?.setting;
@@ -23,6 +29,8 @@ export default function ColorEditor({navigation, route}: any) {
     const [hexInput, setHexInput] = useState('');
     const [colorHistory, setColorHistory] = useState<string[][]>([]);
     const [hasChanges, setHasChanges] = useState(false);
+
+    const startY = useSharedValue(0);
 
 
     const hexToRgb = (hex: string) => {
@@ -95,13 +103,14 @@ export default function ColorEditor({navigation, route}: any) {
         }
     };
 
-    const handleDotSelect = (index: number) => {
+    const handleDotSelect = (index: number, event?: GestureResponderEvent) => {
         try{
             Keyboard.dismiss();
         }
         catch{
             console.log("no keyboard to dismiss");
         }
+
 
         setSelectedDot(index);
         setHexInput(colors[index].replace('#', ''));
@@ -164,8 +173,6 @@ export default function ColorEditor({navigation, route}: any) {
         navigation.navigate("Settings", {setting});
     };
 
-
-
     const handleSliderComplete = (h: number, s: number, v: number) => {
         if (selectedDot !== null) {
             // Save the current state before updating
@@ -178,147 +185,194 @@ export default function ColorEditor({navigation, route}: any) {
         }
     };
 
+    const handleCopyToBottom = () => {
+        const newColors = [...colors];
+        for (let i = 0; i < 8; i++) {
+            newColors[i + 8] = newColors[i];
+        }
+        setColors(newColors);
+        setColorHistory([...colorHistory, [...colors]]);
+        setHasChanges(true);
+    };
+
+    const handleCopyToTop = () => {
+        const newColors = [...colors];
+        for (let i = 8; i < 16; i++) {
+            newColors[i - 8] = newColors[i];
+        }
+        setColors(newColors);
+        setColorHistory([...colorHistory, [...colors]]);
+        setHasChanges(true);
+    }
+
+    const panGestureEvent = useAnimatedGestureHandler({
+        onStart: (event) => {
+            startY.value = event.absoluteY;
+        },
+        onEnd: (event) => {
+            const deltaY = event.absoluteY - startY.value;
+
+            if (deltaY > 50) {
+                // Swiped down - copy from top to bottom
+                runOnJS(handleCopyToBottom)();
+            } else if (deltaY < -50) {
+                // Swiped up - copy from bottom to top
+                runOnJS(handleCopyToTop)();
+            }
+        },
+    });
 
 
     return (
-        <SafeAreaView style={styles.container}>
-            <View style={styles.backButton}>
-                <TouchableOpacity onPress={() => navigation.goBack()}>
-                    <Text style={styles.backB}>    ⟨    </Text>
-                </TouchableOpacity>
-            </View>
-            <Text style={styles.whiteText}>{setting.name}</Text>
-            <ColorDotsEditorEdition
-                colors={colors}
-                onDotSelect={handleDotSelect}
-                selectedDot={selectedDot}
-                key={colors.join(',')} // Force re-render when colors change
-            />
+        <GestureHandlerRootView style={{flex:1}}>
+            <PanGestureHandler onGestureEvent={panGestureEvent}>
+                <Animated.View style={{flex:1}}>
+                    <SafeAreaView style={styles.container}>
+                    <View style={styles.backButton}>
+                        <TouchableOpacity onPress={() => navigation.goBack()}>
+                            <Text style={styles.backB}>    ⟨    </Text>
+                        </TouchableOpacity>
+                    </View>
+                    <View style={styles.titleContainer} >
+                        <Text style={styles.whiteText}>{setting.name}</Text>
 
-            <View style={[styles.hexContainer, { opacity: selectedDot !== null ? 1 : 0.5 }]}>
-                <Text style={styles.sliderText}>Hex: #</Text>
-                <TextInput
-                    style={[styles.hexInput]}
-                    value={hexInput}
-                    onChangeText={handleHexInput}
-                    placeholder="FFFFFF"
-                    placeholderTextColor="#666"
-                    maxLength={6}
-                    editable={selectedDot !== null}
-                    onFocus={() => {
-                        if(selectedDot != null) {
-                            setHexInput('');
-                        }
-                    }}
-                    onBlur={() => {Keyboard.dismiss()}}
-                />
-
-            </View>
-
-            <View style={[styles.sliderContainer, { opacity: selectedDot !== null ? 1 : 0.5 }]}>
-                <View style={styles.sliderRow}>
-                    <Text style={styles.sliderText}>Hue: {Math.round(hue)}°</Text>
-                    <Slider
-                        style={[styles.slider, { opacity: selectedDot !== null ? 1 : 0.5 }]}
-                        minimumValue={0}
-                        maximumValue={360}
-                        value={hue}
-                        onValueChange={value => {
-                            try{
-                                Keyboard.dismiss();
-                            }
-                            catch{
-                                console.log("no keyboard to dismiss");
-                            }
-                            if (selectedDot !== null) {
-                                setHue(value);
-                                updateColor(value, saturation, brightness); // Here
-                            }
-                        }}
-                        onSlidingComplete={value => {
-                            if (selectedDot !== null) {
-                                handleSliderComplete(value, saturation, brightness);
-                            }
-                        }}
-                        minimumTrackTintColor="#ff0000"
-                        maximumTrackTintColor="#ffffff"
+                    </View>
+                    <ColorDotsEditorEdition
+                        colors={colors}
+                        onDotSelect={handleDotSelect}
+                        selectedDot={selectedDot}
+                        key={colors.join(',')} // Force re-render when colors change
                     />
-                </View>
-                <View style={styles.sliderRow}>
-                    <Text style={styles.sliderText}>Saturation: {Math.round(saturation)}%</Text>
-                    <Slider
-                        style={[styles.slider, { opacity: selectedDot !== null ? 1 : 0.5 }]}
-                        minimumValue={0}
-                        maximumValue={100}
-                        value={saturation}
-                        onValueChange={value => {
-                            if (selectedDot !== null) {
-                                setSaturation(value);
-                                updateColor(hue, value, brightness); // Inverse of saturation
-                            }
-                        }}
-                        onSlidingComplete={value => {
-                            if (selectedDot !== null) {
-                                handleSliderComplete(hue, value, brightness);
-                            }
-                        }}
-                        minimumTrackTintColor="#cccccc"
-                        maximumTrackTintColor="#ffffff"
-                    />
-                </View>
-                <View style={styles.sliderRow}>
-                    <Text style={styles.sliderText}>Brightness: {Math.round(brightness)}%</Text>
-                    <Slider
-                        style={[styles.slider, { opacity: selectedDot !== null ? 1 : 0.5 }]}
-                        minimumValue={0}
-                        maximumValue={100}
-                        value={brightness}
-                        onValueChange={value => {
-                            if (selectedDot !== null) {
-                                setBrightness(value);
-                                updateColor(hue, saturation, value); // Here
-                            }
-                        }}
-                        onSlidingComplete={value => {
-                            if (selectedDot !== null) {
-                                handleSliderComplete(hue, saturation, value);
-                            }
-                        }}
-                        minimumTrackTintColor="#333333"
-                        maximumTrackTintColor="#ffffff"
-                    />
-                </View>
 
-            </View>
+                    <View style={[styles.hexContainer, { opacity: selectedDot !== null ? 1 : 0.5 }]}>
+                        <Text style={styles.sliderText}>Hex: #</Text>
+                        <TextInput
+                            style={[styles.hexInput]}
+                            value={hexInput}
+                            onChangeText={(text) => {
+                                const hex = text.slice(0, 6).replace(/[^0-9A-Fa-f]/g, '');
+                                handleHexInput(hex);
+                            }}
+                            placeholder="FFFFFF"
+                            placeholderTextColor="#666"
+                            editable={selectedDot !== null}
+                            onBlur={() => {Keyboard.dismiss()}}
+                            autoCapitalize="characters"
+                            keyboardAppearance="dark"
+                            keyboardType="default"
+                        />
 
-            <View style={styles.buttonContainer}>
-                <View style={styles.buttonRow}>
-                    <TouchableOpacity
-                        style={[styles.styleAButton, { opacity: hasChanges ? 1 : 0.5 }]}
-                        onPress={handleReset}
-                        disabled={!hasChanges}
-                    >
-                        <Text style={styles.button}>Reset</Text>
-                    </TouchableOpacity>
+                    </View>
 
-                    <TouchableOpacity
-                        style={styles.styleAButton}
-                        /*onPress={}TODO*/
-                    >
-                        <Text style={styles.button}>Preview</Text>
-                    </TouchableOpacity>
 
-                    <TouchableOpacity
-                        style={[styles.styleAButton, { opacity: hasChanges ? 1 : 0.5 }]}
-                        onPress={handleSave}
-                        disabled={!hasChanges}
-                    >
-                        <Text style={styles.button}>Save</Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
 
-        </SafeAreaView>
+                    <View style={[styles.sliderContainer, { opacity: selectedDot !== null ? 1 : 0.5 }]}>
+                        <View style={styles.sliderRow}>
+                            <Text style={styles.sliderText}>Hue: {Math.round(hue)}°</Text>
+                            <Slider
+                                style={[styles.slider, { opacity: selectedDot !== null ? 1 : 0.5 }]}
+                                minimumValue={0}
+                                maximumValue={360}
+                                value={hue}
+                                onValueChange={value => {
+                                    try{
+                                        Keyboard.dismiss();
+                                    }
+                                    catch{
+                                        console.log("no keyboard to dismiss");
+                                    }
+                                    if (selectedDot !== null) {
+                                        setHue(value);
+                                        updateColor(value, saturation, brightness); // Here
+                                    }
+                                }}
+                                onSlidingComplete={value => {
+                                    if (selectedDot !== null) {
+                                        handleSliderComplete(value, saturation, brightness);
+                                    }
+                                }}
+                                minimumTrackTintColor="#ff0000"
+                                maximumTrackTintColor="#ffffff"
+                            />
+                        </View>
+                        <View style={styles.sliderRow}>
+                            <Text style={styles.sliderText}>Saturation: {Math.round(saturation)}%</Text>
+                            <Slider
+                                style={[styles.slider, { opacity: selectedDot !== null ? 1 : 0.5 }]}
+                                minimumValue={0}
+                                maximumValue={100}
+                                value={saturation}
+                                onValueChange={value => {
+                                    if (selectedDot !== null) {
+                                        setSaturation(value);
+                                        updateColor(hue, value, brightness); // Inverse of saturation
+                                    }
+                                }}
+                                onSlidingComplete={value => {
+                                    if (selectedDot !== null) {
+                                        handleSliderComplete(hue, value, brightness);
+                                    }
+                                }}
+                                minimumTrackTintColor="#cccccc"
+                                maximumTrackTintColor="#ffffff"
+                            />
+                        </View>
+                        <View style={styles.sliderRow}>
+                            <Text style={styles.sliderText}>Brightness: {Math.round(brightness)}%</Text>
+                            <Slider
+                                style={[styles.slider, { opacity: selectedDot !== null ? 1 : 0.5 }]}
+                                minimumValue={0}
+                                maximumValue={100}
+                                value={brightness}
+                                onValueChange={value => {
+                                    if (selectedDot !== null) {
+                                        setBrightness(value);
+                                        updateColor(hue, saturation, value); // Here
+                                    }
+                                }}
+                                onSlidingComplete={value => {
+                                    if (selectedDot !== null) {
+                                        handleSliderComplete(hue, saturation, value);
+                                    }
+                                }}
+                                minimumTrackTintColor="#333333"
+                                maximumTrackTintColor="#ffffff"
+                            />
+                        </View>
+
+                    </View>
+
+                    <View style={styles.buttonContainer}>
+                        <View style={styles.buttonRow}>
+                            <TouchableOpacity
+                                style={[styles.styleAButton, { opacity: hasChanges ? 1 : 0.5 }]}
+                                onPress={handleReset}
+                                disabled={!hasChanges}
+                            >
+                                <Text style={styles.button}>Reset</Text>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity
+                                style={styles.styleAButton}
+                                /*onPress={}TODO*/
+                            >
+                                <Text style={styles.button}>Preview</Text>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity
+                                style={[styles.styleAButton, { opacity: hasChanges ? 1 : 0.5 }]}
+                                onPress={handleSave}
+                                disabled={!hasChanges}
+                            >
+                                <Text style={styles.button}>Save</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+
+                </SafeAreaView>
+                </Animated.View>
+            </PanGestureHandler>
+        </GestureHandlerRootView>
     );
 }
 const { width, height } = Dimensions.get('window');
@@ -436,5 +490,25 @@ const styles = StyleSheet.create({
         color: "white",
         fontSize: 16 * scale,
         fontFamily: "Clearlight-lJlq",
+    },
+    titleContainer: {
+        flexDirection: "row",
+    },
+    copyButton: {
+        marginTop: height * 0.02,
+        backgroundColor: "#000000",
+        borderRadius: 10,
+        paddingVertical: 8 * scale,
+        paddingHorizontal: 15 * scale,
+        alignItems: "center",
+        borderStyle: "solid",
+        borderWidth: 2,
+        borderColor: "#ffffff",
+    },
+    copyButtonText: {
+        color: "white",
+        fontSize: 18 * scale,
+        fontFamily: "Clearlight-lJlq",
+        letterSpacing: 2,
     }
 });

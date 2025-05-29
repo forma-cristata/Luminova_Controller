@@ -1,10 +1,11 @@
-import { TextInput } from 'react-native';
+import {Keyboard, TextInput} from 'react-native';
 import {Dimensions, SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import ColorDotsEditorEdition from "@/app/components/ColorDotEditorEdition";
 import Slider from "@react-native-community/slider";
 import {useState} from "react";
 import {useThrottle} from "expo-dev-launcher/bundle/hooks/useDebounce";
 import {loadData, saveData} from "@/app/settings";
+import {KeyboardState} from "react-native-reanimated";
 
 export default function ColorEditor({navigation, route}: any) {
     const setting = route.params?.setting;
@@ -95,6 +96,13 @@ export default function ColorEditor({navigation, route}: any) {
     };
 
     const handleDotSelect = (index: number) => {
+        try{
+            Keyboard.dismiss();
+        }
+        catch{
+            console.log("no keyboard to dismiss");
+        }
+
         setSelectedDot(index);
         setHexInput(colors[index].replace('#', ''));
         const rgb = hexToRgb(colors[index]);
@@ -197,7 +205,14 @@ export default function ColorEditor({navigation, route}: any) {
                     placeholderTextColor="#666"
                     maxLength={6}
                     editable={selectedDot !== null}
+                    onFocus={() => {
+                        if(selectedDot != null) {
+                            setHexInput('');
+                        }
+                    }}
+                    onBlur={() => {Keyboard.dismiss()}}
                 />
+
             </View>
 
             <View style={[styles.sliderContainer, { opacity: selectedDot !== null ? 1 : 0.5 }]}>
@@ -209,6 +224,12 @@ export default function ColorEditor({navigation, route}: any) {
                         maximumValue={360}
                         value={hue}
                         onValueChange={value => {
+                            try{
+                                Keyboard.dismiss();
+                            }
+                            catch{
+                                console.log("no keyboard to dismiss");
+                            }
                             if (selectedDot !== null) {
                                 setHue(value);
                                 updateColor(value, saturation, brightness); // Here
@@ -403,5 +424,17 @@ const styles = StyleSheet.create({
         fontFamily: "Clearlight-lJlq",
         letterSpacing: 2,
 
+    },
+    hexApplyButton: {
+        backgroundColor: "#333",
+        paddingVertical: 6 * scale,
+        paddingHorizontal: 10 * scale,
+        borderRadius: 5,
+        marginLeft: 8 * scale,
+    },
+    hexApplyText: {
+        color: "white",
+        fontSize: 16 * scale,
+        fontFamily: "Clearlight-lJlq",
     }
 });

@@ -16,6 +16,7 @@ import TranceDots from "@/app/components/TranceDots";
 import ColorDots from "@/app/components/ColorDots";
 import Picker from "@/app/components/Picker";
 import {useThrottle} from "expo-dev-launcher/bundle/hooks/useDebounce";
+import {loadData, saveData} from "@/app/settings";
 
 
 /**
@@ -87,6 +88,16 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
             default:
                 return <ColorDots colors={setting.colors} key={`${flashingPattern}-${delayTime}`}/>;
         }
+    }
+
+    const handleSave = async () => {
+        setting.delayTime = delayTime;
+        setting.flashingPattern = flashingPattern;
+        const settings = await loadData();
+
+        const updatedSettings = settings!.map(s => s.name === setting.name ? {...s, delayTime: delayTime, flashingPattern: flashingPattern} : s);
+        await saveData(updatedSettings);
+        navigation.navigate("Settings", {setting});
     }
 
     return (
@@ -172,10 +183,7 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 
                   <TouchableOpacity
                       style={[styles.styleAButton, { opacity: delayTime !== initialDelayTime ? 1 : 0.5 }]}
-                      onPress={() => {
-                          setting.delayTime = delayTime;
-                          navigation.goBack();
-                      }}
+                      onPress={handleSave}
                       disabled={delayTime === initialDelayTime && flashingPattern === initialFlashingPattern}
                   >
                       <Text style={styles.button}>Save</Text>

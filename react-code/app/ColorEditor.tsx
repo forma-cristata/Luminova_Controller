@@ -156,6 +156,8 @@ export default function ColorEditor({navigation, route}: any) {
         navigation.navigate("Settings", {setting});
     };
 
+
+
     const handleSliderComplete = (h: number, s: number, v: number) => {
         if (selectedDot !== null) {
             // Save the current state before updating

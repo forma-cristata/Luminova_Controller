@@ -8,6 +8,8 @@ interface SettingItemProps {
     setting: Setting,
 }
 
+// BERGHAIN BITTE - 8
+
 export default function TechnoDots({navigation, setting}: SettingItemProps) {
 
     const COLOR_COUNT = setting.colors.length;

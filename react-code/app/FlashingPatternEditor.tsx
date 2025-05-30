@@ -175,19 +175,21 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
                     </TouchableOpacity>
 
                     <TouchableOpacity
+                        style={[styles.styleAButton, { opacity: delayTime !== initialDelayTime || flashingPattern !== initialFlashingPattern ? 1 : 0.5 }]}
+                        onPress={handleSave}
+                        disabled={delayTime === initialDelayTime && flashingPattern === initialFlashingPattern}
+                    >
+                        <Text style={styles.button}>Save</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
                         style={styles.styleAButton}
                         /*onPress={}TODO*/
                     >
                         <Text style={styles.button}>Preview</Text>
                     </TouchableOpacity>
 
-                  <TouchableOpacity
-                      style={[styles.styleAButton, { opacity: delayTime !== initialDelayTime || flashingPattern !== initialFlashingPattern ? 1 : 0.5 }]}
-                      onPress={handleSave}
-                      disabled={delayTime === initialDelayTime && flashingPattern === initialFlashingPattern}
-                  >
-                      <Text style={styles.button}>Save</Text>
-                  </TouchableOpacity>
+
                 </View>
             </View>
         </SafeAreaView>

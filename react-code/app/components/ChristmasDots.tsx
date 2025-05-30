@@ -8,6 +8,8 @@ interface SettingItemProps {
     setting: Setting,
 }
 
+// SMOLDER - 1
+
 export default function ChristmasDots({navigation, setting}: SettingItemProps) {
 
     const COLOR_COUNT = setting.colors.length;

@@ -8,6 +8,8 @@ interface SettingItemsetting {
     setting: Setting,
 }
 
+// LAPIS LAZULI - 9
+
 export default function TraceManyDots({navigation, setting}: SettingItemsetting) {
 
     const COLOR_COUNT = setting.colors.length;

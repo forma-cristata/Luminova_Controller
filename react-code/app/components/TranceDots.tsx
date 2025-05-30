@@ -8,6 +8,8 @@ interface SettingItemsetting {
     setting: Setting,
 }
 
+// STATE OF TRANCE - 11
+
 export default function TranceDots({navigation, setting}: SettingItemsetting) {
 
     const COLOR_COUNT = setting.colors.length;

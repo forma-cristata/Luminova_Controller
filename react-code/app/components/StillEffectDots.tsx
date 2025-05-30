@@ -8,6 +8,8 @@ interface SettingItemProps {
     setting: Setting,
 }
 
+// STILL - 6
+
 export default function StillEffectDots({navigation, setting}: SettingItemProps) {
 
     const black = "#000000";

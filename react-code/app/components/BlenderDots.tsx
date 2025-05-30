@@ -8,6 +8,8 @@ interface SettingItemProps {
     setting: Setting
 }
 
+// STUCK IN A BLENDER - 0
+
 export default function BlenderDots({navigation, setting}: SettingItemProps) {
 
     const COLOR_COUNT = setting.colors.length;

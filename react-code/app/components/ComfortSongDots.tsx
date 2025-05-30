@@ -8,6 +8,7 @@ interface SettingItemProps {
     setting: Setting,
 }
 
+// THE PIANO MAN - 2
 
 export default function ComfortSongDots({navigation, setting}: SettingItemProps) {
 

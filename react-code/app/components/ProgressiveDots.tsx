@@ -8,6 +8,8 @@ interface SettingItemProps {
     setting: Setting,
 }
 
+// CORTEZ - 5
+
 export default function ProgressiveDots({navigation, setting}: SettingItemProps) {
 
     const COLOR_COUNT = setting.colors.length;

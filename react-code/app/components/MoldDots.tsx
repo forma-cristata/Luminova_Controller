@@ -8,6 +8,8 @@ interface SettingItemProps {
     setting: Setting,
 }
 
+// DECAY - 4
+
 export default function MoldDots({navigation, setting}: SettingItemProps) {
 
     const COLOR_COUNT = setting.colors.length;

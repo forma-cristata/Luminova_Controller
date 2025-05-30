@@ -8,6 +8,8 @@ interface SettingItemProps {
     setting: Setting,
 }
 
+// FEEL THE FUNK - 3
+
 export default function FunkyDots({navigation, setting}: SettingItemProps) {
 
     const COLOR_COUNT = setting.colors.length;

@@ -8,6 +8,8 @@ interface SettingItemsetting {
     setting: Setting,
 }
 
+// MEDUSA - 10
+
 export default function TraceOneDots({navigation, setting}: SettingItemsetting) {
 
     const COLOR_COUNT = setting.colors.length;

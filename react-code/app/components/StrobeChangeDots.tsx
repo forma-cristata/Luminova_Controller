@@ -8,6 +8,8 @@ interface SettingItemProps {
     setting: Setting,
 }
 
+// THE UNDERGROUND - 7
+
 export default function StrobeChangeDots({navigation, setting}: SettingItemProps) {
 
     const COLOR_COUNT = setting.colors.length;

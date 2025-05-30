@@ -13,6 +13,7 @@ import Animated, {
     runOnJS
 } from 'react-native-reanimated';
 import HueSliderBackground from "@/app/components/HueSliderBackground";
+import {IP} from "@/app/configurations/constants";
 
 export default function ColorEditor({navigation, route}: any) {
     const setting = route.params?.setting;
@@ -162,6 +163,7 @@ export default function ColorEditor({navigation, route}: any) {
                     setSaturation(hsv.s);
                 }
             }
+            unPreviewAPI();
         }
     };
 
@@ -280,6 +282,34 @@ export default function ColorEditor({navigation, route}: any) {
             startX.value = 0;
         }
     });
+
+    const previewAPI = () => {
+        fetch(`http://${IP}/api/config`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                    colors: colors,
+                })
+            }).then(response => response.json())
+                .then(data => console.log("success: ", data))
+                .catch(error => console.error('Error: ', error));
+    };
+
+    const unPreviewAPI = () => {
+        fetch(`http://${IP}/api/config`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                colors: setting.colors,
+            })
+        }).then(response => response.json())
+            .then(data => console.log("success: ", data))
+            .catch(error => console.error('Error: ', error));
+    }
 
 
 
@@ -420,7 +450,11 @@ export default function ColorEditor({navigation, route}: any) {
 
                             <TouchableOpacity
                                 style={styles.styleAButton}
-                                /*onPress={}TODO*/
+                                onPress={
+                                    () => {
+                                        previewAPI();
+                                    }
+                                }
                             >
                                 <Text style={styles.button}>Preview</Text>
                             </TouchableOpacity>

@@ -378,8 +378,8 @@ export default function ColorEditor({navigation, route}: any) {
                                         handleSliderComplete(hue, value, brightness);
                                     }
                                 }}
-                                minimumTrackTintColor="#cccccc"
-                                maximumTrackTintColor="#ffffff"
+                                minimumTrackTintColor="#ffffff"
+                                maximumTrackTintColor="#333333"
                             />
                         </View>
                         <View style={styles.sliderRow}>
@@ -401,8 +401,8 @@ export default function ColorEditor({navigation, route}: any) {
                                         handleSliderComplete(hue, saturation, value);
                                     }
                                 }}
-                                minimumTrackTintColor="#333333"
-                                maximumTrackTintColor="#ffffff"
+                                minimumTrackTintColor="#ffffff"
+                                maximumTrackTintColor="#333333"
                             />
                         </View>
 

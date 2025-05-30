@@ -35,6 +35,8 @@ export default function ColorEditor({navigation, route}: any) {
     const startY = useSharedValue(0);
     const startX = useSharedValue(0);
 
+    const [previewMode, setPreviewMode] = useState(false);
+
 
     const hexToRgb = (hex: string) => {
         const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
@@ -452,23 +454,29 @@ export default function ColorEditor({navigation, route}: any) {
                             </TouchableOpacity>
 
                             <TouchableOpacity
-                                style={styles.styleAButton}
-                                onPress={
-                                    () => {
-                                        previewAPI();
-                                    }
-                                }
-                            >
-                                <Text style={styles.button}>Preview</Text>
-                            </TouchableOpacity>
-
-                            <TouchableOpacity
                                 style={[styles.styleAButton, { opacity: hasChanges ? 1 : 0.5 }]}
                                 onPress={handleSave}
                                 disabled={!hasChanges}
                             >
                                 <Text style={styles.button}>Save</Text>
                             </TouchableOpacity>
+
+                            <TouchableOpacity
+                                style={/*!hasChanges ? styles.styleADisabledButton : */styles.styleAButton}  /*TODO: AND setting is different*/
+                                key={hasChanges.toString()}
+                                onPress={
+                                    () => {
+                                        previewAPI();
+                                        // disable the preview button
+
+                                        setPreviewMode(true);
+                                    }
+                                }
+                            >
+                                <Text style={styles.button}>Preview</Text>
+                            </TouchableOpacity>
+
+
                         </View>
                     </View>
 
@@ -574,6 +582,18 @@ const styles = StyleSheet.create({
         borderWidth: 2,
         borderColor: "#ffffff",
         width: "30%",
+    },
+    styleADisabledButton: {
+        backgroundColor: "#000000",
+        borderRadius: 10,
+        paddingVertical: 8 * scale,
+        paddingHorizontal: 15 * scale,
+        alignItems: "center",
+        borderStyle: "dashed",
+        borderWidth: 2,
+        borderColor: "#ffffff",
+        width: "30%",
+        opacity: 0.5,
     },
     button: {
         color: "white",

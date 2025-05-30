@@ -319,7 +319,10 @@ export default function ColorEditor({navigation, route}: any) {
                 <Animated.View style={{flex:1}}>
                     <SafeAreaView style={styles.container}>
                     <View style={styles.backButton}>
-                        <TouchableOpacity onPress={() => navigation.goBack()}>
+                        <TouchableOpacity onPress={() => {
+                            unPreviewAPI();
+                            navigation.goBack();
+                        }}>
                             <Text style={styles.backB}>    ⟨    </Text>
                         </TouchableOpacity>
                     </View>

@@ -1,9 +1,14 @@
+import { useConfiguration } from './context/ConfigurationContext';
 import {Text, StyleSheet, SafeAreaView, Switch, TouchableOpacity} from "react-native";
 import {SafeAreaProvider} from "react-native-safe-area-context";
 import React, { useState, useEffect} from "react";
 import {IP} from "@/app/configurations/constants";
+import Setting from "@/app/interface/setting-interface";
 
 export default function Welcome({navigation}: any) {
+
+    const { currentConfiguration, setCurrentConfiguration, lastEdited, setLastEdited } = useConfiguration();
+    setLastEdited("0");
 
     function createButtonPressed() {
         navigation.navigate("Settings");
@@ -43,6 +48,36 @@ export default function Welcome({navigation}: any) {
         const newState = !isEnabled;
         setIsEnabled(newState);
 
+        if(!currentConfiguration) {
+            let startConfig: Setting = {
+                name: "still",
+                colors: [
+                    "#ff0000", "#ff4400", "#ff6a00", "#ff9100", "#ffee00",
+                    "#00ff1e", "#00ff44", "#00ff95", "#00ffff", "#0088ff",
+                    "#0000ff", "#8800ff", "#ff00ff", "#ff00bb", "#ff0088", "#ff0044"
+                ],
+                whiteValues: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                brightnessValues: [255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255],
+                flashingPattern: "6",
+                delayTime: 3
+            }
+
+            setCurrentConfiguration(startConfig);
+
+        }
+        else {
+            let startConfig: Setting = {
+                name: currentConfiguration.name,
+                colors: currentConfiguration.colors,
+                whiteValues: currentConfiguration.whiteValues,
+                brightnessValues: currentConfiguration.brightnessValues,
+                flashingPattern: currentConfiguration.flashingPattern,
+                delayTime: currentConfiguration.delayTime
+            }
+            setCurrentConfiguration(startConfig);
+        }
+
+
         try{
             const endpoint = newState ? 'on': 'off';
             const response = await fetch(`http://${IP}/api/led/${endpoint}`, {
@@ -60,6 +95,9 @@ export default function Welcome({navigation}: any) {
             console.error("error toggling");
         }
     }
+
+    console.log("\u001b[34m" + currentConfiguration?.flashingPattern);
+
     // When switch is toggled, send on/off API
 
     return (

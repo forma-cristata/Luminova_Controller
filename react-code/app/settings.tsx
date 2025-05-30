@@ -8,6 +8,7 @@ import Setting from "@/app/interface/setting-interface";
 import SettingBlock from "@/app/components/settingBlock";
 import * as FileSystem from 'expo-file-system';
 import jsonData from './configurations/modes.json';
+import {useConfiguration} from "@/app/context/ConfigurationContext";
 let data = jsonData.settings as Setting[];
 console.log("JSON Default Data: ", jsonData);
 
@@ -43,6 +44,9 @@ export const saveData = async (newSettings: Setting[]) => {
 };
 
 export default function Settings({navigation}: any) {
+    const { currentConfiguration, setCurrentConfiguration, lastEdited, setLastEdited } = useConfiguration();
+
+
     const [settingsData, setSettingsData] = React.useState<Setting[]>([]);
     const ref = React.useRef<ICarouselInstance>(null);
     const progress = useSharedValue<number>(0);
@@ -102,11 +106,12 @@ export default function Settings({navigation}: any) {
                         ref={ref}
                         data={Array.from({ length: data.length }, (_, i) => i)}
                         width={width}
-                        defaultIndex={0}
+                        defaultIndex={lastEdited ? parseInt(lastEdited) : 0}
                         enabled={true}
                         onProgressChange={(offset, absoluteProgress) => {
                             progress.value = offset;
                             setCurrentIndex(Math.round(absoluteProgress));
+                            console.log("\u001b[35m" + lastEdited);
                         }}
                         renderItem={({item}: { item: number }) => (
                             <SettingBlock navigation={navigation} animated={false} style={styles.renderItem} setting={settingsData[item]}/>

@@ -8,6 +8,7 @@
     import ColorEditor from "@/app/ColorEditor";
     import FlashingPatternEditor from "@/app/FlashingPatternEditor";
     import Setting from "@/app/interface/setting-interface";
+    import {ConfigurationProvider} from "@/app/context/ConfigurationContext";
 
     // TypeScript type definition for the navigation stack parameters
     // Currently both screens don't require any parameters
@@ -63,17 +64,20 @@
 
         // Main navigation structure
         return (
-            <Stack.Navigator
-                screenOptions={{
-                    headerShown: false  // Hide the default navigation header
-                }}
-            >
-                {/* Define the navigation screens */}
-                <Stack.Screen name="Welcome" component={Welcome} />
-                <Stack.Screen name="Settings" component={Settings} />
-                <Stack.Screen name="ChooseModification" component={ChooseModificatioon} />
-                <Stack.Screen name="ColorEditor" component={ColorEditor} />
-                <Stack.Screen name="FlashingPatternEditor" component={FlashingPatternEditor} />
-            </Stack.Navigator>
+            <ConfigurationProvider>
+                <Stack.Navigator
+                    screenOptions={{
+                        headerShown: false  // Hide the default navigation header
+                    }}
+                >
+                    {/* Define the navigation screens */}
+                    <Stack.Screen name="Welcome" component={Welcome} />
+                    <Stack.Screen name="Settings" component={Settings} />
+                    <Stack.Screen name="ChooseModification" component={ChooseModificatioon} />
+                    <Stack.Screen name="ColorEditor" component={ColorEditor} />
+                    <Stack.Screen name="FlashingPatternEditor" component={FlashingPatternEditor} />
+                </Stack.Navigator>
+            </ConfigurationProvider>
+
         );
     }

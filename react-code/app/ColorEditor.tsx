@@ -292,14 +292,16 @@ export default function ColorEditor({navigation, route}: any) {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                    colors: colors,
+                        colors: colors,
+                        flashingPattern: setting.flashingPattern,
+                        delayTime: setting.delayTime,
                 })
             }).then(response => response.json())
                 .then(data => console.log("success: ", data))
                 .catch(error => console.error('Error: ', error));
     };
 
-    const unPreviewAPI = () => {
+    const unPreviewAPI = () => { // this is wrong. We need to maintain state of the last setting flashed to the shelf.
         fetch(`http://${IP}/api/config`, {
             method: 'POST',
             headers: {
@@ -307,6 +309,8 @@ export default function ColorEditor({navigation, route}: any) {
             },
             body: JSON.stringify({
                 colors: setting.colors,
+                flashingPattern: setting.flashingPattern,
+                delayTime: setting.delayTime,
             })
         }).then(response => response.json())
             .then(data => console.log("success: ", data))

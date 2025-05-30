@@ -15,6 +15,7 @@ import TraceManyDots from "@/app/components/TraceManyDots";
 import TraceOneDots from "@/app/components/TraceOneDots";
 import {navigate} from "expo-router/build/global-state/routing";
 import {IP} from "@/app/configurations/constants";
+import {useConfiguration} from "@/app/context/ConfigurationContext";
 
 interface SettingItemProps {
     navigation: any
@@ -26,6 +27,8 @@ interface SettingItemProps {
 
 
 const SettingBlock = ({navigation, setting, style, animated}: SettingItemProps) => {
+    const { currentConfiguration, setCurrentConfiguration, lastEdited, setLastEdited } = useConfiguration();
+
     if(!setting){
         return null;
     }
@@ -86,6 +89,7 @@ const SettingBlock = ({navigation, setting, style, animated}: SettingItemProps) 
                     {dotsRendered()}
                     <View style={styles.buttonsContainer}>
                         <TouchableOpacity style={styles.styleAButton} onPress={() => {
+                            setLastEdited(setting.flashingPattern);
                             navigation.navigate("ChooseModification", {setting: setting});
                         }}>
                             <Text style={styles.buttons}>Edit</Text>
@@ -105,7 +109,11 @@ const SettingBlock = ({navigation, setting, style, animated}: SettingItemProps) 
                                 })
                             })
                                 .then(response => response.json())
-                                .then(data => console.log("success: ", data))
+                                .then(data => {
+                                    console.log("success: ", data);
+                                    setCurrentConfiguration(setting);
+                                    console.log("\u001b[34m" + currentConfiguration?.flashingPattern);
+                                })
                                 .catch(error => console.error('Error: ', error));
                         }}>
                             <Text style={styles.buttons}>Flash</Text>

@@ -22,12 +22,12 @@ interface SettingItemProps {
     setting: Setting,
     style: any,
     animated: boolean,
+    index?: number,
 }
 
 
 
-const SettingBlock = ({navigation, setting, style, animated}: SettingItemProps) => {
-    const { currentConfiguration, setCurrentConfiguration, lastEdited, setLastEdited } = useConfiguration();
+const SettingBlock = ({navigation, setting, style, animated, index}: SettingItemProps) => {    const { currentConfiguration, setCurrentConfiguration, lastEdited, setLastEdited } = useConfiguration();
 
     if(!setting){
         return null;
@@ -89,7 +89,7 @@ const SettingBlock = ({navigation, setting, style, animated}: SettingItemProps) 
                     {dotsRendered()}
                     <View style={styles.buttonsContainer}>
                         <TouchableOpacity style={styles.styleAButton} onPress={() => {
-                            setLastEdited(setting.flashingPattern);
+                            setLastEdited(index!.toString());
                             navigation.navigate("ChooseModification", {setting: setting});
                         }}>
                             <Text style={styles.buttons}>Edit</Text>

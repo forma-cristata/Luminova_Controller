@@ -17,6 +17,7 @@ import ColorDots from "@/app/components/ColorDots";
 import Picker from "@/app/components/Picker";
 import {useThrottle} from "expo-dev-launcher/bundle/hooks/useDebounce";
 import {loadData, saveData} from "@/app/settings";
+import {useConfiguration} from "@/app/context/ConfigurationContext";
 
 
 /**
@@ -28,6 +29,8 @@ import {loadData, saveData} from "@/app/settings";
  *          The greater the speed, the shorter the delay time.*/
 
 export default function FlashingPatternEditor({ route, navigation }: any) {
+    const { currentConfiguration, setCurrentConfiguration, lastEdited, setLastEdited } = useConfiguration();
+
     const setting  = route.params?.setting;
 
     const [initialDelayTime] = React.useState(setting.delayTime);
@@ -97,6 +100,8 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 
         const updatedSettings = settings!.map(s => s.name === setting.name ? {...s, delayTime: delayTime, flashingPattern: flashingPattern} : s);
         await saveData(updatedSettings);
+        const currentIndex = updatedSettings.findIndex(s => s.name === setting.name);
+        setLastEdited(currentIndex.toString());
         navigation.navigate("Settings", {setting});
     }
 

@@ -14,8 +14,11 @@ import Animated, {
 } from 'react-native-reanimated';
 import HueSliderBackground from "@/app/components/HueSliderBackground";
 import {IP} from "@/app/configurations/constants";
+import {useConfiguration} from "@/app/context/ConfigurationContext";
 
 export default function ColorEditor({navigation, route}: any) {
+    const { currentConfiguration, setCurrentConfiguration, lastEdited, setLastEdited } = useConfiguration();
+
     const setting = route.params?.setting;
     const [colors, setColors] = useState([...setting.colors]);
     const [selectedDot, setSelectedDot] = useState<number | null>(null);
@@ -176,6 +179,9 @@ export default function ColorEditor({navigation, route}: any) {
 
         const updatedSettings = settings!.map(s => s.name === setting.name ? {...s, colors: [...colors]} : s);
         await saveData(updatedSettings);
+
+        const currentIndex = updatedSettings.findIndex(s => s.name === setting.name);
+        setLastEdited(currentIndex.toString());
         navigation.navigate("Settings", {setting});
     };
 

@@ -97,7 +97,7 @@ const SettingBlock = ({navigation, setting, style, animated}: SettingItemProps) 
                                     'Content-Type': 'application/json',
                                 },
                                 body: JSON.stringify({
-                                    delayTime: setting.delayTime,
+                                    delayTime: parseInt(String(setting.delayTime)),
                                     effectNumber: effectNumber(setting.flashingPattern),
                                     whiteValues: setting.whiteValues,
                                     brightnessValues: setting.brightnessValues,

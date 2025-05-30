@@ -12,6 +12,7 @@ import Animated, {
     useSharedValue,
     runOnJS
 } from 'react-native-reanimated';
+import HueSliderBackground from "@/app/components/HueSliderBackground";
 
 export default function ColorEditor({navigation, route}: any) {
     const setting = route.params?.setting;
@@ -281,6 +282,7 @@ export default function ColorEditor({navigation, route}: any) {
     });
 
 
+
     return (
         <GestureHandlerRootView style={{flex:1}}>
             <PanGestureHandler onGestureEvent={panGestureEvent}>
@@ -327,19 +329,22 @@ export default function ColorEditor({navigation, route}: any) {
                     <View style={[styles.sliderContainer, { opacity: selectedDot !== null ? 1 : 0.5 }]}>
                         <View style={styles.sliderRow}>
                             <Text style={styles.sliderText}>Hue: {Math.round(hue)}°</Text>
+                            <View style={styles.sliderWrapper}>
+                                <HueSliderBackground />
                             <Slider
                                 style={[styles.slider, { opacity: selectedDot !== null ? 1 : 0.5 }]}
                                 minimumValue={0}
                                 maximumValue={360}
                                 value={hue}
+                                disabled={selectedDot === null}
                                 onValueChange={value => {
-                                    try{
-                                        Keyboard.dismiss();
-                                    }
-                                    catch{
-                                        console.log("no keyboard to dismiss");
-                                    }
                                     if (selectedDot !== null) {
+                                        try{
+                                            Keyboard.dismiss();
+                                        }
+                                        catch{
+                                            console.log("no keyboard to dismiss");
+                                        }
                                         setHue(value);
                                         updateColor(value, saturation, brightness); // Here
                                     }
@@ -352,6 +357,7 @@ export default function ColorEditor({navigation, route}: any) {
                                 minimumTrackTintColor="#ff0000"
                                 maximumTrackTintColor="#ffffff"
                             />
+                            </View>
                         </View>
                         <View style={styles.sliderRow}>
                             <Text style={styles.sliderText}>Saturation: {Math.round(saturation)}%</Text>
@@ -359,6 +365,7 @@ export default function ColorEditor({navigation, route}: any) {
                                 style={[styles.slider, { opacity: selectedDot !== null ? 1 : 0.5 }]}
                                 minimumValue={0}
                                 maximumValue={100}
+                                disabled={selectedDot === null}
                                 value={saturation}
                                 onValueChange={value => {
                                     if (selectedDot !== null) {
@@ -381,6 +388,7 @@ export default function ColorEditor({navigation, route}: any) {
                                 style={[styles.slider, { opacity: selectedDot !== null ? 1 : 0.5 }]}
                                 minimumValue={0}
                                 maximumValue={100}
+                                disabled={selectedDot === null}
                                 value={brightness}
                                 onValueChange={value => {
                                     if (selectedDot !== null) {
@@ -568,5 +576,11 @@ const styles = StyleSheet.create({
         fontSize: 18 * scale,
         fontFamily: "Clearlight-lJlq",
         letterSpacing: 2,
-    }
+    },
+    sliderWrapper: {
+      position: 'relative',
+      width: '100%',
+      height: 30 * scale,
+      justifyContent: 'center',
+    },
 });

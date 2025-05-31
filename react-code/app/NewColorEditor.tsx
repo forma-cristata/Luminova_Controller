@@ -434,7 +434,12 @@ export default function ColorEditor({navigation, route}: any) {
                                         nameError ? {color: '#ff0000'} : null
                                     ]}
                                     value={settingName}
-                                    onChangeText={handleNameChange}
+                                    onChangeText={() => {
+                                        if(settingName.length > 18) {
+                                            setSettingName(settingName.slice(0, 18));
+                                        }
+                                        handleNameChange;
+                                    }
                                     placeholder="Enter setting name"
                                     placeholderTextColor="#666"
                                     maxLength={20}
@@ -640,20 +645,17 @@ const styles = StyleSheet.create({
     },
     whiteText: {
         color: "white",
-        fontSize: 50 * scale,
+        fontSize: 30 * scale,
         fontFamily: "Thesignature",
         textAlign: "center",
     },
     backButton: {
-        position: "absolute",
-        top: height * 0.03,
-        left: 0,
+        height: height / 20,
         width: "100%",
-        height: height * 0.05,
     },
     backB: {
         color: "white",
-        fontSize: 20 * scale,
+        fontSize: 30 * scale,
     },
     sliderContainer: {
         width: width * 0.85,
@@ -743,7 +745,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
         width: width * 0.9,
-        marginTop: scale * 60,
         marginBottom: height * 0.03,
         borderStyle: "solid",
         borderBottomWidth: 2,
@@ -823,7 +824,7 @@ const styles = StyleSheet.create({
     },
     nameInput: {
         color: 'white',
-        fontSize: 50 * scale,
+        fontSize: 30 * scale,
         fontFamily: "Thesignature",
         textAlign: 'center',
         minWidth: width * 0.6,

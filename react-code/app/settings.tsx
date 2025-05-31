@@ -249,9 +249,9 @@ export default function Settings({navigation}: any) {
                             item === 'new' ? (
                                 <TouchableOpacity
                                     style={[styles.renderItem, styles.newSettingItem]}
-                                    onPress={createNewSetting}
+                                    onPress={() => {}}
                                 >
-                                    <Text style={styles.newSettingItemText}>+</Text>
+                                    <Text style={styles.newSettingItemText}></Text>
                                 </TouchableOpacity>
                             ) : (
                                 <SettingBlock

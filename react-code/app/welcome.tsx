@@ -1,5 +1,5 @@
 import { useConfiguration } from './context/ConfigurationContext';
-import {Text, StyleSheet, SafeAreaView, Switch, TouchableOpacity} from "react-native";
+import {Text, StyleSheet, SafeAreaView, Switch, TouchableOpacity, View} from "react-native";
 import {SafeAreaProvider} from "react-native-safe-area-context";
 import React, { useState, useEffect} from "react";
 import {IP} from "@/app/configurations/constants";
@@ -10,6 +10,21 @@ export default function Welcome({navigation}: any) {
     const { currentConfiguration, setCurrentConfiguration, lastEdited, setLastEdited } = useConfiguration();
     setLastEdited("0");
 
+    // Animation state for progressive text
+    const [displayText, setDisplayText] = useState("");
+    const fullText = "Hello";
+
+    // Text animation effect
+    useEffect(() => {
+        if (displayText.length < fullText.length) {
+            const timeout = setTimeout(() => {
+                setDisplayText(fullText.substring(0, displayText.length + 1));
+            }, 250); // Adjust timing for each letter
+
+            return () => clearTimeout(timeout);
+        }
+    }, [displayText]);
+
     function createButtonPressed() {
         navigation.navigate("Settings");
     }
@@ -17,7 +32,7 @@ export default function Welcome({navigation}: any) {
     const [isEnabled, setIsEnabled] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
 
-
+    // Rest of your existing code...
     useEffect(() => {
         const fetchInitialStatus = async () => {
             try {
@@ -96,14 +111,10 @@ export default function Welcome({navigation}: any) {
         }
     }
 
-    console.log("\u001b[34m" + currentConfiguration?.flashingPattern);
-
-    // When switch is toggled, send on/off API
-
     return (
         <SafeAreaProvider>
             <SafeAreaView style={styles.container}>
-                <Text style={styles.text}>Hello</Text>
+                <Text style={styles.text}>{displayText}</Text>
                 <TouchableOpacity style={styles.styleAButton} onPress={createButtonPressed}>
                     <Text style={styles.button}>Create     ⟩</Text>
                 </TouchableOpacity>

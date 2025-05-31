@@ -415,7 +415,30 @@ export default function ColorEditor({navigation, route}: any) {
                             keyboardAppearance="dark"
                             keyboardType="default"
                         />
-
+                        <View style={styles.colorButtons}>
+                            <TouchableOpacity
+                                style={[styles.colorButton, { backgroundColor: '#FFFFFF' }]}
+                                disabled={selectedDot === null}
+                                onPress={() => {
+                                    if (selectedDot !== null) {
+                                        handleHexInput('FFFFFF');
+                                    }
+                                }}
+                            >
+                                <Text style={styles.colorButtonText}>W</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={[styles.colorButton, { backgroundColor: '#000000', borderColor: '#FFFFFF', borderWidth: 1 }]}
+                                disabled={selectedDot === null}
+                                onPress={() => {
+                                    if (selectedDot !== null) {
+                                        handleHexInput('000000');
+                                    }
+                                }}
+                            >
+                                <Text style={styles.colorButtonText}>B</Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
 
 
@@ -726,5 +749,22 @@ const styles = StyleSheet.create({
       fontSize: 20 * scale,
       fontWeight: "ultralight",
       textAlign: 'center',
+    },
+    colorButtons: {
+        flexDirection: 'row',
+        marginLeft: 10 * scale,
+    },
+    colorButton: {
+        width: 30 * scale,
+        height: 30 * scale,
+        borderRadius: 15 * scale,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginHorizontal: 5 * scale,
+    },
+    colorButtonText: {
+        color: '#666',
+        fontSize: 14 * scale,
+        fontWeight: 'bold',
     },
 });

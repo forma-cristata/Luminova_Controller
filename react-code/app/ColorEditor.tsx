@@ -419,10 +419,14 @@ export default function ColorEditor({navigation, route}: any) {
                                     nameError ? {color: '#ff0000'} : null
                                 ]}
                                 value={settingName}
-                                onChangeText={handleNameChange}
-                                placeholder="Enter setting name"
+                                onChangeText={() => {
+                                    if(settingName.length > 18) {
+                                        setSettingName(settingName.slice(0, 18));
+                                    }
+                                    handleNameChange;
+                                }}                                placeholder="Enter setting name"
                                 placeholderTextColor="#666"
-                                maxLength={20}
+                                maxLength={18}
                             />
                         </View>
                         <TouchableOpacity

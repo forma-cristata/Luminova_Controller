@@ -15,7 +15,6 @@ import Animated, {
 import HueSliderBackground from "@/app/components/HueSliderBackground";
 import {IP} from "@/app/configurations/constants";
 import {useConfiguration} from "@/app/context/ConfigurationContext";
-import Setting from "@/app/interface/setting-interface";
 import { useRef, useCallback } from "react";
 import { Platform } from "react-native";
 
@@ -34,35 +33,7 @@ export default function ColorEditor({navigation, route}: any) {
     const [saturation, setSaturation] = useState(0);
     const throttledSaturation = useThrottle(saturation);
 
-    const useThrottledSlider = (initialValue: number, updateFunction: (value: number) => void, delay = 100) => {
-        const [value, setValue] = useState(initialValue);
-        const lastUpdate = useRef(0);
-        const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-        const throttledUpdate = useCallback((newValue: number) => {
-            setValue(newValue);
-
-            const now = Date.now();
-
-            if(timeoutRef.current) {
-                clearTimeout((timeoutRef.current));
-            }
-
-            const throttleDelay = Platform.OS = 'android' ? delay : delay/2;
-
-            if (now - lastUpdate.current > throttleDelay) {
-                updateFunction(newValue);
-                lastUpdate.current = now;
-            } else {
-                timeoutRef.current = setTimeout(() => {
-                    updateFunction(newValue);
-                    lastUpdate.current = Date.now();
-                }, throttleDelay);
-            }
-        }, [updateFunction, delay]);
-
-        return [value, throttledUpdate] as const;
-    };
 
     const [hexInput, setHexInput] = useState('');
     const [colorHistory, setColorHistory] = useState<string[][]>([]);
@@ -431,7 +402,6 @@ export default function ColorEditor({navigation, route}: any) {
                                 const j = Math.floor(Math.random() * (i + 1));
                                 [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
                                 setColors(shuffled);
-                                setHasChanges(true);
                             }
                             setColors(shuffled);
                             setColorHistory([...colorHistory, [...colors]]);
@@ -577,7 +547,7 @@ export default function ColorEditor({navigation, route}: any) {
                                 minimumValue={0}
                                 maximumValue={100}
                                 disabled={selectedDot === null}
-                                value={brightness}
+                                value={throttledBrightness}
                                 onValueChange={value => {
                                     if (selectedDot !== null) {
                                         setBrightness(value);

@@ -155,6 +155,7 @@ export default function ColorEditor({navigation, route}: any) {
     };
 
     const handleReset = () => {
+        unPreviewAPI();
         if (hasChanges) {
             setColors([...setting.colors]);
             setColorHistory([]);
@@ -308,7 +309,8 @@ export default function ColorEditor({navigation, route}: any) {
                 .catch(error => console.error('Error: ', error));
     };
 
-    const unPreviewAPI = () => { // this is wrong. We need to maintain state of the last setting flashed to the shelf.
+    const unPreviewAPI = () => {
+        setPreviewMode(false);
         fetch(`http://${IP}/api/config`, {
             method: 'POST',
             headers: {
@@ -469,7 +471,7 @@ export default function ColorEditor({navigation, route}: any) {
                             </TouchableOpacity>
 
                             <TouchableOpacity
-                                style={/*!hasChanges ? styles.styleADisabledButton : */styles.styleAButton}  /*TODO: AND setting is different*/
+                                style={!hasChanges && previewMode ? styles.styleADisabledButton : styles.styleAButton}
                                 key={hasChanges.toString()}
                                 onPress={
                                     () => {
@@ -480,7 +482,7 @@ export default function ColorEditor({navigation, route}: any) {
                                     }
                                 }
                             >
-                                <Text style={styles.button}>Preview</Text>
+                                <Text style={styles.button}>{previewMode ? "Update" : "Preview"}</Text>
                             </TouchableOpacity>
 
 

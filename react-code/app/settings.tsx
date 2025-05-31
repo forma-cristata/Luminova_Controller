@@ -87,8 +87,8 @@ export default function Settings({navigation}: any) {
         <SafeAreaView style={styles.container}>
             {/*Back Button*/}
             <View style={styles.backButton}>
-                <TouchableOpacity onPress={() => navigation.goBack()}>
-                    <Text style={styles.backB}> ⟨ </Text>
+<TouchableOpacity onPress={() => navigation.navigate('Welcome', { animation: 'slideFromLeft' })}>
+    <Text style={styles.backB}> ⟨ </Text>
                 </TouchableOpacity>
             </View>
 

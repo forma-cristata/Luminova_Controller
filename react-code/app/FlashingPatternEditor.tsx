@@ -53,7 +53,7 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
     }
 
     const calculateDelayTime = (bpm: number) : number => {
-        return (60000 / (64 * bpm));
+        return (60000 / (64 * bpm)).toFixed(0) as unknown as number;
     }
 
     const modeDots = () => {

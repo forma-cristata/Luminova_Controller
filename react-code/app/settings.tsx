@@ -88,7 +88,7 @@ export default function Settings({navigation}: any) {
             {/*Back Button*/}
             <View style={styles.backButton}>
 <TouchableOpacity onPress={() => navigation.navigate('Welcome', { animation: 'slideFromLeft' })}>
-    <Text style={styles.backB}> ⟨ </Text>
+    <Text style={styles.backB}> ⪡ </Text>
                 </TouchableOpacity>
             </View>
 

@@ -56,7 +56,7 @@ export default function ChooseModificatioon({navigation, route}: any) {
             {/*Back Button*/}
             <View style={styles.backButton}>
                 <TouchableOpacity onPress={() => navigation.goBack()}>
-                    <Text style={styles.backB}>    ⟨    </Text>
+                    <Text style={styles.backB}>    ⪡    </Text>
                 </TouchableOpacity>
             </View>
             <View style={styles.notBackButton}>

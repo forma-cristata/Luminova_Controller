@@ -154,7 +154,7 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
                     unPreviewAPI();
                     navigation.goBack();
                 }}>
-                    <Text style={styles.backB}>    ⟨    </Text>
+                    <Text style={styles.backB}>    ⪡    </Text>
                 </TouchableOpacity>
             </View>
             <Text style={styles.whiteText}>{setting.name}</Text>

@@ -328,6 +328,25 @@ export default function ColorEditor({navigation, route}: any) {
             .catch(error => console.error('Error: ', error));
     }
 
+    const sortColorsByHue = () => {
+      const colorsWithHSV = colors.map(color => {
+        const rgb = hexToRgb(color);
+        if (rgb) {
+          const hsv = rgbToHsv(rgb.r, rgb.g, rgb.b);
+          return { color, h: hsv.h, s: hsv.s, v: hsv.v };
+        }
+        return { color, h: 0, s: 0, v: 0 };
+      });
+
+      colorsWithHSV.sort((a, b) => a.h - b.h);
+
+      const sortedColors = colorsWithHSV.map(item => item.color);
+
+      setColorHistory([...colorHistory, [...colors]]);
+      setColors(sortedColors);
+      setHasChanges(true);
+    };
+
 
 
     return (
@@ -340,12 +359,35 @@ export default function ColorEditor({navigation, route}: any) {
                             unPreviewAPI();
                             navigation.goBack();
                         }}>
-                            <Text style={styles.backB}>    ⟨    </Text>
+                            <Text style={styles.backB}>    ⪡    </Text>
                         </TouchableOpacity>
                     </View>
-                    <View style={styles.titleContainer} >
-                        <Text style={styles.whiteText}>{setting.name}</Text>
+                    <View style={styles.titleContainer}>
+                      <TouchableOpacity
+                        style={styles.shuffleButton}
+                        onPress={() => {
+                          const shuffled = [...colors];
+                          for (let i = shuffled.length - 1; i > 0; i--) {
+                            const j = Math.floor(Math.random() * (i + 1));
+                            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+                          }
+                          setColors(shuffled);
+                          setColorHistory([...colorHistory, [...colors]]);
+                          setHasChanges(true);
+                        }}
+                      >
+                        <Text style={styles.shuffleIcon}>⟳</Text>
 
+
+                      </TouchableOpacity>
+                      <Text style={styles.whiteText}>{setting.name}</Text>
+
+                        <TouchableOpacity
+                            style={styles.sortButton}
+                            onPress={sortColorsByHue}
+                        >
+                            <Text style={styles.sortIcon}>↹</Text>
+                        </TouchableOpacity>
                     </View>
                     <ColorDotsEditorEdition
                         colors={colors}
@@ -515,12 +557,6 @@ const styles = StyleSheet.create({
         fontSize: 50 * scale,
         fontFamily: "Thesignature",
         textAlign: "center",
-        marginTop: height * 0.05,
-        marginBottom: height * 0.03,
-        borderStyle: "solid",
-        borderBottomWidth: 2,
-        borderColor: "white",
-        width: width * 0.8,
     },
     backButton: {
         position: "absolute",
@@ -630,7 +666,15 @@ const styles = StyleSheet.create({
         fontFamily: "Clearlight-lJlq",
     },
     titleContainer: {
-        flexDirection: "row",
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: width * 0.9,
+        marginTop: height * 0.05,
+        marginBottom: height * 0.03,
+        borderStyle: "solid",
+        borderBottomWidth: 2,
+        borderColor: "white",
     },
     copyButton: {
         marginTop: height * 0.02,
@@ -654,5 +698,31 @@ const styles = StyleSheet.create({
       width: '100%',
       height: 30 * scale,
       justifyContent: 'center',
+    },
+    shuffleButton: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginRight: 20 * scale,
+        width: 60 * scale,
+        height: 60 * scale,
+    },
+    shuffleIcon: {
+        color: 'white',
+        fontSize: 35 * scale,
+        fontWeight: "ultralight",
+        textAlign: 'center',
+    },
+    sortButton: {
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginLeft: 20 * scale,
+      width: 60 * scale,
+      height: 60 * scale,
+    },
+    sortIcon: {
+      color: 'white',
+      fontSize: 20 * scale,
+      fontWeight: "ultralight",
+      textAlign: 'center',
     },
 });

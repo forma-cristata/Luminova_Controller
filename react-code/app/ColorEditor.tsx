@@ -366,14 +366,16 @@ export default function ColorEditor({navigation, route}: any) {
                       <TouchableOpacity
                         style={styles.shuffleButton}
                         onPress={() => {
-                          const shuffled = [...colors];
-                          for (let i = shuffled.length - 1; i > 0; i--) {
-                            const j = Math.floor(Math.random() * (i + 1));
-                            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-                          }
-                          setColors(shuffled);
-                          setColorHistory([...colorHistory, [...colors]]);
-                          setHasChanges(true);
+                            const shuffled = [...colors];
+                            for (let i = shuffled.length - 1; i > 0; i--) {
+                                const j = Math.floor(Math.random() * (i + 1));
+                                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+                                setColors(shuffled);
+                                setHasChanges(true);
+                            }
+                            setColors(shuffled);
+                            setColorHistory([...colorHistory, [...colors]]);
+                            setHasChanges(true);
                         }}
                       >
                         <Text style={styles.shuffleIcon}>⟳</Text>
@@ -400,7 +402,7 @@ export default function ColorEditor({navigation, route}: any) {
                         <Text style={styles.sliderText}>Hex: #</Text>
                         <TextInput
                             style={[styles.hexInput]}
-                            value={hexInput}
+                            value={hexInput.toUpperCase()}
                             onChangeText={(text) => {
                                 const hex = text.slice(0, 6).replace(/[^0-9A-Fa-f]/g, '');
                                 handleHexInput(hex);

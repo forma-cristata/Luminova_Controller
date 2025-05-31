@@ -12,18 +12,38 @@ export default function Welcome({navigation}: any) {
 
     // Animation state for progressive text
     const [displayText, setDisplayText] = useState("");
+    const [textColor, setTextColor] = useState("#ffffff");
     const fullText = "Hello";
 
     // Text animation effect
+    // Text animation effect for typing
     useEffect(() => {
         if (displayText.length < fullText.length) {
-            const timeout = setTimeout(() => {
+            const timeout1 = setTimeout(() => {
                 setDisplayText(fullText.substring(0, displayText.length + 1));
-            }, 250); // Adjust timing for each letter
+            }, 300); // Adjust timing for each letter
 
-            return () => clearTimeout(timeout);
+            return () => {
+                clearTimeout(timeout1);
+            }
         }
-    }, [displayText]);
+    }, [displayText, fullText]);
+
+    // Separate color animation effect that runs continuously
+    useEffect(() => {
+        const animationColors = ['#ff0000', '#000000', '#ff4400', '#000000', '#ff6a00', '#000000', '#ff9100', '#000000', '#ffee00', '#000000', '#00ff1e', '#000000', '#00ff44', '#000000', '#00ff95', '#000000', '#00ffff', '#000000', '#0088ff', '#000000', '#0000ff', '#000000', '#8800ff', '#000000', '#d300ff', '#000000', '#ff00BB', '#000000', '#ff0088', '#000000', '#ff0031', '#000000'];
+        let colorIndex = 0;
+
+        // Use a single interval for color changes
+        const colorInterval = setInterval(() => {
+            setTextColor(animationColors[colorIndex]);
+            colorIndex = (colorIndex + 1) % animationColors.length;
+        }, 5);
+
+        return () => {
+            clearInterval(colorInterval);
+        }
+    }, []); // Empty dependency array means this runs once and continues
 
     function createButtonPressed() {
         navigation.navigate("Settings");
@@ -114,7 +134,7 @@ export default function Welcome({navigation}: any) {
     return (
         <SafeAreaProvider>
             <SafeAreaView style={styles.container}>
-                <Text style={styles.text}>{displayText}</Text>
+                <Text style={[styles.text, {color: textColor}]} key={textColor}>{displayText}</Text>
                 <TouchableOpacity style={styles.styleAButton} onPress={createButtonPressed}>
                     <Text style={styles.button}>Create     ⟩</Text>
                 </TouchableOpacity>
@@ -142,7 +162,6 @@ const styles = StyleSheet.create({
         marginBottom: "20%",
         fontFamily: "Thesignature",
         fontSize: 130,
-        color: "#ffffff",
     },
     button: {
         color: "white",

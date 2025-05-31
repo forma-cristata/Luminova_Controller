@@ -36,44 +36,7 @@ const SettingBlock = ({navigation, setting, style, animated, index}: SettingItem
         return null;
     }
 
-    const handleDelete = async () => {
-        Alert.alert(
-            "Delete Setting",
-            "Are you sure you want to delete this setting?",
-            [
-                {
-                    text: "Cancel",
-                    style: "cancel"
-                },
-                {
-                    text: "Delete",
-                    style: "destructive",
-                    onPress: async () => {
-                        try {
-                            const currentSettings = await loadData();
 
-                            const updatedSettings = currentSettings.filter((_, i) => i !== index);
-
-                            await saveData(updatedSettings);
-
-                            if (lastEdited === index?.toString()) {
-                                setLastEdited("0");
-                            } else if (parseInt(lastEdited!) > index!) {
-                                setLastEdited((parseInt(lastEdited!) - 1).toString());
-                            }
-
-                            navigation.reset({
-                                index: 0,
-                                routes: [{ name: 'Settings' }],
-                            });
-                        } catch (error) {
-                            console.error("Error deleting setting:", error);
-                        }
-                    }
-                }
-            ]
-        );
-    };
 
 
     const dotsRendered = () => {
@@ -121,13 +84,7 @@ const SettingBlock = ({navigation, setting, style, animated, index}: SettingItem
     return (
         <>
             {animated && (
-                <View style={style}>
-                    <TouchableOpacity
-                        style={styles.deleteButton}
-                        onPress={handleDelete}
-                    >
-                        <Ionicons name="trash-outline" size={24} color="white" />
-                    </TouchableOpacity>
+                <View style={[style]}>
                     <View style={styles.headerContainer}>
                         <Text style={styles.whiteText}>{setting.name.toLowerCase()}</Text>
                     </View>
@@ -222,8 +179,9 @@ const styles = StyleSheet.create({
         paddingHorizontal: 40, // Add extra padding to account for the delete button
         position: "relative", // Make sure positioning context is established
     },
+    // Update styles in settingBlock.tsx
     deleteButton: {
-        position: 'absolute',
+        position: "absolute",
         top: 10,
         right: 10,
         zIndex: 1,

@@ -1,4 +1,4 @@
-import {Dimensions, SafeAreaView, Text, StyleSheet, TouchableOpacity, View} from "react-native";
+import {Dimensions, SafeAreaView, Text, StyleSheet, TouchableOpacity, View, Alert} from "react-native";
 import {useSharedValue} from "react-native-reanimated";
 import Carousel, {
     ICarouselInstance,
@@ -9,7 +9,8 @@ import SettingBlock from "@/app/components/settingBlock";
 import * as FileSystem from 'expo-file-system';
 import jsonData from './configurations/modes.json';
 import {useConfiguration} from "@/app/context/ConfigurationContext";
-import {useFocusEffect} from '@react-navigation/native';
+import {Ionicons} from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
 
 let data = jsonData.settings as Setting[];
 console.log("JSON Default Data: ", jsonData);
@@ -94,6 +95,72 @@ export default function Settings({navigation}: any) {
         initializeData();
     }, []);
 
+   const handleDelete = async () => {
+       Alert.alert(
+           "Delete Setting",
+           "Are you sure you want to delete this setting?",
+           [
+               {
+                   text: "Cancel",
+                   style: "cancel"
+               },
+               {
+                   text: "Delete",
+                   style: "destructive",
+                   onPress: async () => {
+                       try {
+                           const currentSettings = await loadData();
+
+                           const updatedSettings = currentSettings.filter((_, i) => i !== currentIndex);
+
+                           await saveData(updatedSettings);
+
+                           if (lastEdited === currentIndex.toString()) {
+                               setLastEdited("0");
+                           } else if (parseInt(lastEdited!) > currentIndex) {
+                               setLastEdited((parseInt(lastEdited!) - 1).toString());
+                           }
+
+                           navigation.reset({
+                               index: 0,
+                               routes: [{name: 'Settings'}],
+                           });
+                       } catch (error) {
+                           console.error("Error deleting setting:", error);
+                       }
+                   }
+               }
+           ]
+       );
+   };
+
+    const getUniqueName = (baseName: string, settings: Setting[]) => {
+        let newName = baseName + " Copy";
+        let counter = 1;
+        const names = settings.map(s => s.name);
+        while (names.includes(newName)) {
+            newName = `${baseName} Copy ${counter++}`;
+        }
+        return newName;
+    };
+
+    const handleDuplicate = () => {
+        if (currentIndex < settingsData.length) {
+            const original = settingsData[currentIndex];
+            const duplicated = {
+                ...original,
+                name: getUniqueName(original.name, settingsData)
+            };
+            navigation.navigate("NewColorEditor", {
+                setting: duplicated,
+                isNew: true,
+                originalName: duplicated.name
+            });
+        }
+    };
+
+
+
 
     return (
         <SafeAreaView style={styles.container}>
@@ -113,23 +180,57 @@ export default function Settings({navigation}: any) {
                 {/*See: https://reactnative.dev/docs/intro-react*/}
                 {/*Carousel Focus Item*/}
 
-                <View style={styles.focusedItem}>
-                    {currentIndex < settingsData.length ? (
-                        <SettingBlock
-                            navigation={navigation}
-                            animated={true}
-                            style={styles.nothing}
-                            setting={settingsData[currentIndex]}
-                            index={currentIndex}
-                        />
-                    ) : (
-                        <TouchableOpacity
-                            style={styles.newSettingButton}
-                            onPress={createNewSetting}
-                        >
-                            <Text style={styles.newSettingText}>+</Text>
-                        </TouchableOpacity>
+                <View style={[styles.focusedItem, {position: "relative"}]}>
+                    {currentIndex < settingsData.length && (
+                        <>
+                            <TouchableOpacity
+                                style={{
+                                    position: "absolute",
+                                    top: 10,
+                                    left: 10,
+                                    zIndex: 1,
+                                }}
+                                onPress={() => {handleDuplicate();}}
+                            >
+                                <MaterialIcons name="content-copy" size={24} color="white" />
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                key={currentIndex}
+                                style={{
+                                    position: "absolute",
+                                    top: 10,
+                                    right: 10,
+                                    zIndex: 1,
+                                    opacity: (currentIndex < 12 ? 0.3 : 1)
+                                }}
+                                onPress={() => {
+                                if(currentIndex >= 12) handleDelete;
+                            }}
+                            >
+                                <Ionicons name="trash-outline" size={24} color="white"/>
+                            </TouchableOpacity>
+                            <SettingBlock
+                                navigation={navigation}
+                                animated={true}
+                                style={styles.nothing}
+                                setting={settingsData[currentIndex]}
+                                index={currentIndex}
+
+                            />
+                        </>
                     )}
+
+                    {currentIndex >= settingsData.length &&
+                       ( <>
+                            <TouchableOpacity
+                                style={styles.newSettingButton}
+                                onPress={createNewSetting}
+                            >
+                                <Text style={styles.newSettingText}>+</Text>
+                            </TouchableOpacity>
+                        </>)
+                    }
+
                 </View>
 
                 {/*Carousel*/}

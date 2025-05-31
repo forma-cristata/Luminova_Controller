@@ -1,4 +1,4 @@
-import {View, Text, StyleSheet, Button, Dimensions, TouchableOpacity} from "react-native";
+import { View, Text, StyleSheet, Button, Dimensions, TouchableOpacity, Alert } from "react-native";
 import Setting from "@/app/interface/setting-interface";
 import ColorDots from "@/app/components/ColorDots";
 import StillEffectDots from "@/app/components/StillEffectDots";
@@ -13,9 +13,11 @@ import TechnoDots from "@/app/components/TechnoDots";
 import TranceDots from "@/app/components/TranceDots";
 import TraceManyDots from "@/app/components/TraceManyDots";
 import TraceOneDots from "@/app/components/TraceOneDots";
-import {navigate} from "expo-router/build/global-state/routing";
-import {IP} from "@/app/configurations/constants";
-import {useConfiguration} from "@/app/context/ConfigurationContext";
+import { navigate } from "expo-router/build/global-state/routing";
+import { IP } from "@/app/configurations/constants";
+import { useConfiguration } from "@/app/context/ConfigurationContext";
+import { Ionicons } from '@expo/vector-icons';
+import { loadData, saveData } from "@/app/settings";
 
 interface SettingItemProps {
     navigation: any
@@ -27,13 +29,51 @@ interface SettingItemProps {
 
 
 
-const SettingBlock = ({navigation, setting, style, animated, index}: SettingItemProps) => {    const { currentConfiguration, setCurrentConfiguration, lastEdited, setLastEdited } = useConfiguration();
+const SettingBlock = ({navigation, setting, style, animated, index}: SettingItemProps) => {
+    const { currentConfiguration, setCurrentConfiguration, lastEdited, setLastEdited } = useConfiguration();
 
     if(!setting){
         return null;
     }
 
+    const handleDelete = async () => {
+        Alert.alert(
+            "Delete Setting",
+            "Are you sure you want to delete this setting?",
+            [
+                {
+                    text: "Cancel",
+                    style: "cancel"
+                },
+                {
+                    text: "Delete",
+                    style: "destructive",
+                    onPress: async () => {
+                        try {
+                            const currentSettings = await loadData();
 
+                            const updatedSettings = currentSettings.filter((_, i) => i !== index);
+
+                            await saveData(updatedSettings);
+
+                            if (lastEdited === index?.toString()) {
+                                setLastEdited("0");
+                            } else if (parseInt(lastEdited!) > index!) {
+                                setLastEdited((parseInt(lastEdited!) - 1).toString());
+                            }
+
+                            navigation.reset({
+                                index: 0,
+                                routes: [{ name: 'Settings' }],
+                            });
+                        } catch (error) {
+                            console.error("Error deleting setting:", error);
+                        }
+                    }
+                }
+            ]
+        );
+    };
 
 
     const dotsRendered = () => {
@@ -80,15 +120,22 @@ const SettingBlock = ({navigation, setting, style, animated, index}: SettingItem
 
     return (
         <>
-            {/*Top Section*/}
-            {animated &&
-            (
+            {animated && (
                 <View style={style}>
-                    <Text style={styles.whiteText}>{setting.name.toLowerCase()}</Text>
+                    <TouchableOpacity
+                        style={styles.deleteButton}
+                        onPress={handleDelete}
+                    >
+                        <Ionicons name="trash-outline" size={24} color="white" />
+                    </TouchableOpacity>
+                    <View style={styles.headerContainer}>
+                        <Text style={styles.whiteText}>{setting.name.toLowerCase()}</Text>
+                    </View>
 
                     {dotsRendered()}
                     <View style={styles.buttonsContainer}>
-                        <TouchableOpacity style={styles.styleAButton} onPress={() => {
+
+                    <TouchableOpacity style={styles.styleAButton} onPress={() => {
                             setLastEdited(index!.toString());
                             navigation.navigate("ChooseModification", {setting: setting});
                         }}>
@@ -119,33 +166,24 @@ const SettingBlock = ({navigation, setting, style, animated, index}: SettingItem
                             <Text style={styles.buttons}>Flash</Text>
                         </TouchableOpacity>
                     </View>
-
                 </View>
             )}
 
-            {/*Carousel Section*/}
-            {!animated &&
-            (
+            {!animated && (
                 <View style={style}>
                     <Text style={styles.whiteTextSmaller}>{setting.name.toLowerCase()}</Text>
-
                     {dotsRendered()}
-
                 </View>
             )}
-
-
         </>
-
-
     );
 }
-
 const styles = StyleSheet.create({
     whiteText: {
         color: "white",
         fontSize: 80,
         fontFamily: "Thesignature",
+        textAlign: "center", // Add this to center the text
     },
     whiteTextSmaller: {
         color: "white",
@@ -158,13 +196,11 @@ const styles = StyleSheet.create({
         marginTop: 40,
         width: "100%",
         paddingHorizontal: 20,
-
     },
     buttons: {
         color: "white",
         fontSize: 40,
         fontFamily: "Clearlight-lJlq",
-
     },
     styleAButton: {
         backgroundColor: "#000000",
@@ -177,15 +213,20 @@ const styles = StyleSheet.create({
         borderStyle: "dashed",
         borderWidth: 2,
         borderColor: "#ffffff",
-    }
+    },
+    headerContainer: {
+        width: "100%",
+        alignItems: "center", // Center children horizontally
+        justifyContent: "center", // Center children vertically
+        paddingHorizontal: 40, // Add extra padding to account for the delete button
+        position: "relative", // Make sure positioning context is established
+    },
+    deleteButton: {
+        position: 'absolute',
+        top: 10,
+        right: 10,
+        zIndex: 1,
+    },
 });
 
 export default SettingBlock;
-
-// Read from the saved settings in the file for the settings page.
-// format as an object that displays the settings in a list
-// Pass those into each settingBlock
-
-// Once a setting is SELECTED, PASS IN ITS VARIABLES TO THE page being shown
-// and allow modification to these values while viewing this page.
-// If they save, save the settings to the file.

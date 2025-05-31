@@ -1,5 +1,5 @@
-import { Dimensions, SafeAreaView, Text, StyleSheet, TouchableOpacity, View} from "react-native";
-import { useSharedValue } from "react-native-reanimated";
+import {Dimensions, SafeAreaView, Text, StyleSheet, TouchableOpacity, View} from "react-native";
+import {useSharedValue} from "react-native-reanimated";
 import Carousel, {
     ICarouselInstance,
 } from "react-native-reanimated-carousel";
@@ -9,11 +9,10 @@ import SettingBlock from "@/app/components/settingBlock";
 import * as FileSystem from 'expo-file-system';
 import jsonData from './configurations/modes.json';
 import {useConfiguration} from "@/app/context/ConfigurationContext";
-import { useFocusEffect } from '@react-navigation/native';
+import {useFocusEffect} from '@react-navigation/native';
 
 let data = jsonData.settings as Setting[];
 console.log("JSON Default Data: ", jsonData);
-
 
 
 const width = Dimensions.get("window").width;
@@ -25,18 +24,16 @@ export const loadData = async () => {
 
     try {
         const fileInfo = await FileSystem.getInfoAsync(FILE_URI);
-        if(fileInfo.exists){
+        if (fileInfo.exists) {
             const fileContent = await FileSystem.readAsStringAsync(FILE_URI);
             console.log("Loaded data from file:", fileContent);
             return JSON.parse(fileContent) as Setting[];
-        }
-        else {
+        } else {
             console.log("No existing file found, using default data.");
             console.log("jsonData: " + JSON.stringify(jsonData));
             return data;
         }
-    }
-    catch (e) {
+    } catch (e) {
         console.error("Error loading data:", e);
         return [];
     }
@@ -47,7 +44,7 @@ export const saveData = async (newSettings: Setting[]) => {
 };
 
 export default function Settings({navigation}: any) {
-    const { currentConfiguration, setCurrentConfiguration, lastEdited, setLastEdited } = useConfiguration();
+    const {currentConfiguration, setCurrentConfiguration, lastEdited, setLastEdited} = useConfiguration();
 
 
     const [settingsData, setSettingsData] = React.useState<Setting[]>([]);
@@ -58,6 +55,22 @@ export default function Settings({navigation}: any) {
     const updateSettings = async (updatedSettings: Setting[]) => {
         setSettingsData(updatedSettings);
         await saveData(updatedSettings);
+    };
+
+    const createNewSetting = () => {
+        const newSetting: Setting = {
+            name: `Setting ${settingsData.length + 1}`,
+            colors: Array(16).fill('#FFFFFF'),
+            whiteValues: Array(16).fill(0),
+            brightnessValues: Array(16).fill(255),
+            flashingPattern: "6",
+            delayTime: 100
+        };
+
+        navigation.navigate("ColorEditor", {
+            setting: newSetting,
+            isNew: true
+        });
     };
 
 
@@ -74,21 +87,19 @@ export default function Settings({navigation}: any) {
             }
 
             setCurrentIndex(lastEdited ? parseInt(lastEdited) : 0);
-            if(!lastEdited) setLastEdited("0");
+            if (!lastEdited) setLastEdited("0");
         };
 
         initializeData();
     }, []);
 
 
-
-
     return (
         <SafeAreaView style={styles.container}>
             {/*Back Button*/}
             <View style={styles.backButton}>
-<TouchableOpacity onPress={() => navigation.navigate('Welcome', { animation: 'slideFromLeft' })}>
-    <Text style={styles.backB}> ⪡ </Text>
+                <TouchableOpacity onPress={() => navigation.navigate('Welcome', {animation: 'slideFromLeft'})}>
+                    <Text style={styles.backB}> ⪡ </Text>
                 </TouchableOpacity>
             </View>
 
@@ -102,31 +113,58 @@ export default function Settings({navigation}: any) {
                 {/*Carousel Focus Item*/}
 
                 <View style={styles.focusedItem}>
-                    <SettingBlock navigation={navigation} animated={true} style={styles.nothing} setting={settingsData[currentIndex % settingsData.length]} index={currentIndex % settingsData.length}/>                    {/*
-                    <Text style={styles.whiteText}>{data[currentIndex % data.length].delayTime} Insert delay shower here</Text>
-*/}
+                    {currentIndex < settingsData.length ? (
+                        <SettingBlock
+                            navigation={navigation}
+                            animated={true}
+                            style={styles.nothing}
+                            setting={settingsData[currentIndex]}
+                            index={currentIndex}
+                        />
+                    ) : (
+                        <TouchableOpacity
+                            style={styles.newSettingButton}
+                            onPress={createNewSetting}
+                        >
+                            <Text style={styles.newSettingText}>+</Text>
+                        </TouchableOpacity>
+                    )}
                 </View>
 
                 {/*Carousel*/}
                 <View style={styles.carCont}>
+                    // In settings.tsx, modify the Carousel data and renderItem
                     <Carousel
                         ref={ref}
-                        data={Array.from({ length: data.length }, (_, i) => i)}
+                        data={[...settingsData, 'new']}  // Simply append 'new' to the end of actual settings
                         width={width}
-                        defaultIndex={lastEdited !== null ? parseInt(lastEdited) : 0}
+                        defaultIndex={lastEdited !== null && parseInt(lastEdited) < settingsData.length ? parseInt(lastEdited) : 0}
                         enabled={true}
                         onProgressChange={(offset, absoluteProgress) => {
                             progress.value = offset;
                             setCurrentIndex(Math.round(absoluteProgress));
-                            console.log("\u001b[35m" + lastEdited);
                         }}
-                        renderItem={({item}: { item: number }) => (
-                            <SettingBlock navigation={navigation} animated={false} style={styles.renderItem} setting={settingsData[item]} index={item}/>
+                        renderItem={({item, index}: { item: Setting | string, index: number }) => (
+                            item === 'new' ? (
+                                <TouchableOpacity
+                                    style={[styles.renderItem, styles.newSettingItem]}
+                                    onPress={createNewSetting}
+                                >
+                                    <Text style={styles.newSettingItemText}>+</Text>
+                                </TouchableOpacity>
+                            ) : (
+                                <SettingBlock
+                                    navigation={navigation}
+                                    animated={false}
+                                    style={styles.renderItem}
+                                    setting={item as Setting}
+                                    index={index}
+                                />
+                            )
                         )}
                         mode="parallax"
                         style={styles.carousel}
                     />
-
                 </View>
             </View>
         </SafeAreaView>
@@ -172,7 +210,7 @@ const styles = StyleSheet.create({
     },
     carousel: {
         flex: 1,
-        height: height * 2 /10,
+        height: height * 2 / 10,
         justifyContent: "center",
         alignItems: "flex-end"
     },
@@ -186,7 +224,7 @@ const styles = StyleSheet.create({
         alignItems: "center"
     },
     title: {
-        height: height * 2/10,
+        height: height * 2 / 10,
         justifyContent: "center",
         alignItems: "center"
     },
@@ -197,5 +235,28 @@ const styles = StyleSheet.create({
     },
     nothing: {
         justifyContent: "center",
-        alignItems: "center"    }
+        alignItems: "center"
+    },
+
+    newSettingButton: {
+        width: '80%',
+        height: '40%',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    newSettingText: {
+        color: 'white',
+        fontSize: 100,
+        fontFamily: 'Clearlight-lJlq',
+    },
+    newSettingItem: {
+        borderColor: "black",
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    newSettingItemText: {
+        color: 'white',
+        fontSize: 20,
+        fontFamily: 'Clearlight-lJlq',
+    }
 });

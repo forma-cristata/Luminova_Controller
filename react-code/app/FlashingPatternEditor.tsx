@@ -101,14 +101,29 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
     const handleSave = async () => {
         setting.delayTime = Math.round(delayTime);
         setting.flashingPattern = flashingPattern;
-        const settings = await loadData();
 
-        const updatedSettings = settings!.map(s => s.name === setting.name ? {...s, delayTime: Math.round(delayTime), flashingPattern: flashingPattern} : s);
-        await saveData(updatedSettings);
-        const currentIndex = updatedSettings.findIndex(s => s.name === setting.name);
-        setLastEdited(currentIndex.toString());
-        navigation.navigate("Settings", {setting});
-    }
+        if (route.params?.isNew) {
+            const settings = await loadData();
+
+            const updatedSettings = [...settings, setting];
+            await saveData(updatedSettings);
+
+            const newIndex = updatedSettings.length - 1;
+            setLastEdited(newIndex.toString());
+
+            navigation.navigate("Settings", {setting});
+        } else {
+            const settings = await loadData();
+            const updatedSettings = settings!.map(s =>
+                s.name === setting.name ?
+                {...s, delayTime: Math.round(delayTime), flashingPattern: flashingPattern} : s
+            );
+            await saveData(updatedSettings);
+            const currentIndex = updatedSettings.findIndex(s => s.name === setting.name);
+            setLastEdited(currentIndex.toString());
+            navigation.navigate("Settings", {setting});
+        }
+    };
 
     const previewAPI = () => {
         fetch(`http://${IP}/api/config`, {

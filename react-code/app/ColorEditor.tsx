@@ -173,17 +173,29 @@ export default function ColorEditor({navigation, route}: any) {
         }
     };
 
+    // Add to ColorEditor.tsx - update the handleSave function
     const handleSave = async () => {
-
         setting.colors = [...colors];
-        const settings = await loadData();
 
-        const updatedSettings = settings!.map(s => s.name === setting.name ? {...s, colors: [...colors]} : s);
-        await saveData(updatedSettings);
+        // Check if this is a new setting being created
+        if (route.params?.isNew) {
+            // Just navigate to FlashingPatternEditor with the same setting and isNew flag
+            navigation.navigate("FlashingPatternEditor", {
+                setting: setting,
+                isNew: true
+            });
+        } else {
+            // Regular flow for existing settings
+            const settings = await loadData();
+            const updatedSettings = settings!.map(s =>
+                s.name === setting.name ? {...s, colors: [...colors]} : s
+            );
+            await saveData(updatedSettings);
 
-        const currentIndex = updatedSettings.findIndex(s => s.name === setting.name);
-        setLastEdited(currentIndex.toString());
-        navigation.navigate("Settings", {setting});
+            const currentIndex = updatedSettings.findIndex(s => s.name === setting.name);
+            setLastEdited(currentIndex.toString());
+            navigation.navigate("Settings", {setting});
+        }
     };
 
     const handleSliderComplete = (h: number, s: number, v: number) => {

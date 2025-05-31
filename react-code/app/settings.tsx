@@ -67,9 +67,10 @@ export default function Settings({navigation}: any) {
             delayTime: 100
         };
 
-        navigation.navigate("ColorEditor", {
+        navigation.navigate("NewColorEditor", {
             setting: newSetting,
-            isNew: true
+            isNew: true,
+            originalName: newSetting.name
         });
     };
 
@@ -133,7 +134,6 @@ export default function Settings({navigation}: any) {
 
                 {/*Carousel*/}
                 <View style={styles.carCont}>
-                    // In settings.tsx, modify the Carousel data and renderItem
                     <Carousel
                         ref={ref}
                         data={[...settingsData, 'new']}  // Simply append 'new' to the end of actual settings

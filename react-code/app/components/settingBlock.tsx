@@ -181,9 +181,10 @@ const SettingBlock = ({navigation, setting, style, animated, index}: SettingItem
 const styles = StyleSheet.create({
     whiteText: {
         color: "white",
-        fontSize: 80,
+        fontSize: 50,
         fontFamily: "Thesignature",
         textAlign: "center", // Add this to center the text
+        flexWrap: "nowrap",
     },
     whiteTextSmaller: {
         color: "white",

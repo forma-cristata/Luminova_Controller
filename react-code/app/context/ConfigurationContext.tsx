@@ -11,8 +11,8 @@ interface ConfigurationContextType {
 const ConfigurationContext = createContext<ConfigurationContextType | undefined>(undefined);
 
 export function ConfigurationProvider({ children }: { children: ReactNode }) {
-    const [currentConfiguration, setCurrentConfiguration] = useState<Setting | null>(null);
-    const [lastEdited, setLastEdited] = useState<string | null>(null);
+    const [currentConfiguration, setCurrentConfiguration] = useState<Setting | null>(null); // Maintains what the shelf should show (NOT PREVIEWS)
+    const [lastEdited, setLastEdited] = useState<string | null>(null); // Maintains the state of the carousel index / last edited setting as string
 
     return (
         <ConfigurationContext.Provider value={{ currentConfiguration, setCurrentConfiguration, lastEdited, setLastEdited }}>

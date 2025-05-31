@@ -15,6 +15,7 @@ import Animated, {
 import HueSliderBackground from "@/app/components/HueSliderBackground";
 import {IP} from "@/app/configurations/constants";
 import {useConfiguration} from "@/app/context/ConfigurationContext";
+import Setting from "@/app/interface/setting-interface";
 
 export default function ColorEditor({navigation, route}: any) {
     const { currentConfiguration, setCurrentConfiguration, lastEdited, setLastEdited } = useConfiguration();
@@ -313,11 +314,7 @@ export default function ColorEditor({navigation, route}: any) {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({
-                colors: setting.colors,
-                flashingPattern: setting.flashingPattern,
-                delayTime: setting.delayTime,
-            })
+            body: JSON.stringify(currentConfiguration as Setting)
         }).then(response => response.json())
             .then(data => console.log("success: ", data))
             .catch(error => console.error('Error: ', error));

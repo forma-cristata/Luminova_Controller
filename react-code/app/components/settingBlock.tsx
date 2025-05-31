@@ -111,8 +111,8 @@ const SettingBlock = ({navigation, setting, style, animated, index}: SettingItem
                                 .then(response => response.json())
                                 .then(data => {
                                     console.log("success: ", data);
-                                    setCurrentConfiguration(setting);
-                                    console.log("\u001b[34m" + currentConfiguration?.flashingPattern);
+                                    setCurrentConfiguration(setting)
+                                    console.log("\"\u001b[39m\"Current Configuration: " + currentConfiguration?.name);
                                 })
                                 .catch(error => console.error('Error: ', error));
                         }}>

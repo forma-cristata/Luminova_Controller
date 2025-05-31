@@ -170,7 +170,6 @@ export default function ColorEditor({navigation, route}: any) {
                     setSaturation(hsv.s);
                 }
             }
-            unPreviewAPI();
         }
     };
 
@@ -301,7 +300,7 @@ export default function ColorEditor({navigation, route}: any) {
                     },
                     body: JSON.stringify({
                         colors: colors,
-                        flashingPattern: setting.flashingPattern,
+                        effectNumber: setting.flashingPattern,
                         delayTime: setting.delayTime,
                 })
             }).then(response => response.json())
@@ -316,7 +315,14 @@ export default function ColorEditor({navigation, route}: any) {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(currentConfiguration as Setting)
+            body: JSON.stringify({
+                delayTime: currentConfiguration?.delayTime,
+                effectNumber: currentConfiguration?.flashingPattern,
+                whiteValues: currentConfiguration?.whiteValues,
+                brightnessValues: currentConfiguration?.brightnessValues,
+                colors: currentConfiguration?.colors,
+
+            })
         }).then(response => response.json())
             .then(data => console.log("success: ", data))
             .catch(error => console.error('Error: ', error));
@@ -482,7 +488,7 @@ export default function ColorEditor({navigation, route}: any) {
                                     }
                                 }
                             >
-                                <Text style={styles.button}>{previewMode ? "Update" : "Preview"}</Text>
+                                <Text style={styles.button}>{previewMode && hasChanges ? "Update" : "Preview"}</Text>
                             </TouchableOpacity>
 
 

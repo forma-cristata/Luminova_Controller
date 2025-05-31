@@ -1,6 +1,6 @@
 import {Dimensions, SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import Slider from "@react-native-community/slider";
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import BlenderDots from "@/app/components/BlenderDots";
 import ChristmasDots from "@/app/components/ChristmasDots";
 import ComfortSongDots from "@/app/components/ComfortSongDots";
@@ -18,6 +18,8 @@ import Picker from "@/app/components/Picker";
 import {useThrottle} from "expo-dev-launcher/bundle/hooks/useDebounce";
 import {loadData, saveData} from "@/app/settings";
 import {useConfiguration} from "@/app/context/ConfigurationContext";
+import {IP} from "@/app/configurations/constants";
+import Setting from "@/app/interface/setting-interface";
 
 
 /**
@@ -43,6 +45,9 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
     const [flashingPattern, setFlashingPattern] = React.useState(setting.flashingPattern);
     const throttledFlashingPattern = useThrottle(flashingPattern);
 
+    const [previewMode, setPreviewMode] = useState(false);
+
+
     useEffect(() => {
         const initialBpm = parseFloat(calculateBPM(setting.delayTime));
         setBPM(isNaN(initialBpm) ? 0 : initialBpm);
@@ -52,8 +57,8 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
         return ((60000 / (64 * delayTime))).toFixed(0);
     }
 
-    const calculateDelayTime = (bpm: number) : number => {
-        return (60000 / (64 * bpm)).toFixed(0) as unknown as number;
+    const calculateDelayTime = (bpm: number): number => {
+        return Math.round(60000 / (64 * bpm));
     }
 
     const modeDots = () => {
@@ -94,21 +99,61 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
     }
 
     const handleSave = async () => {
-        setting.delayTime = delayTime;
+        setting.delayTime = Math.round(delayTime);
         setting.flashingPattern = flashingPattern;
         const settings = await loadData();
 
-        const updatedSettings = settings!.map(s => s.name === setting.name ? {...s, delayTime: delayTime, flashingPattern: flashingPattern} : s);
+        const updatedSettings = settings!.map(s => s.name === setting.name ? {...s, delayTime: Math.round(delayTime), flashingPattern: flashingPattern} : s);
         await saveData(updatedSettings);
         const currentIndex = updatedSettings.findIndex(s => s.name === setting.name);
         setLastEdited(currentIndex.toString());
         navigation.navigate("Settings", {setting});
     }
 
+    const previewAPI = () => {
+        fetch(`http://${IP}/api/config`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                colors: setting.colors,
+                whiteValues: setting.whiteValues,
+                brightnessValues: setting.brightnessValues,
+                effectNumber: flashingPattern,
+                delayTime: delayTime,
+            })
+        }).then(response => response.json())
+            .then(data => console.log("success: ", data))
+            .catch(error => console.error('Error: ', error));
+    };
+
+    const unPreviewAPI = () => {
+        setPreviewMode(false);
+        fetch(`http://${IP}/api/config`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                delayTime: currentConfiguration?.delayTime,
+                effectNumber: currentConfiguration?.flashingPattern,
+                whiteValues: currentConfiguration?.whiteValues,
+                brightnessValues: currentConfiguration?.brightnessValues,
+                colors: currentConfiguration?.colors,
+            })
+        }).then(response => response.json())
+            .then(data => console.log("success: ", data))
+            .catch(error => console.error('Error: ', error));
+    }
+
     return (
         <SafeAreaView  style={styles.container}>
             <View style={styles.backButton}>
-                <TouchableOpacity onPress={() => navigation.goBack()}>
+                <TouchableOpacity onPress={() => {
+                    unPreviewAPI();
+                    navigation.goBack();
+                }}>
                     <Text style={styles.backB}>    ⟨    </Text>
                 </TouchableOpacity>
             </View>
@@ -173,6 +218,7 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
                             setDelayTime(initialDelayTime);
                             setBPM(parseFloat(calculateBPM(initialDelayTime)));
                             setFlashingPattern(initialFlashingPattern);
+                            unPreviewAPI();
                         }}
                         disabled={delayTime === initialDelayTime && flashingPattern === initialFlashingPattern}
                     >
@@ -188,10 +234,18 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
                     </TouchableOpacity>
 
                     <TouchableOpacity
-                        style={styles.styleAButton}
-                        /*onPress={}TODO*/
+                        style={!(delayTime !== initialDelayTime || flashingPattern !== initialFlashingPattern) && previewMode ? styles.styleADisabledButton : styles.styleAButton}
+                        key={(delayTime !== initialDelayTime || flashingPattern !== initialFlashingPattern).toString()}
+                        onPress={
+                            () => {
+                                previewAPI();
+                                // disable the preview button
+
+                                setPreviewMode(true);
+                            }
+                        }
                     >
-                        <Text style={styles.button}>Preview</Text>
+                        <Text style={styles.button}>{previewMode && (delayTime !== initialDelayTime || flashingPattern !== initialFlashingPattern) ? "Update" : "Preview"}</Text>
                     </TouchableOpacity>
 
 
@@ -210,6 +264,18 @@ const styles=StyleSheet.create({
         flex: 1,
         backgroundColor: "#000000",
         alignItems: "center",
+    },
+    styleADisabledButton: {
+        backgroundColor: "#000000",
+        borderRadius: 10,
+        paddingVertical: 8 * scale,
+        paddingHorizontal: 15 * scale,
+        alignItems: "center",
+        borderStyle: "dashed",
+        borderWidth: 2,
+        borderColor: "#ffffff",
+        width: "30%",
+        opacity: 0.5,
     },
     backButton: {
         position: "absolute",

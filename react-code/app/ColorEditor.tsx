@@ -16,6 +16,8 @@ import HueSliderBackground from "@/app/components/HueSliderBackground";
 import {IP} from "@/app/configurations/constants";
 import {useConfiguration} from "@/app/context/ConfigurationContext";
 import Setting from "@/app/interface/setting-interface";
+import { useRef, useCallback } from "react";
+import { Platform } from "react-native";
 
 export default function ColorEditor({navigation, route}: any) {
     const { currentConfiguration, setCurrentConfiguration, lastEdited, setLastEdited } = useConfiguration();
@@ -32,6 +34,36 @@ export default function ColorEditor({navigation, route}: any) {
     const [saturation, setSaturation] = useState(0);
     const throttledSaturation = useThrottle(saturation);
 
+    const useThrottledSlider = (initialValue: number, updateFunction: (value: number) => void, delay = 100) => {
+        const [value, setValue] = useState(initialValue);
+        const lastUpdate = useRef(0);
+        const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+        const throttledUpdate = useCallback((newValue: number) => {
+            setValue(newValue);
+
+            const now = Date.now();
+
+            if(timeoutRef.current) {
+                clearTimeout((timeoutRef.current));
+            }
+
+            const throttleDelay = Platform.OS = 'android' ? delay : delay/2;
+
+            if (now - lastUpdate.current > throttleDelay) {
+                updateFunction(newValue);
+                lastUpdate.current = now;
+            } else {
+                timeoutRef.current = setTimeout(() => {
+                    updateFunction(newValue);
+                    lastUpdate.current = Date.now();
+                }, throttleDelay);
+            }
+        }, [updateFunction, delay]);
+
+        return [value, throttledUpdate] as const;
+    };
+
     const [hexInput, setHexInput] = useState('');
     const [colorHistory, setColorHistory] = useState<string[][]>([]);
     const [hasChanges, setHasChanges] = useState(false);
@@ -40,6 +72,22 @@ export default function ColorEditor({navigation, route}: any) {
     const startX = useSharedValue(0);
 
     const [previewMode, setPreviewMode] = useState(false);
+
+    const [settingName, setSettingName] = useState(setting.name);
+
+    const [nameError, setNameError] = useState<string | null>(null);
+
+    const handleNameChange = async (text: string) => {
+        setSettingName(text);
+        setHasChanges(true);
+
+        const settings = await loadData();
+        const originalName = route.params?.originalName || setting.name;
+        const nameExists = settings?.some(
+            (s: any) => s.name.toLowerCase() === text.toLowerCase() && s.name !== originalName
+        );
+        setNameError(nameExists ? "Name already exists." : null);
+    };
 
 
     const hexToRgb = (hex: string) => {
@@ -394,8 +442,19 @@ export default function ColorEditor({navigation, route}: any) {
 
 
                       </TouchableOpacity>
-                      <Text style={styles.whiteText}>{setting.name}</Text>
-
+                        <View style={styles.nameInputContainer}>
+                            <TextInput
+                                style={[
+                                    styles.nameInput,
+                                    nameError ? {color: '#ff0000'} : null
+                                ]}
+                                value={settingName}
+                                onChangeText={handleNameChange}
+                                placeholder="Enter setting name"
+                                placeholderTextColor="#666"
+                                maxLength={20}
+                            />
+                        </View>
                         <TouchableOpacity
                             style={styles.sortButton}
                             onPress={sortColorsByHue}
@@ -604,11 +663,11 @@ const styles = StyleSheet.create({
     },
     backB: {
         color: "white",
-        fontSize: 30 * scale,
+        fontSize: 20 * scale,
     },
     sliderContainer: {
         width: width * 0.85,
-        marginTop: height * 0.02,
+        marginTop: scale * 20,
         borderStyle: "solid",
         borderWidth: 2,
         borderColor: "#ffffff",
@@ -620,7 +679,7 @@ const styles = StyleSheet.create({
     },
     slider: {
         width: "100%",
-        height: 30 * scale,
+        height: 50 * scale,
     },
     sliderText: {
         color: "white",
@@ -631,7 +690,7 @@ const styles = StyleSheet.create({
     hexContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginTop: height * 0.02,
+        marginTop: scale * 30,
         width: width * 0.85,
         borderStyle: "solid",
         borderWidth: 2,
@@ -653,7 +712,7 @@ const styles = StyleSheet.create({
     },
     buttonContainer: {
         width: width * 0.85,
-        marginTop: height * 0.02,
+        marginTop: scale * 20,
     },
     buttonRow: {
         flexDirection: "row",
@@ -690,24 +749,12 @@ const styles = StyleSheet.create({
         letterSpacing: 2,
 
     },
-    hexApplyButton: {
-        backgroundColor: "#333",
-        paddingVertical: 6 * scale,
-        paddingHorizontal: 10 * scale,
-        borderRadius: 5,
-        marginLeft: 8 * scale,
-    },
-    hexApplyText: {
-        color: "white",
-        fontSize: 16 * scale,
-        fontFamily: "Clearlight-lJlq",
-    },
     titleContainer: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
         width: width * 0.9,
-        marginTop: height * 0.05,
+        marginTop: scale * 60,
         marginBottom: height * 0.03,
         borderStyle: "solid",
         borderBottomWidth: 2,
@@ -733,7 +780,7 @@ const styles = StyleSheet.create({
     sliderWrapper: {
       position: 'relative',
       width: '100%',
-      height: 30 * scale,
+      height: 40 * scale,
       justifyContent: 'center',
     },
     shuffleButton: {
@@ -764,19 +811,32 @@ const styles = StyleSheet.create({
     },
     colorButtons: {
         flexDirection: 'row',
-        marginLeft: 10 * scale,
+        marginLeft: 30 * scale,
     },
     colorButton: {
-        width: 30 * scale,
-        height: 30 * scale,
+        width: 40 * scale,
+        height: 40 * scale,
         borderRadius: 15 * scale,
         justifyContent: 'center',
         alignItems: 'center',
-        marginHorizontal: 5 * scale,
+        marginLeft: 10 * scale,
     },
     colorButtonText: {
         color: '#666',
         fontSize: 14 * scale,
         fontWeight: 'bold',
+    },
+    nameInputContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    nameInput: {
+        color: 'white',
+        fontSize: 50 * scale,
+        fontFamily: "Thesignature",
+        textAlign: 'center',
+        minWidth: width * 0.6,
+        padding: 10,
     },
 });

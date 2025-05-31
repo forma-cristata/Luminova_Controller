@@ -43,11 +43,19 @@ export default function ColorEditor({navigation, route}: any) {
 
     const [settingName, setSettingName] = useState(setting.name);
 
-    const handleNameChange = (text: string) => {
+    const [nameError, setNameError] = useState<string | null>(null);
+
+    const handleNameChange = async (text: string) => {
         setSettingName(text);
         setHasChanges(true);
-    }
 
+        const settings = await loadData();
+        const originalName = route.params?.originalName || setting.name;
+        const nameExists = settings?.some(
+            (s: any) => s.name.toLowerCase() === text.toLowerCase() && s.name !== originalName
+        );
+        setNameError(nameExists ? "Name already exists." : null);
+    };
 
     const hexToRgb = (hex: string) => {
         const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
@@ -190,6 +198,7 @@ export default function ColorEditor({navigation, route}: any) {
             setColors([...setting.colors]);
             setColorHistory([]);
             setHasChanges(false);
+            setSettingName(setting.name); // Reset the name as well
             if (selectedDot !== null) {
                 setHexInput(setting.colors[selectedDot].replace('#', ''));
                 const rgb = hexToRgb(setting.colors[selectedDot]);
@@ -419,9 +428,11 @@ export default function ColorEditor({navigation, route}: any) {
 
                             </TouchableOpacity>
                             <View style={styles.nameInputContainer}>
-                                <Text style={styles.sliderText}>Setting Name:</Text>
                                 <TextInput
-                                    style={styles.nameInput}
+                                    style={[
+                                        styles.nameInput,
+                                        nameError ? {color: '#ff0000'} : null
+                                    ]}
                                     value={settingName}
                                     onChangeText={handleNameChange}
                                     placeholder="Enter setting name"
@@ -518,6 +529,8 @@ export default function ColorEditor({navigation, route}: any) {
                                         }}
                                         minimumTrackTintColor="#ff0000"
                                         maximumTrackTintColor="#ffffff"
+                                        thumbTintColor="#ffffff"
+
                                     />
                                 </View>
                             </View>
@@ -542,6 +555,7 @@ export default function ColorEditor({navigation, route}: any) {
                                     }}
                                     minimumTrackTintColor="#ffffff"
                                     maximumTrackTintColor="#333333"
+                                    thumbTintColor="#ffffff"
                                 />
                             </View>
                             <View style={styles.sliderRow}>
@@ -565,6 +579,8 @@ export default function ColorEditor({navigation, route}: any) {
                                     }}
                                     minimumTrackTintColor="#ffffff"
                                     maximumTrackTintColor="#333333"
+                                    thumbTintColor="#ffffff"
+
                                 />
                             </View>
 
@@ -581,9 +597,9 @@ export default function ColorEditor({navigation, route}: any) {
                                 </TouchableOpacity>
 
                                 <TouchableOpacity
-                                    style={[styles.styleAButton, {opacity: hasChanges ? 1 : 0.5}]}
+                                    style={[styles.styleAButton, {opacity: hasChanges && !nameError ? 1 : 0.5}]}
                                     onPress={handleSave}
-                                    disabled={!hasChanges}
+                                    disabled={!hasChanges || !!nameError}
                                 >
                                     <Text style={styles.button}>Save</Text>
                                 </TouchableOpacity>
@@ -630,18 +646,18 @@ const styles = StyleSheet.create({
     },
     backButton: {
         position: "absolute",
-        top: height * 0.05,
+        top: height * 0.03,
         left: 0,
         width: "100%",
         height: height * 0.05,
     },
     backB: {
         color: "white",
-        fontSize: 30 * scale,
+        fontSize: 20 * scale,
     },
     sliderContainer: {
         width: width * 0.85,
-        marginTop: height * 0.02,
+        marginTop: scale * 20,
         borderStyle: "solid",
         borderWidth: 2,
         borderColor: "#ffffff",
@@ -653,7 +669,7 @@ const styles = StyleSheet.create({
     },
     slider: {
         width: "100%",
-        height: 30 * scale,
+        height: 50 * scale,
     },
     sliderText: {
         color: "white",
@@ -664,7 +680,7 @@ const styles = StyleSheet.create({
     hexContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginTop: height * 0.02,
+        marginTop: scale * 30,
         width: width * 0.85,
         borderStyle: "solid",
         borderWidth: 2,
@@ -686,7 +702,7 @@ const styles = StyleSheet.create({
     },
     buttonContainer: {
         width: width * 0.85,
-        marginTop: height * 0.02,
+        marginTop: scale * 20,
     },
     buttonRow: {
         flexDirection: "row",
@@ -723,24 +739,11 @@ const styles = StyleSheet.create({
         letterSpacing: 2,
 
     },
-    hexApplyButton: {
-        backgroundColor: "#333",
-        paddingVertical: 6 * scale,
-        paddingHorizontal: 10 * scale,
-        borderRadius: 5,
-        marginLeft: 8 * scale,
-    },
-    hexApplyText: {
-        color: "white",
-        fontSize: 16 * scale,
-        fontFamily: "Clearlight-lJlq",
-    },
     titleContainer: {
         flexDirection: 'row',
-        alignItems: 'center',
         justifyContent: 'center',
         width: width * 0.9,
-        marginTop: height * 0.05,
+        marginTop: scale * 60,
         marginBottom: height * 0.03,
         borderStyle: "solid",
         borderBottomWidth: 2,
@@ -766,7 +769,7 @@ const styles = StyleSheet.create({
     sliderWrapper: {
         position: 'relative',
         width: '100%',
-        height: 30 * scale,
+        height: 40 * scale,
         justifyContent: 'center',
     },
     shuffleButton: {
@@ -797,37 +800,33 @@ const styles = StyleSheet.create({
     },
     colorButtons: {
         flexDirection: 'row',
-        marginLeft: 10 * scale,
+        marginLeft: 30 * scale,
     },
     colorButton: {
-        width: 30 * scale,
-        height: 30 * scale,
+        width: 40 * scale,
+        height: 40 * scale,
         borderRadius: 15 * scale,
         justifyContent: 'center',
         alignItems: 'center',
-        marginHorizontal: 5 * scale,
+        marginLeft: 10 * scale,
     },
     colorButtonText: {
         color: '#666',
         fontSize: 14 * scale,
         fontWeight: 'bold',
     },
+
     nameInputContainer: {
-        width: width * 0.85,
-        marginTop: height * 0.02,
-        borderStyle: "solid",
-        borderWidth: 2,
-        borderColor: "#ffffff",
-        padding: 15 * scale,
-        borderRadius: 10,
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     nameInput: {
         color: 'white',
-        fontSize: 22 * scale,
-        fontFamily: "Clearlight-lJlq",
-        borderBottomWidth: 1,
-        borderBottomColor: 'white',
-        paddingVertical: 8,
-        width: '100%',
+        fontSize: 50 * scale,
+        fontFamily: "Thesignature",
+        textAlign: 'center',
+        minWidth: width * 0.6,
+        padding: 10,
     },
 });

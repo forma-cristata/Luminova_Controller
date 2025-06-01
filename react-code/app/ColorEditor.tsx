@@ -42,6 +42,7 @@ export default function ColorEditor({navigation, route}: any) {
     const [previewMode, setPreviewMode] = useState(false);
 
 
+
     const hexToRgb = (hex: string) => {
         const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
         return result ? {
@@ -464,7 +465,7 @@ export default function ColorEditor({navigation, route}: any) {
                                 style={[styles.slider, { opacity: selectedDot !== null ? 1 : 0.5 }]}
                                 minimumValue={0}
                                 maximumValue={360}
-                                value={hue}
+                                value={throttledHue}
                                 disabled={selectedDot === null}
                                 onValueChange={value => {
                                     if (selectedDot !== null) {
@@ -485,6 +486,8 @@ export default function ColorEditor({navigation, route}: any) {
                                 }}
                                 minimumTrackTintColor="#ff0000"
                                 maximumTrackTintColor="#ffffff"
+                                thumbTintColor="#ffffff"
+
                             />
                             </View>
                         </View>
@@ -495,7 +498,7 @@ export default function ColorEditor({navigation, route}: any) {
                                 minimumValue={0}
                                 maximumValue={100}
                                 disabled={selectedDot === null}
-                                value={saturation}
+                                value={throttledSaturation}
                                 onValueChange={value => {
                                     if (selectedDot !== null) {
                                         setSaturation(value);
@@ -509,6 +512,8 @@ export default function ColorEditor({navigation, route}: any) {
                                 }}
                                 minimumTrackTintColor="#ffffff"
                                 maximumTrackTintColor="#333333"
+                                thumbTintColor="#ffffff"
+
                             />
                         </View>
                         <View style={styles.sliderRow}>
@@ -518,7 +523,7 @@ export default function ColorEditor({navigation, route}: any) {
                                 minimumValue={0}
                                 maximumValue={100}
                                 disabled={selectedDot === null}
-                                value={brightness}
+                                value={throttledBrightness}
                                 onValueChange={value => {
                                     if (selectedDot !== null) {
                                         setBrightness(value);
@@ -532,6 +537,8 @@ export default function ColorEditor({navigation, route}: any) {
                                 }}
                                 minimumTrackTintColor="#ffffff"
                                 maximumTrackTintColor="#333333"
+                                thumbTintColor="#ffffff"
+
                             />
                         </View>
 
@@ -591,16 +598,13 @@ const styles = StyleSheet.create({
     },
     whiteText: {
         color: "white",
-        fontSize: 50 * scale,
+        fontSize: 30 * scale,
         fontFamily: "Thesignature",
         textAlign: "center",
     },
     backButton: {
-        position: "absolute",
-        top: height * 0.05,
-        left: 0,
+        height: height / 20,
         width: "100%",
-        height: height * 0.05,
     },
     backB: {
         color: "white",
@@ -608,7 +612,7 @@ const styles = StyleSheet.create({
     },
     sliderContainer: {
         width: width * 0.85,
-        marginTop: height * 0.02,
+        marginTop: scale * 20,
         borderStyle: "solid",
         borderWidth: 2,
         borderColor: "#ffffff",
@@ -620,7 +624,7 @@ const styles = StyleSheet.create({
     },
     slider: {
         width: "100%",
-        height: 30 * scale,
+        height: 50 * scale,
     },
     sliderText: {
         color: "white",
@@ -631,7 +635,7 @@ const styles = StyleSheet.create({
     hexContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginTop: height * 0.02,
+        marginTop: scale * 30,
         width: width * 0.85,
         borderStyle: "solid",
         borderWidth: 2,
@@ -653,7 +657,7 @@ const styles = StyleSheet.create({
     },
     buttonContainer: {
         width: width * 0.85,
-        marginTop: height * 0.02,
+        marginTop: scale * 20,
     },
     buttonRow: {
         flexDirection: "row",
@@ -690,24 +694,11 @@ const styles = StyleSheet.create({
         letterSpacing: 2,
 
     },
-    hexApplyButton: {
-        backgroundColor: "#333",
-        paddingVertical: 6 * scale,
-        paddingHorizontal: 10 * scale,
-        borderRadius: 5,
-        marginLeft: 8 * scale,
-    },
-    hexApplyText: {
-        color: "white",
-        fontSize: 16 * scale,
-        fontFamily: "Clearlight-lJlq",
-    },
     titleContainer: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
         width: width * 0.9,
-        marginTop: height * 0.05,
         marginBottom: height * 0.03,
         borderStyle: "solid",
         borderBottomWidth: 2,
@@ -731,10 +722,10 @@ const styles = StyleSheet.create({
         letterSpacing: 2,
     },
     sliderWrapper: {
-      position: 'relative',
-      width: '100%',
-      height: 30 * scale,
-      justifyContent: 'center',
+        position: 'relative',
+        width: '100%',
+        height: 40 * scale,
+        justifyContent: 'center',
     },
     shuffleButton: {
         justifyContent: 'center',
@@ -750,33 +741,46 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
     sortButton: {
-      justifyContent: 'center',
-      alignItems: 'center',
-      marginLeft: 20 * scale,
-      width: 60 * scale,
-      height: 60 * scale,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginLeft: 20 * scale,
+        width: 60 * scale,
+        height: 60 * scale,
     },
     sortIcon: {
-      color: 'white',
-      fontSize: 20 * scale,
-      fontWeight: "ultralight",
-      textAlign: 'center',
+        color: 'white',
+        fontSize: 20 * scale,
+        fontWeight: "ultralight",
+        textAlign: 'center',
     },
     colorButtons: {
         flexDirection: 'row',
-        marginLeft: 10 * scale,
+        marginLeft: 30 * scale,
     },
     colorButton: {
-        width: 30 * scale,
-        height: 30 * scale,
+        width: 40 * scale,
+        height: 40 * scale,
         borderRadius: 15 * scale,
         justifyContent: 'center',
         alignItems: 'center',
-        marginHorizontal: 5 * scale,
+        marginLeft: 10 * scale,
     },
     colorButtonText: {
         color: '#666',
         fontSize: 14 * scale,
         fontWeight: 'bold',
+    },
+    nameInputContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    nameInput: {
+        color: 'white',
+        fontSize: 30 * scale,
+        fontFamily: "Thesignature",
+        textAlign: 'center',
+        minWidth: width * 0.6,
+        padding: 10,
     },
 });

@@ -1,7 +1,7 @@
 {
   "settings": [
     {
-      "name": "Still",
+      "name": "Homeostasis",
       "colors": [
         "#ff0000", "#ff4400", "#ff6a00", "#ff9100", "#ffee00",
         "#00ff1e", "#00ff44", "#00ff95", "#00ffff", "#0088ff",
@@ -13,11 +13,12 @@
       "delayTime": 3
     },
     {
-      "name": "Medusa",
+      "name": "Queen of Hearts",
       "colors": [
-        "#FF3366", "#FF6B3D", "#FF9F33", "#FFD433", "#B4DE2C",
-        "#44D492", "#2CC4DE", "#3399FF", "#5B7CFF", "#8A5CFF",
-        "#B94DFF", "#E633FF", "#FF339F", "#FF3366", "#FF4D4D", "#FF3366"
+        "#3399FF", "#2CC4DE", "#44D492", "#B4DE2C",
+        "#FFD433", "#FF9F33", "#FF6B3D","#FF3366",
+        "#5B7CFF", "#8A5CFF", "#B94DFF", "#E633FF",
+        "#FF339F", "#FF3366", "#FF4D4D", "#FF3366"
       ],
       "whiteValues": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       "brightnessValues": [255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255],
@@ -25,7 +26,7 @@
       "delayTime": 3
     },
     {
-      "name": "Lapis Lazuli",
+      "name": "Amethyst",
       "colors": [
         "#A10000", "#CD3400", "#AC132A", "#131534",
         "#470023", "#D72300", "#CD260F", "#BE2852",
@@ -38,7 +39,7 @@
       "delayTime": 3
     },
     {
-      "name": "Cortez",
+      "name": "Incindium",
       "colors": [
         "#FF0000",
         "#FF5501",
@@ -63,7 +64,7 @@
       "delayTime": 3
     },
     {
-      "name": "The Underground",
+      "name": "Toter Schmetterling",
       "colors": [
         "#FF5F6D",
         "#FF817E",
@@ -88,7 +89,7 @@
       "delayTime": 3
     },
     {
-      "name": "The Piano Man",
+      "name": "Velvet Static",
       "colors": [
         "#FF003C",
         "#00FF3C",
@@ -113,7 +114,7 @@
       "delayTime": 3
     },
     {
-      "name": "Stuck in a Blender",
+      "name": "Waltzer",
       "colors": [
         "#FF00FF",
         "#000000",
@@ -138,7 +139,7 @@
       "delayTime": 3
     },
     {
-      "name": "Berghain Bitte",
+      "name": "Black Lotus",
       "colors": [
         "#00BFFF",
         "#FF8C00",
@@ -163,7 +164,7 @@
       "delayTime": 2
     },
     {
-      "name": "State of Trance",
+      "name": "Who I'm Not",
       "colors": ["#00FF00", "#00C800", "#006400", "#009600", "#003200", "#00FF00", "#00B400", "#00E600", "#005A00", "#003200", "#00B400", "#00D200", "#000000", "#007800", "#006400", "#00FF00"],
       "whiteValues": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       "brightnessValues": [255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255],
@@ -171,7 +172,7 @@
       "delayTime": 3
     },
     {
-      "name": "Decay",
+      "name": "Strobelegy",
       "colors": [
         "#FF4C00",
         "#6F00FF",
@@ -196,7 +197,7 @@
       "delayTime": 3
     },
     {
-      "name": "Feel the Funk",
+      "name": "Dissonant Pulse",
       "colors": [
         "#2E8B57",
         "#1B4D3E",
@@ -221,24 +222,24 @@
       "delayTime": 3
     },
     {
-      "name": "Smolder",
+      "name": "Ashes to Ashes",
       "colors": [
-        "#FF1493", 
-        "#FF69B4", 
-        "#DA70D6", 
-        "#BA55D3", 
-        "#9932CC", 
-        "#8B008B", 
-        "#800080", 
-        "#9400D3", 
-        "#FF1493", 
-        "#FF69B4", 
-        "#DA70D6", 
-        "#BA55D3", 
-        "#9932CC", 
-        "#8B008B", 
-        "#800080", 
-        "#9400D3"  
+        "#FF1493",
+        "#FF69B4",
+        "#DA70D6",
+        "#BA55D3",
+        "#9932CC",
+        "#8B008B",
+        "#800080",
+        "#9400D3",
+        "#FF1493",
+        "#FF69B4",
+        "#DA70D6",
+        "#BA55D3",
+        "#9932CC",
+        "#8B008B",
+        "#800080",
+        "#9400D3"
       ],
       "whiteValues": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       "brightnessValues": [255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255],

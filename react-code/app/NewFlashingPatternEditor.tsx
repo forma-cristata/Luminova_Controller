@@ -220,6 +220,8 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
                         }}
                         minimumTrackTintColor="#ff0000"
                         maximumTrackTintColor="#ffffff"
+                        thumbTintColor="#ffffff"
+
                     />
                 </View>
 
@@ -293,15 +295,13 @@ const styles=StyleSheet.create({
         opacity: 0.5,
     },
     backButton: {
-        position: "absolute",
-        top: 50,
-        left: 0,
+        height: height / 12,
         width: "100%",
-        height: Dimensions.get('window').height * 0.05,
+        marginBottom: scale*10,
     },
     backB: {
         color: "white",
-        fontSize: 30,
+        fontSize: 30 * scale,
     },
     whiteText: {
         color: "white",

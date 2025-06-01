@@ -213,22 +213,29 @@ export default function ColorEditor({navigation, route}: any) {
     };
 
     const handleSave = async () => {
-        setting.name = settingName;
         setting.colors = [...colors];
+        setting.name = settingName;
 
+        // Check if this is a new setting being created
         if (route.params?.isNew) {
-            navigation.navigate("NewFlashingPatternEditor", {
+            // Make sure the setting has an ID
+            if (!setting.id) {
+                setting.id = Date.now().toString();
+            }
+
+            navigation.navigate("FlashingPatternEditor", {
                 setting: setting,
                 isNew: true
             });
         } else {
             const settings = await loadData();
             const updatedSettings = settings!.map(s =>
-                s.name === route.params.originalName ? {...s, name: settingName, colors: [...colors]} : s
+                s.id === setting.id ? {...s, name: settingName, colors: [...colors]} : s
             );
             await saveData(updatedSettings);
 
-            const currentIndex = updatedSettings.findIndex(s => s.name === settingName);
+            // Find current index by ID instead of name
+            const currentIndex = updatedSettings.findIndex(s => s.id === setting.id);
             setLastEdited(currentIndex.toString());
             navigation.navigate("Settings", {setting});
         }
@@ -434,11 +441,11 @@ export default function ColorEditor({navigation, route}: any) {
                                         nameError ? {color: '#ff0000'} : null
                                     ]}
                                     value={settingName}
-                                    onChangeText={() => {
-                                        if(settingName.length > 18) {
-                                            setSettingName(settingName.slice(0, 18));
+                                    onChangeText={(text) => {
+                                        if(text.length > 18) {
+                                            text = text.slice(0, 18);
                                         }
-                                        handleNameChange;
+                                        handleNameChange(text);
                                     }}
                                     placeholder="Enter setting name"
                                     placeholderTextColor="#666"

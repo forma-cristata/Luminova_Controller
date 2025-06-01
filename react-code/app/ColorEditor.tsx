@@ -195,23 +195,28 @@ export default function ColorEditor({navigation, route}: any) {
     // Add to ColorEditor.tsx - update the handleSave function
     const handleSave = async () => {
         setting.colors = [...colors];
+        setting.name = settingName;
 
         // Check if this is a new setting being created
         if (route.params?.isNew) {
-            // Just navigate to FlashingPatternEditor with the same setting and isNew flag
+            // Make sure the setting has an ID
+            if (!setting.id) {
+                setting.id = Date.now().toString();
+            }
+
             navigation.navigate("FlashingPatternEditor", {
                 setting: setting,
                 isNew: true
             });
         } else {
-            // Regular flow for existing settings
             const settings = await loadData();
             const updatedSettings = settings!.map(s =>
-                s.name === setting.name ? {...s, colors: [...colors]} : s
+                s.id === setting.id ? {...s, name: settingName, colors: [...colors]} : s
             );
             await saveData(updatedSettings);
 
-            const currentIndex = updatedSettings.findIndex(s => s.name === setting.name);
+            // Find current index by ID instead of name
+            const currentIndex = updatedSettings.findIndex(s => s.id === setting.id);
             setLastEdited(currentIndex.toString());
             navigation.navigate("Settings", {setting});
         }
@@ -419,12 +424,13 @@ export default function ColorEditor({navigation, route}: any) {
                                     nameError ? {color: '#ff0000'} : null
                                 ]}
                                 value={settingName}
-                                onChangeText={() => {
-                                    if(settingName.length > 18) {
-                                        setSettingName(settingName.slice(0, 18));
+                                onChangeText={(text) => {
+                                    if(text.length > 18) {
+                                        text = text.slice(0, 18);
                                     }
-                                    handleNameChange;
-                                }}                                placeholder="Enter setting name"
+                                    handleNameChange(text);
+                                }}
+                                placeholder="Enter setting name"
                                 placeholderTextColor="#666"
                                 maxLength={18}
                             />

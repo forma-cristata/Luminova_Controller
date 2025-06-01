@@ -58,22 +58,23 @@ export default function Settings({navigation}: any) {
         await saveData(updatedSettings);
     };
 
-    const createNewSetting = () => {
-        const newSetting: Setting = {
-            name: `Setting ${settingsData.length + 1}`,
-            colors: Array(16).fill('#FFFFFF'),
-            whiteValues: Array(16).fill(0),
-            brightnessValues: Array(16).fill(255),
-            flashingPattern: "6",
-            delayTime: 100
-        };
+   const createNewSetting = () => {
+       const newSetting: Setting = {
+           id: Date.now().toString(), // Generate unique ID
+           name: `Setting ${settingsData.length + 1}`,
+           colors: Array(16).fill('#FFFFFF'),
+           whiteValues: Array(16).fill(0),
+           brightnessValues: Array(16).fill(255),
+           flashingPattern: "6",
+           delayTime: 100
+       };
 
-        navigation.navigate("NewColorEditor", {
-            setting: newSetting,
-            isNew: true,
-            originalName: newSetting.name
-        });
-    };
+       navigation.navigate("NewColorEditor", {
+           setting: newSetting,
+           isNew: true,
+           originalName: newSetting.name
+       });
+   };
 
 
     React.useEffect(() => {
@@ -149,6 +150,7 @@ export default function Settings({navigation}: any) {
             const original = settingsData[currentIndex];
             const duplicated = {
                 ...original,
+                id: Date.now().toString(), // Generate new ID for the duplicate
                 name: getUniqueName(original.name, settingsData)
             };
             navigation.navigate("NewColorEditor", {

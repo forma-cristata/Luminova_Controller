@@ -21,8 +21,25 @@ const height = Dimensions.get("window").height;
 
 const FILE_URI = FileSystem.documentDirectory + 'settings.json';
 
-export const loadData = async () => {
+const deleteSettingsFile = async () => {
+    try {
+        const fileInfo = await FileSystem.getInfoAsync(FILE_URI);
+        if (fileInfo.exists) {
+            await FileSystem.deleteAsync(FILE_URI);
+            console.log("Settings file deleted successfully");
+            Alert.alert("Success", "Settings file has been deleted. The app will now use default settings.");
+            // Reset state to default settings
+        } else {
+            Alert.alert("Info", "No settings file found to delete.");
+        }
+    } catch (error) {
+        console.error("Error deleting settings file:", error);
+        Alert.alert("Error", "Failed to delete settings file.");
+    }
+};
 
+export const loadData = async () => {
+    //await deleteSettingsFile();
     try {
         const fileInfo = await FileSystem.getInfoAsync(FILE_URI);
         if (fileInfo.exists) {
@@ -39,6 +56,8 @@ export const loadData = async () => {
         return [];
     }
 };
+
+
 
 export const saveData = async (newSettings: Setting[]) => {
     await FileSystem.writeAsStringAsync(FILE_URI, JSON.stringify(newSettings));
@@ -58,22 +77,22 @@ export default function Settings({navigation}: any) {
         await saveData(updatedSettings);
     };
 
-    const createNewSetting = () => {
-        const newSetting: Setting = {
-            name: `Setting ${settingsData.length + 1}`,
-            colors: Array(16).fill('#FFFFFF'),
-            whiteValues: Array(16).fill(0),
-            brightnessValues: Array(16).fill(255),
-            flashingPattern: "6",
-            delayTime: 100
-        };
+   const createNewSetting = () => {
+       const newSetting: Setting = {
+           name: `Setting ${settingsData.length + 1}`,
+           colors: Array(16).fill('#FFFFFF'),
+           whiteValues: Array(16).fill(0),
+           brightnessValues: Array(16).fill(255),
+           flashingPattern: "6",
+           delayTime: 100
+       };
 
-        navigation.navigate("NewColorEditor", {
-            setting: newSetting,
-            isNew: true,
-            originalName: newSetting.name
-        });
-    };
+       navigation.navigate("NewColorEditor", {
+           setting: newSetting,
+           isNew: true,
+           originalName: newSetting.name
+       });
+   };
 
 
     React.useEffect(() => {
@@ -81,15 +100,22 @@ export default function Settings({navigation}: any) {
             try {
                 const loadedData = await loadData();
                 if (loadedData && loadedData.length > 0) {
-                    setSettingsData(loadedData);
+                    const deepCopy = JSON.parse(JSON.stringify(loadedData));
+                    setSettingsData(deepCopy);
                     data = loadedData;
+
+                    const lastEditedIndex = lastEdited ? parseInt(lastEdited) : 0;
+                    setCurrentIndex(lastEditedIndex);
+                    if (!lastEdited) setLastEdited("0");
+
+                    if (ref.current) {
+                        ref.current.scrollTo({ index: lastEditedIndex, animated: false });
+                    }
                 }
             } catch (error) {
                 console.error("Error initializing data:", error);
             }
 
-            setCurrentIndex(lastEdited ? parseInt(lastEdited) : 0);
-            if (!lastEdited) setLastEdited("0");
         };
 
         initializeData();
@@ -239,7 +265,7 @@ export default function Settings({navigation}: any) {
                         ref={ref}
                         data={[...settingsData, 'new']}  // Simply append 'new' to the end of actual settings
                         width={width}
-                        defaultIndex={lastEdited !== null && parseInt(lastEdited) < settingsData.length ? parseInt(lastEdited) : 0}
+                        defaultIndex={currentIndex}
                         enabled={true}
                         onProgressChange={(offset, absoluteProgress) => {
                             progress.value = offset;

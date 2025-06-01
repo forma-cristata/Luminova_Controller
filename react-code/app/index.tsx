@@ -11,6 +11,7 @@
     import {ConfigurationProvider} from "@/app/context/ConfigurationContext";
     import NewColorEditor from "@/app/NewColorEditor";
     import NewFlashingPatternEditor from "@/app/NewFlashingPatternEditor";
+    import {GestureHandlerRootView} from "react-native-gesture-handler";
 
     export type RootStackParamList = {
         Welcome: undefined;
@@ -44,6 +45,7 @@
 
         return (
             <ConfigurationProvider>
+                <GestureHandlerRootView>
                 <Stack.Navigator
                     screenOptions={{
                         headerShown: false
@@ -58,6 +60,7 @@
                     <Stack.Screen name="NewColorEditor" component={NewColorEditor} />
                     <Stack.Screen name="NewFlashingPatternEditor" component={NewFlashingPatternEditor} />
                 </Stack.Navigator>
+                </GestureHandlerRootView>
             </ConfigurationProvider>
 
         );

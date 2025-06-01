@@ -103,13 +103,19 @@ export default function Settings({navigation}: any) {
                     const deepCopy = JSON.parse(JSON.stringify(loadedData));
                     setSettingsData(deepCopy);
                     data = loadedData;
+
+                    const lastEditedIndex = lastEdited ? parseInt(lastEdited) : 0;
+                    setCurrentIndex(lastEditedIndex);
+                    if (!lastEdited) setLastEdited("0");
+
+                    if (ref.current) {
+                        ref.current.scrollTo({ index: lastEditedIndex, animated: false });
+                    }
                 }
             } catch (error) {
                 console.error("Error initializing data:", error);
             }
 
-            setCurrentIndex(lastEdited ? parseInt(lastEdited) : 0);
-            if (!lastEdited) setLastEdited("0");
         };
 
         initializeData();
@@ -259,7 +265,7 @@ export default function Settings({navigation}: any) {
                         ref={ref}
                         data={[...settingsData, 'new']}  // Simply append 'new' to the end of actual settings
                         width={width}
-                        defaultIndex={lastEdited !== null && parseInt(lastEdited) < settingsData.length ? parseInt(lastEdited) : 0}
+                        defaultIndex={currentIndex}
                         enabled={true}
                         onProgressChange={(offset, absoluteProgress) => {
                             progress.value = offset;

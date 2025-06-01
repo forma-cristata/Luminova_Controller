@@ -246,7 +246,7 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
                         onPress={
                             () => {
                                 previewAPI();
-                                // disable the preview button
+
 
                                 setPreviewMode(true);
                             }
@@ -263,7 +263,7 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 }
 
 const { width, height } = Dimensions.get('window');
-const scale = Math.min(width, height) / 375; // Base scale factor
+const scale = Math.min(width, height) / 375;
 
 
 const styles=StyleSheet.create({

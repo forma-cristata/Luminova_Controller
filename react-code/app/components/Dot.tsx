@@ -1,4 +1,3 @@
-// app/components/Dot.tsx
 import React from "react";
 import {SafeAreaView} from "react-native";
 

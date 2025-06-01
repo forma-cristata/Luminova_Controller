@@ -28,7 +28,6 @@ const deleteSettingsFile = async () => {
             await FileSystem.deleteAsync(FILE_URI);
             console.log("Settings file deleted successfully");
             Alert.alert("Success", "Settings file has been deleted. The app will now use default settings.");
-            // Reset state to default settings
         } else {
             Alert.alert("Info", "No settings file found to delete.");
         }
@@ -125,17 +124,12 @@ export default function Settings({navigation}: any) {
 
     React.useEffect(() => {
         if (ref.current && currentIndex === 0) {
-            // This prevents the carousel from scrolling to the end when at index 0
             ref.current.scrollTo({ index: 0, animated: false });
         }
     }, [currentIndex]);
 
     const handleProgressChange = (offset: number, absoluteProgress: number) => {
-        // Prevent scrolling left of the first item
         if (absoluteProgress === 0 && offset < 0) {
-            /*if (ref.current) {
-                ref.current.scrollTo({ index: 0, animated: true }); // This isyour bug when negative it breaks.
-            }*/
             return;
         }
 
@@ -175,7 +169,7 @@ export default function Settings({navigation}: any) {
                                routes: [{name: 'Settings'}],
                            });
                            setTimeout(() => {
-                               setLastEdited('0'); // Perform state updates after navigation completes
+                               setLastEdited('0');
                            }, 0);
 
                        } catch (error) {
@@ -221,11 +215,11 @@ export default function Settings({navigation}: any) {
             {/*Back Button*/}
             <View style={styles.backButton}>
                 <TouchableOpacity onPress={() => {
-                    setLastEdited('0'); // Update the state first
+                    setLastEdited('0');
 
                     navigation.navigate('Welcome', {animation: 'slideFromLeft'});
                     setTimeout(() => {
-                        setLastEdited('0'); // Perform state updates after navigation completes
+                        setLastEdited('0');
                     }, 0);
                 }}>
                     <Text style={styles.backB}> ⪡ </Text>
@@ -238,9 +232,7 @@ export default function Settings({navigation}: any) {
                     <Text style={styles.text}>Settings</Text>
                 </View>
 
-                {/*See: https://reactnative.dev/docs/intro-react*/}
                 {/*Carousel Focus Item*/}
-
                 <View style={[styles.focusedItem, {position: "relative"}]}>
                     {currentIndex < 0 && (<View></View>)}
                     {currentIndex < settingsData.length && (
@@ -299,7 +291,7 @@ export default function Settings({navigation}: any) {
                 <View style={styles.carCont}>
                     <Carousel
                         ref={ref}
-                        data={[...settingsData, 'new']}  // Simply append 'new' to the end of actual settings
+                        data={[...settingsData, 'new']}
                         width={width}
                         defaultIndex={Math.abs(currentIndex % (settingsData.length+1))}
                         enabled={true}

@@ -195,7 +195,7 @@ export default function ColorEditor({navigation, route}: any) {
             setColors([...setting.colors]);
             setColorHistory([]);
             setHasChanges(false);
-            setSettingName(setting.name); // Reset the name as well
+            setSettingName(setting.name);
 
             if (selectedDot !== null) {
                 setHexInput(setting.colors[selectedDot].replace('#', ''));
@@ -234,7 +234,6 @@ export default function ColorEditor({navigation, route}: any) {
 
     const handleSliderComplete = (h: number, s: number, v: number) => {
         if (selectedDot !== null) {
-            // Save the current state before updating
             setColorHistory([...colorHistory, [...colors]]);
             const newColor = hsvToHex(h, s, v);
             const newColors = [...colors];
@@ -303,19 +302,15 @@ export default function ColorEditor({navigation, route}: any) {
 
             if ((Math.abs(deltaX)) < 50) {
                 if (deltaY > 100) {
-                    // Swiped down - copy from top to bottom
                     runOnJS(handleCopyToBottom)();
                 } else if (deltaY < -100) {
-                    // Swiped up - copy from bottom to top
                     runOnJS(handleCopyToTop)();
                 }
             } else {
                 if (Math.abs(deltaY) < 100) {
                     if (startY.value > 180 && startY.value < 260) {
-                        // Swiped right - reverse colors
                         runOnJS(handleReverseTopRow)();
                     } else if (startY.value > 260 && startY.value < 360) {
-                        // Swiped left - reverse colors
                         runOnJS(handleReverseBottomRow)();
                         console.log("Reversed bottom row");
                     }
@@ -450,7 +445,7 @@ export default function ColorEditor({navigation, route}: any) {
                             colors={colors}
                             onDotSelect={handleDotSelect}
                             selectedDot={selectedDot}
-                            key={colors.join(',')} // Force re-render when colors change
+                            key={colors.join(',')}
                         />
 
                         <View style={[styles.hexContainer, {opacity: selectedDot !== null ? 1 : 0.5}]}>
@@ -518,7 +513,7 @@ export default function ColorEditor({navigation, route}: any) {
                                                     console.log("no keyboard to dismiss");
                                                 }
                                                 setHue(value);
-                                                updateColor(value, saturation, brightness); // Here
+                                                updateColor(value, saturation, brightness);
                                             }
                                         }}
                                         onSlidingComplete={value => {
@@ -544,7 +539,7 @@ export default function ColorEditor({navigation, route}: any) {
                                     onValueChange={value => {
                                         if (selectedDot !== null) {
                                             setSaturation(value);
-                                            updateColor(hue, value, brightness); // Inverse of saturation
+                                            updateColor(hue, value, brightness);
                                         }
                                     }}
                                     onSlidingComplete={value => {
@@ -569,7 +564,7 @@ export default function ColorEditor({navigation, route}: any) {
                                     onValueChange={value => {
                                         if (selectedDot !== null) {
                                             setBrightness(value);
-                                            updateColor(hue, saturation, value); // Here
+                                            updateColor(hue, saturation, value);
                                         }
                                     }}
                                     onSlidingComplete={value => {
@@ -610,8 +605,6 @@ export default function ColorEditor({navigation, route}: any) {
                                     onPress={
                                         () => {
                                             previewAPI();
-                                            // disable the preview button
-
                                             setPreviewMode(true);
                                         }
                                     }
@@ -630,7 +623,7 @@ export default function ColorEditor({navigation, route}: any) {
     );
 }
 const {width, height} = Dimensions.get('window');
-const scale = Math.min(width, height) / 375; // Base scale factor
+const scale = Math.min(width, height) / 375;
 
 const styles = StyleSheet.create({
     container: {

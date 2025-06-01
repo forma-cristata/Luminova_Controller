@@ -48,10 +48,6 @@ export default function StillEffectDots({setting}: SettingItemProps) {
             <Dot color={dot15Color} id={"dot_16"} />
         </SafeAreaView>
     );
-    
-    // No ANIMATION for still effect
-    // Will need to use passed in stuff though
-    
 }
 
 const styles = StyleSheet.create({

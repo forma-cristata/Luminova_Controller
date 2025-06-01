@@ -1,7 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Dimensions } from 'react-native';
 
-// Define the flashing pattern options
 const FLASHING_PATTERNS = [
   { id: "8", name: "Berghain Bitte" },
   { id: "5", name: "Cortez" },
@@ -18,7 +17,7 @@ const FLASHING_PATTERNS = [
 ];
 
 const { width, height } = Dimensions.get('window');
-const scale = Math.min(width, height) / 375; // Base scale factor
+const scale = Math.min(width, height) / 375;
 
 export default function Picker({ setting, selectedPattern, setSelectedPattern }: any) {
   const scrollViewRef = useRef<ScrollView>(null);
@@ -27,7 +26,6 @@ export default function Picker({ setting, selectedPattern, setSelectedPattern }:
     if (scrollViewRef.current) {
       const selectedIndex = FLASHING_PATTERNS.findIndex(p => p.id === selectedPattern);
       if (selectedIndex !== -1) {
-        // Estimate height of each item (padding + text + borders)
         const itemHeight = 12 * 2 * scale + 25 * scale + 2;
         setTimeout(() => {
           scrollViewRef.current?.scrollTo({
@@ -41,7 +39,6 @@ export default function Picker({ setting, selectedPattern, setSelectedPattern }:
 
   const handlePatternSelect = (patternId: string) => {
     setSelectedPattern(patternId);
-    // Update the setting object
     setting.flashingPattern = patternId;
   };
 

@@ -101,10 +101,6 @@ export default function ProgressiveDots({setting}: SettingItemProps) {
             <Dot color={dot15Color} id={"dot_16"} />
         </SafeAreaView>
     );
-
-    // TRACE ONE ANIMATION
-
-
 }
 
 const styles = StyleSheet.create({

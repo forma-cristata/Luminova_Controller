@@ -9,7 +9,6 @@ export default function Welcome({navigation}: any) {
 
     const { currentConfiguration, setCurrentConfiguration, setLastEdited } = useConfiguration();
 
-    // Animation state for progressive text
     const [displayText, setDisplayText] = useState("");
     const [textColor, setTextColor] = useState("#ffffff");
     const fullText = "Hello";
@@ -18,13 +17,11 @@ export default function Welcome({navigation}: any) {
         setLastEdited("0");
     }, []);
 
-    // Text animation effect
-    // Text animation effect for typing
     useEffect(() => {
         if (displayText.length < fullText.length) {
             const timeout1 = setTimeout(() => {
                 setDisplayText(fullText.substring(0, displayText.length + 1));
-            }, 300); // Adjust timing for each letter
+            }, 300);
 
             return () => {
                 clearTimeout(timeout1);
@@ -32,12 +29,10 @@ export default function Welcome({navigation}: any) {
         }
     }, [displayText, fullText]);
 
-    // Separate color animation effect that runs continuously
     useEffect(() => {
         const animationColors = ['#ff0000', '#000000', '#ff4400', '#000000', '#ff6a00', '#000000', '#ff9100', '#000000', '#ffee00', '#000000', '#00ff1e', '#000000', '#00ff44', '#000000', '#00ff95', '#000000', '#00ffff', '#000000', '#0088ff', '#000000', '#0000ff', '#000000', '#8800ff', '#000000', '#d300ff', '#000000', '#ff00BB', '#000000', '#ff0088', '#000000', '#ff0031', '#000000'];
         let colorIndex = 0;
 
-        // Use a single interval for color changes
         const colorInterval = setInterval(() => {
             setTextColor(animationColors[colorIndex]);
             colorIndex = (colorIndex + 1) % animationColors.length;
@@ -46,7 +41,7 @@ export default function Welcome({navigation}: any) {
         return () => {
             clearInterval(colorInterval);
         }
-    }, []); // Empty dependency array means this runs once and continues
+    }, []);
 
     function createButtonPressed() {
         navigation.navigate("Settings");
@@ -55,7 +50,6 @@ export default function Welcome({navigation}: any) {
     const [isEnabled, setIsEnabled] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
 
-    // Rest of your existing code...
     useEffect(() => {
         const fetchInitialStatus = async () => {
             try {

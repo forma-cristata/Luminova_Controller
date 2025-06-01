@@ -7,9 +7,7 @@ interface SettingItemsetting {
     navigation: any
     setting: Setting,
 }
-
 // STATE OF TRANCE - 11
-
 export default function TranceDots({setting}: SettingItemsetting) {
 
     const COLOR_COUNT = setting.colors.length;
@@ -106,10 +104,6 @@ export default function TranceDots({setting}: SettingItemsetting) {
             <Dot color={dot15Color} id={"dot_16"} />
         </SafeAreaView>
     );
-
-    // TRACE ONE ANIMATION
-
-
 }
 
 const styles = StyleSheet.create({

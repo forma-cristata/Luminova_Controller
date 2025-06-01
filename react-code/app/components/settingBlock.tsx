@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
         color: "white",
         fontSize: 50,
         fontFamily: "Thesignature",
-        textAlign: "center", // Add this to center the text
+        textAlign: "center",
         flexWrap: "nowrap",
     },
     whiteTextSmaller: {
@@ -171,12 +171,11 @@ const styles = StyleSheet.create({
     },
     headerContainer: {
         width: "100%",
-        alignItems: "center", // Center children horizontally
-        justifyContent: "center", // Center children vertically
-        paddingHorizontal: 40, // Add extra padding to account for the delete button
-        position: "relative", // Make sure positioning context is established
+        alignItems: "center",
+        justifyContent: "center",
+        paddingHorizontal: 40,
+        position: "relative",
     },
-    // Update styles in settingBlock.tsx
     deleteButton: {
         position: "absolute",
         top: 10,

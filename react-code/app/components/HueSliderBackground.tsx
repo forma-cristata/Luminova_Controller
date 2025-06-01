@@ -1,7 +1,6 @@
 import { StyleSheet, View } from 'react-native';
 
     const HueSliderBackground = () => {
-      // Rainbow colors representing the hue spectrum from 0-360°
       const hueColors = [
         '#FF0000',
         '#FF1700',
@@ -13,7 +12,7 @@ import { StyleSheet, View } from 'react-native';
           '#FFB900',
           '#FFD100',
           '#FFE800',
-        '#FFFF00', // 60° - yellow
+        '#FFFF00',
           '#E8FF00',
           '#D1FF00',
           '#B9FF00',
@@ -24,7 +23,7 @@ import { StyleSheet, View } from 'react-native';
           '#46FF00',
           '#2EFF00',
             '#17FF00',
-        '#00FF00', // 120° - green
+        '#00FF00',
         '#00FF17',
         '#00FF2E',
         '#00FF46',
@@ -34,41 +33,41 @@ import { StyleSheet, View } from 'react-native';
         '#00FFA2',
         '#00FFB9',
         '#00FFD1',
-        '#00FFE8', // 180° - cyan
-        '#00FFFF', // 180° - cyan
-        '#00E8FF', // 210° - light blue
-        '#00D1FF', // 210° - light blue
-        '#00B9FF', // 210° - light blue
-        '#00A2FF', // 210° - light blue
-        '#008BFF', // 210° - light blue
-        '#0074FF', // 210° - light blue
-        '#005DFF', // 210° - light blue
-        '#0046FF', // 210° - light blue
-        '#002EFF', // 210° - light blue
-        '#0017FF', // 210° - light blue
-        '#0000FF', // 240° - blue
-        '#1700FF', // 270° - purple
-        '#2E00FF', // 270° - purple
-        '#4600FF', // 270° - purple
-        '#5D00FF', // 270° - purple
-        '#7400FF', // 270° - purple
-        '#8B00FF', // 270° - purple
-        '#A200FF', // 270° - purple
-        '#B900FF', // 270° - purple
-        '#D100FF', // 270° - purple
-        '#E800FF', // 270° - purple
-        '#FF00FF', // 300° - magenta
-        '#FF00E8', // 330° - magenta
-        '#FF00D1', // 330° - magenta
-        '#FF00B9', // 330° - magenta
-        '#FF00A2', // 330° - magenta
-        '#FF008B', // 330° - magenta
-        '#FF0074', // 330° - magenta
-        '#FF005D', // 330° - magenta
-        '#FF0046', // 330° - magenta
-        '#FF002E', // 330° - magenta
-        '#FF0017', // 330° - magenta
-        '#FF0000', // 360° - back to red
+        '#00FFE8',
+        '#00FFFF',
+        '#00E8FF',
+        '#00D1FF',
+        '#00B9FF',
+        '#00A2FF',
+        '#008BFF',
+        '#0074FF',
+        '#005DFF',
+        '#0046FF',
+        '#002EFF',
+        '#0017FF',
+        '#0000FF',
+        '#1700FF',
+        '#2E00FF',
+        '#4600FF',
+        '#5D00FF',
+        '#7400FF',
+        '#8B00FF',
+        '#A200FF',
+        '#B900FF',
+        '#D100FF',
+        '#E800FF',
+        '#FF00FF',
+        '#FF00E8',
+        '#FF00D1',
+        '#FF00B9',
+        '#FF00A2',
+        '#FF008B',
+        '#FF0074',
+        '#FF005D',
+        '#FF0046',
+        '#FF002E',
+        '#FF0017',
+        '#FF0000',
       ];
 
       return (

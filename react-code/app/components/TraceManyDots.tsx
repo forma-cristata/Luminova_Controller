@@ -50,7 +50,6 @@ export default function TraceManyDots({setting}: SettingItemsetting) {
         const animate = async () => {
             if (!isActive) return;
 
-            // Set all LEDs to black
             for (let i = 0; i < LIGHT_COUNT; i++) {
                 setLed[i](setting.colors[0]);
             }
@@ -70,7 +69,6 @@ export default function TraceManyDots({setting}: SettingItemsetting) {
                 }
             }
 
-            // Schedule next animation
             setTimeout(animate, 0);
         };
 
@@ -101,10 +99,6 @@ export default function TraceManyDots({setting}: SettingItemsetting) {
             <Dot color={dot15Color} id={"dot_16"} />
         </SafeAreaView>
     );
-
-    // TRACE ONE ANIMATION
-
-
 }
 
 const styles = StyleSheet.create({

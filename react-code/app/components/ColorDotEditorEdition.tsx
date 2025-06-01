@@ -19,7 +19,7 @@ const ColorDotsEditorEdition = (props: ColorProps) => {
 
     const getFirstNonBlackColor = () => {
         const nonBlackColor = props.colors.find(color => color !== "#000000");
-        return nonBlackColor || "#FFFFFF"; // Default to white if all colors are black
+        return nonBlackColor || "#FFFFFF";
     };
 
     const getDotStyle = (index: number) => {
@@ -37,7 +37,7 @@ const ColorDotsEditorEdition = (props: ColorProps) => {
                 shadowOffset: { width: 0, height: 0 },
                 shadowOpacity: 0.6,
                 shadowRadius: 5,
-                elevation: 5, // for Android
+                elevation: 5,
             } : {})
         };
     };

@@ -50,7 +50,6 @@ export default function TechnoDots({setting}: SettingItemProps) {
         const animate = async () => {
             if (!isActive) return;
 
-            // Initialize all LEDs to black
             for (let i = 0; i < LIGHT_COUNT; i++) {
                 setLed[i](black);
             }
@@ -124,10 +123,6 @@ export default function TechnoDots({setting}: SettingItemProps) {
             <Dot color={dot15Color} id={"dot_16"} />
         </SafeAreaView>
     );
-
-    // TRACE ONE ANIMATION
-
-
 }
 
 const styles = StyleSheet.create({

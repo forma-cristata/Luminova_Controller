@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "react-code",
-    "slug": "react-code",
+    "name": "Luminova Controller",
+    "slug": "luminova-controller",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",

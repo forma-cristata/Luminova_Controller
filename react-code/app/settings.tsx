@@ -21,8 +21,25 @@ const height = Dimensions.get("window").height;
 
 const FILE_URI = FileSystem.documentDirectory + 'settings.json';
 
-export const loadData = async () => {
+const deleteSettingsFile = async () => {
+    try {
+        const fileInfo = await FileSystem.getInfoAsync(FILE_URI);
+        if (fileInfo.exists) {
+            await FileSystem.deleteAsync(FILE_URI);
+            console.log("Settings file deleted successfully");
+            Alert.alert("Success", "Settings file has been deleted. The app will now use default settings.");
+            // Reset state to default settings
+        } else {
+            Alert.alert("Info", "No settings file found to delete.");
+        }
+    } catch (error) {
+        console.error("Error deleting settings file:", error);
+        Alert.alert("Error", "Failed to delete settings file.");
+    }
+};
 
+export const loadData = async () => {
+    //await deleteSettingsFile();
     try {
         const fileInfo = await FileSystem.getInfoAsync(FILE_URI);
         if (fileInfo.exists) {
@@ -39,6 +56,8 @@ export const loadData = async () => {
         return [];
     }
 };
+
+
 
 export const saveData = async (newSettings: Setting[]) => {
     await FileSystem.writeAsStringAsync(FILE_URI, JSON.stringify(newSettings));
@@ -60,7 +79,6 @@ export default function Settings({navigation}: any) {
 
    const createNewSetting = () => {
        const newSetting: Setting = {
-           id: Date.now().toString(), // Generate unique ID
            name: `Setting ${settingsData.length + 1}`,
            colors: Array(16).fill('#FFFFFF'),
            whiteValues: Array(16).fill(0),
@@ -82,7 +100,8 @@ export default function Settings({navigation}: any) {
             try {
                 const loadedData = await loadData();
                 if (loadedData && loadedData.length > 0) {
-                    setSettingsData(loadedData);
+                    const deepCopy = JSON.parse(JSON.stringify(loadedData));
+                    setSettingsData(deepCopy);
                     data = loadedData;
                 }
             } catch (error) {
@@ -150,7 +169,6 @@ export default function Settings({navigation}: any) {
             const original = settingsData[currentIndex];
             const duplicated = {
                 ...original,
-                id: Date.now().toString(), // Generate new ID for the duplicate
                 name: getUniqueName(original.name, settingsData)
             };
             navigation.navigate("NewColorEditor", {

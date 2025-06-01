@@ -212,30 +212,24 @@ export default function ColorEditor({navigation, route}: any) {
         }
     };
 
+
     const handleSave = async () => {
-        setting.colors = [...colors];
         setting.name = settingName;
+        setting.colors = [...colors];
 
-        // Check if this is a new setting being created
         if (route.params?.isNew) {
-            // Make sure the setting has an ID
-            if (!setting.id) {
-                setting.id = Date.now().toString();
-            }
-
-            navigation.navigate("FlashingPatternEditor", {
+            navigation.navigate("NewFlashingPatternEditor", {
                 setting: setting,
                 isNew: true
             });
         } else {
             const settings = await loadData();
             const updatedSettings = settings!.map(s =>
-                s.id === setting.id ? {...s, name: settingName, colors: [...colors]} : s
+                s.name === route.params.originalName ? {...s, name: settingName, colors: [...colors]} : s
             );
             await saveData(updatedSettings);
 
-            // Find current index by ID instead of name
-            const currentIndex = updatedSettings.findIndex(s => s.id === setting.id);
+            const currentIndex = updatedSettings.findIndex(s => s.name === settingName);
             setLastEdited(currentIndex.toString());
             navigation.navigate("Settings", {setting});
         }

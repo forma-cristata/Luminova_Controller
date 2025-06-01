@@ -48,17 +48,7 @@ export default function ColorEditor({navigation, route}: any) {
 
     const [nameError, setNameError] = useState<string | null>(null);
 
-    const handleNameChange = async (text: string) => {
-        setSettingName(text);
-        setHasChanges(true);
 
-        const settings = await loadData();
-        const originalName = route.params?.originalName || setting.name;
-        const nameExists = settings?.some(
-            (s: any) => s.name.toLowerCase() === text.toLowerCase() && s.name !== originalName
-        );
-        setNameError(nameExists ? "Name already exists." : null);
-    };
 
 
     const hexToRgb = (hex: string) => {
@@ -193,30 +183,24 @@ export default function ColorEditor({navigation, route}: any) {
     };
 
     // Add to ColorEditor.tsx - update the handleSave function
+
     const handleSave = async () => {
-        setting.colors = [...colors];
         setting.name = settingName;
+        setting.colors = [...colors];
 
-        // Check if this is a new setting being created
         if (route.params?.isNew) {
-            // Make sure the setting has an ID
-            if (!setting.id) {
-                setting.id = Date.now().toString();
-            }
-
-            navigation.navigate("FlashingPatternEditor", {
+            navigation.navigate("NewFlashingPatternEditor", {
                 setting: setting,
                 isNew: true
             });
         } else {
             const settings = await loadData();
             const updatedSettings = settings!.map(s =>
-                s.id === setting.id ? {...s, name: settingName, colors: [...colors]} : s
+                s.name === route.params.setting.name ? {...s, name: setting.name, colors: [...colors]} : s
             );
             await saveData(updatedSettings);
 
-            // Find current index by ID instead of name
-            const currentIndex = updatedSettings.findIndex(s => s.id === setting.id);
+            const currentIndex = updatedSettings.findIndex(s => s.name === settingName);
             setLastEdited(currentIndex.toString());
             navigation.navigate("Settings", {setting});
         }
@@ -418,22 +402,9 @@ export default function ColorEditor({navigation, route}: any) {
 
                       </TouchableOpacity>
                         <View style={styles.nameInputContainer}>
-                            <TextInput
-                                style={[
-                                    styles.nameInput,
-                                    nameError ? {color: '#ff0000'} : null
-                                ]}
-                                value={settingName}
-                                onChangeText={(text) => {
-                                    if(text.length > 18) {
-                                        text = text.slice(0, 18);
-                                    }
-                                    handleNameChange(text);
-                                }}
-                                placeholder="Enter setting name"
-                                placeholderTextColor="#666"
-                                maxLength={18}
-                            />
+                            <Text style={styles.nameInput}>
+                                {settingName}
+                            </Text>
                         </View>
                         <TouchableOpacity
                             style={styles.sortButton}

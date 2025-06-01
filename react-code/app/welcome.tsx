@@ -8,12 +8,15 @@ import Setting from "@/app/interface/setting-interface";
 export default function Welcome({navigation}: any) {
 
     const { currentConfiguration, setCurrentConfiguration, lastEdited, setLastEdited } = useConfiguration();
-    setLastEdited("0");
 
     // Animation state for progressive text
     const [displayText, setDisplayText] = useState("");
     const [textColor, setTextColor] = useState("#ffffff");
     const fullText = "Hello";
+
+    useEffect(() => {
+        setLastEdited("0");
+    }, []);
 
     // Text animation effect
     // Text animation effect for typing

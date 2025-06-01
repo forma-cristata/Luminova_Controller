@@ -131,10 +131,10 @@ export default function Settings({navigation}: any) {
 
     const handleProgressChange = (offset: number, absoluteProgress: number) => {
         // Prevent scrolling left of the first item
-        if (absoluteProgress < 0) {
-            if (ref.current) {
+        if (absoluteProgress === 0 && offset < 0) {
+            /*if (ref.current) {
                 ref.current.scrollTo({ index: 0, animated: true }); // This isyour bug when negative it breaks.
-            }
+            }*/
             return;
         }
 
@@ -197,7 +197,7 @@ export default function Settings({navigation}: any) {
     };
 
     const handleDuplicate = () => {
-        if (currentIndex < settingsData.length) {
+        if (currentIndex < settingsData.length && currentIndex >= 0) {
             const original = settingsData[currentIndex];
             const duplicated = {
                 ...original,
@@ -211,11 +211,6 @@ export default function Settings({navigation}: any) {
         }
     };
 
-    const bitch = (offset: any, absoluteProgress: any) => {
-
-        progress.value = offset;
-        setCurrentIndex(Math.round(absoluteProgress));
-    }
 
 
 
@@ -246,6 +241,7 @@ export default function Settings({navigation}: any) {
                 {/*Carousel Focus Item*/}
 
                 <View style={[styles.focusedItem, {position: "relative"}]}>
+                    {currentIndex < 0 && (<View></View>)}
                     {currentIndex < settingsData.length && (
                         <>
                             <TouchableOpacity
@@ -260,7 +256,7 @@ export default function Settings({navigation}: any) {
                                 <MaterialIcons name="content-copy" size={24} color="white" />
                             </TouchableOpacity>
                             <TouchableOpacity
-                                key={currentIndex}
+                                key={currentIndex.toString()}
                                 style={{
                                     position: "absolute",
                                     top: 10,
@@ -269,7 +265,7 @@ export default function Settings({navigation}: any) {
                                     opacity: (currentIndex < 12 ? 0.3 : 1)
                                 }}
                                 onPress={() => {
-                                if(currentIndex >= 12) handleDelete;
+                                if(currentIndex >= 12) handleDelete();
                             }}
                             >
                                 <Ionicons name="trash-outline" size={24} color="white"/>
@@ -304,14 +300,15 @@ export default function Settings({navigation}: any) {
                         ref={ref}
                         data={[...settingsData, 'new']}  // Simply append 'new' to the end of actual settings
                         width={width}
-                        defaultIndex={currentIndex}
+                        defaultIndex={Math.abs(currentIndex % (settingsData.length+1))}
                         enabled={true}
                         onProgressChange={handleProgressChange}
                         renderItem={({item, index}: { item: Setting | 'new', index: number }) => (
                             item === 'new' ? (
-                                <Text style={styles.newSettingItemText}/>
+                                <Text style={styles.newSettingItemText} key={item + index.toString()}/>
                             ) : (
                                 <SettingBlock
+                                    key={item + index.toString()}
                                     navigation={navigation}
                                     animated={false}
                                     style={styles.renderItem}

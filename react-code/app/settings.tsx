@@ -121,6 +121,28 @@ export default function Settings({navigation}: any) {
         initializeData();
     }, []);
 
+
+    React.useEffect(() => {
+        if (ref.current && currentIndex === 0) {
+            // This prevents the carousel from scrolling to the end when at index 0
+            ref.current.scrollTo({ index: 0, animated: false });
+        }
+    }, [currentIndex]);
+
+    const handleProgressChange = (offset: number, absoluteProgress: number) => {
+        // Prevent scrolling left of the first item
+        if (absoluteProgress < 0) {
+            if (ref.current) {
+                ref.current.scrollTo({ index: 0, animated: true }); // This isyour bug when negative it breaks.
+            }
+            return;
+        }
+
+        progress.value = offset;
+        setCurrentIndex(Math.round(absoluteProgress));
+    };
+
+
    const handleDelete = async () => {
        Alert.alert(
            "Delete Setting",
@@ -151,6 +173,10 @@ export default function Settings({navigation}: any) {
                                index: 0,
                                routes: [{name: 'Settings'}],
                            });
+                           setTimeout(() => {
+                               setLastEdited('0'); // Perform state updates after navigation completes
+                           }, 0);
+
                        } catch (error) {
                            console.error("Error deleting setting:", error);
                        }
@@ -185,6 +211,12 @@ export default function Settings({navigation}: any) {
         }
     };
 
+    const bitch = (offset: any, absoluteProgress: any) => {
+
+        progress.value = offset;
+        setCurrentIndex(Math.round(absoluteProgress));
+    }
+
 
 
 
@@ -192,7 +224,14 @@ export default function Settings({navigation}: any) {
         <SafeAreaView style={styles.container}>
             {/*Back Button*/}
             <View style={styles.backButton}>
-                <TouchableOpacity onPress={() => navigation.navigate('Welcome', {animation: 'slideFromLeft'})}>
+                <TouchableOpacity onPress={() => {
+                    setLastEdited('0'); // Update the state first
+
+                    navigation.navigate('Welcome', {animation: 'slideFromLeft'});
+                    setTimeout(() => {
+                        setLastEdited('0'); // Perform state updates after navigation completes
+                    }, 0);
+                }}>
                     <Text style={styles.backB}> ⪡ </Text>
                 </TouchableOpacity>
             </View>
@@ -267,24 +306,16 @@ export default function Settings({navigation}: any) {
                         width={width}
                         defaultIndex={currentIndex}
                         enabled={true}
-                        onProgressChange={(offset, absoluteProgress) => {
-                            progress.value = offset;
-                            setCurrentIndex(Math.round(absoluteProgress));
-                        }}
-                        renderItem={({item, index}: { item: Setting | string, index: number }) => (
+                        onProgressChange={handleProgressChange}
+                        renderItem={({item, index}: { item: Setting | 'new', index: number }) => (
                             item === 'new' ? (
-                                <TouchableOpacity
-                                    style={[styles.renderItem, styles.newSettingItem]}
-                                    onPress={() => {}}
-                                >
-                                    <Text style={styles.newSettingItemText}></Text>
-                                </TouchableOpacity>
+                                <Text style={styles.newSettingItemText}/>
                             ) : (
                                 <SettingBlock
                                     navigation={navigation}
                                     animated={false}
                                     style={styles.renderItem}
-                                    setting={item as Setting}
+                                    setting={item}
                                     index={index}
                                 />
                             )
@@ -338,6 +369,7 @@ const styles = StyleSheet.create({
     carousel: {
         flex: 1,
         height: height * 2 / 10,
+        width: width * 0.9,
         justifyContent: "center",
         alignItems: "flex-end"
     },

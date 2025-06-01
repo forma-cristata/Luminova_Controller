@@ -88,7 +88,7 @@ export default function Info() {
                     <Text style={styles.feedbackText}>Feedback</Text>
                 </TouchableOpacity>
             </View>
-            
+
 
             <Text style={[styles.title, {color: textColor}]}>How to Use This App</Text>
 

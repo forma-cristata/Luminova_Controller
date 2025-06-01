@@ -10,7 +10,7 @@ import * as FileSystem from 'expo-file-system';
 import jsonData from './configurations/modes.json';
 import {useConfiguration} from "@/app/context/ConfigurationContext";
 import {Ionicons} from "@expo/vector-icons";
-import { MaterialIcons } from "@expo/vector-icons";
+import {MaterialIcons} from "@expo/vector-icons";
 
 let data = jsonData.settings as Setting[];
 console.log("JSON Default Data: ", jsonData);
@@ -58,7 +58,6 @@ export const loadData = async () => {
 };
 
 
-
 export const saveData = async (newSettings: Setting[]) => {
     await FileSystem.writeAsStringAsync(FILE_URI, JSON.stringify(newSettings));
 };
@@ -72,59 +71,68 @@ export default function Settings({navigation}: any) {
     const progress = useSharedValue<number>(0);
     const [currentIndex, setCurrentIndex] = React.useState(0);
 
+    const [isInitialRender, setIsInitialRender] = React.useState(true);
+
+    // In your useEffect
+    React.useEffect(() => {
+      const initializeData = async () => {
+        try {
+          const loadedData = await loadData();
+          if (loadedData && loadedData.length > 0) {
+            const deepCopy = JSON.parse(JSON.stringify(loadedData));
+            setSettingsData(deepCopy);
+            data = loadedData;
+
+            const lastEditedIndex = lastEdited ? parseInt(lastEdited) : 0;
+            setCurrentIndex(lastEditedIndex);
+
+            // Set a flag to prevent initial progress change handling
+            setIsInitialRender(true);
+
+            // Scroll to index
+            ref.current?.scrollTo({index: lastEditedIndex || 0, animated: false});
+
+            // Reset the flag after a small delay
+            setTimeout(() => {
+              setIsInitialRender(false);
+            }, 100);
+          }
+        } catch (error) {
+          console.error("Error initializing data:", error);
+        }
+      };
+
+      initializeData();
+    }, []);
+
+
+
     const updateSettings = async (updatedSettings: Setting[]) => {
         setSettingsData(updatedSettings);
         await saveData(updatedSettings);
     };
 
-   const createNewSetting = () => {
-       const newSetting: Setting = {
-           name: `Setting ${settingsData.length + 1}`,
-           colors: Array(16).fill('#FFFFFF'),
-           whiteValues: Array(16).fill(0),
-           brightnessValues: Array(16).fill(255),
-           flashingPattern: "6",
-           delayTime: 100
-       };
-
-       navigation.navigate("NewColorEditor", {
-           setting: newSetting,
-           isNew: true,
-           originalName: newSetting.name
-       });
-   };
-
-
-    React.useEffect(() => {
-        const initializeData = async () => {
-            try {
-                const loadedData = await loadData();
-                if (loadedData && loadedData.length > 0) {
-                    const deepCopy = JSON.parse(JSON.stringify(loadedData));
-                    setSettingsData(deepCopy);
-                    data = loadedData;
-
-                    const lastEditedIndex = lastEdited ? parseInt(lastEdited) : 0;
-                    setCurrentIndex(lastEditedIndex);
-                    if (!lastEdited) setLastEdited("0");
-
-                    if (ref.current) {
-                        ref.current.scrollTo({ index: lastEditedIndex, animated: false });
-                    }
-                }
-            } catch (error) {
-                console.error("Error initializing data:", error);
-            }
-
+    const createNewSetting = () => {
+        const newSetting: Setting = {
+            name: `Setting ${settingsData.length + 1}`,
+            colors: Array(16).fill('#FFFFFF'),
+            whiteValues: Array(16).fill(0),
+            brightnessValues: Array(16).fill(255),
+            flashingPattern: "6",
+            delayTime: 100
         };
 
-        initializeData().then(() => {});
-    }, []);
+        navigation.navigate("NewColorEditor", {
+            setting: newSetting,
+            isNew: true,
+            originalName: newSetting.name
+        });
+    };
 
 
     React.useEffect(() => {
         if (ref.current && currentIndex === 0) {
-            ref.current.scrollTo({ index: 0, animated: false });
+            ref.current.scrollTo({index: 0, animated: false});
         }
     }, [currentIndex]);
 
@@ -138,48 +146,48 @@ export default function Settings({navigation}: any) {
     };
 
 
-   const handleDelete = async () => {
-       Alert.alert(
-           "Delete Setting",
-           "Are you sure you want to delete this setting?",
-           [
-               {
-                   text: "Cancel",
-                   style: "cancel"
-               },
-               {
-                   text: "Delete",
-                   style: "destructive",
-                   onPress: async () => {
-                       try {
-                           const currentSettings = await loadData();
+    const handleDelete = async () => {
+        Alert.alert(
+            "Delete Setting",
+            "Are you sure you want to delete this setting?",
+            [
+                {
+                    text: "Cancel",
+                    style: "cancel"
+                },
+                {
+                    text: "Delete",
+                    style: "destructive",
+                    onPress: async () => {
+                        try {
+                            const currentSettings = await loadData();
 
-                           const updatedSettings = currentSettings.filter((_, i) => i !== currentIndex);
+                            const updatedSettings = currentSettings.filter((_, i) => i !== currentIndex);
 
-                           await saveData(updatedSettings);
+                            await saveData(updatedSettings);
 
-                           if (lastEdited === currentIndex.toString()) {
-                               setLastEdited("0");
-                           } else if (parseInt(lastEdited!) > currentIndex) {
-                               setLastEdited((parseInt(lastEdited!) - 1).toString());
-                           }
+                            if (lastEdited === currentIndex.toString()) {
+                                setLastEdited("0");
+                            } else if (parseInt(lastEdited!) > currentIndex) {
+                                setLastEdited((parseInt(lastEdited!) - 1).toString());
+                            }
 
-                           navigation.reset({
-                               index: 0,
-                               routes: [{name: 'Settings'}],
-                           });
-                           setTimeout(() => {
-                               setLastEdited('0');
-                           }, 0);
+                            navigation.reset({
+                                index: 0,
+                                routes: [{name: 'Settings'}],
+                            });
+                            setTimeout(() => {
+                                setLastEdited('0');
+                            }, 0);
 
-                       } catch (error) {
-                           console.error("Error deleting setting:", error);
-                       }
-                   }
-               }
-           ]
-       );
-   };
+                        } catch (error) {
+                            console.error("Error deleting setting:", error);
+                        }
+                    }
+                }
+            ]
+        );
+    };
 
     const getUniqueName = (baseName: string, settings: Setting[]) => {
         let newName = baseName + " Copy";
@@ -207,17 +215,13 @@ export default function Settings({navigation}: any) {
     };
 
 
-
-
-
     return (
         <SafeAreaView style={styles.container}>
             {/*Back Button*/}
             <View style={styles.backButton}>
                 <TouchableOpacity onPress={() => {
                     setLastEdited('0');
-
-                    navigation.navigate('Welcome', {animation: 'slideFromLeft'});
+                    navigation.navigate('Welcome');
                     setTimeout(() => {
                         setLastEdited('0');
                     }, 0);
@@ -244,9 +248,11 @@ export default function Settings({navigation}: any) {
                                     left: 10,
                                     zIndex: 1,
                                 }}
-                                onPress={() => {handleDuplicate();}}
+                                onPress={() => {
+                                    handleDuplicate();
+                                }}
                             >
-                                <MaterialIcons name="content-copy" size={24} color="white" />
+                                <MaterialIcons name="content-copy" size={24} color="white"/>
                             </TouchableOpacity>
                             <TouchableOpacity
                                 key={currentIndex.toString()}
@@ -258,8 +264,9 @@ export default function Settings({navigation}: any) {
                                     opacity: (currentIndex < 12 ? 0.3 : 1)
                                 }}
                                 onPress={() => {
-                                if(currentIndex >= 12) handleDelete().then(() => {});
-                            }}
+                                    if (currentIndex >= 12) handleDelete().then(() => {
+                                    });
+                                }}
                             >
                                 <Ionicons name="trash-outline" size={24} color="white"/>
                             </TouchableOpacity>
@@ -275,7 +282,7 @@ export default function Settings({navigation}: any) {
                     )}
 
                     {currentIndex >= settingsData.length &&
-                       ( <>
+                        (<>
                             <TouchableOpacity
                                 style={styles.newSettingButton}
                                 onPress={createNewSetting}
@@ -293,9 +300,13 @@ export default function Settings({navigation}: any) {
                         ref={ref}
                         data={[...settingsData, 'new']}
                         width={width}
-                        defaultIndex={Math.abs(currentIndex % (settingsData.length+1))}
+                        defaultIndex={currentIndex}
                         enabled={true}
-                        onProgressChange={handleProgressChange}
+                        onProgressChange={(offset, absoluteProgress) => {
+                            if (!isInitialRender) {
+                                handleProgressChange(offset, absoluteProgress);
+                            }
+                        }}
                         renderItem={({item, index}: { item: Setting | 'new', index: number }) => (
                             item === 'new' ? (
                                 <Text style={styles.newSettingItemText} key={item + index.toString()}/>

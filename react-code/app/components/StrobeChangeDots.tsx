@@ -1,6 +1,6 @@
 import {useState, useEffect} from "react";
 import Dot from "@/app/components/Dot";
-import {SafeAreaView, StyleSheet, View} from "react-native";
+import {SafeAreaView, StyleSheet} from "react-native";
 import Setting from "@/app/interface/setting-interface";
 
 interface SettingItemProps {
@@ -10,7 +10,7 @@ interface SettingItemProps {
 
 // THE UNDERGROUND - 7
 
-export default function StrobeChangeDots({navigation, setting}: SettingItemProps) {
+export default function StrobeChangeDots({setting}: SettingItemProps) {
 
     const COLOR_COUNT = setting.colors.length;
 
@@ -72,7 +72,7 @@ export default function StrobeChangeDots({navigation, setting}: SettingItemProps
             setTimeout(animate, 0);
         };
 
-        animate();
+        animate().then(() => {});
 
         return () => {
             isActive = false;

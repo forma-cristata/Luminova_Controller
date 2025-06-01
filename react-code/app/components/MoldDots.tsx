@@ -1,6 +1,6 @@
 import {useState, useEffect} from "react";
 import Dot from "@/app/components/Dot";
-import {SafeAreaView, StyleSheet, View} from "react-native";
+import {SafeAreaView, StyleSheet} from "react-native";
 import Setting from "@/app/interface/setting-interface";
 
 interface SettingItemProps {
@@ -10,7 +10,7 @@ interface SettingItemProps {
 
 // DECAY - 4
 
-export default function MoldDots({navigation, setting}: SettingItemProps) {
+export default function MoldDots({setting}: SettingItemProps) {
 
     const COLOR_COUNT = setting.colors.length;
     const black = "#000000";
@@ -162,7 +162,7 @@ export default function MoldDots({navigation, setting}: SettingItemProps) {
         };
 
 
-        animate();
+        animate().then(() => {});
         return () => {
             isActive = false;
         };

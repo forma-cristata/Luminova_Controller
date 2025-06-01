@@ -27,7 +27,7 @@
 
     SplashScreen.preventAutoHideAsync();
 
-    export default function Index() {
+    function Index(){
         const [loaded, error] = useFonts({
             'Thesignature': require('../assets/fonts/Thesignature.ttf'),
             'Clearlight-lJlq': require('../assets/fonts/Clearlight-lJlq.ttf'),
@@ -65,3 +65,5 @@
 
         );
     }
+
+    export default Index;

@@ -1,6 +1,6 @@
 import {useState, useEffect} from "react";
 import Dot from "@/app/components/Dot";
-import {SafeAreaView, StyleSheet, View} from "react-native";
+import {SafeAreaView, StyleSheet} from "react-native";
 import Setting from "@/app/interface/setting-interface";
 
 interface SettingItemsetting {
@@ -10,7 +10,7 @@ interface SettingItemsetting {
 
 // STATE OF TRANCE - 11
 
-export default function TranceDots({navigation, setting}: SettingItemsetting) {
+export default function TranceDots({setting}: SettingItemsetting) {
 
     const COLOR_COUNT = setting.colors.length;
 
@@ -79,7 +79,7 @@ export default function TranceDots({navigation, setting}: SettingItemsetting) {
             setTimeout(animate, 0);
         };
 
-        animate();
+        animate().then(() => {});
 
         return () => {
             isActive = false;

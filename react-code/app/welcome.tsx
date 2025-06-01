@@ -1,5 +1,5 @@
 import { useConfiguration } from './context/ConfigurationContext';
-import {Text, StyleSheet, SafeAreaView, Switch, TouchableOpacity, View} from "react-native";
+import {Text, StyleSheet, SafeAreaView, Switch, TouchableOpacity} from "react-native";
 import {SafeAreaProvider} from "react-native-safe-area-context";
 import React, { useState, useEffect} from "react";
 import {IP} from "@/app/configurations/constants";
@@ -7,7 +7,7 @@ import Setting from "@/app/interface/setting-interface";
 
 export default function Welcome({navigation}: any) {
 
-    const { currentConfiguration, setCurrentConfiguration, lastEdited, setLastEdited } = useConfiguration();
+    const { currentConfiguration, setCurrentConfiguration, setLastEdited } = useConfiguration();
 
     // Animation state for progressive text
     const [displayText, setDisplayText] = useState("");
@@ -79,7 +79,7 @@ export default function Welcome({navigation}: any) {
             }
         };
 
-        fetchInitialStatus();
+        fetchInitialStatus().then(() => {});
     }, []);
 
     const toggleSwitch = async() => {

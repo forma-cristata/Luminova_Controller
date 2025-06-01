@@ -1,13 +1,13 @@
 // app/components/Dot.tsx
 import React from "react";
-import {TouchableOpacity, Animated, View, SafeAreaView} from "react-native";
+import {SafeAreaView} from "react-native";
 
 interface DotProps {
     color: string;
     id: string;
 }
 
-export default function Dot({ color, id }: DotProps) {
+export default function Dot({ color }: DotProps) {
     return (
 
             <SafeAreaView

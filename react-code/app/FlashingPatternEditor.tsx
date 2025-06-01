@@ -19,7 +19,6 @@ import {useThrottle} from "expo-dev-launcher/bundle/hooks/useDebounce";
 import {loadData, saveData} from "@/app/settings";
 import {useConfiguration} from "@/app/context/ConfigurationContext";
 import {IP} from "@/app/configurations/constants";
-import Setting from "@/app/interface/setting-interface";
 
 
 /**
@@ -31,7 +30,7 @@ import Setting from "@/app/interface/setting-interface";
  *          The greater the speed, the shorter the delay time.*/
 
 export default function FlashingPatternEditor({ route, navigation }: any) {
-    const { currentConfiguration, setCurrentConfiguration, lastEdited, setLastEdited } = useConfiguration();
+    const { currentConfiguration, setLastEdited } = useConfiguration();
 
     const setting  = route.params?.setting;
 
@@ -64,7 +63,7 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
     const modeDots = () => {
         const newSetting = {
             ...setting,
-            delayTime: delayTime,
+            delayTime: throttledDelayTime,
             flashingPattern: flashingPattern,
         }
 
@@ -184,7 +183,7 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
                 <Picker
                     navigation={navigation}
                     setting={setting}
-                    selectedPattern={flashingPattern}
+                    selectedPattern={throttledFlashingPattern}
                     setSelectedPattern={setFlashingPattern}
                 />                {/*<Text style={styles.sliderText}>Hex: #</Text>
                 <TextInput
@@ -209,14 +208,11 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
                         style={styles.slider}
                         minimumValue={40}
                         maximumValue={180}
-                        value={BPM}
+                        value={throttledBPM}
                         onValueChange={value => {
                             setBPM(value);
                             const newDelayTime = calculateDelayTime(value);
                             setDelayTime(newDelayTime);
-/*
-                            setting.delayTime = newDelayTime;
-*/
                         }}
                         minimumTrackTintColor="#ff0000"
                         maximumTrackTintColor="#ffffff"

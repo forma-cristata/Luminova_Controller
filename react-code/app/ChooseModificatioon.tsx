@@ -14,10 +14,6 @@ import TraceManyDots from "@/app/components/TraceManyDots";
 import TraceOneDots from "@/app/components/TraceOneDots";
 import TranceDots from "@/app/components/TranceDots";
 
-interface ChooseModificatioonProps {
-    navigation: any;
-}
-
 export default function ChooseModificatioon({navigation, route}: any) {
     const setting = route.params?.setting as Setting;
     const modeDots = () => {

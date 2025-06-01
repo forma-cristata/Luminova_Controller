@@ -10,7 +10,7 @@ interface SettingItemProps {
 
 // THE PIANO MAN - 2
 
-export default function ComfortSongDots({navigation, setting}: SettingItemProps) {
+export default function ComfortSongDots({setting}: SettingItemProps) {
 
     const COLOR_COUNT = setting.colors.length;
 
@@ -83,7 +83,7 @@ export default function ComfortSongDots({navigation, setting}: SettingItemProps)
             setTimeout(animate, setting.delayTime);
         };
 
-        animate();
+        animate().then(() => {});
 
         return () => {
             isActive = false;

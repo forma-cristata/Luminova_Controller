@@ -5,7 +5,6 @@ import Slider from "@react-native-community/slider";
 import {useState} from "react";
 import {useThrottle} from "expo-dev-launcher/bundle/hooks/useDebounce";
 import {loadData, saveData} from "@/app/settings";
-import {GestureResponderEvent} from "react-native";
 import {GestureHandlerRootView, PanGestureHandler} from "react-native-gesture-handler";
 import Animated, {
     useAnimatedGestureHandler,
@@ -15,10 +14,9 @@ import Animated, {
 import HueSliderBackground from "@/app/components/HueSliderBackground";
 import {IP} from "@/app/configurations/constants";
 import {useConfiguration} from "@/app/context/ConfigurationContext";
-import Setting from "@/app/interface/setting-interface";
 
 export default function ColorEditor({navigation, route}: any) {
-    const {currentConfiguration, setCurrentConfiguration, lastEdited, setLastEdited} = useConfiguration();
+    const {currentConfiguration, setLastEdited} = useConfiguration();
 
     const setting = route.params?.setting;
     const [colors, setColors] = useState([...setting.colors]);
@@ -150,7 +148,7 @@ export default function ColorEditor({navigation, route}: any) {
         }
     };
 
-    const handleDotSelect = (index: number, event?: GestureResponderEvent) => {
+    const handleDotSelect = (index: number) => {
         try {
             Keyboard.dismiss();
         } catch {
@@ -295,7 +293,7 @@ export default function ColorEditor({navigation, route}: any) {
             startY.value = event.absoluteY;
             startX.value = event.absoluteX;
         },
-        onActive: (event) => {
+        onActive: () => {
         },
         onEnd: (event) => {
             const initY = startY.value;
@@ -510,7 +508,7 @@ export default function ColorEditor({navigation, route}: any) {
                                         style={[styles.slider, {opacity: selectedDot !== null ? 1 : 0.5}]}
                                         minimumValue={0}
                                         maximumValue={360}
-                                        value={hue}
+                                        value={throttledHue}
                                         disabled={selectedDot === null}
                                         onValueChange={value => {
                                             if (selectedDot !== null) {
@@ -542,7 +540,7 @@ export default function ColorEditor({navigation, route}: any) {
                                     minimumValue={0}
                                     maximumValue={100}
                                     disabled={selectedDot === null}
-                                    value={saturation}
+                                    value={throttledSaturation}
                                     onValueChange={value => {
                                         if (selectedDot !== null) {
                                             setSaturation(value);
@@ -567,7 +565,7 @@ export default function ColorEditor({navigation, route}: any) {
                                     minimumValue={0}
                                     maximumValue={100}
                                     disabled={selectedDot === null}
-                                    value={brightness}
+                                    value={throttledBrightness}
                                     onValueChange={value => {
                                         if (selectedDot !== null) {
                                             setBrightness(value);

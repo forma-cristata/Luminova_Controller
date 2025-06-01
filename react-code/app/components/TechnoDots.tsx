@@ -1,6 +1,6 @@
 import {useState, useEffect} from "react";
 import Dot from "@/app/components/Dot";
-import {SafeAreaView, StyleSheet, View} from "react-native";
+import {SafeAreaView, StyleSheet} from "react-native";
 import Setting from "@/app/interface/setting-interface";
 
 interface SettingItemProps {
@@ -10,7 +10,7 @@ interface SettingItemProps {
 
 // BERGHAIN BITTE - 8
 
-export default function TechnoDots({navigation, setting}: SettingItemProps) {
+export default function TechnoDots({setting}: SettingItemProps) {
 
     const COLOR_COUNT = setting.colors.length;
 
@@ -97,7 +97,7 @@ export default function TechnoDots({navigation, setting}: SettingItemProps) {
             setTimeout(animate, setting.delayTime);
         };
 
-        animate();
+        animate().then(() => {});
 
         return () => {
             isActive = false;

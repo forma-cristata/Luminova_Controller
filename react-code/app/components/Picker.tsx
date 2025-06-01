@@ -20,7 +20,7 @@ const FLASHING_PATTERNS = [
 const { width, height } = Dimensions.get('window');
 const scale = Math.min(width, height) / 375; // Base scale factor
 
-export default function Picker({ navigation, setting, selectedPattern, setSelectedPattern }: any) {
+export default function Picker({ setting, selectedPattern, setSelectedPattern }: any) {
   const scrollViewRef = useRef<ScrollView>(null);
 
   useEffect(() => {

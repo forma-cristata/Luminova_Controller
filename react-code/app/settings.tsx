@@ -39,6 +39,7 @@ const deleteSettingsFile = async () => {
 };
 
 export const loadData = async () => {
+    // Uncomment line and load this page to restore defaults. Then uncomment this line and save again
     //await deleteSettingsFile();
     try {
         const fileInfo = await FileSystem.getInfoAsync(FILE_URI);
@@ -64,7 +65,7 @@ export const saveData = async (newSettings: Setting[]) => {
 };
 
 export default function Settings({navigation}: any) {
-    const {currentConfiguration, setCurrentConfiguration, lastEdited, setLastEdited} = useConfiguration();
+    const {lastEdited, setLastEdited} = useConfiguration();
 
 
     const [settingsData, setSettingsData] = React.useState<Setting[]>([]);
@@ -118,7 +119,7 @@ export default function Settings({navigation}: any) {
 
         };
 
-        initializeData();
+        initializeData().then(() => {});
     }, []);
 
 
@@ -265,7 +266,7 @@ export default function Settings({navigation}: any) {
                                     opacity: (currentIndex < 12 ? 0.3 : 1)
                                 }}
                                 onPress={() => {
-                                if(currentIndex >= 12) handleDelete();
+                                if(currentIndex >= 12) handleDelete().then(() => {});
                             }}
                             >
                                 <Ionicons name="trash-outline" size={24} color="white"/>

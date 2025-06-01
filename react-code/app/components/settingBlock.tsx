@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Button, Dimensions, TouchableOpacity, Alert } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import Setting from "@/app/interface/setting-interface";
 import ColorDots from "@/app/components/ColorDots";
 import StillEffectDots from "@/app/components/StillEffectDots";
@@ -13,11 +13,8 @@ import TechnoDots from "@/app/components/TechnoDots";
 import TranceDots from "@/app/components/TranceDots";
 import TraceManyDots from "@/app/components/TraceManyDots";
 import TraceOneDots from "@/app/components/TraceOneDots";
-import { navigate } from "expo-router/build/global-state/routing";
 import { IP } from "@/app/configurations/constants";
 import { useConfiguration } from "@/app/context/ConfigurationContext";
-import { Ionicons } from '@expo/vector-icons';
-import { loadData, saveData } from "@/app/settings";
 
 interface SettingItemProps {
     navigation: any
@@ -30,7 +27,7 @@ interface SettingItemProps {
 
 
 const SettingBlock = ({navigation, setting, style, animated, index}: SettingItemProps) => {
-    const { currentConfiguration, setCurrentConfiguration, lastEdited, setLastEdited } = useConfiguration();
+    const { currentConfiguration, setCurrentConfiguration, setLastEdited } = useConfiguration();
 
     if(!setting){
         return null;

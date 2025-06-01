@@ -1,6 +1,6 @@
 import {useState} from "react";
 import Dot from "@/app/components/Dot";
-import {SafeAreaView, StyleSheet, View} from "react-native";
+import {SafeAreaView, StyleSheet} from "react-native";
 import Setting from "@/app/interface/setting-interface";
 
 interface SettingItemProps {
@@ -10,26 +10,23 @@ interface SettingItemProps {
 
 // STILL - 6
 
-export default function StillEffectDots({navigation, setting}: SettingItemProps) {
-
-    const black = "#000000";
-
-    const [dot0Color, setLED0Color] = useState(setting.colors[0]);
-    const [dot1Color, setLED1Color] = useState(setting.colors[1]);
-    const [dot2Color, setLED2Color] = useState(setting.colors[2]);
-    const [dot3Color, setLED3Color] = useState(setting.colors[3]);
-    const [dot4Color, setLED4Color] = useState(setting.colors[4]);
-    const [dot5Color, setLED5Color] = useState(setting.colors[5]);
-    const [dot6Color, setLED6Color] = useState(setting.colors[6]);
-    const [dot7Color, setLED7Color] = useState(setting.colors[7]);
-    const [dot8Color, setLED8Color] = useState(setting.colors[8]);
-    const [dot9Color, setLED9Color] = useState(setting.colors[9]);
-    const [dot10Color, setLED10Color] = useState(setting.colors[10]);
-    const [dot11Color, setLED11Color] = useState(setting.colors[11]);
-    const [dot12Color, setLED12Color] = useState(setting.colors[12]);
-    const [dot13Color, setLED13Color] = useState(setting.colors[13]);
-    const [dot14Color, setLED14Color] = useState(setting.colors[14]);
-    const [dot15Color, setLED15Color] = useState(setting.colors[15]);
+export default function StillEffectDots({setting}: SettingItemProps) {
+    const [dot0Color] = useState(setting.colors[0]);
+    const [dot1Color] = useState(setting.colors[1]);
+    const [dot2Color] = useState(setting.colors[2]);
+    const [dot3Color] = useState(setting.colors[3]);
+    const [dot4Color] = useState(setting.colors[4]);
+    const [dot5Color] = useState(setting.colors[5]);
+    const [dot6Color] = useState(setting.colors[6]);
+    const [dot7Color] = useState(setting.colors[7]);
+    const [dot8Color] = useState(setting.colors[8]);
+    const [dot9Color] = useState(setting.colors[9]);
+    const [dot10Color] = useState(setting.colors[10]);
+    const [dot11Color] = useState(setting.colors[11]);
+    const [dot12Color] = useState(setting.colors[12]);
+    const [dot13Color] = useState(setting.colors[13]);
+    const [dot14Color] = useState(setting.colors[14]);
+    const [dot15Color] = useState(setting.colors[15]);
 
     return (
         <SafeAreaView style={styles.background}>

@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import { SafeAreaView, ScrollView, StyleSheet, Text, View, Dimensions, TouchableOpacity } from 'react-native';
+import {SafeAreaView, ScrollView, StyleSheet, Text, View, Dimensions, TouchableOpacity, Alert, Linking, Platform} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -25,14 +25,70 @@ export default function Info() {
         }
     }, []);
 
+    const sendFeedback = () => {
+      const phoneNumber = '720-665-3101';
+      const message = 'Feedback for Pixel Controller: ';
+
+      let url = '';
+      if (Platform.OS === 'ios') {
+        url = `sms:${phoneNumber}&body=${encodeURIComponent(message)}`;
+      } else {
+        url = `sms:${phoneNumber}?body=${encodeURIComponent(message)}`;
+      }
+
+      Linking.canOpenURL(url)
+        .then(supported => {
+          if (supported) {
+            return Linking.openURL(url);
+          } else {
+            Alert.alert(
+              'Error',
+              'SMS messaging is not supported on this device'
+            );
+          }
+        })
+        .catch(error => {
+          console.error('Error opening SMS app:', error);
+        });
+    };
+
+    const showFeedbackAlert = () => {
+      Alert.alert(
+        'Send Feedback',
+        'Would you like to send feedback via text message?',
+        [
+          {
+            text: 'Cancel',
+            style: 'cancel'
+          },
+          {
+            text: 'Send Feedback',
+            onPress: sendFeedback
+          }
+        ],
+        { cancelable: true }
+      );
+    };
+
     return (
         <SafeAreaView style={styles.container}>
-            <TouchableOpacity
-                style={styles.backButton}
-                onPress={() => navigation.goBack()}
-            >
-                <Text style={styles.backB}> ⪡ </Text>
-            </TouchableOpacity>
+            <View style={styles.header}>
+                <TouchableOpacity
+                    style={styles.backButton}
+                    onPress={() => navigation.goBack()}
+                >
+                    <Text style={styles.backB}> ⪡ </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                    style={styles.feedbackButton}
+                    onPress={showFeedbackAlert}
+                >
+                    <Ionicons name="chatbubble-outline" size={24} color="white" />
+                    <Text style={styles.feedbackText}>Feedback</Text>
+                </TouchableOpacity>
+            </View>
+            
 
             <Text style={[styles.title, {color: textColor}]}>How to Use This App</Text>
 
@@ -154,5 +210,24 @@ const styles = StyleSheet.create({
         color: '#ffffff',
         textAlign: 'left',
         fontSize: 30
+    },
+    header: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        width: '100%',
+        marginTop: 20,
+        marginBottom: 10,
+    },
+    feedbackButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: 8,
+    },
+    feedbackText: {
+        color: 'white',
+        fontFamily: 'Clearlight-lJlq',
+        fontSize: 16,
+        marginLeft: 5,
     },
 });

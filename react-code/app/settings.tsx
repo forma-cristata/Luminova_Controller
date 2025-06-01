@@ -71,6 +71,7 @@ export default function Settings({navigation}: any) {
     const ref = React.useRef<ICarouselInstance>(null);
     const progress = useSharedValue<number>(0);
     const [currentIndex, setCurrentIndex] = React.useState(0);
+    const [isInitialRender, setIsInitialRender] = React.useState(true);
 
     const updateSettings = async (updatedSettings: Setting[]) => {
         setSettingsData(updatedSettings);
@@ -106,27 +107,26 @@ export default function Settings({navigation}: any) {
 
                     const lastEditedIndex = lastEdited ? parseInt(lastEdited) : 0;
                     setCurrentIndex(lastEditedIndex);
-                    if (!lastEdited) setLastEdited("0");
 
-                    if (ref.current) {
-                        ref.current.scrollTo({ index: lastEditedIndex, animated: false });
-                    }
+                    // Set a flag to prevent initial progress change handling
+                    setIsInitialRender(true);
+
+                    // Scroll to index
+                    ref.current?.scrollTo({index: lastEditedIndex || 0, animated: false});
+
+                    // Reset the flag after a small delay
+                    setTimeout(() => {
+                        setIsInitialRender(false);
+                    }, 100);
                 }
             } catch (error) {
                 console.error("Error initializing data:", error);
             }
-
         };
 
-        initializeData().then(() => {});
+        initializeData();
     }, []);
-
-
-    React.useEffect(() => {
-        if (ref.current && currentIndex === 0) {
-            ref.current.scrollTo({ index: 0, animated: false });
-        }
-    }, [currentIndex]);
+    
 
     const handleProgressChange = (offset: number, absoluteProgress: number) => {
         if (absoluteProgress === 0 && offset < 0) {
@@ -295,7 +295,11 @@ export default function Settings({navigation}: any) {
                         width={width}
                         defaultIndex={Math.abs(currentIndex % (settingsData.length+1))}
                         enabled={true}
-                        onProgressChange={handleProgressChange}
+                        onProgressChange={(offset, absoluteProgress) => {
+                            if (!isInitialRender) {
+                                handleProgressChange(offset, absoluteProgress);
+                            }
+                        }}
                         renderItem={({item, index}: { item: Setting | 'new', index: number }) => (
                             item === 'new' ? (
                                 <Text style={styles.newSettingItemText} key={item + index.toString()}/>

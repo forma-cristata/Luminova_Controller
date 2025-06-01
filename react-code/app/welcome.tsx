@@ -4,6 +4,7 @@ import {SafeAreaProvider} from "react-native-safe-area-context";
 import React, { useState, useEffect} from "react";
 import {IP} from "@/app/configurations/constants";
 import Setting from "@/app/interface/setting-interface";
+import { Ionicons } from '@expo/vector-icons';
 
 export default function Welcome({navigation}: any) {
 
@@ -45,6 +46,10 @@ export default function Welcome({navigation}: any) {
 
     function createButtonPressed() {
         navigation.navigate("Settings");
+    }
+
+    function navigateToInfo() {
+        navigation.navigate("Info");
     }
 
     const [isEnabled, setIsEnabled] = useState(false);
@@ -131,6 +136,12 @@ export default function Welcome({navigation}: any) {
     return (
         <SafeAreaProvider>
             <SafeAreaView style={styles.container}>
+                <TouchableOpacity
+                    style={styles.infoButton}
+                    onPress={navigateToInfo}
+                >
+                    <Ionicons name="information-circle-outline" size={32} color="white" />
+                </TouchableOpacity>
                 <Text style={[styles.text, {color: textColor}]} key={textColor}>{displayText}</Text>
                 <TouchableOpacity style={styles.styleAButton} onPress={createButtonPressed}>
                     <Text style={styles.button}>Create     ⟩</Text>
@@ -179,5 +190,11 @@ const styles = StyleSheet.create({
         borderStyle: "dashed",
         borderWidth: 2,
         borderColor: "#ffffff",
+    },
+    infoButton: {
+        position: 'absolute',
+        top: 40,
+        right: 20,
+        zIndex: 10,
     }
 });

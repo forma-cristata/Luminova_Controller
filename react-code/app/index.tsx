@@ -12,6 +12,7 @@
     import NewColorEditor from "@/app/NewColorEditor";
     import NewFlashingPatternEditor from "@/app/NewFlashingPatternEditor";
     import {GestureHandlerRootView} from "react-native-gesture-handler";
+    import Info from "@/app/Info";
 
     export type RootStackParamList = {
         Welcome: undefined;
@@ -21,6 +22,7 @@
         FlashingPatternEditor: { setting: Setting, isNew?: boolean };
         NewColorEditor: { setting: Setting, isNew?: boolean };
         NewFlashingPatternEditor: { setting: Setting, isNew?: boolean };
+        Info: undefined;
     }
 
     const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -51,7 +53,6 @@
                         headerShown: false
                     }}
                 >
-                    {/* Define the navigation screens */}
                     <Stack.Screen name="Welcome" component={Welcome} />
                     <Stack.Screen name="Settings" component={Settings} />
                     <Stack.Screen name="ChooseModification" component={ChooseModificatioon} />
@@ -59,6 +60,7 @@
                     <Stack.Screen name="FlashingPatternEditor" component={FlashingPatternEditor} />
                     <Stack.Screen name="NewColorEditor" component={NewColorEditor} />
                     <Stack.Screen name="NewFlashingPatternEditor" component={NewFlashingPatternEditor} />
+                    <Stack.Screen name="Info" component={Info} />
                 </Stack.Navigator>
                 </GestureHandlerRootView>
             </ConfigurationProvider>

@@ -126,7 +126,7 @@ export default function Settings({navigation}: any) {
 
         initializeData();
     }, []);
-    
+
 
     const handleProgressChange = (offset: number, absoluteProgress: number) => {
         if (absoluteProgress === 0 && offset < 0) {

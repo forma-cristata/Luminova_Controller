@@ -193,7 +193,7 @@ const styles = StyleSheet.create({
     },
     infoButton: {
         position: 'absolute',
-        top: 40,
+        top: 60,
         right: 20,
         zIndex: 10,
     }

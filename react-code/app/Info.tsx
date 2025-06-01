@@ -31,7 +31,7 @@ export default function Info() {
                 style={styles.backButton}
                 onPress={() => navigation.goBack()}
             >
-                <Ionicons name="arrow-back" size={30} color="white" />
+                <Text style={styles.backB}> ⪡ </Text>
             </TouchableOpacity>
 
             <Text style={[styles.title, {color: textColor}]}>How to Use This App</Text>
@@ -149,5 +149,10 @@ const styles = StyleSheet.create({
         fontFamily: 'Clearlight-lJlq',
         fontSize: 26,
         flex: 1,
+    },
+    backB: {
+        color: '#ffffff',
+        textAlign: 'left',
+        fontSize: 30
     },
 });

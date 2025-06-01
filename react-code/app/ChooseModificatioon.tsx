@@ -13,6 +13,7 @@ import TechnoDots from "@/app/components/TechnoDots";
 import TraceManyDots from "@/app/components/TraceManyDots";
 import TraceOneDots from "@/app/components/TraceOneDots";
 import TranceDots from "@/app/components/TranceDots";
+import {Ionicons} from "@expo/vector-icons";
 
 export default function ChooseModificatioon({navigation, route}: any) {
     const setting = route.params?.setting as Setting;
@@ -45,10 +46,20 @@ export default function ChooseModificatioon({navigation, route}: any) {
             default:
                 return <ColorDots colors={setting.colors}/>;
         }
+    };
+
+    function navigateToInfo() {
+        navigation.navigate("Info");
     }
 
     return (
         <SafeAreaView style={styles.container}>
+            <TouchableOpacity
+                style={styles.infoButton}
+                onPress={navigateToInfo}
+            >
+                <Ionicons name="information-circle-outline" size={32} color="white" />
+            </TouchableOpacity>
             {/*Back Button*/}
             <View style={styles.backButton}>
                 <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -167,4 +178,10 @@ const styles = StyleSheet.create({
         color: "white",
         fontSize: 30,
     },
+    infoButton: {
+        position: 'absolute',
+        top: 60,
+        right: 20,
+        zIndex: 10,
+    }
 })

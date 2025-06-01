@@ -14,6 +14,7 @@ import Animated, {
 import HueSliderBackground from "@/app/components/HueSliderBackground";
 import {IP} from "@/app/configurations/constants";
 import {useConfiguration} from "@/app/context/ConfigurationContext";
+import {Ionicons} from "@expo/vector-icons";
 
 export default function ColorEditor({navigation, route}: any) {
     const { currentConfiguration, setLastEdited } = useConfiguration();
@@ -349,6 +350,10 @@ export default function ColorEditor({navigation, route}: any) {
       setHasChanges(true);
     };
 
+    function navigateToInfo() {
+        navigation.navigate("Info");
+    }
+
 
 
     return (
@@ -356,6 +361,12 @@ export default function ColorEditor({navigation, route}: any) {
             <PanGestureHandler onGestureEvent={panGestureEvent}>
                 <Animated.View style={{flex:1}}>
                     <SafeAreaView style={styles.container}>
+                        <TouchableOpacity
+                            style={styles.infoButton}
+                            onPress={navigateToInfo}
+                        >
+                            <Ionicons name="information-circle-outline" size={32} color="white" />
+                        </TouchableOpacity>
                     <View style={styles.backButton}>
                         <TouchableOpacity onPress={() => {
                             unPreviewAPI();
@@ -770,4 +781,10 @@ const styles = StyleSheet.create({
         minWidth: width * 0.6,
         padding: 10,
     },
+    infoButton: {
+        position: 'absolute',
+        top: 60,
+        right: 20,
+        zIndex: 10,
+    }
 });

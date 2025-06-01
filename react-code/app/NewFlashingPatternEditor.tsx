@@ -19,6 +19,7 @@ import {useThrottle} from "expo-dev-launcher/bundle/hooks/useDebounce";
 import {loadData, saveData} from "@/app/settings";
 import {useConfiguration} from "@/app/context/ConfigurationContext";
 import {IP} from "@/app/configurations/constants";
+import {Ionicons} from "@expo/vector-icons";
 
 export default function FlashingPatternEditor({ route, navigation }: any) {
     const { currentConfiguration, setLastEdited } = useConfiguration();
@@ -150,10 +151,20 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
         }).then(response => response.json())
             .then(data => console.log("success: ", data))
             .catch(error => console.error('Error: ', error));
+    };
+
+    function navigateToInfo() {
+        navigation.navigate("Info");
     }
 
     return (
         <SafeAreaView  style={styles.container}>
+            <TouchableOpacity
+                style={styles.infoButton}
+                onPress={navigateToInfo}
+            >
+                <Ionicons name="information-circle-outline" size={32} color="white" />
+            </TouchableOpacity>
             <View style={styles.backButton}>
                 <TouchableOpacity onPress={() => {
                     unPreviewAPI();
@@ -176,20 +187,7 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
                     setting={setting}
                     selectedPattern={throttledFlashingPattern}
                     setSelectedPattern={setFlashingPattern}
-                />                {/*<Text style={styles.sliderText}>Hex: #</Text>
-                <TextInput
-                    style={[styles.hexInput]}
-                    value={hexInput}
-                    onChangeText={handleHexInput}
-                    placeholder="FFFFFF"
-                    placeholderTextColor="#666"
-                    maxLength={6}
-                    editable={selectedDot !== null}
                 />
-
-                TODO: This needs edited to display a vertical carousel of the flashing pattern options
-
-                */}
             </View>
 
             <View style={styles.sliderContainer}>
@@ -233,9 +231,8 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
                     </TouchableOpacity>
 
                     <TouchableOpacity
-                        style={[styles.styleAButton, { opacity: delayTime !== initialDelayTime || flashingPattern !== initialFlashingPattern ? 1 : 0.5 }]}
+                        style={styles.styleAButton}
                         onPress={handleSave}
-                        disabled={delayTime === initialDelayTime && flashingPattern === initialFlashingPattern}
                     >
                         <Text style={styles.button}>Save</Text>
                     </TouchableOpacity>
@@ -372,5 +369,11 @@ const styles=StyleSheet.create({
         fontFamily: "Clearlight-lJlq",
         letterSpacing: 2,
 
+    },
+    infoButton: {
+        position: 'absolute',
+        top: 60,
+        right: 20,
+        zIndex: 10,
     }
 });

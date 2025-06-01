@@ -206,12 +206,21 @@ export default function Settings({navigation}: any) {
         }
     };
 
+    function navigateToInfo() {
+        navigation.navigate("Info");
+    }
 
 
 
 
     return (
         <SafeAreaView style={styles.container}>
+            <TouchableOpacity
+                style={styles.infoButton}
+                onPress={navigateToInfo}
+            >
+                <Ionicons name="information-circle-outline" size={32} color="white" />
+            </TouchableOpacity>
             {/*Back Button*/}
             <View style={styles.backButton}>
                 <TouchableOpacity onPress={() => {
@@ -411,5 +420,11 @@ const styles = StyleSheet.create({
         color: 'white',
         fontSize: 20,
         fontFamily: 'Clearlight-lJlq',
+    },
+    infoButton: {
+        position: 'absolute',
+        top: 60,
+        right: 20,
+        zIndex: 10,
     }
 });

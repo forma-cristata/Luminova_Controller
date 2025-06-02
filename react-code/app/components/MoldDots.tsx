@@ -48,7 +48,7 @@ export default function MoldDots({setting}: SettingItemProps) {
         let isActive = true;
         const strobeCount1 = 2;
         const strobeCount2 = 2;
-        const ledsPerGroup = Math.floor(LIGHT_COUNT * 3 / 4);
+        const ledsPerGroup = 12;
 
         const animate = async () => {
             if (!isActive) return;

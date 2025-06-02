@@ -55,7 +55,7 @@ export default function StrobeChangeDots({setting}: SettingItemProps) {
                     if (!isActive) return;
 
                     let offset = (i + j * 2) % LIGHT_COUNT;
-                    for (let k = 0; k < 2; k++) {
+                    for (let k = 0; k < 4; k++) {
                         if (!isActive) return;
 
                         setLed[offset](black);

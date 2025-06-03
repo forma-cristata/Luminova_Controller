@@ -45,15 +45,20 @@ export default function ComfortSongDots({setting}: SettingItemProps) {
     const LIGHT_COUNT = setLed.length;
     const patternIndices= [1, 2, 3, 2, 4, 3, 2, 1, 0, 1, 2, 1, 3, 2, 1, 0 ];
     const pattern2Indices= [7, 8, 9, 8, 10, 9, 8, 7, 6, 7, 8, 7, 9, 8, 7, 6];
-    const pattern3Indices= [13, 14, 15, 14, 16, 15, 14, 13, 12, 13, 14, 13, 15, 14, 13, 12];
+    const pattern3Indices= [13, 14, 15, 14, 15, 14, 13, 12, 11, 12, 13, 14, 15, 14, 13, 12];
 
     useEffect(() => {
         let isActive = true;
 
-        const animate = async () => {
+        const animate = async () => { 
+            for(let i = 0; i < LIGHT_COUNT; i++) {
+                if (!isActive) return;
+                setLed[i](black);
+            }
+
             if (!isActive) return;
 
-            for (let x = 0; x < COLOR_COUNT; x++) {
+            for (let x = 0; x < COLOR_COUNT * 2; x++) {
                 for (let i = 0; i < 2; i++) {
                     if (!isActive) return;
 

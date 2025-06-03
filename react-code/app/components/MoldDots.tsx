@@ -51,6 +51,10 @@ export default function MoldDots({setting}: SettingItemProps) {
         const ledsPerGroup = 12;
 
         const animate = async () => {
+            for(let i = 0; i < LIGHT_COUNT; i++) {
+                setLed[i](black);
+            }
+
             if (!isActive) return;
 
             for (let startIdx = LIGHT_COUNT - 1; startIdx >= 0; startIdx--) {
@@ -61,12 +65,10 @@ export default function MoldDots({setting}: SettingItemProps) {
 
                     for (let i = 0; i < ledsPerGroup; i++) {
                         let ledIndex = startIdx + i;
-                        for (let ha = 0; ha < 4; ha++) {
-                            if (!isActive) return;
-                            setLed[(ledIndex + 1) % LIGHT_COUNT](setting.colors[ledIndex % COLOR_COUNT]);
-                            await new Promise(resolve => setTimeout(resolve, setting.delayTime * 2));
-                            setLed[ledIndex % LIGHT_COUNT](black);
-                        }
+                        if (!isActive) return;
+                        setLed[(ledIndex + 1) % LIGHT_COUNT](setting.colors[ledIndex % COLOR_COUNT]);
+                        await new Promise(resolve => setTimeout(resolve, setting.delayTime / 2));
+                        setLed[ledIndex % LIGHT_COUNT](black);
                     }
 
                     for (let i = 0; i < ledsPerGroup; i++) {
@@ -81,12 +83,9 @@ export default function MoldDots({setting}: SettingItemProps) {
 
                     for (let i = 0; i < ledsPerGroup; i++) {
                         let ledIndex = startIdx + i;
-                        for (let ha = 0; ha < 4; ha++) {
-                            if (!isActive) return;
-                            setLed[(ledIndex + 1) % LIGHT_COUNT](setting.colors[(ledIndex + ha) % COLOR_COUNT]);
-                            await new Promise(resolve => setTimeout(resolve, setting.delayTime / 2));
-                            setLed[ledIndex % LIGHT_COUNT](black);
-                        }
+                        setLed[(ledIndex + 1) % LIGHT_COUNT](setting.colors[(ledIndex) % COLOR_COUNT]);
+                        await new Promise(resolve => setTimeout(resolve, setting.delayTime / 2));
+                        setLed[ledIndex % LIGHT_COUNT](black);
                     }
 
                     for (let i = 0; i < ledsPerGroup; i++) {
@@ -105,12 +104,10 @@ export default function MoldDots({setting}: SettingItemProps) {
 
                     for (let i = 0; i < ledsPerGroup; i++) {
                         let ledIndex = startIdx + i;
-                        for (let ha = 0; ha < 4; ha++) {
-                            if (!isActive) return;
-                            setLed[(ledIndex + 1) % LIGHT_COUNT](setting.colors[ledIndex % COLOR_COUNT]);
-                            await new Promise(resolve => setTimeout(resolve, setting.delayTime * 2));
-                            setLed[ledIndex % LIGHT_COUNT](black);
-                        }
+                        if (!isActive) return;
+                        setLed[(ledIndex + 1) % LIGHT_COUNT](setting.colors[ledIndex % COLOR_COUNT]);
+                        await new Promise(resolve => setTimeout(resolve, setting.delayTime / 2));
+                        setLed[ledIndex % LIGHT_COUNT](black);
                     }
 
                     for (let i = 0; i < ledsPerGroup; i++) {
@@ -123,13 +120,11 @@ export default function MoldDots({setting}: SettingItemProps) {
 
                     for (let i = 0; i < ledsPerGroup; i++) {
                         let ledIndex = startIdx + i;
-                        for (let ha = 0; ha < 4; ha++) {
-                            if (!isActive) return;
-                            setLed[(ledIndex + 1) % LIGHT_COUNT](setting.colors[(ledIndex + ha) % COLOR_COUNT]);
-                            await new Promise(resolve => setTimeout(resolve, setting.delayTime / 2));
+                        if (!isActive) return;
+                        setLed[(ledIndex + 1) % LIGHT_COUNT](setting.colors[(ledIndex) % COLOR_COUNT]);
+                        await new Promise(resolve => setTimeout(resolve, setting.delayTime / 2));
 
-                            setLed[ledIndex % LIGHT_COUNT](black);
-                        }
+                        setLed[ledIndex % LIGHT_COUNT](black);
                     }
 
                     for (let i = 0; i < ledsPerGroup; i++) {

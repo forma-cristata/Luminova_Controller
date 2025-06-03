@@ -50,7 +50,7 @@ export default function ComfortSongDots({setting}: SettingItemProps) {
     useEffect(() => {
         let isActive = true;
 
-        const animate = async () => { 
+        const animate = async () => {
             for(let i = 0; i < LIGHT_COUNT; i++) {
                 if (!isActive) return;
                 setLed[i](black);

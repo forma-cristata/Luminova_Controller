@@ -56,7 +56,7 @@ export default function ChristmasDots({setting}: SettingItemProps) {
                     if (!isActive) return;
                     await new Promise(resolve => setTimeout(resolve, setting.delayTime/16));
 
-                    setLed[j](setting.colors[xy]);
+                    setLed[j % LIGHT_COUNT](setting.colors[xy]);
                     if (j === 8) {
                         f = (xy+1) % COLOR_COUNT;
                         await new Promise(resolve => setTimeout(resolve, setting.delayTime/16));

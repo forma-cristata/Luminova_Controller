@@ -101,7 +101,7 @@ export default function MoldDots({setting}: SettingItemProps) {
 
                 for (let strobe = 0; strobe < strobeCount1; strobe++) {
                     if (!isActive) return;
-
+3
                     for (let i = 0; i < ledsPerGroup; i++) {
                         let ledIndex = startIdx + i;
                         if (!isActive) return;

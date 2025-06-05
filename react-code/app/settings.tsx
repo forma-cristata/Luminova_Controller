@@ -111,13 +111,15 @@ export default function Settings({navigation}: any) {
                     // Set a flag to prevent initial progress change handling
                     setIsInitialRender(true);
 
+                    setTimeout(() => {
+                        setIsInitialRender(false);
+                    }, 100);
+
                     // Scroll to index
                     ref.current?.scrollTo({index: lastEditedIndex || 0, animated: false});
 
                     // Reset the flag after a small delay
-                    setTimeout(() => {
-                        setIsInitialRender(false);
-                    }, 100);
+
                 }
             } catch (error) {
                 console.error("Error initializing data:", error);

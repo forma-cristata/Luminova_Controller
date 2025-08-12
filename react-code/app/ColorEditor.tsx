@@ -219,8 +219,8 @@ export default function ColorEditor({navigation, route}: any) {
             const currentIndex = updatedSettings.findIndex(s => s.name === setting.name);
             setLastEdited(currentIndex.toString());
             
-            // Restore proper navigation - this was correct originally
-            navigation.navigate("Settings", {setting});
+            // Fix: Navigate directly to Settings, skipping ChooseModification
+            navigation.navigate("Settings");
         }
     };
 

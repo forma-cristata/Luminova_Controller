@@ -2,6 +2,8 @@ import {useState, useEffect, useRef} from "react";
 import Dot from "@/app/components/Dot";
 import {SafeAreaView, StyleSheet} from "react-native";
 import Setting from "@/app/interface/setting-interface";
+import { useFocusEffect } from '@react-navigation/native';
+import React from 'react';
 
 interface AnimatedDotsProps {
     navigation: any;
@@ -15,9 +17,20 @@ export default function AnimatedDots({setting}: AnimatedDotsProps) {
     const COLOR_COUNT = setting.colors.length;
     const animationRef = useRef<boolean>(false);
     const timeoutRefs = useRef<(NodeJS.Timeout | number)[]>([]);
+    const [isComponentActive, setIsComponentActive] = useState(true);
 
     // Initialize all 16 dot colors as an array - this will be reset when setting changes
     const [dotColors, setDotColors] = useState<string[]>(new Array(LIGHT_COUNT).fill(black));
+
+    // Handle navigation focus - restart animations when screen becomes focused
+    useFocusEffect(
+        React.useCallback(() => {
+            setIsComponentActive(true);
+            return () => {
+                setIsComponentActive(false);
+            };
+        }, [])
+    );
 
     // Helper function to initialize colors based on current setting
     const initializeColors = () => {
@@ -51,7 +64,7 @@ export default function AnimatedDots({setting}: AnimatedDotsProps) {
 
     // Helper function to update a specific LED color
     const setLedColor = (index: number, color: string) => {
-        if (!animationRef.current) return;
+        if (!animationRef.current || !isComponentActive) return;
         setDotColors(prev => {
             const newColors = [...prev];
             newColors[index] = color;
@@ -61,7 +74,7 @@ export default function AnimatedDots({setting}: AnimatedDotsProps) {
 
     // Helper function to set all LEDs to a specific color
     const setAllLeds = (color: string) => {
-        if (!animationRef.current) return;
+        if (!animationRef.current || !isComponentActive) return;
         setDotColors(new Array(LIGHT_COUNT).fill(color));
     };
 
@@ -69,6 +82,9 @@ export default function AnimatedDots({setting}: AnimatedDotsProps) {
     const random = (min: number, max: number) => {
         return Math.floor(Math.random() * (max - min)) + min;
     };
+
+    // Updated animation helper that checks both refs
+    const isActive = () => animationRef.current && isComponentActive;
 
     // Animation patterns with proper cleanup
     const blenderAnimation = async (isActive: () => boolean) => {

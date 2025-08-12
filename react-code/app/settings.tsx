@@ -244,7 +244,6 @@ export default function Settings({navigation}: any) {
             <View style={styles.backButton}>
                 <TouchableOpacity onPress={() => {
                     setLastEdited('0');
-
                     navigation.navigate('Welcome', {animation: 'slideFromLeft'});
                     setTimeout(() => {
                         setLastEdited('0');

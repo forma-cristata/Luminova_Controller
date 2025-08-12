@@ -2,7 +2,7 @@ import {StyleSheet, SafeAreaView, TouchableOpacity, View, Text, Dimensions} from
 import ColorDots from "@/app/components/ColorDots";
 import Setting from "@/app/interface/setting-interface";
 import AnimatedDots from "@/app/components/AnimatedDots";
-import {Ionicons} from "@expo/vector-icons";
+import InfoButton from "@/app/components/InfoButton";
 
 export default function ChooseModificatioon({navigation, route}: any) {
     const setting = route.params?.setting as Setting;
@@ -16,12 +16,7 @@ export default function ChooseModificatioon({navigation, route}: any) {
 
     return (
         <SafeAreaView style={styles.container}>
-            <TouchableOpacity
-                style={styles.infoButton}
-                onPress={navigateToInfo}
-            >
-                <Ionicons name="information-circle-outline" size={32} color="white" />
-            </TouchableOpacity>
+            <InfoButton onPress={navigateToInfo} />
             {/*Back Button*/}
             <View style={styles.backButton}>
                 <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -63,16 +58,12 @@ const styles = StyleSheet.create({
         transform: "rotate(90deg) scale(1.7)",
         marginTop: "5%",
         marginLeft: "50%",
-
-
     },
     whiteText: {
         color: "white",
         fontFamily: "Thesignature",
         fontSize: 29,
-
         textAlign: "right",
-
         borderStyle: "solid",
         borderRightWidth: 2,
         borderBottomWidth: 2,
@@ -93,20 +84,13 @@ const styles = StyleSheet.create({
         paddingLeft: 5,
         alignSelf: "flex-end"
     },
-
-
-        modeSection: {
+    modeSection: {
         height: Dimensions.get('window').height * 0.86,
         width: Dimensions.get('window').width * 0.5,
-
-/*
-        backgroundColor: "blue",
-*/
     },
     colorSection: {
         height: Dimensions.get('window').height * 0.88,
         width: Dimensions.get('window').width * 0.5,
-
     },
     container: {
         flex: 1,
@@ -118,9 +102,6 @@ const styles = StyleSheet.create({
         left: 0,
         width: "100%",
         height: Dimensions.get('window').height * 0.05,
-/*
-        backgroundColor: "red"
-*/
     },
     notBackButton: {
         flex: 1,
@@ -139,12 +120,5 @@ const styles = StyleSheet.create({
     backB: {
         color: "white",
         fontSize: 30,
-    },
-    infoButton: {
-        position: 'absolute',
-        top: 60,
-        right: 20,
-        zIndex: 10,
     }
-})
-
+});

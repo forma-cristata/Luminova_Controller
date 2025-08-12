@@ -11,10 +11,10 @@ import jsonData from './configurations/modes.json';
 import {useConfiguration} from "@/app/context/ConfigurationContext";
 import {Ionicons} from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
+import InfoButton from "@/app/components/InfoButton";
 
 let data = jsonData.settings as Setting[];
 console.log("JSON Default Data: ", jsonData);
-
 
 const width = Dimensions.get("window").width;
 const height = Dimensions.get("window").height;
@@ -57,15 +57,12 @@ export const loadData = async () => {
     }
 };
 
-
-
 export const saveData = async (newSettings: Setting[]) => {
     await FileSystem.writeAsStringAsync(FILE_URI, JSON.stringify(newSettings));
 };
 
 export default function Settings({navigation}: any) {
     const {lastEdited, setLastEdited} = useConfiguration();
-
 
     const [settingsData, setSettingsData] = React.useState<Setting[]>([]);
     const ref = React.useRef<ICarouselInstance>(null);
@@ -95,7 +92,6 @@ export default function Settings({navigation}: any) {
        });
    };
 
-
     React.useEffect(() => {
         const initializeData = async () => {
             try {
@@ -112,7 +108,6 @@ export default function Settings({navigation}: any) {
                     setIsInitialRender(true);
 
                     ref.current?.scrollTo({index: lastEditedIndex || 0, animated: false});
-
 
                     setTimeout(() => {
                         setIsInitialRender(false);
@@ -131,7 +126,6 @@ export default function Settings({navigation}: any) {
         initializeData();
     }, []);
 
-
     const handleProgressChange = (offset: number, absoluteProgress: number) => {
         if (absoluteProgress === 0 && offset < 0) {
             return;
@@ -140,7 +134,6 @@ export default function Settings({navigation}: any) {
         progress.value = offset;
         setCurrentIndex(Math.round(absoluteProgress));
     };
-
 
    const handleDelete = async () => {
        Alert.alert(
@@ -214,17 +207,9 @@ export default function Settings({navigation}: any) {
         navigation.navigate("Info");
     }
 
-
-
-
     return (
         <SafeAreaView style={styles.container}>
-            <TouchableOpacity
-                style={styles.infoButton}
-                onPress={navigateToInfo}
-            >
-                <Ionicons name="information-circle-outline" size={32} color="white" />
-            </TouchableOpacity>
+            <InfoButton onPress={navigateToInfo} />
             {/*Back Button*/}
             <View style={styles.backButton}>
                 <TouchableOpacity onPress={() => {
@@ -424,11 +409,5 @@ const styles = StyleSheet.create({
         color: 'white',
         fontSize: 20,
         fontFamily: 'Clearlight-lJlq',
-    },
-    infoButton: {
-        position: 'absolute',
-        top: 60,
-        right: 20,
-        zIndex: 10,
     }
 });

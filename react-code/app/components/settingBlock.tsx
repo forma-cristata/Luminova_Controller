@@ -2,8 +2,9 @@ import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import Setting from "@/app/interface/setting-interface";
 import ColorDots from "@/app/components/ColorDots";
 import AnimatedDots from "@/app/components/AnimatedDots";
-import { IP } from "@/app/configurations/constants";
 import { useConfiguration } from "@/app/context/ConfigurationContext";
+import { COMMON_STYLES, COLORS, FONTS } from "@/app/components/SharedStyles";
+import { ApiService } from "@/app/services/ApiService";
 
 interface SettingItemProps {
     navigation: any
@@ -28,9 +29,15 @@ const SettingBlock = ({navigation, setting, style, animated, index}: SettingItem
         }
     }
 
-    const effectNumber = (flashingPattern: string) => {
-        return parseInt(flashingPattern);
-    }
+    const handleFlash = async () => {
+        try {
+            await ApiService.flashSetting(setting);
+            setCurrentConfiguration(setting);
+            console.log("Current Configuration: " + setting.name);
+        } catch (error) {
+            console.error('Flash error:', error);
+        }
+    };
 
     return (
         <>
@@ -43,34 +50,13 @@ const SettingBlock = ({navigation, setting, style, animated, index}: SettingItem
                     {dotsRendered()}
                     <View style={styles.buttonsContainer}>
 
-                    <TouchableOpacity style={styles.styleAButton} onPress={() => {
+                    <TouchableOpacity style={COMMON_STYLES.wideButton} onPress={() => {
                             setLastEdited(index!.toString());
                             navigation.navigate("ChooseModification", {setting: setting});
                         }}>
                             <Text style={styles.buttons}>Edit</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.styleAButton} onPress={() => {
-                            fetch(`http://${IP}/api/config`, {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                },
-                                body: JSON.stringify({
-                                    delayTime: parseInt(String(setting.delayTime)),
-                                    effectNumber: effectNumber(setting.flashingPattern),
-                                    whiteValues: setting.whiteValues,
-                                    brightnessValues: setting.brightnessValues,
-                                    colors: setting.colors,
-                                })
-                            })
-                                .then(response => response.json())
-                                .then(data => {
-                                    console.log("success: ", data);
-                                    setCurrentConfiguration(setting)
-                                    console.log("\"\u001b[39m\"Current Configuration: " + currentConfiguration?.name);
-                                })
-                                .catch(error => console.error('Error: ', error));
-                        }}>
+                        <TouchableOpacity style={COMMON_STYLES.wideButton} onPress={handleFlash}>
                             <Text style={styles.buttons}>Flash</Text>
                         </TouchableOpacity>
                     </View>
@@ -86,18 +72,19 @@ const SettingBlock = ({navigation, setting, style, animated, index}: SettingItem
         </>
     );
 }
+
 const styles = StyleSheet.create({
     whiteText: {
-        color: "white",
+        color: COLORS.WHITE,
         fontSize: 50,
-        fontFamily: "Thesignature",
+        fontFamily: FONTS.SIGNATURE,
         textAlign: "center",
         flexWrap: "nowrap",
     },
     whiteTextSmaller: {
-        color: "white",
+        color: COLORS.WHITE,
         fontSize: 60,
-        fontFamily: "Thesignature",
+        fontFamily: FONTS.SIGNATURE,
     },
     buttonsContainer: {
         flexDirection: "row",
@@ -107,21 +94,9 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
     },
     buttons: {
-        color: "white",
+        color: COLORS.WHITE,
         fontSize: 40,
-        fontFamily: "Clearlight-lJlq",
-    },
-    styleAButton: {
-        backgroundColor: "#000000",
-        borderRadius: 10,
-        paddingVertical: 10,
-        paddingHorizontal: 20,
-        marginTop: 10,
-        width: "45%",
-        alignItems: "center",
-        borderStyle: "dashed",
-        borderWidth: 2,
-        borderColor: "#ffffff",
+        fontFamily: FONTS.CLEAR,
     },
     headerContainer: {
         width: "100%",

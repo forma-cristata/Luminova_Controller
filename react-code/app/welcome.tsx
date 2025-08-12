@@ -2,12 +2,12 @@ import { useConfiguration } from './context/ConfigurationContext';
 import {Text, StyleSheet, SafeAreaView, Switch, TouchableOpacity} from "react-native";
 import {SafeAreaProvider} from "react-native-safe-area-context";
 import React, { useState, useEffect} from "react";
-import {IP} from "@/app/configurations/constants";
 import Setting from "@/app/interface/setting-interface";
-import { Ionicons } from '@expo/vector-icons';
+import InfoButton from "@/app/components/InfoButton";
+import { COMMON_STYLES, COLORS, FONTS } from "@/app/components/SharedStyles";
+import { ApiService } from "@/app/services/ApiService";
 
 export default function Welcome({navigation}: any) {
-
     const { currentConfiguration, setCurrentConfiguration, setLastEdited } = useConfiguration();
 
     const [displayText, setDisplayText] = useState("");
@@ -58,19 +58,8 @@ export default function Welcome({navigation}: any) {
     useEffect(() => {
         const fetchInitialStatus = async () => {
             try {
-                const response = await fetch(`http://${IP}/api/status`, {
-                    method: 'GET',
-                    headers: {
-                        'Accept': 'application/json',
-                    }
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    setIsEnabled(data.shelfOn);
-                } else {
-                    console.error("Failed to fetch initial status");
-                }
+                const data = await ApiService.getStatus();
+                setIsEnabled(data.shelfOn);
             } catch (error) {
                 console.error("Error fetching status:", error);
             } finally {
@@ -78,7 +67,7 @@ export default function Welcome({navigation}: any) {
             }
         };
 
-        fetchInitialStatus().then(() => {});
+        fetchInitialStatus();
     }, []);
 
     const toggleSwitch = async() => {
@@ -98,9 +87,7 @@ export default function Welcome({navigation}: any) {
                 flashingPattern: "6",
                 delayTime: 3
             }
-
             setCurrentConfiguration(startConfig);
-
         }
         else {
             let startConfig: Setting = {
@@ -114,36 +101,22 @@ export default function Welcome({navigation}: any) {
             setCurrentConfiguration(startConfig);
         }
 
-
         try{
             const endpoint = newState ? 'on': 'off';
-            const response = await fetch(`http://${IP}/api/led/${endpoint}`, {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json',
-                }
-            });
-
-            if(!response.ok) {
-                console.error("API request failed");
-            }
+            await ApiService.toggleLed(endpoint);
+            console.log(`LED toggled ${endpoint}`);
         }
         catch (error){
-            console.error("error toggling");
+            console.error("Error toggling LED:", error);
         }
     }
 
     return (
         <SafeAreaProvider>
             <SafeAreaView style={styles.container}>
-                <TouchableOpacity
-                    style={styles.infoButton}
-                    onPress={navigateToInfo}
-                >
-                    <Ionicons name="information-circle-outline" size={32} color="white" />
-                </TouchableOpacity>
+                <InfoButton onPress={navigateToInfo} />
                 <Text style={[styles.text, {color: textColor}]} key={textColor}>{displayText}</Text>
-                <TouchableOpacity style={styles.styleAButton} onPress={createButtonPressed}>
+                <TouchableOpacity style={COMMON_STYLES.welcomeButton} onPress={createButtonPressed}>
                     <Text style={styles.button}>Create     ⟩</Text>
                 </TouchableOpacity>
                 <Switch onValueChange={toggleSwitch}
@@ -164,37 +137,20 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#000000',
+        backgroundColor: COLORS.BLACK,
     },
     text: {
         marginBottom: "20%",
-        fontFamily: "Thesignature",
+        fontFamily: FONTS.SIGNATURE,
         fontSize: 130,
     },
     button: {
-        color: "white",
+        color: COLORS.WHITE,
         fontSize: 40,
-        fontFamily: "Thesignature",
+        fontFamily: FONTS.SIGNATURE,
     },
     switch: {
         transformOrigin: "center",
         transform: "scale(1.5)",
-    },
-    styleAButton: {
-        marginBottom: "25%",
-        backgroundColor: "#000000",
-        borderRadius: 10,
-        paddingVertical: 10,
-        paddingHorizontal: 20,
-        alignItems: "center",
-        borderStyle: "dashed",
-        borderWidth: 2,
-        borderColor: "#ffffff",
-    },
-    infoButton: {
-        position: 'absolute',
-        top: 60,
-        right: 20,
-        zIndex: 10,
     }
 });

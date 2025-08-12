@@ -7,7 +7,9 @@ import {useThrottle} from "expo-dev-launcher/bundle/hooks/useDebounce";
 import {loadData, saveData} from "@/app/settings";
 import {useConfiguration} from "@/app/context/ConfigurationContext";
 import {IP} from "@/app/configurations/constants";
-import {Ionicons} from "@expo/vector-icons";
+import InfoButton from "@/app/components/InfoButton";
+import { COMMON_STYLES, COLORS, FONTS, DIMENSIONS } from "@/app/components/SharedStyles";
+import { ApiService } from "@/app/services/ApiService";
 
 
 /**
@@ -85,41 +87,31 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
         }
     };
 
-    const previewAPI = () => {
-        fetch(`http://${IP}/api/config`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
+    const previewAPI = async () => {
+        try {
+            await ApiService.postConfig({
                 colors: setting.colors,
                 whiteValues: setting.whiteValues,
                 brightnessValues: setting.brightnessValues,
                 effectNumber: flashingPattern,
                 delayTime: delayTime,
-            })
-        }).then(response => response.json())
-            .then(data => console.log("success: ", data))
-            .catch(error => console.error('Error: ', error));
+            });
+            console.log("Preview successful");
+        } catch (error) {
+            console.error('Preview error:', error);
+        }
     };
 
-    const unPreviewAPI = () => {
+    const unPreviewAPI = async () => {
         setPreviewMode(false);
-        fetch(`http://${IP}/api/config`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                delayTime: currentConfiguration?.delayTime,
-                effectNumber: currentConfiguration?.flashingPattern,
-                whiteValues: currentConfiguration?.whiteValues,
-                brightnessValues: currentConfiguration?.brightnessValues,
-                colors: currentConfiguration?.colors,
-            })
-        }).then(response => response.json())
-            .then(data => console.log("success: ", data))
-            .catch(error => console.error('Error: ', error));
+        if (currentConfiguration) {
+            try {
+                await ApiService.restoreConfiguration(currentConfiguration);
+                console.log("Configuration restored");
+            } catch (error) {
+                console.error('Restore error:', error);
+            }
+        }
     };
 
     function navigateToInfo() {
@@ -127,13 +119,8 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
     }
 
     return (
-        <SafeAreaView  style={styles.container}>
-            <TouchableOpacity
-                style={styles.infoButton}
-                onPress={navigateToInfo}
-            >
-                <Ionicons name="information-circle-outline" size={32} color="white" />
-            </TouchableOpacity>
+        <SafeAreaView style={COMMON_STYLES.container}>
+            <InfoButton onPress={navigateToInfo} />
             <View style={styles.backButton}>
                 <TouchableOpacity onPress={() => {
                     unPreviewAPI();
@@ -144,37 +131,22 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
             </View>
             <Text style={styles.whiteText}>{setting.name}</Text>
 
-
             <View>
                 {modeDots()}
             </View>
 
             <View style={styles.fpContainer}>
-                {/*<Text style={styles.flashingPatternText}>{setting.delayTime}</Text>*/}
                 <Picker
                     navigation={navigation}
                     setting={setting}
                     selectedPattern={throttledFlashingPattern}
                     setSelectedPattern={setFlashingPattern}
-                />                {/*<Text style={styles.sliderText}>Hex: #</Text>
-                <TextInput
-                    style={[styles.hexInput]}
-                    value={hexInput}
-                    onChangeText={handleHexInput}
-                    placeholder="FFFFFF"
-                    placeholderTextColor="#666"
-                    maxLength={6}
-                    editable={selectedDot !== null}
                 />
-
-                TODO: This needs edited to display a vertical carousel of the flashing pattern options
-
-                */}
             </View>
 
-            <View style={styles.sliderContainer}>
+            <View style={COMMON_STYLES.sliderContainer}>
                 <View style={styles.sliderRow}>
-                    <Text style={styles.sliderText}>Speed: {BPM.toFixed(0)} bpm</Text>
+                    <Text style={COMMON_STYLES.sliderText}>Speed: {BPM.toFixed(0)} bpm</Text>
                     <Slider
                         style={styles.slider}
                         minimumValue={40}
@@ -186,18 +158,16 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
                             setDelayTime(newDelayTime);
                         }}
                         minimumTrackTintColor="#ff0000"
-                        maximumTrackTintColor="#ffffff"
-                        thumbTintColor="#ffffff"
-
+                        maximumTrackTintColor={COLORS.WHITE}
+                        thumbTintColor={COLORS.WHITE}
                     />
                 </View>
-
             </View>
 
-            <View style={styles.buttonContainer}>
-                <View style={styles.buttonRow}>
+            <View style={COMMON_STYLES.buttonContainer}>
+                <View style={COMMON_STYLES.buttonRow}>
                     <TouchableOpacity
-                        style={[styles.styleAButton, { opacity: (delayTime !== initialDelayTime || flashingPattern !== initialFlashingPattern) ? 1 : 0.5 }]}
+                        style={[COMMON_STYLES.styleAButton, { opacity: (delayTime !== initialDelayTime || flashingPattern !== initialFlashingPattern) ? 1 : COLORS.DISABLED_OPACITY }]}
                         onPress={() => {
                             setDelayTime(initialDelayTime);
                             setBPM(parseFloat(calculateBPM(initialDelayTime)));
@@ -206,31 +176,27 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
                         }}
                         disabled={delayTime === initialDelayTime && flashingPattern === initialFlashingPattern}
                     >
-                        <Text style={styles.button}>Reset</Text>
+                        <Text style={COMMON_STYLES.buttonText}>Reset</Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity
-                        style={[styles.styleAButton, { opacity: (delayTime !== initialDelayTime || flashingPattern !== initialFlashingPattern || isNew) ? 1 : 0.5 }]}
+                        style={[COMMON_STYLES.styleAButton, { opacity: (delayTime !== initialDelayTime || flashingPattern !== initialFlashingPattern || isNew) ? 1 : COLORS.DISABLED_OPACITY }]}
                         onPress={handleSave}
                         disabled={!isNew && delayTime === initialDelayTime && flashingPattern === initialFlashingPattern}
                     >
-                        <Text style={styles.button}>Save</Text>
+                        <Text style={COMMON_STYLES.buttonText}>Save</Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity
-                        style={!(delayTime !== initialDelayTime || flashingPattern !== initialFlashingPattern) && previewMode ? styles.styleADisabledButton : styles.styleAButton}
+                        style={!(delayTime !== initialDelayTime || flashingPattern !== initialFlashingPattern) && previewMode ? COMMON_STYLES.styleADisabledButton : COMMON_STYLES.styleAButton}
                         key={(delayTime !== initialDelayTime || flashingPattern !== initialFlashingPattern).toString()}
-                        onPress={
-                            () => {
-                                previewAPI();
-                                setPreviewMode(true);
-                            }
-                        }
+                        onPress={() => {
+                            previewAPI();
+                            setPreviewMode(true);
+                        }}
                     >
-                        <Text style={styles.button}>{previewMode && (delayTime !== initialDelayTime || flashingPattern !== initialFlashingPattern) ? "Update" : "Preview"}</Text>
+                        <Text style={COMMON_STYLES.buttonText}>{previewMode && (delayTime !== initialDelayTime || flashingPattern !== initialFlashingPattern) ? "Update" : "Preview"}</Text>
                     </TouchableOpacity>
-
-
                 </View>
             </View>
         </SafeAreaView>
@@ -240,53 +206,34 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 const { width, height } = Dimensions.get('window');
 const scale = Math.min(width, height) / 375;
 
-
-const styles=StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: "#000000",
-        alignItems: "center",
-    },
-    styleADisabledButton: {
-        backgroundColor: "#000000",
-        borderRadius: 10,
-        paddingVertical: 8 * scale,
-        paddingHorizontal: 15 * scale,
-        alignItems: "center",
-        borderStyle: "dashed",
-        borderWidth: 2,
-        borderColor: "#ffffff",
-        width: "30%",
-        opacity: 0.5,
-    },
+const styles = StyleSheet.create({
     backButton: {
         height: height / 12,
         width: "100%",
-        marginBottom: scale*10,
+        marginBottom: scale * 10,
     },
     backB: {
-        color: "white",
+        color: COLORS.WHITE,
         fontSize: 30 * scale,
     },
     whiteText: {
-        color: "white",
+        color: COLORS.WHITE,
         fontSize: 50 * scale,
-        fontFamily: "Thesignature",
+        fontFamily: FONTS.SIGNATURE,
         textAlign: "center",
         marginTop: height * 0.05,
         marginBottom: height * 0.03,
         borderStyle: "solid",
         borderBottomWidth: 2,
-        borderColor: "white",
+        borderColor: COLORS.WHITE,
         width: width * 0.8,
     },
     flashingPatternText: {
-        color: "white",
+        color: COLORS.WHITE,
         fontSize: 22 * scale,
-        fontFamily: "Clearlight-lJlq",
+        fontFamily: FONTS.CLEAR,
         letterSpacing: 2,
         padding: 15 * scale,
-
     },
     fpContainer: {
         flexDirection: 'row',
@@ -295,17 +242,8 @@ const styles=StyleSheet.create({
         width: width * 0.85,
         borderStyle: "solid",
         borderWidth: 2,
-        borderColor: "#ffffff",
+        borderColor: COLORS.WHITE,
         padding: 10 * scale,
-        borderRadius: 10,
-    },
-    sliderContainer: {
-        width: width * 0.85,
-        marginTop: height * 0.02,
-        borderStyle: "solid",
-        borderWidth: 2,
-        borderColor: "#ffffff",
-        padding: 15 * scale,
         borderRadius: 10,
     },
     sliderRow: {
@@ -314,44 +252,5 @@ const styles=StyleSheet.create({
     slider: {
         width: "100%",
         height: 30 * scale,
-    },
-    sliderText: {
-        color: "white",
-        fontSize: 22 * scale,
-        fontFamily: "Clearlight-lJlq",
-        letterSpacing: 2,
-    },
-    buttonContainer: {
-        width: width * 0.85,
-        marginTop: height * 0.02,
-    },
-    buttonRow: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        marginBottom: 8 * scale,
-    },
-    styleAButton: {
-        backgroundColor: "#000000",
-        borderRadius: 10,
-        paddingVertical: 8 * scale,
-        paddingHorizontal: 15 * scale,
-        alignItems: "center",
-        borderStyle: "dashed",
-        borderWidth: 2,
-        borderColor: "#ffffff",
-        width: "30%",
-    },
-    button: {
-        color: "white",
-        fontSize: 25 * scale,
-        fontFamily: "Clearlight-lJlq",
-        letterSpacing: 2,
-
-    },
-    infoButton: {
-        position: 'absolute',
-        top: 60,
-        right: 20,
-        zIndex: 10,
     }
 });

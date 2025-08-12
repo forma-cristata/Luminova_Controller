@@ -12,9 +12,10 @@ import Animated, {
     runOnJS
 } from 'react-native-reanimated';
 import HueSliderBackground from "@/app/components/HueSliderBackground";
-import {IP} from "@/app/configurations/constants";
 import {useConfiguration} from "@/app/context/ConfigurationContext";
-import {Ionicons} from "@expo/vector-icons";
+import InfoButton from "@/app/components/InfoButton";
+import { COMMON_STYLES, COLORS, FONTS, DIMENSIONS } from "@/app/components/SharedStyles";
+import { ApiService } from "@/app/services/ApiService";
 
 export default function ColorEditor({navigation, route}: any) {
     const { currentConfiguration, setLastEdited } = useConfiguration();
@@ -322,41 +323,30 @@ export default function ColorEditor({navigation, route}: any) {
         }
     });
 
-    const previewAPI = () => {
-        fetch(`http://${IP}/api/config`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        colors: colors,
-                        effectNumber: setting.flashingPattern,
-                        delayTime: setting.delayTime,
-                })
-            }).then(response => response.json())
-                .then(data => console.log("success: ", data))
-                .catch(error => console.error('Error: ', error));
+    const previewAPI = async () => {
+        try {
+            await ApiService.previewSetting({
+                colors: colors,
+                flashingPattern: setting.flashingPattern,
+                delayTime: setting.delayTime,
+            });
+            console.log("Preview successful");
+        } catch (error) {
+            console.error('Preview error:', error);
+        }
     };
 
-    const unPreviewAPI = () => {
+    const unPreviewAPI = async () => {
         setPreviewMode(false);
-        fetch(`http://${IP}/api/config`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                delayTime: currentConfiguration?.delayTime,
-                effectNumber: currentConfiguration?.flashingPattern,
-                whiteValues: currentConfiguration?.whiteValues,
-                brightnessValues: currentConfiguration?.brightnessValues,
-                colors: currentConfiguration?.colors,
-
-            })
-        }).then(response => response.json())
-            .then(data => console.log("success: ", data))
-            .catch(error => console.error('Error: ', error));
-    }
+        if (currentConfiguration) {
+            try {
+                await ApiService.restoreConfiguration(currentConfiguration);
+                console.log("Configuration restored");
+            } catch (error) {
+                console.error('Restore error:', error);
+            }
+        }
+    };
 
     const sortColorsByHue = () => {
       const colorsWithHSV = colors.map(color => {
@@ -402,16 +392,16 @@ export default function ColorEditor({navigation, route}: any) {
                     </TouchableOpacity>
 
                     <View style={styles.nameInputContainer}>
-                        <Text style={styles.sliderText}>Setting Name:</Text>
+                        <Text style={COMMON_STYLES.sliderText}>Setting Name:</Text>
                         <TextInput
                             style={[
                                 styles.nameInput,
-                                nameError ? {color: '#ff0000'} : null
+                                nameError ? {color: COLORS.ERROR} : null
                             ]}
                             value={settingName}
                             onChangeText={handleNameChange}
                             placeholder="Enter setting name"
-                            placeholderTextColor="#666"
+                            placeholderTextColor={COLORS.PLACEHOLDER}
                             maxLength={20}
                         />
                     </View>
@@ -460,13 +450,8 @@ export default function ColorEditor({navigation, route}: any) {
         <GestureHandlerRootView style={{flex:1}}>
             <PanGestureHandler onGestureEvent={panGestureEvent}>
                 <Animated.View style={{flex:1}}>
-                    <SafeAreaView style={styles.container}>
-                        <TouchableOpacity
-                            style={styles.infoButton}
-                            onPress={navigateToInfo}
-                        >
-                            <Ionicons name="information-circle-outline" size={32} color="white" />
-                        </TouchableOpacity>
+                    <SafeAreaView style={COMMON_STYLES.container}>
+                        <InfoButton onPress={navigateToInfo} />
 
                         <View style={styles.backButton}>
                             <TouchableOpacity onPress={() => {
@@ -487,7 +472,7 @@ export default function ColorEditor({navigation, route}: any) {
                         />
 
                         <View style={[styles.hexContainer, { opacity: selectedDot !== null ? 1 : 0.5 }]}>
-                            <Text style={styles.sliderText}>Hex: #</Text>
+                            <Text style={COMMON_STYLES.sliderText}>Hex: #</Text>
                             <TextInput
                                 style={[styles.hexInput]}
                                 value={hexInput.toUpperCase()}
@@ -496,7 +481,7 @@ export default function ColorEditor({navigation, route}: any) {
                                     handleHexInput(hex);
                                 }}
                                 placeholder="FFFFFF"
-                                placeholderTextColor="#666"
+                                placeholderTextColor={COLORS.PLACEHOLDER}
                                 editable={selectedDot !== null}
                                 onBlur={() => {Keyboard.dismiss()}}
                                 autoCapitalize="characters"
@@ -505,7 +490,7 @@ export default function ColorEditor({navigation, route}: any) {
                             />
                             <View style={styles.colorButtons}>
                                 <TouchableOpacity
-                                    style={[styles.colorButton, { backgroundColor: '#FFFFFF' }]}
+                                    style={[styles.colorButton, { backgroundColor: COLORS.WHITE }]}
                                     disabled={selectedDot === null}
                                     onPress={() => {
                                         if (selectedDot !== null) {
@@ -516,7 +501,7 @@ export default function ColorEditor({navigation, route}: any) {
                                     <Text style={styles.colorButtonText}>W</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity
-                                    style={[styles.colorButton, { backgroundColor: '#000000', borderColor: '#FFFFFF', borderWidth: 1 }]}
+                                    style={[styles.colorButton, { backgroundColor: COLORS.BLACK, borderColor: COLORS.WHITE, borderWidth: 1 }]}
                                     disabled={selectedDot === null}
                                     onPress={() => {
                                         if (selectedDot !== null) {
@@ -529,9 +514,9 @@ export default function ColorEditor({navigation, route}: any) {
                             </View>
                         </View>
 
-                        <View style={[styles.sliderContainer, { opacity: selectedDot !== null ? 1 : 0.5 }]}>
+                        <View style={[COMMON_STYLES.sliderContainer, { opacity: selectedDot !== null ? 1 : 0.5 }]}>
                             <View style={styles.sliderRow}>
-                                <Text style={styles.sliderText}>Hue: {Math.round(hue)}°</Text>
+                                <Text style={COMMON_STYLES.sliderText}>Hue: {Math.round(hue)}°</Text>
                                 <View style={styles.sliderWrapper}>
                                     <HueSliderBackground />
                                     <Slider
@@ -558,14 +543,14 @@ export default function ColorEditor({navigation, route}: any) {
                                             }
                                         }}
                                         minimumTrackTintColor="#ff0000"
-                                        maximumTrackTintColor="#ffffff"
-                                        thumbTintColor="#ffffff"
+                                        maximumTrackTintColor={COLORS.WHITE}
+                                        thumbTintColor={COLORS.WHITE}
                                     />
                                 </View>
                             </View>
 
                             <View style={styles.sliderRow}>
-                                <Text style={styles.sliderText}>Saturation: {Math.round(saturation)}%</Text>
+                                <Text style={COMMON_STYLES.sliderText}>Saturation: {Math.round(saturation)}%</Text>
                                 <Slider
                                     style={[styles.slider, { opacity: selectedDot !== null ? 1 : 0.5 }]}
                                     minimumValue={0}
@@ -583,14 +568,14 @@ export default function ColorEditor({navigation, route}: any) {
                                             handleSliderComplete(hue, value, brightness);
                                         }
                                     }}
-                                    minimumTrackTintColor="#ffffff"
+                                    minimumTrackTintColor={COLORS.WHITE}
                                     maximumTrackTintColor="#333333"
-                                    thumbTintColor="#ffffff"
+                                    thumbTintColor={COLORS.WHITE}
                                 />
                             </View>
 
                             <View style={styles.sliderRow}>
-                                <Text style={styles.sliderText}>Brightness: {Math.round(brightness)}%</Text>
+                                <Text style={COMMON_STYLES.sliderText}>Brightness: {Math.round(brightness)}%</Text>
                                 <Slider
                                     style={[styles.slider, { opacity: selectedDot !== null ? 1 : 0.5 }]}
                                     minimumValue={0}
@@ -608,40 +593,40 @@ export default function ColorEditor({navigation, route}: any) {
                                             handleSliderComplete(hue, saturation, value);
                                         }
                                     }}
-                                    minimumTrackTintColor="#ffffff"
+                                    minimumTrackTintColor={COLORS.WHITE}
                                     maximumTrackTintColor="#333333"
-                                    thumbTintColor="#ffffff"
+                                    thumbTintColor={COLORS.WHITE}
                                 />
                             </View>
                         </View>
 
-                        <View style={styles.buttonContainer}>
-                            <View style={styles.buttonRow}>
+                        <View style={COMMON_STYLES.buttonContainer}>
+                            <View style={COMMON_STYLES.buttonRow}>
                                 <TouchableOpacity
-                                    style={[styles.styleAButton, { opacity: hasChanges ? 1 : 0.5 }]}
+                                    style={[COMMON_STYLES.styleAButton, { opacity: hasChanges ? 1 : COLORS.DISABLED_OPACITY }]}
                                     onPress={handleReset}
                                     disabled={!hasChanges}
                                 >
-                                    <Text style={styles.button}>Reset</Text>
+                                    <Text style={COMMON_STYLES.buttonText}>Reset</Text>
                                 </TouchableOpacity>
 
                                 <TouchableOpacity
-                                    style={[styles.styleAButton, { opacity: (hasChanges && (!isNew || !nameError)) ? 1 : 0.5 }]}
+                                    style={[COMMON_STYLES.styleAButton, { opacity: (hasChanges && (!isNew || !nameError)) ? 1 : COLORS.DISABLED_OPACITY }]}
                                     onPress={handleSave}
                                     disabled={!hasChanges || (isNew && !!nameError)}
                                 >
-                                    <Text style={styles.button}>Save</Text>
+                                    <Text style={COMMON_STYLES.buttonText}>Save</Text>
                                 </TouchableOpacity>
 
                                 <TouchableOpacity
-                                    style={!hasChanges && previewMode ? styles.styleADisabledButton : styles.styleAButton}
+                                    style={!hasChanges && previewMode ? COMMON_STYLES.styleADisabledButton : COMMON_STYLES.styleAButton}
                                     key={hasChanges.toString()}
                                     onPress={() => {
                                         previewAPI();
                                         setPreviewMode(true);
                                     }}
                                 >
-                                    <Text style={styles.button}>{previewMode && hasChanges ? "Update" : "Preview"}</Text>
+                                    <Text style={COMMON_STYLES.buttonText}>{previewMode && hasChanges ? "Update" : "Preview"}</Text>
                                 </TouchableOpacity>
                             </View>
                         </View>
@@ -651,19 +636,15 @@ export default function ColorEditor({navigation, route}: any) {
         </GestureHandlerRootView>
     );
 }
+
 const { width, height } = Dimensions.get('window');
 const scale = Math.min(width, height) / 375;
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: "#000000",
-        alignItems: "center",
-    },
     whiteText: {
-        color: "white",
+        color: COLORS.WHITE,
         fontSize: 30 * scale,
-        fontFamily: "Thesignature",
+        fontFamily: FONTS.SIGNATURE,
         textAlign: "center",
     },
     backButton: {
@@ -671,17 +652,8 @@ const styles = StyleSheet.create({
         width: "100%",
     },
     backB: {
-        color: "white",
+        color: COLORS.WHITE,
         fontSize: 30 * scale,
-    },
-    sliderContainer: {
-        width: width * 0.85,
-        marginTop: scale * 20,
-        borderStyle: "solid",
-        borderWidth: 2,
-        borderColor: "#ffffff",
-        padding: 15 * scale,
-        borderRadius: 10,
     },
     sliderRow: {
         marginVertical: 5 * scale,
@@ -690,12 +662,6 @@ const styles = StyleSheet.create({
         width: "100%",
         height: 50 * scale,
     },
-    sliderText: {
-        color: "white",
-        fontSize: 22 * scale,
-        fontFamily: "Clearlight-lJlq",
-        letterSpacing: 2,
-    },
     hexContainer: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -703,60 +669,21 @@ const styles = StyleSheet.create({
         width: width * 0.85,
         borderStyle: "solid",
         borderWidth: 2,
-        borderColor: "#ffffff",
+        borderColor: COLORS.WHITE,
         padding: 10 * scale,
         borderRadius: 10,
     },
     hexInput: {
-        color: 'white',
+        color: COLORS.WHITE,
         fontSize: 22 * scale,
-        fontFamily: "Clearlight-lJlq",
+        fontFamily: FONTS.CLEAR,
         textTransform: "uppercase",
         letterSpacing: 3,
         borderBottomWidth: 1,
-        borderBottomColor: 'white',
+        borderBottomColor: COLORS.WHITE,
         paddingVertical: 4,
         paddingHorizontal: 8,
         minWidth: width * 0.3,
-    },
-    buttonContainer: {
-        width: width * 0.85,
-        marginTop: scale * 20,
-    },
-    buttonRow: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        marginBottom: 8 * scale,
-    },
-    styleAButton: {
-        backgroundColor: "#000000",
-        borderRadius: 10,
-        paddingVertical: 8 * scale,
-        paddingHorizontal: 15 * scale,
-        alignItems: "center",
-        borderStyle: "dashed",
-        borderWidth: 2,
-        borderColor: "#ffffff",
-        width: "30%",
-    },
-    styleADisabledButton: {
-        backgroundColor: "#000000",
-        borderRadius: 10,
-        paddingVertical: 8 * scale,
-        paddingHorizontal: 15 * scale,
-        alignItems: "center",
-        borderStyle: "dashed",
-        borderWidth: 2,
-        borderColor: "#ffffff",
-        width: "30%",
-        opacity: 0.5,
-    },
-    button: {
-        color: "white",
-        fontSize: 25 * scale,
-        fontFamily: "Clearlight-lJlq",
-        letterSpacing: 2,
-
     },
     titleContainer: {
         flexDirection: 'row',
@@ -766,24 +693,7 @@ const styles = StyleSheet.create({
         marginBottom: height * 0.03,
         borderStyle: "solid",
         borderBottomWidth: 2,
-        borderColor: "white",
-    },
-    copyButton: {
-        marginTop: height * 0.02,
-        backgroundColor: "#000000",
-        borderRadius: 10,
-        paddingVertical: 8 * scale,
-        paddingHorizontal: 15 * scale,
-        alignItems: "center",
-        borderStyle: "solid",
-        borderWidth: 2,
-        borderColor: "#ffffff",
-    },
-    copyButtonText: {
-        color: "white",
-        fontSize: 18 * scale,
-        fontFamily: "Clearlight-lJlq",
-        letterSpacing: 2,
+        borderColor: COLORS.WHITE,
     },
     sliderWrapper: {
         position: 'relative',
@@ -799,7 +709,7 @@ const styles = StyleSheet.create({
         height: 60 * scale,
     },
     shuffleIcon: {
-        color: 'white',
+        color: COLORS.WHITE,
         fontSize: 35 * scale,
         fontWeight: "ultralight",
         textAlign: 'center',
@@ -812,7 +722,7 @@ const styles = StyleSheet.create({
         height: 60 * scale,
     },
     sortIcon: {
-        color: 'white',
+        color: COLORS.WHITE,
         fontSize: 20 * scale,
         fontWeight: "ultralight",
         textAlign: 'center',
@@ -830,7 +740,7 @@ const styles = StyleSheet.create({
         marginLeft: 10 * scale,
     },
     colorButtonText: {
-        color: '#666',
+        color: COLORS.PLACEHOLDER,
         fontSize: 14 * scale,
         fontWeight: 'bold',
     },
@@ -840,18 +750,12 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     nameInput: {
-        color: 'white',
+        color: COLORS.WHITE,
         fontSize: 30 * scale,
-        fontFamily: "Thesignature",
+        fontFamily: FONTS.SIGNATURE,
         textAlign: 'center',
         minWidth: width * 0.6,
         padding: 10,
-    },
-    infoButton: {
-        position: 'absolute',
-        top: 60,
-        right: 20,
-        zIndex: 10,
     }
 });
 

@@ -1,6 +1,6 @@
 import {Keyboard, TextInput} from 'react-native';
 import {Dimensions, SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
-import ColorDotsEditorEdition from "@/app/components/ColorDotEditorEdition";
+import ColorDots from "@/app/components/ColorDots";
 import Slider from "@react-native-community/slider";
 import {useState} from "react";
 import {useThrottle} from "expo-dev-launcher/bundle/hooks/useDebounce";
@@ -218,6 +218,8 @@ export default function ColorEditor({navigation, route}: any) {
 
             const currentIndex = updatedSettings.findIndex(s => s.name === setting.name);
             setLastEdited(currentIndex.toString());
+            
+            // Restore proper navigation - this was correct originally
             navigation.navigate("Settings", {setting});
         }
     };
@@ -464,10 +466,11 @@ export default function ColorEditor({navigation, route}: any) {
 
                         {renderTitle()}
 
-                        <ColorDotsEditorEdition
+                        <ColorDots
                             colors={colors}
                             onDotSelect={handleDotSelect}
                             selectedDot={selectedDot}
+                            layout='two-rows'
                             key={colors.join(',')}
                         />
 
@@ -758,4 +761,3 @@ const styles = StyleSheet.create({
         padding: 10,
     }
 });
-

@@ -119,16 +119,29 @@ Welcome → Settings → ChooseModification → [ColorEditor | FlashingPatternEd
 - **Usage**: Building block for all dot displays
 
 #### `/app/components/ColorDots.tsx`
-- **Purpose**: Static color display (16 dots in a row)
-- **Usage**: Preview in settings carousel and selection screens
-
-#### `/app/components/ColorDotEditorEdition.tsx`
-- **Purpose**: Interactive color editing grid
+- **Purpose**: Unified, modular component for LED dot display and interaction
+- **Modes**:
+  - **Static Display**: `layout='single-row'` (default) - for previews in settings carousel
+  - **Interactive Editor**: `layout='two-rows'` + interaction props - for color editing
 - **Features**:
-  - Click selection with visual feedback
-  - Scale animation for selected dots
-  - Shadow effects for black dots
-- **Layout**: 2 rows of 8 dots each
+  - Configurable layouts (single-row/two-rows)
+  - Optional interactivity with click selection and visual feedback
+  - Scale animation for selected dots in interactive mode
+  - Shadow effects for black dots in interactive mode
+  - Customizable dot size and spacing
+- **Usage Examples**:
+  ```typescript
+  // Static preview
+  <ColorDots colors={setting.colors} />
+  
+  // Interactive editor
+  <ColorDots 
+    colors={colors}
+    onDotSelect={handleDotSelect}
+    selectedDot={selectedDot}
+    layout='two-rows'
+  />
+  ```
 
 #### `/app/components/AnimatedDots.tsx`
 - **Purpose**: Animated dot patterns for previewing effects

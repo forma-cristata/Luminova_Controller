@@ -137,8 +137,14 @@ export default function Settings({navigation}: any) {
     }, [settingsData.length, lastEdited]);
 
     const handleProgressChange = (offset: number, absoluteProgress: number) => {
-        if (isInitialRender || (absoluteProgress === 0 && offset < 0)) {
+        // Only block during the initial positioning, not after navigation returns
+        if (isInitialRender && Math.abs(offset) < 0.1) {
             return;
+        }
+        
+        // Reset initial render flag once user starts scrolling
+        if (isInitialRender) {
+            setIsInitialRender(false);
         }
 
         progress.value = offset;
@@ -172,13 +178,26 @@ export default function Settings({navigation}: any) {
                                setLastEdited((parseInt(lastEdited!) - 1).toString());
                            }
 
-                           navigation.reset({
-                               index: 0,
-                               routes: [{name: 'Settings'}],
-                           });
-                           setTimeout(() => {
-                               setLastEdited('0');
-                           }, 0);
+                           // Fix: Remove the problematic navigation.reset that corrupts the stack
+                           // Simply reload the current screen's data instead
+                           const initializeData = async () => {
+                               try {
+                                   const loadedData = await loadData();
+                                   if (loadedData && loadedData.length > 0) {
+                                       const deepCopy = JSON.parse(JSON.stringify(loadedData));
+                                       setSettingsData(deepCopy);
+                                       
+                                       const targetIndex = 0; // Go to first setting after delete
+                                       setCurrentIndex(targetIndex);
+                                       setLastEdited('0');
+                                       setIsInitialRender(true);
+                                   }
+                               } catch (error) {
+                                   console.error("Error reloading data:", error);
+                               }
+                           };
+                           
+                           await initializeData();
 
                        } catch (error) {
                            console.error("Error deleting setting:", error);

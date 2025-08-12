@@ -69,6 +69,7 @@ export default function Settings({navigation}: any) {
     const progress = useSharedValue<number>(0);
     const [currentIndex, setCurrentIndex] = React.useState(0);
     const [isInitialRender, setIsInitialRender] = React.useState(true);
+    const [carouselReady, setCarouselReady] = React.useState(false);
 
     const updateSettings = async (updatedSettings: Setting[]) => {
         setSettingsData(updatedSettings);
@@ -92,47 +93,59 @@ export default function Settings({navigation}: any) {
        });
    };
 
+    // Add focus listener to handle returning from ColorEditor
     React.useEffect(() => {
-        const initializeData = async () => {
-            try {
-                const loadedData = await loadData();
-                if (loadedData && loadedData.length > 0) {
-                    const deepCopy = JSON.parse(JSON.stringify(loadedData));
-                    setSettingsData(deepCopy);
-                    data = loadedData;
+        const unsubscribe = navigation.addListener('focus', () => {
+            const initializeData = async () => {
+                try {
+                    const loadedData = await loadData();
+                    if (loadedData && loadedData.length > 0) {
+                        const deepCopy = JSON.parse(JSON.stringify(loadedData));
+                        setSettingsData(deepCopy);
+                        data = loadedData;
 
-                    const lastEditedIndex = lastEdited ? parseInt(lastEdited) : 0;
-                    setCurrentIndex(lastEditedIndex);
+                        const lastEditedIndex = lastEdited ? parseInt(lastEdited) : 0;
+                        setCurrentIndex(lastEditedIndex);
+                        setIsInitialRender(true);
+                    }
+                } catch (error) {
+                    console.error("Error initializing data:", error);
+                }
+            };
 
-                    // Set a flag to prevent initial progress change handling
-                    setIsInitialRender(true);
+            initializeData();
+        });
 
-                    ref.current?.scrollTo({index: lastEditedIndex || 0, animated: false});
+        return unsubscribe;
+    }, [navigation, lastEdited]);
 
+    // Handle carousel positioning when ready
+    React.useEffect(() => {
+        if (settingsData.length > 0 && ref.current) {
+            // Set carousel ready after a short delay to ensure component is mounted
+            setTimeout(() => {
+                setCarouselReady(true);
+                const targetIndex = lastEdited ? parseInt(lastEdited) : 0;
+                setTimeout(() => {
+                    if (ref.current) {
+                        ref.current.scrollTo({index: targetIndex, animated: false});
+                    }
                     setTimeout(() => {
                         setIsInitialRender(false);
-                    }, 100);
-
-                    // Scroll to index
-
-                    // Reset the flag after a small delay
-
-                }
-            } catch (error) {
-                console.error("Error initializing data:", error);
-            }
-        };
-
-        initializeData();
-    }, []);
+                    }, 150);
+                }, 100);
+            }, 50);
+        }
+    }, [settingsData.length, lastEdited]);
 
     const handleProgressChange = (offset: number, absoluteProgress: number) => {
-        if (absoluteProgress === 0 && offset < 0) {
+        if (isInitialRender || (absoluteProgress === 0 && offset < 0)) {
             return;
         }
 
         progress.value = offset;
-        setCurrentIndex(Math.round(absoluteProgress));
+        const newIndex = Math.round(absoluteProgress);
+        setCurrentIndex(newIndex);
     };
 
    const handleDelete = async () => {
@@ -294,9 +307,7 @@ export default function Settings({navigation}: any) {
                         defaultIndex={Math.abs(currentIndex % (settingsData.length+1))}
                         enabled={true}
                         onProgressChange={(offset, absoluteProgress) => {
-                            if (!isInitialRender) {
-                                handleProgressChange(offset, absoluteProgress);
-                            }
+                            handleProgressChange(offset, absoluteProgress);
                         }}
                         renderItem={({item, index}: { item: Setting | 'new', index: number }) => (
                             item === 'new' ? (

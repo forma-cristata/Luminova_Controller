@@ -69,7 +69,6 @@ export default function Settings({navigation}: any) {
     const progress = useSharedValue<number>(0);
     const [currentIndex, setCurrentIndex] = React.useState(0);
     const [isInitialRender, setIsInitialRender] = React.useState(true);
-    const [carouselReady, setCarouselReady] = React.useState(false);
 
     const updateSettings = async (updatedSettings: Setting[]) => {
         setSettingsData(updatedSettings);
@@ -124,7 +123,6 @@ export default function Settings({navigation}: any) {
         if (settingsData.length > 0 && ref.current) {
             // Set carousel ready after a short delay to ensure component is mounted
             setTimeout(() => {
-                setCarouselReady(true);
                 const targetIndex = lastEdited ? parseInt(lastEdited) : 0;
                 setTimeout(() => {
                     if (ref.current) {

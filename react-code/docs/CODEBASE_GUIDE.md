@@ -13,6 +13,41 @@ The Luminova Controller is a React Native application that controls LED lighting
 - **React Native Reanimated** for animations
 - **Expo File System** for data persistence
 
+## Development Standards & Best Practices
+
+### 🧹 **Code Cleanup Protocol**
+- **MANDATORY**: Always remove deprecated code when implementing fixes or new features
+- **Remove**: Unused state variables, functions, imports, and components
+- **Clean**: Old useEffect hooks, event listeners, and temporary debugging code
+- **Validate**: Use TypeScript errors and linting to identify deprecated patterns
+
+### 🔧 **Implementation Standards**
+
+#### **Before Making Changes:**
+- Scan related components to understand dependencies
+- Check for existing patterns in SharedStyles.ts and ApiService.ts
+- Review similar implementations in the codebase
+- Consider impact on navigation flow and state management
+
+#### **During Implementation:**
+- Use established patterns (COMMON_STYLES, COLORS, FONTS)
+- Leverage ApiService for all API communications
+- Follow component organization standards
+- Maintain TypeScript interfaces and type safety
+
+#### **After Implementation:**
+- **REMOVE DEPRECATED CODE** - Clean up any unused/replaced code
+- Validate changes with get_errors tool
+- Update documentation to reflect changes
+- Test component integration patterns
+- Verify no broken imports or dependencies
+
+### 📚 **Documentation Maintenance**
+- Update this guide when adding new components or patterns
+- Document new shared utilities or optimization techniques
+- Keep animation pattern lists current
+- Maintain accuracy of component relationships
+
 ## Project Structure
 
 ```

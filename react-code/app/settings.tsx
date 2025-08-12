@@ -88,7 +88,7 @@ export default function Settings({navigation}: any) {
            delayTime: 100
        };
 
-       navigation.navigate("NewColorEditor", {
+       navigation.navigate("ColorEditor", {
            setting: newSetting,
            isNew: true,
            originalName: newSetting.name
@@ -202,7 +202,7 @@ export default function Settings({navigation}: any) {
                 ...original,
                 name: getUniqueName(original.name, settingsData)
             };
-            navigation.navigate("NewColorEditor", {
+            navigation.navigate("ColorEditor", {
                 setting: duplicated,
                 isNew: true,
                 originalName: duplicated.name

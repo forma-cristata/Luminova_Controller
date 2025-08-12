@@ -21,7 +21,8 @@ import {Ionicons} from "@expo/vector-icons";
 export default function FlashingPatternEditor({ route, navigation }: any) {
     const { currentConfiguration, setLastEdited } = useConfiguration();
 
-    const setting  = route.params?.setting;
+    const setting = route.params?.setting;
+    const isNew = route.params?.isNew || false;
 
     const [initialDelayTime] = React.useState(setting.delayTime);
     const [initialFlashingPattern] = React.useState(setting.flashingPattern);
@@ -34,7 +35,6 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
     const throttledFlashingPattern = useThrottle(flashingPattern);
 
     const [previewMode, setPreviewMode] = useState(false);
-
 
     useEffect(() => {
         const initialBpm = parseFloat(calculateBPM(setting.delayTime));
@@ -63,9 +63,8 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
         setting.delayTime = Math.round(delayTime);
         setting.flashingPattern = flashingPattern;
 
-        if (route.params?.isNew) {
+        if (isNew) {
             const settings = await loadData();
-
             const updatedSettings = [...settings, setting];
             await saveData(updatedSettings);
 
@@ -211,9 +210,9 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
                     </TouchableOpacity>
 
                     <TouchableOpacity
-                        style={[styles.styleAButton, { opacity: delayTime !== initialDelayTime || flashingPattern !== initialFlashingPattern ? 1 : 0.5 }]}
+                        style={[styles.styleAButton, { opacity: (delayTime !== initialDelayTime || flashingPattern !== initialFlashingPattern || isNew) ? 1 : 0.5 }]}
                         onPress={handleSave}
-                        disabled={delayTime === initialDelayTime && flashingPattern === initialFlashingPattern}
+                        disabled={!isNew && delayTime === initialDelayTime && flashingPattern === initialFlashingPattern}
                     >
                         <Text style={styles.button}>Save</Text>
                     </TouchableOpacity>

@@ -1,18 +1,7 @@
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import Setting from "@/app/interface/setting-interface";
 import ColorDots from "@/app/components/ColorDots";
-import StillEffectDots from "@/app/components/StillEffectDots";
-import BlenderDots from "@/app/components/BlenderDots";
-import ChristmasDots from "@/app/components/ChristmasDots";
-import ComfortSongDots from "@/app/components/ComfortSongDots";
-import FunkyDots from "@/app/components/FunkyDots";
-import MoldDots from "@/app/components/MoldDots";
-import ProgressiveDots from "@/app/components/ProgressiveDots";
-import StrobeChangeDots from "@/app/components/StrobeChangeDots";
-import TechnoDots from "@/app/components/TechnoDots";
-import TranceDots from "@/app/components/TranceDots";
-import TraceManyDots from "@/app/components/TraceManyDots";
-import TraceOneDots from "@/app/components/TraceOneDots";
+import AnimatedDots from "@/app/components/AnimatedDots";
 import { IP } from "@/app/configurations/constants";
 import { useConfiguration } from "@/app/context/ConfigurationContext";
 
@@ -24,8 +13,6 @@ interface SettingItemProps {
     index?: number,
 }
 
-
-
 const SettingBlock = ({navigation, setting, style, animated, index}: SettingItemProps) => {
     const { currentConfiguration, setCurrentConfiguration, setLastEdited } = useConfiguration();
 
@@ -33,50 +20,17 @@ const SettingBlock = ({navigation, setting, style, animated, index}: SettingItem
         return null;
     }
 
-
-
-
     const dotsRendered = () => {
         if (animated) {
-            switch (setting!.flashingPattern) {
-                case "0":
-                    return <BlenderDots navigation={navigation} setting={setting}/>;
-                case "1":
-                    return <ChristmasDots navigation={navigation} setting={setting}/>;
-                case "2":
-                    return <ComfortSongDots navigation={navigation} setting={setting}/>;
-                case "3":
-                    return <FunkyDots navigation={navigation} setting={setting}/>;
-                case "4":
-                    return <MoldDots navigation={navigation} setting={setting}/>;
-                case "5":
-                    return <ProgressiveDots navigation={navigation} setting={setting}/>;
-                case "6":
-                    return <StillEffectDots navigation={navigation} setting={setting}/>;
-                case "7":
-                    return <StrobeChangeDots navigation={navigation} setting={setting}/>;
-                case "8":
-                    return <TechnoDots navigation={navigation} setting={setting}/>;
-                case "9":
-                    return <TraceManyDots navigation={navigation} setting={setting}/>;
-                case "10":
-                    return <TraceOneDots navigation={navigation} setting={setting}/>;
-                case "11":
-                    return <TranceDots navigation={navigation} setting={setting}/>;
-                default:
-                    return <ColorDots colors={setting.colors}/>;
-            }
+            return <AnimatedDots navigation={navigation} setting={setting}/>;
         } else {
             return <ColorDots colors={setting.colors}/>;
         }
     }
 
-
     const effectNumber = (flashingPattern: string) => {
         return parseInt(flashingPattern);
     }
-
-
 
     return (
         <>
@@ -185,3 +139,4 @@ const styles = StyleSheet.create({
 });
 
 export default SettingBlock;
+

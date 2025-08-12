@@ -9,7 +9,7 @@
 - **CONVERSATION HISTORY**: Always review previous conversation history for context and patterns
 
 ### 📚 **Context Requirements**
-- **MANDATORY REFERENCE**: Always consider the `CODEBASE_GUIDE.md` as primary context
+- **MANDATORY REFERENCE**: Always consider the `docs/CODEBASE_GUIDE.md` as primary context
 - **APPLICATION OVERVIEW**: Treat the Luminova Controller architecture as foundational knowledge
 - **COMPONENT RELATIONSHIPS**: Understand the interconnections between all components before making changes
 - **PATTERN CONSISTENCY**: Maintain established patterns (SharedStyles, ApiService, etc.)

@@ -10,6 +10,7 @@
 
 ### 📚 **Context Requirements**
 - **MANDATORY REFERENCE**: Always consider the `docs/CODEBASE_GUIDE.md` as primary context
+- **HOW TO USE THE UI**: Exists here: services/Info.tsx ... the text in the jsx explains how a user uses the app
 - **APPLICATION OVERVIEW**: Treat the Luminova Controller architecture as foundational knowledge
 - **COMPONENT RELATIONSHIPS**: Understand the interconnections between all components before making changes
 - **PATTERN CONSISTENCY**: Maintain established patterns (SharedStyles, ApiService, etc.)
@@ -86,6 +87,8 @@
 - Follow navigation parameter typing in index.tsx
 
 ### 🎯 **Response Guidelines**
+
+If you run out of tool attempts, continue automatically iterating. Don't require prompting to continue.
 
 #### **Always Do:**
 - Scan workspace before responding

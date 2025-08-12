@@ -1,51 +1,13 @@
 import {StyleSheet, SafeAreaView, TouchableOpacity, View, Text, Dimensions} from "react-native";
 import ColorDots from "@/app/components/ColorDots";
 import Setting from "@/app/interface/setting-interface";
-import BlenderDots from "@/app/components/BlenderDots";
-import ChristmasDots from "@/app/components/ChristmasDots";
-import ComfortSongDots from "@/app/components/ComfortSongDots";
-import FunkyDots from "@/app/components/FunkyDots";
-import MoldDots from "@/app/components/MoldDots";
-import ProgressiveDots from "@/app/components/ProgressiveDots";
-import StillEffectDots from "@/app/components/StillEffectDots";
-import StrobeChangeDots from "@/app/components/StrobeChangeDots";
-import TechnoDots from "@/app/components/TechnoDots";
-import TraceManyDots from "@/app/components/TraceManyDots";
-import TraceOneDots from "@/app/components/TraceOneDots";
-import TranceDots from "@/app/components/TranceDots";
+import AnimatedDots from "@/app/components/AnimatedDots";
 import {Ionicons} from "@expo/vector-icons";
 
 export default function ChooseModificatioon({navigation, route}: any) {
     const setting = route.params?.setting as Setting;
     const modeDots = () => {
-        switch (setting!.flashingPattern) {
-            case "0":
-                return <BlenderDots navigation={navigation} setting={setting}/>;
-            case "1":
-                return <ChristmasDots navigation={navigation} setting={setting}/>;
-            case "2":
-                return <ComfortSongDots navigation={navigation} setting={setting}/>;
-            case "3":
-                return <FunkyDots navigation={navigation} setting={setting}/>;
-            case "4":
-                return <MoldDots navigation={navigation} setting={setting}/>;
-            case "5":
-                return <ProgressiveDots navigation={navigation} setting={setting}/>;
-            case "6":
-                return <StillEffectDots navigation={navigation} setting={setting}/>;
-            case "7":
-                return <StrobeChangeDots navigation={navigation} setting={setting}/>;
-            case "8":
-                return <TechnoDots navigation={navigation} setting={setting}/>;
-            case "9":
-                return <TraceManyDots navigation={navigation} setting={setting}/>;
-            case "10":
-                return <TraceOneDots navigation={navigation} setting={setting}/>;
-            case "11":
-                return <TranceDots navigation={navigation} setting={setting}/>;
-            default:
-                return <ColorDots colors={setting.colors}/>;
-        }
+        return <AnimatedDots navigation={navigation} setting={setting}/>;
     };
 
     function navigateToInfo() {
@@ -185,3 +147,4 @@ const styles = StyleSheet.create({
         zIndex: 10,
     }
 })
+

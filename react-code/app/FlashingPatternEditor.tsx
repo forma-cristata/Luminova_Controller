@@ -1,19 +1,7 @@
 import {Dimensions, SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import Slider from "@react-native-community/slider";
 import React, {useEffect, useState} from "react";
-import BlenderDots from "@/app/components/BlenderDots";
-import ChristmasDots from "@/app/components/ChristmasDots";
-import ComfortSongDots from "@/app/components/ComfortSongDots";
-import FunkyDots from "@/app/components/FunkyDots";
-import MoldDots from "@/app/components/MoldDots";
-import ProgressiveDots from "@/app/components/ProgressiveDots";
-import StillEffectDots from "@/app/components/StillEffectDots";
-import StrobeChangeDots from "@/app/components/StrobeChangeDots";
-import TechnoDots from "@/app/components/TechnoDots";
-import TraceManyDots from "@/app/components/TraceManyDots";
-import TraceOneDots from "@/app/components/TraceOneDots";
-import TranceDots from "@/app/components/TranceDots";
-import ColorDots from "@/app/components/ColorDots";
+import AnimatedDots from "@/app/components/AnimatedDots";
 import Picker from "@/app/components/Picker";
 import {useThrottle} from "expo-dev-launcher/bundle/hooks/useDebounce";
 import {loadData, saveData} from "@/app/settings";
@@ -68,34 +56,7 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
             flashingPattern: flashingPattern,
         }
 
-        switch (flashingPattern) {
-            case "0":
-                return <BlenderDots navigation={navigation} setting={newSetting} key={`${flashingPattern}-${delayTime}`}/>;
-            case "1":
-                return <ChristmasDots navigation={navigation} setting={newSetting} key={`${flashingPattern}-${delayTime}`}/>;
-            case "2":
-                return <ComfortSongDots navigation={navigation} setting={newSetting} key={`${flashingPattern}-${delayTime}`}/>;
-            case "3":
-                return <FunkyDots navigation={navigation} setting={newSetting} key={`${flashingPattern}-${delayTime}`}/>;
-            case "4":
-                return <MoldDots navigation={navigation} setting={newSetting} key={`${flashingPattern}-${delayTime}`}/>;
-            case "5":
-                return <ProgressiveDots navigation={navigation} setting={newSetting} key={`${flashingPattern}-${delayTime}`}/>;
-            case "6":
-                return <StillEffectDots navigation={navigation} setting={newSetting} key={`${flashingPattern}-${delayTime}`}/>;
-            case "7":
-                return <StrobeChangeDots navigation={navigation} setting={newSetting} key={`${flashingPattern}-${delayTime}`}/>;
-            case "8":
-                return <TechnoDots navigation={navigation} setting={newSetting} key={`${flashingPattern}-${delayTime}`}/>;
-            case "9":
-                return <TraceManyDots navigation={navigation} setting={newSetting} key={`${flashingPattern}-${delayTime}`}/>;
-            case "10":
-                return <TraceOneDots navigation={navigation} setting={newSetting} key={`${flashingPattern}-${delayTime}`}/>;
-            case "11":
-                return <TranceDots navigation={navigation} setting={newSetting} key={`${flashingPattern}-${delayTime}`}/>;
-            default:
-                return <ColorDots colors={setting.colors} key={`${flashingPattern}-${delayTime}`}/>;
-        }
+        return <AnimatedDots navigation={navigation} setting={newSetting} key={`${flashingPattern}-${delayTime}`}/>;
     }
 
     const handleSave = async () => {

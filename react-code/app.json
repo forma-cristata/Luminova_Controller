@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Luminova Controller",
-    "slug": "react-code",
+    "slug": "Luminova_Controller",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -9,8 +9,8 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.formacristata.luminova",
+      "supportsTablet": false,
+      "bundleIdentifier": "com.formacristata.luminovacontroller",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       }
@@ -25,7 +25,7 @@
         "android.permission.BLUETOOTH_ADMIN",
         "android.permission.BLUETOOTH_CONNECT"
       ],
-      "package": "com.formacristata.reactcode"
+      "package": "com.formacristata.luminovacontroller"
     },
     "web": {
       "bundler": "metro",
@@ -52,15 +52,17 @@
             "./assets/fonts/Thesignature.ttf"
           ]
         }
-      ]
+      ],
+      "expo-web-browser"
     ],
     "experiments": {
       "typedRoutes": true
     },
     "extra": {
       "eas": {
-        "projectId": "72fe9ed6-3d33-462d-9dee-52375df23d86"
-      }
+        "projectId": "8b4bbbb4-b7b6-45d9-916b-bfdae31c5909"
+      },
+      "router": {}
     }
   }
 }

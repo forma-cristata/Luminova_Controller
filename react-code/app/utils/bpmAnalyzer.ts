@@ -1,6 +1,7 @@
-import * as Audio from 'expo-audio';
+import * as Audio from "expo-audio";
+import { RecordingOptions, RecordingStatus } from "expo-audio/build/Audio.types";
 
-interface BPMAnalyzerOptions {
+export interface BPMAnalyzerOptions {
     onBPMUpdate?: (bpm: number) => void;
     onBPMStable?: (bpm: number) => void;
     stabilizationTime?: number;
@@ -12,8 +13,8 @@ export class BPMAnalyzer {
     private lastBeat: number = 0;
     private options: BPMAnalyzerOptions;
     private startTime: number = 0;
-    private recorder: Audio.AudioRecorder | null = null;
     private analyzing: boolean = false;
+    private recorder: Audio.AudioRecorder | null = null;
 
     constructor(options: BPMAnalyzerOptions = {}) {
         this.options = {
@@ -28,7 +29,7 @@ export class BPMAnalyzer {
             // Request permissions
             const permission = await Audio.requestRecordingPermissionsAsync();
             if (!permission.granted) {
-                throw new Error('Microphone permission denied');
+                throw new Error("Microphone permission denied");
             }
 
             // Set up audio mode for recording
@@ -37,49 +38,69 @@ export class BPMAnalyzer {
                 playsInSilentMode: true
             });
 
-            // Create recorder with high quality settings
-            this.recorder = Audio.useAudioRecorder(Audio.RecordingPresets.HIGH_QUALITY);
-            
-            // Set up the recorder state listener
-            Audio.useAudioRecorderState(this.recorder, 100); // Update every 100ms
-            
-            const recorderState = Audio.useAudioRecorderState(this.recorder);
-            this.setupAudioLevelDetection(recorderState);
-
-            // Start recording
-            await this.recorder.prepareToRecordAsync({
-                isMeteringEnabled: true, // Enable audio level metering
+            const recordingOptions: RecordingOptions = {
+                isMeteringEnabled: true,
+                extension: '.m4a',
+                sampleRate: 44100,
+                numberOfChannels: 2,
+                bitRate: 128000,
                 android: {
                     audioEncoder: 'aac',
-                    outputFormat: 'mpeg4'
+                    outputFormat: 'mpeg4',
                 },
                 ios: {
                     audioQuality: Audio.AudioQuality.MAX,
                     outputFormat: Audio.IOSOutputFormat.MPEG4AAC,
+                    sampleRate: 44100,
                 }
-            });
+            };
 
-            this.recorder.record();
+            // Create recorder with high quality settings
+            this.recorder = Audio.useAudioRecorder(recordingOptions);
+            
+            if (!this.recorder) {
+                throw new Error("Failed to initialize audio recorder");
+            }
+
+            // Start recording
+            await this.recorder.prepareToRecordAsync();
+
+            // Start recording
+            await this.recorder.record();
+            
+            // Use Audio.useAudioRecorderState in a React component to get metering updates
 
             // Reset state
             this.beatTimes = [];
             this.lastBeat = 0;
             this.startTime = Date.now();
             this.analyzing = true;
-
         } catch (error) {
+            if (this.recorder) {
+                this.recorder = null;
+            }
             throw error;
         }
     }
 
-    private setupAudioLevelDetection(recorderState: Audio.RecorderState) {
-        // Watch for audio level changes in the recorder state
-        if (recorderState.metering !== undefined) {
-            this.processAudioLevel(recorderState.metering);
+    private calculateAudioLevel(sample: Audio.AudioSample): number {
+        // Calculate RMS (Root Mean Square) of the audio sample
+        let sumSquares = 0;
+        let totalSamples = 0;
+
+        for (const channel of sample.channels) {
+            for (const frame of channel.frames) {
+                sumSquares += frame * frame;
+                totalSamples++;
+            }
         }
+
+        const rms = Math.sqrt(sumSquares / totalSamples);
+        // Convert to dB
+        return 20 * Math.log10(rms);
     }
 
-    private processAudioLevel = (level: number) => {
+    private processAudioLevel(level: number) {
         if (!this.analyzing) return;
 
         // Audio level threshold for beat detection
@@ -88,11 +109,11 @@ export class BPMAnalyzer {
         if (level > BEAT_THRESHOLD) {
             this.checkForBeat();
         }
-    };
+    }
 
     async stop() {
         this.analyzing = false;
-        
+
         if (this.recorder) {
             await this.recorder.stop();
             this.recorder = null;

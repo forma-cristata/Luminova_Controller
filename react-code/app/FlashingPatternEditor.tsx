@@ -1,7 +1,9 @@
 import Slider from "@react-native-community/slider";
 import { useThrottle } from "expo-dev-launcher/bundle/hooks/useDebounce";
 import * as React from "react";
+
 const { useEffect, useState } = React;
+
 import {
 	Dimensions,
 	SafeAreaView,
@@ -13,12 +15,12 @@ import {
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import AnimatedDots from "@/app/components/AnimatedDots";
 import BackButton from "@/app/components/BackButton";
+import BPMMeasurer from "@/app/components/BPMMeasurer";
 import InfoButton from "@/app/components/InfoButton";
 import MetronomeButton from "@/app/components/MetronomeButton";
 import Picker from "@/app/components/Picker";
 import RandomizeButton from "@/app/components/RandomizeButton";
 import { COLORS, COMMON_STYLES, FONTS } from "@/app/components/SharedStyles";
-import BPMMeasurer from "@/app/components/BPMMeasurer";
 import { useConfiguration } from "@/app/context/ConfigurationContext";
 import { ApiService } from "@/app/services/ApiService";
 import { loadData, saveData } from "@/app/settings";
@@ -68,12 +70,7 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 			delayTime: throttledDelayTime,
 			flashingPattern: flashingPattern,
 		};
-		return (
-			<AnimatedDots
-				navigation={navigation}
-				setting={newSetting}
-			/>
-		);
+		return <AnimatedDots navigation={navigation} setting={newSetting} />;
 	};
 
 	const handleSave = async () => {
@@ -137,7 +134,19 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 	};
 
 	// Pattern IDs (excluding "Still" which is "6")
-	const ANIMATION_PATTERNS = ["0", "1", "2", "3", "4", "5", "7", "8", "9", "10", "11"];
+	const ANIMATION_PATTERNS = [
+		"0",
+		"1",
+		"2",
+		"3",
+		"4",
+		"5",
+		"7",
+		"8",
+		"9",
+		"10",
+		"11",
+	];
 
 	return (
 		<SafeAreaProvider>
@@ -153,11 +162,15 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 							setDelayTime(calculateDelayTime(randomBPM));
 
 							// Random pattern from valid animation patterns (excluding STILL)
-							const randomPattern = ANIMATION_PATTERNS[Math.floor(Math.random() * ANIMATION_PATTERNS.length)];
+							const randomPattern =
+								ANIMATION_PATTERNS[
+									Math.floor(Math.random() * ANIMATION_PATTERNS.length)
+								];
 							setFlashingPattern(randomPattern);
 						}}
 					/>
-					<Text style={styles.whiteText}>{setting.name}</Text>					<MetronomeButton
+					<Text style={styles.whiteText}>{setting.name}</Text>{" "}
+					<MetronomeButton
 						onPress={() => {
 							setShowBPMMeasurer(true);
 						}}
@@ -271,7 +284,8 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 							</Text>
 						</TouchableOpacity>
 					</View>
-				</View>				<BPMMeasurer
+				</View>{" "}
+				<BPMMeasurer
 					isVisible={showBPMMeasurer}
 					onClose={() => setShowBPMMeasurer(false)}
 					onBPMDetected={(bpm) => {
@@ -287,48 +301,49 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 const { width, height } = Dimensions.get("window");
 const scale = Math.min(width, height) / 375;
 
-const styles = StyleSheet.create({    titleContainer: {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "center",
-        width: width * 0.9,
-        marginTop: 40,
-        marginBottom: height * 0.03,
-        borderStyle: "solid",
-        borderBottomWidth: 2,
-        borderColor: COLORS.WHITE,
-    },
-    whiteText: {
-        color: COLORS.WHITE,
-        fontSize: 30 * scale,
-        fontFamily: FONTS.SIGNATURE,
-        textAlign: "center",
-        flex: 1,
-    },
-    fpContainer: {
-        flexDirection: "row",
-        alignItems: "center",
-        marginTop: 20,
-        marginBottom: 20,
-        width: width * 0.85,
-        borderStyle: "solid",
-        borderWidth: 2,
-        borderColor: COLORS.WHITE,
-        padding: 10 * scale,
-        borderRadius: 10,
-    },
-    sliderRow: {
-        marginVertical: 5 * scale,
-    },
-    slider: {
-        width: "100%",
-        height: 30 * scale,
-    },
-    dotPadding: {
-        marginTop: 20,
-        marginBottom: 20,
-    },
-    sliderPadding: {
-        marginBottom: 20,
-    },
+const styles = StyleSheet.create({
+	titleContainer: {
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "center",
+		width: width * 0.9,
+		marginTop: 40,
+		marginBottom: height * 0.03,
+		borderStyle: "solid",
+		borderBottomWidth: 2,
+		borderColor: COLORS.WHITE,
+	},
+	whiteText: {
+		color: COLORS.WHITE,
+		fontSize: 30 * scale,
+		fontFamily: FONTS.SIGNATURE,
+		textAlign: "center",
+		flex: 1,
+	},
+	fpContainer: {
+		flexDirection: "row",
+		alignItems: "center",
+		marginTop: 20,
+		marginBottom: 20,
+		width: width * 0.85,
+		borderStyle: "solid",
+		borderWidth: 2,
+		borderColor: COLORS.WHITE,
+		padding: 10 * scale,
+		borderRadius: 10,
+	},
+	sliderRow: {
+		marginVertical: 5 * scale,
+	},
+	slider: {
+		width: "100%",
+		height: 30 * scale,
+	},
+	dotPadding: {
+		marginTop: 20,
+		marginBottom: 20,
+	},
+	sliderPadding: {
+		marginBottom: 20,
+	},
 });

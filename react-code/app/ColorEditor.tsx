@@ -749,7 +749,7 @@ const styles = StyleSheet.create({
 		width: "100%",
 		height: 40 * scale,
 		justifyContent: "center",
-	},	// Removed styles for shuffle button as they are now in the RandomizeButton component
+	}, // Removed styles for shuffle button as they are now in the RandomizeButton component
 	sortButton: {
 		justifyContent: "center",
 		alignItems: "center",

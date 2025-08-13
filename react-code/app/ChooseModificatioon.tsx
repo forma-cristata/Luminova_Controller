@@ -11,10 +11,24 @@ import AnimatedDots from "@/app/components/AnimatedDots";
 import BackButton from "@/app/components/BackButton";
 import ColorDots from "@/app/components/ColorDots";
 import InfoButton from "@/app/components/InfoButton";
-import type { Setting } from "@/app/interface/setting-interface";
+import { Setting } from "@/app/interface/setting-interface";
+import { Stack } from "expo-router";
+import React from "react";
 
-export default function ChooseModificatioon({ navigation, route }: any) {
-	const setting = route.params?.setting as Setting;
+interface Props {
+    route: {
+        params?: {
+            setting: Setting;
+        };
+    };
+    navigation: {
+        goBack: () => void;
+        navigate: (screen: string, params?: any) => void;
+    };
+}
+
+export default function ChooseModificatioon({ navigation, route }: Props) {
+    const setting = route.params!.setting;
 	const modeDots = () => {
 		return <AnimatedDots navigation={navigation} setting={setting} />;
 	};

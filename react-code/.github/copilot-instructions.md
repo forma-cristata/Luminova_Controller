@@ -60,7 +60,7 @@
 ### 📋 **Codebase Context Summary**
 
 #### **Core Application:**
-- **Type**: React Native LED controller app with Expo
+- **Type**: React Native LED controller app with Expo SDK 53
 - **Architecture**: Component-based with centralized state and services
 - **Hardware Integration**: REST API communication with LED hardware
 - **Data Flow**: FileSystem persistence → Context state → API communication
@@ -148,5 +148,6 @@ When creating new components:
 - Consider reusability across screens
 - Document purpose and usage patterns
 - Integrate with existing state management
+
 
 This instruction set ensures consistent, informed development while maintaining the high-quality architecture already established in the Luminova Controller codebase.

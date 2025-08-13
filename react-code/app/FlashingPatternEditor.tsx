@@ -1,6 +1,7 @@
 import Slider from "@react-native-community/slider";
 import { useThrottle } from "expo-dev-launcher/bundle/hooks/useDebounce";
-import React, { useEffect, useState } from "react";
+import * as React from "react";
+const { useEffect, useState } = React;
 import {
 	Dimensions,
 	SafeAreaView,
@@ -17,6 +18,7 @@ import MetronomeButton from "@/app/components/MetronomeButton";
 import Picker from "@/app/components/Picker";
 import RandomizeButton from "@/app/components/RandomizeButton";
 import { COLORS, COMMON_STYLES, FONTS } from "@/app/components/SharedStyles";
+import BPMMeasurer from "@/app/components/BPMMeasurer";
 import { useConfiguration } from "@/app/context/ConfigurationContext";
 import { ApiService } from "@/app/services/ApiService";
 import { loadData, saveData } from "@/app/settings";
@@ -47,6 +49,7 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 	const throttledFlashingPattern = useThrottle(flashingPattern);
 
 	const [previewMode, setPreviewMode] = useState(false);
+	const [showBPMMeasurer, setShowBPMMeasurer] = useState(false);
 	const calculateBPM = (delayTime: number): string => {
 		return (60000 / (64 * delayTime)).toFixed(0);
 	};
@@ -59,19 +62,16 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 	const calculateDelayTime = (bpm: number): number => {
 		return Math.round(60000 / (64 * bpm));
 	};
-
 	const modeDots = () => {
 		const newSetting = {
 			...setting,
 			delayTime: throttledDelayTime,
 			flashingPattern: flashingPattern,
 		};
-
 		return (
 			<AnimatedDots
 				navigation={navigation}
 				setting={newSetting}
-				key={`${flashingPattern}-${delayTime}`}
 			/>
 		);
 	};
@@ -157,11 +157,9 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 							setFlashingPattern(randomPattern);
 						}}
 					/>
-					<Text style={styles.whiteText}>{setting.name}</Text>
-					<MetronomeButton
+					<Text style={styles.whiteText}>{setting.name}</Text>					<MetronomeButton
 						onPress={() => {
-							// Open a tap tempo interface or similar metronome functionality
-							console.log("Metronome button pressed");
+							setShowBPMMeasurer(true);
 						}}
 					/>
 				</View>
@@ -273,7 +271,14 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 							</Text>
 						</TouchableOpacity>
 					</View>
-				</View>
+				</View>				<BPMMeasurer
+					isVisible={showBPMMeasurer}
+					onClose={() => setShowBPMMeasurer(false)}
+					onBPMDetected={(bpm) => {
+						setBPM(bpm);
+						setDelayTime(calculateDelayTime(bpm));
+					}}
+				/>
 			</SafeAreaView>
 		</SafeAreaProvider>
 	);

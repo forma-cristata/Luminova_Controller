@@ -1,6 +1,9 @@
 # AI Assistant Instructions for Luminova Controller Codebase
 
 ## Core Permissions and Protocols
+THIS CODEBASE USES EXPO-AUDIO, DO NOT SUGGEST USING EXPO-AV AS IT IS DEPRECATED BY SDK 53.
+Your terminal default path is C:/Users/frisk/Documents/T6_25/Capstone/Luminova_Controller/react-code>
+* You do not need to navigate to this path to suggest commands.
 
 ### 🔍 **Codebase Scanning Authority**
 - **ALWAYS SCAN**: You have full permission to scan and analyze the entire codebase

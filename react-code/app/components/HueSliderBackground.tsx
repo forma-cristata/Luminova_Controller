@@ -1,5 +1,5 @@
-import { StyleSheet, View } from "react-native";
 import { useMemo } from "react";
+import { StyleSheet, View } from "react-native";
 
 // Define the ColorItem interface
 interface ColorItem {
@@ -14,7 +14,9 @@ const generateId = (color: string, index: number): string => {
 	for (let i = 0; i < data.length; i++) {
 		array[i % 8] ^= data.charCodeAt(i);
 	}
-	return Array.from(array).map(b => b.toString(16).padStart(2, '0')).join('');
+	return Array.from(array)
+		.map((b) => b.toString(16).padStart(2, "0"))
+		.join("");
 };
 
 // Create the colors array with stable IDs outside the component
@@ -87,7 +89,7 @@ const colorsList: ColorItem[] = [
 	"#FF0000",
 ].map((color, index) => ({
 	id: generateId(color, index),
-	color
+	color,
 }));
 
 const HueSliderBackground = () => {

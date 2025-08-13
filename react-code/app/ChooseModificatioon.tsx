@@ -16,19 +16,19 @@ import { Stack } from "expo-router";
 import React from "react";
 
 interface Props {
-    route: {
-        params?: {
-            setting: Setting;
-        };
-    };
-    navigation: {
-        goBack: () => void;
-        navigate: (screen: string, params?: any) => void;
-    };
+	route: {
+		params?: {
+			setting: Setting;
+		};
+	};
+	navigation: {
+		goBack: () => void;
+		navigate: (screen: string, params?: any) => void;
+	};
 }
 
 export default function ChooseModificatioon({ navigation, route }: Props) {
-    const setting = route.params!.setting;
+	const setting = route.params!.setting;
 	const modeDots = () => {
 		return <AnimatedDots navigation={navigation} setting={setting} />;
 	};

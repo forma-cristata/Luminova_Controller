@@ -44,6 +44,7 @@
 - Check for existing patterns in SharedStyles.ts and ApiService.ts
 - Review similar implementations in the codebase
 - Consider impact on navigation flow and state management
+- NOTE THAT YOUR MASTER NEVER EVER WANTS TO USE EXPO-AV AS IT IS DEPRECATED BY SDK 53.
 
 #### **During Implementation:**
 - Use established patterns (COMMON_STYLES, COLORS, FONTS)

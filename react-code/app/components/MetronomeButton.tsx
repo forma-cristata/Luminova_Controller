@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { Dimensions, StyleSheet, TouchableOpacity } from "react-native";
 import { COLORS } from "./SharedStyles";

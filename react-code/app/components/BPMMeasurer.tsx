@@ -8,7 +8,7 @@ import {
 	TouchableOpacity,
 	View,
 } from "react-native";
-import * as Audio from 'expo-audio';
+import * as Audio from "expo-audio";
 import { COLORS, COMMON_STYLES, FONTS } from "./SharedStyles";
 
 const { width, height } = Dimensions.get("window");
@@ -40,43 +40,49 @@ export default function BPMMeasurer({
 
 		// Calculate intervals between beats
 		const intervals = times.slice(1).map((time, i) => time - times[i]);
-		
+
 		// Calculate median interval
 		const sortedIntervals = [...intervals].sort((a, b) => a - b);
-		const medianInterval = sortedIntervals[Math.floor(sortedIntervals.length / 2)];
+		const medianInterval =
+			sortedIntervals[Math.floor(sortedIntervals.length / 2)];
 
 		// Convert to BPM and ensure it's in a reasonable range (40-180)
 		return Math.max(40, Math.min(180, Math.round(60000 / medianInterval)));
 	}, []);
 
-	const processAudioLevel = useCallback((level: number) => {
-		if (!recording) return;
+	const processAudioLevel = useCallback(
+		(level: number) => {
+			if (!recording) return;
 
-		const now = Date.now();
-		const BEAT_THRESHOLD = -20; // Adjust based on testing
-		const MIN_INTERVAL = 300; // Minimum 300ms between beats
-		const lastBeat = beatTimes[beatTimes.length - 1] || 0;
+			const now = Date.now();
+			const BEAT_THRESHOLD = -20; // Adjust based on testing
+			const MIN_INTERVAL = 300; // Minimum 300ms between beats
+			const lastBeat = beatTimes[beatTimes.length - 1] || 0;
 
-		if (level > BEAT_THRESHOLD && (now - lastBeat) > MIN_INTERVAL) {
-			const newBeatTimes = [...beatTimes, now];
-			
-			// Keep only recent beats (last 5 seconds)
-			const recentWindow = 5000;
-			const filteredTimes = newBeatTimes.filter(time => (now - time) < recentWindow);
-			setBeatTimes(filteredTimes);
+			if (level > BEAT_THRESHOLD && now - lastBeat > MIN_INTERVAL) {
+				const newBeatTimes = [...beatTimes, now];
 
-			if (filteredTimes.length >= 4) {
-				const bpm = calculateBPM(filteredTimes);
-				setDetectedBPM(bpm);
+				// Keep only recent beats (last 5 seconds)
+				const recentWindow = 5000;
+				const filteredTimes = newBeatTimes.filter(
+					(time) => now - time < recentWindow,
+				);
+				setBeatTimes(filteredTimes);
 
-				// If we've been recording for 20 seconds, finalize the BPM
-				if (now - startTime >= 20000) {
-					onBPMDetected(bpm);
-					onClose();
+				if (filteredTimes.length >= 4) {
+					const bpm = calculateBPM(filteredTimes);
+					setDetectedBPM(bpm);
+
+					// If we've been recording for 20 seconds, finalize the BPM
+					if (now - startTime >= 20000) {
+						onBPMDetected(bpm);
+						onClose();
+					}
 				}
 			}
-		}
-	}, [recording, beatTimes, startTime, calculateBPM, onBPMDetected, onClose]);
+		},
+		[recording, beatTimes, startTime, calculateBPM, onBPMDetected, onClose],
+	);
 
 	// Process audio levels from recorder state
 	useEffect(() => {
@@ -96,19 +102,19 @@ export default function BPMMeasurer({
 
 				await Audio.setAudioModeAsync({
 					allowsRecording: true,
-					playsInSilentMode: true
+					playsInSilentMode: true,
 				});
 
 				await recorder.prepareToRecordAsync({
 					isMeteringEnabled: true,
 					android: {
-						audioEncoder: 'aac',
-						outputFormat: 'mpeg4'
+						audioEncoder: "aac",
+						outputFormat: "mpeg4",
 					},
 					ios: {
 						audioQuality: Audio.AudioQuality.MAX,
-						outputFormat: Audio.IOSOutputFormat.MPEG4AAC
-					}
+						outputFormat: Audio.IOSOutputFormat.MPEG4AAC,
+					},
 				});
 
 				await recorder.record();
@@ -118,7 +124,9 @@ export default function BPMMeasurer({
 				setError(null);
 			} catch (err) {
 				console.error("Failed to start recording:", err);
-				setError(err instanceof Error ? err.message : "Failed to start recording");
+				setError(
+					err instanceof Error ? err.message : "Failed to start recording",
+				);
 			}
 		};
 
@@ -129,7 +137,7 @@ export default function BPMMeasurer({
 				}
 				await Audio.setAudioModeAsync({
 					allowsRecording: false,
-					playsInSilentMode: false
+					playsInSilentMode: false,
 				});
 			} catch (err) {
 				console.error("Failed to stop recording:", err);

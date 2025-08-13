@@ -40,7 +40,7 @@ const SettingBlock = ({
 		try {
 			await ApiService.flashSetting(setting);
 			setCurrentConfiguration(setting);
-			console.log("Current Configuration: " + setting.name);
+			console.log(`Current Configuration: ${setting.name}`);
 		} catch (error) {
 			console.error("Flash error:", error);
 		}
@@ -59,7 +59,7 @@ const SettingBlock = ({
 						<TouchableOpacity
 							style={COMMON_STYLES.wideButton}
 							onPress={() => {
-								setLastEdited(index!.toString());
+								setLastEdited(index?.toString());
 								navigation.navigate("ChooseModification", { setting: setting });
 							}}
 						>

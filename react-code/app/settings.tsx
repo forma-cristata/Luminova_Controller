@@ -28,9 +28,9 @@ console.log("JSON Default Data: ", jsonData);
 const width = Dimensions.get("window").width;
 const height = Dimensions.get("window").height;
 
-const FILE_URI = FileSystem.documentDirectory + "settings.json";
+const FILE_URI = `${FileSystem.documentDirectory}settings.json`;
 
-const deleteSettingsFile = async () => {
+const _deleteSettingsFile = async () => {
 	try {
 		const fileInfo = await FileSystem.getInfoAsync(FILE_URI);
 		if (fileInfo.exists) {
@@ -60,7 +60,7 @@ export const loadData = async () => {
 			return JSON.parse(fileContent) as Setting[];
 		} else {
 			console.log("No existing file found, using default data.");
-			console.log("jsonData: " + JSON.stringify(jsonData));
+			console.log(`jsonData: ${JSON.stringify(jsonData)}`);
 			return data;
 		}
 	} catch (e) {
@@ -217,7 +217,7 @@ export default function Settings({ navigation }: any) {
 	};
 
 	const getUniqueName = (baseName: string, settings: Setting[]) => {
-		let newName = baseName + " Copy";
+		let newName = `${baseName} Copy`;
 		let counter = 1;
 		const names = settings.map((s) => s.name);
 		while (names.includes(newName)) {
@@ -298,14 +298,12 @@ export default function Settings({ navigation }: any) {
 							</>
 						)}
 						{currentIndex >= settingsData.length && (
-							<>
-								<TouchableOpacity
-									style={styles.newSettingButton}
-									onPress={createNewSetting}
-								>
-									<Text style={styles.newSettingText}>+</Text>
-								</TouchableOpacity>
-							</>
+							<TouchableOpacity
+								style={styles.newSettingButton}
+								onPress={createNewSetting}
+							>
+								<Text style={styles.newSettingText}>+</Text>
+							</TouchableOpacity>
 						)}
 					</View>
 					<View style={styles.carCont}>

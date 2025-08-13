@@ -1,8 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import React from "react";
-import { Dimensions, StyleSheet, TouchableOpacity } from "react-native";
-import { COLORS } from "./SharedStyles";
+import { StyleSheet, TouchableOpacity } from "react-native";
 
 interface BackButtonProps {
 	beforePress?: () => void | Promise<void>;

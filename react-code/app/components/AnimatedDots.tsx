@@ -89,7 +89,7 @@ export default function AnimatedDots({ setting }: AnimatedDotsProps) {
 	};
 
 	// Updated animation helper that checks both refs
-	const isActive = () => animationRef.current && isComponentActive;
+	const _isActive = () => animationRef.current && isComponentActive;
 
 	// Animation patterns with proper cleanup
 	const blenderAnimation = async (isActive: () => boolean) => {
@@ -598,7 +598,25 @@ export default function AnimatedDots({ setting }: AnimatedDotsProps) {
 			animationRef.current = false;
 			clearAllTimeouts();
 		};
-	}, [setting.colors, setting.delayTime, setting.flashingPattern]);
+	}, [
+		setting.colors,
+		setting.flashingPattern,
+		blenderAnimation,
+		christmasAnimation,
+		clearAllTimeouts,
+		comfortSongAnimation,
+		funkyAnimation,
+		initializeColors,
+		moldAnimation,
+		progressiveAnimation,
+		setAllLeds,
+		stillAnimation,
+		strobeChangeAnimation,
+		technoAnimation,
+		traceManyAnimation,
+		traceOneAnimation,
+		tranceAnimation,
+	]);
 
 	return (
 		<SafeAreaView style={styles.background}>

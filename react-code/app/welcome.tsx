@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
 	SafeAreaView,
 	StyleSheet,
@@ -22,7 +22,7 @@ export default function Welcome({ navigation }: any) {
 
 	useEffect(() => {
 		setLastEdited("0");
-	}, []);
+	}, [setLastEdited]);
 
 	useEffect(() => {
 		if (displayText.length < fullText.length) {
@@ -34,7 +34,7 @@ export default function Welcome({ navigation }: any) {
 				clearTimeout(timeout1);
 			};
 		}
-	}, [displayText, fullText]);
+	}, [displayText]);
 
 	function createButtonPressed() {
 		navigation.navigate("Settings");

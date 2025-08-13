@@ -14,6 +14,7 @@ import AnimatedDots from "@/app/components/AnimatedDots";
 import BackButton from "@/app/components/BackButton";
 import InfoButton from "@/app/components/InfoButton";
 import Picker from "@/app/components/Picker";
+import RandomizeButton from "@/app/components/RandomizeButton";
 import { COLORS, COMMON_STYLES, FONTS } from "@/app/components/SharedStyles";
 import { useConfiguration } from "@/app/context/ConfigurationContext";
 import { ApiService } from "@/app/services/ApiService";
@@ -135,12 +136,29 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 		}
 	};
 
+	// Pattern IDs (excluding "Still" which is "6")
+	const ANIMATION_PATTERNS = ["0", "1", "2", "3", "4", "5", "7", "8", "9", "10", "11"];
+
 	return (
 		<SafeAreaProvider>
 			<SafeAreaView style={COMMON_STYLES.container}>
 				<InfoButton />
 				<BackButton beforePress={previewMode ? unPreviewAPI : undefined} />
-				<Text style={styles.whiteText}>{setting.name}</Text>
+				<View style={styles.titleContainer}>
+					<RandomizeButton
+						onPress={() => {
+							// Random BPM between 40 and 180
+							const randomBPM = Math.floor(Math.random() * (180 - 40) + 40);
+							setBPM(randomBPM);
+							setDelayTime(calculateDelayTime(randomBPM));
+
+							// Random pattern from valid animation patterns (excluding STILL)
+							const randomPattern = ANIMATION_PATTERNS[Math.floor(Math.random() * ANIMATION_PATTERNS.length)];
+							setFlashingPattern(randomPattern);
+						}}
+					/>
+					<Text style={styles.whiteText}>{setting.name}</Text>
+				</View>
 				<View style={styles.dotPadding}>{modeDots()}</View>
 				<View style={styles.fpContainer}>
 					<Picker
@@ -259,42 +277,48 @@ const { width, height } = Dimensions.get("window");
 const scale = Math.min(width, height) / 375;
 
 const styles = StyleSheet.create({
-	whiteText: {
-		color: COLORS.WHITE,
-		fontSize: 50 * scale,
-		fontFamily: FONTS.SIGNATURE,
-		textAlign: "center",
-		marginTop: 50,
-		marginBottom: height * 0.03,
-		borderStyle: "solid",
-		borderBottomWidth: 2,
-		borderColor: COLORS.WHITE,
-		width: width * 0.8,
-	},
-	fpContainer: {
-		flexDirection: "row",
-		alignItems: "center",
-		marginTop: 20,
-		marginBottom: 20,
-		width: width * 0.85,
-		borderStyle: "solid",
-		borderWidth: 2,
-		borderColor: COLORS.WHITE,
-		padding: 10 * scale,
-		borderRadius: 10,
-	},
-	sliderRow: {
-		marginVertical: 5 * scale,
-	},
-	slider: {
-		width: "100%",
-		height: 30 * scale,
-	},
-	dotPadding: {
-		marginTop: 20,
-		marginBottom: 20,
-	},
-	sliderPadding: {
-		marginBottom: 20,
-	},
+    titleContainer: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+        width: width * 0.9,
+        marginTop: 40,
+        marginBottom: height * 0.03,
+        borderStyle: "solid",
+        borderBottomWidth: 2,
+        borderColor: COLORS.WHITE,
+    },
+    whiteText: {
+        color: COLORS.WHITE,
+        fontSize: 50 * scale,
+        fontFamily: FONTS.SIGNATURE,
+        textAlign: "center",
+        flex: 1,
+    },
+    fpContainer: {
+        flexDirection: "row",
+        alignItems: "center",
+        marginTop: 20,
+        marginBottom: 20,
+        width: width * 0.85,
+        borderStyle: "solid",
+        borderWidth: 2,
+        borderColor: COLORS.WHITE,
+        padding: 10 * scale,
+        borderRadius: 10,
+    },
+    sliderRow: {
+        marginVertical: 5 * scale,
+    },
+    slider: {
+        width: "100%",
+        height: 30 * scale,
+    },
+    dotPadding: {
+        marginTop: 20,
+        marginBottom: 20,
+    },
+    sliderPadding: {
+        marginBottom: 20,
+    },
 });

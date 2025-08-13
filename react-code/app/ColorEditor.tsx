@@ -25,6 +25,7 @@ import BackButton from "@/app/components/BackButton";
 import ColorDots from "@/app/components/ColorDots";
 import HueSliderBackground from "@/app/components/HueSliderBackground";
 import InfoButton from "@/app/components/InfoButton";
+import RandomizeButton from "@/app/components/RandomizeButton";
 import { COLORS, COMMON_STYLES, FONTS } from "@/app/components/SharedStyles";
 import { useConfiguration } from "@/app/context/ConfigurationContext";
 import { ApiService } from "@/app/services/ApiService";
@@ -403,8 +404,7 @@ export default function ColorEditor({ navigation, route }: any) {
 		if (isNew) {
 			return (
 				<View style={styles.titleContainer}>
-					<TouchableOpacity
-						style={styles.shuffleButton}
+					<RandomizeButton
 						onPress={() => {
 							const shuffled = [...colors];
 							for (let i = shuffled.length - 1; i > 0; i--) {
@@ -415,9 +415,7 @@ export default function ColorEditor({ navigation, route }: any) {
 							setColorHistory([...colorHistory, [...colors]]);
 							setHasChanges(true);
 						}}
-					>
-						<Text style={styles.shuffleIcon}>⟳</Text>
-					</TouchableOpacity>
+					/>
 					<View style={styles.nameInputContainer}>
 						<Text style={COMMON_STYLES.sliderText}>Setting Name:</Text>
 						<TextInput
@@ -440,8 +438,7 @@ export default function ColorEditor({ navigation, route }: any) {
 		} else {
 			return (
 				<View style={styles.titleContainer}>
-					<TouchableOpacity
-						style={styles.shuffleButton}
+					<RandomizeButton
 						onPress={() => {
 							const shuffled = [...colors];
 							for (let i = shuffled.length - 1; i > 0; i--) {
@@ -452,9 +449,7 @@ export default function ColorEditor({ navigation, route }: any) {
 							setColorHistory([...colorHistory, [...colors]]);
 							setHasChanges(true);
 						}}
-					>
-						<Text style={styles.shuffleIcon}>⟳</Text>
-					</TouchableOpacity>
+					/>
 					<Text style={styles.whiteText}>{setting.name}</Text>
 					<TouchableOpacity style={styles.sortButton} onPress={sortColorsByHue}>
 						<Text style={styles.sortIcon}>↹</Text>
@@ -754,20 +749,7 @@ const styles = StyleSheet.create({
 		width: "100%",
 		height: 40 * scale,
 		justifyContent: "center",
-	},
-	shuffleButton: {
-		justifyContent: "center",
-		alignItems: "center",
-		marginRight: 20 * scale,
-		width: 60 * scale,
-		height: 60 * scale,
-	},
-	shuffleIcon: {
-		color: COLORS.WHITE,
-		fontSize: 35 * scale,
-		fontWeight: "ultralight",
-		textAlign: "center",
-	},
+	},	// Removed styles for shuffle button as they are now in the RandomizeButton component
 	sortButton: {
 		justifyContent: "center",
 		alignItems: "center",

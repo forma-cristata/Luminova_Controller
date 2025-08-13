@@ -1,8 +1,9 @@
 import React, {useEffect, useState} from 'react';
-import {SafeAreaView, ScrollView, StyleSheet, Text, View, TouchableOpacity, Alert, Linking, Platform} from 'react-native';
+import {SafeAreaView, SectionList, StyleSheet, Text, View, TouchableOpacity, Alert, Linking, Platform} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import BackButton from '@/app/components/BackButton';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { LinearGradient } from 'expo-linear-gradient';
 
 
 export default function Info() {
@@ -66,8 +67,63 @@ export default function Info() {
       );
     };
 
-    return (     <SafeAreaProvider>            
-        <SafeAreaView style={styles.container}>
+    const sections = [
+        {
+            title: "Home Screen",
+            data: [
+                "Wait for the power toggle to synchronize with your device's state - the toggle will then control turning your device on and off.",
+                "Access your saved settings and customization options by tapping the 'Create' button."
+            ]
+        },
+        {
+            title: "Settings Screen",
+            data: [
+                "Navigate settings by swiping left or right on the bottom menu.",
+                "The selected setting displays in the center of the screen.",
+                "Create a new setting by tapping the plus sign (+) at the carousel's end.",
+                "Duplicate settings using the copy icon for easy editing.",
+                "Remove custom settings using the trash icon.",
+                "Broadcast settings to your device by tapping 'Flash'.",
+                "Access settings editor by tapping 'Edit'."
+            ]
+        },
+        {
+            title: "Color Modification",
+            data: [
+                "Select a color by tapping it - selected colors appear larger.",
+                "Use HSB sliders to adjust Hue, Saturation, and Brightness values.",
+                "Enter hex codes manually - values update with slider changes.",
+                "Reverse dot order by swiping left or right.",
+                "Copy colors between rows by swiping vertically.",
+                "Randomize colors using the shuffle button.",
+                "Organize colors by hue with the sort button.",
+                "Return to original settings using 'Reset'.",
+                "Preserve changes by tapping 'Save'.",
+                "Preview changes temporarily using 'Preview'."
+            ]
+        },
+        {
+            title: "Flashing Pattern Modification",
+            data: [
+                "Select patterns using the pattern picker.",
+                "Match music tempo using the BPM slider.",
+                "Return to original settings using 'Reset'.",
+                "Save changes by tapping 'Save'.",
+                "Preview changes temporarily using 'Preview'."
+            ]
+        },
+        {
+            title: "Tips & Tricks",
+            data: [
+                "Default settings can be modified but not deleted.",
+                "Using black can create distinct setting variations."
+            ]
+        }
+    ];
+
+    return (
+        <SafeAreaProvider>            
+            <SafeAreaView style={styles.container}>
                 <BackButton />
                 <TouchableOpacity
                     style={styles.feedbackButton}
@@ -76,56 +132,33 @@ export default function Info() {
                     <Ionicons name="chatbubble-outline" size={24} color="white" />
                     <Text style={styles.feedbackText}>Feedback</Text>
                 </TouchableOpacity>
-            <Text style={[styles.title, {color: textColor}]}>How to Use This App</Text>
-            <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
-                <Section title="Home Screen">
-                    <BulletPoint text="Wait for the power toggle to synchronize with your device's state - the toggle will then control turning your device on and off." />
-                    <BulletPoint text="Access your saved settings and customization options by tapping the 'Create' button." />
-                </Section>
-                <Section title="Settings Screen">
-                    <BulletPoint text="Navigate settings by swiping left or right on the bottom menu." />
-                    <BulletPoint text="The selected setting displays in the center of the screen." />
-                    <BulletPoint text="Create a new setting by tapping the plus sign (+) at the carousel's end." />
-                    <BulletPoint text="Duplicate settings using the copy icon for easy editing." />
-                    <BulletPoint text="Remove custom settings using the trash icon." />
-                    <BulletPoint text="Broadcast settings to your device by tapping 'Flash'." />
-                    <BulletPoint text="Access settings editor by tapping 'Edit'." />
-                </Section>
-                <Section title="Color Modification">
-                    <BulletPoint text="Select a color by tapping it - selected colors appear larger." />
-                    <BulletPoint text="Use HSB sliders to adjust Hue, Saturation, and Brightness values." />
-                    <BulletPoint text="Enter hex codes manually - values update with slider changes." />
-                    <BulletPoint text="Reverse dot order by swiping left or right." />
-                    <BulletPoint text="Copy colors between rows by swiping vertically." />
-                    <BulletPoint text="Randomize colors using the shuffle button." />
-                    <BulletPoint text="Organize colors by hue with the sort button." />
-                    <BulletPoint text="Return to original settings using 'Reset'." />
-                    <BulletPoint text="Preserve changes by tapping 'Save'." />
-                    <BulletPoint text="Preview changes temporarily using 'Preview'." />
-                </Section>
-                <Section title="Flashing Pattern Modification">
-                    <BulletPoint text="Select patterns using the pattern picker." />
-                    <BulletPoint text="Match music tempo using the BPM slider." />
-                    <BulletPoint text="Return to original settings using 'Reset'." />
-                    <BulletPoint text="Save changes by tapping 'Save'." />
-                    <BulletPoint text="Preview changes temporarily using 'Preview'." />
-                </Section>
-                <Section title="Tips & Tricks">
-                    <BulletPoint text="Default settings can be modified but not deleted." />
-                    <BulletPoint text="Using black can create distinct setting variations.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      " />
-                </Section>
-            </ScrollView>
-        </SafeAreaView>
-    </SafeAreaProvider>
+                <Text style={[styles.title, {color: textColor}]}>How to Use This App</Text>
+                <SectionList
+                    sections={sections}
+                    style={styles.scrollView}
+                    contentContainerStyle={styles.scrollContent}
+                    stickySectionHeadersEnabled={true}
+                    renderSectionHeader={({section: {title}}) => (
+                        <View style={styles.sectionHeaderWrapper}>
+                            <View style={styles.sectionTitleContainer}>
+                                <Text style={styles.sectionTitle}>{title}</Text>
+                            </View>
+                            <LinearGradient
+                                colors={['#000000', 'transparent']}
+                                style={styles.fadeGradient}
+                            />
+                        </View>
+                    )}
+                    renderItem={({item}) => (
+                        <BulletPoint text={item} />
+                    )}
+                    keyExtractor={(item, index) => index.toString()+item.toString()}
+                    SectionSeparatorComponent={() => <View style={styles.sectionSeparator} />}
+                />
+            </SafeAreaView>
+        </SafeAreaProvider>
     );
 }
-
-const Section = ({ title, children }: { title: string, children: React.ReactNode }) => (
-    <View style={styles.section}>
-        <Text style={styles.sectionTitle}>{title}</Text>
-        {children}
-    </View>
-);
 
 const BulletPoint = ({ text }: { text: string }) => (
     <View style={styles.bulletPoint}>
@@ -146,31 +179,54 @@ const styles = StyleSheet.create({
         fontSize: 50,
         textAlign: 'center',
         marginBottom: 15,
+        marginTop: 50,
     },
     scrollView: {
         flex: 1,
         width: "100%",
-        padding: 15,
+        paddingHorizontal: 15,
     },
     scrollContent: {
         paddingBottom: 40,
     },
     section: {
-        marginBottom: 30,
+        marginBottom: 20,
+        paddingHorizontal: 15,
+    },
+    sectionHeaderWrapper: {
+        position: 'relative',
+    },
+    sectionTitleContainer: {
+        backgroundColor: '#000000',
+        paddingBottom: 20,
+        zIndex: 2,
+        elevation: 2,
     },
     sectionTitle: {
         color: 'white',
         fontFamily: 'Clearlight-lJlq',
         fontSize: 36,
-        marginBottom: 10,
         borderBottomWidth: 1,
         borderBottomColor: '#333',
         paddingBottom: 5,
+        paddingHorizontal: 15,
+    },
+    fadeGradient: {
+        position: 'absolute',
+        bottom: -40,
+        left: 0,
+        right: 0,
+        height: 40,
+        zIndex: 1,
+    },
+    sectionSeparator: {
+        height: 20,
     },
     bulletPoint: {
         flexDirection: 'row',
         marginBottom: 10,
         paddingLeft: 10,
+        paddingTop: 10,
     },
     bulletDot: {
         color: 'white',
@@ -182,8 +238,11 @@ const styles = StyleSheet.create({
         fontFamily: 'Clearlight-lJlq',
         fontSize: 26,
         flex: 1,
-    },
-    feedbackButton: {
+    },    feedbackButton: {
+        position: 'absolute',
+        top: 60,
+        right: 20,
+        zIndex: 10,
         flexDirection: 'row',
         alignItems: 'center',
         padding: 8,
@@ -193,5 +252,8 @@ const styles = StyleSheet.create({
         fontFamily: 'Clearlight-lJlq',
         fontSize: 16,
         marginLeft: 5,
+    },
+    spacer: {
+        height: 10,
     },
 });

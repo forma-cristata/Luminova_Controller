@@ -119,7 +119,7 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
         <InfoButton />
             <BackButton beforePress={previewMode ? unPreviewAPI : undefined} />
             <Text style={styles.whiteText}>{setting.name}</Text>
-            <View>
+            <View style={styles.dotPadding}>
                 {modeDots()}
             </View>
             <View style={styles.fpContainer}>
@@ -130,6 +130,7 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
                     setSelectedPattern={setFlashingPattern}
                 />
             </View>
+            <View style={styles.sliderPadding} >
             <View style={COMMON_STYLES.sliderContainer}>
                 <View style={styles.sliderRow}>
                     <Text style={COMMON_STYLES.sliderText}>Speed: {BPM.toFixed(0)} bpm</Text>
@@ -148,6 +149,7 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
                         thumbTintColor={COLORS.WHITE}
                     />
                 </View>
+            </View>
             </View>
             <View style={COMMON_STYLES.buttonContainer}>
                 <View style={COMMON_STYLES.buttonRow}>
@@ -198,7 +200,7 @@ const styles = StyleSheet.create({
         fontSize: 50 * scale,
         fontFamily: FONTS.SIGNATURE,
         textAlign: "center",
-        marginTop: height * 0.05,
+        marginTop: 50,
         marginBottom: height * 0.03,
         borderStyle: "solid",
         borderBottomWidth: 2,
@@ -208,7 +210,8 @@ const styles = StyleSheet.create({
     fpContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginTop: height * 0.02,
+        marginTop: 20,
+        marginBottom: 20,
         width: width * 0.85,
         borderStyle: "solid",
         borderWidth: 2,
@@ -222,5 +225,13 @@ const styles = StyleSheet.create({
     slider: {
         width: "100%",
         height: 30 * scale,
+        
+    },
+    dotPadding: {
+        marginTop: 20,
+        marginBottom: 20,
+    },
+    sliderPadding: {
+        marginBottom: 20,
     }
 });

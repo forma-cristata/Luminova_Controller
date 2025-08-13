@@ -642,6 +642,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         width: width * 0.9,
+        marginTop: 40,
         marginBottom: height * 0.03,
         borderStyle: "solid",
         borderBottomWidth: 2,

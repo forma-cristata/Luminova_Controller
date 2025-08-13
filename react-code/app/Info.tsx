@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
 	Alert,
 	Linking,
@@ -17,7 +17,7 @@ import AnimatedTitle from "@/app/components/AnimatedTitle";
 import BackButton from "@/app/components/BackButton";
 
 export default function Info() {
-	const [textColor, setTextColor] = useState("#ffffff");
+	const [_textColor, setTextColor] = useState("#ffffff");
 	useEffect(() => {
 		const animationColors = [
 			"#ff0000",

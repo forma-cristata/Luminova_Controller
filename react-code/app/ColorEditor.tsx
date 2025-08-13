@@ -252,7 +252,7 @@ export default function ColorEditor({ navigation, route }: any) {
 			});
 		} else {
 			const settings = await loadData();
-			const updatedSettings = settings!.map((s) =>
+			const updatedSettings = settings?.map((s) =>
 				s.name === setting.name ? { ...s, colors: [...colors] } : s,
 			);
 			await saveData(updatedSettings);

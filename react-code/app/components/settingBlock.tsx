@@ -3,7 +3,7 @@ import AnimatedDots from "@/app/components/AnimatedDots";
 import ColorDots from "@/app/components/ColorDots";
 import { COLORS, COMMON_STYLES, FONTS } from "@/app/components/SharedStyles";
 import { useConfiguration } from "@/app/context/ConfigurationContext";
-import type Setting from "@/app/interface/setting-interface";
+import type {Setting} from "@/app/interface/setting-interface";
 import { ApiService } from "@/app/services/ApiService";
 
 interface SettingItemProps {
@@ -40,7 +40,7 @@ const SettingBlock = ({
 		try {
 			await ApiService.flashSetting(setting);
 			setCurrentConfiguration(setting);
-			console.log("Current Configuration: " + setting.name);
+			console.log(`Current Configuration: ${setting.name}`);
 		} catch (error) {
 			console.error("Flash error:", error);
 		}
@@ -59,7 +59,7 @@ const SettingBlock = ({
 						<TouchableOpacity
 							style={COMMON_STYLES.wideButton}
 							onPress={() => {
-								setLastEdited(index!.toString());
+								setLastEdited(index?.toString());
 								navigation.navigate("ChooseModification", { setting: setting });
 							}}
 						>

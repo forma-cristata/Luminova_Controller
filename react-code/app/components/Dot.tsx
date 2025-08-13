@@ -1,4 +1,3 @@
-import React from "react";
 import { SafeAreaView } from "react-native";
 
 interface DotProps {
@@ -14,7 +13,7 @@ export default function Dot({ color }: DotProps) {
 				height: 35,
 				marginHorizontal: -7,
 				backgroundColor: color,
-				borderRadius: "50%",
+				borderRadius: 17.5, // Half of the width/height (35) to make a perfect circle
 			}}
 		/>
 	);

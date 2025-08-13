@@ -46,15 +46,14 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 	const throttledFlashingPattern = useThrottle(flashingPattern);
 
 	const [previewMode, setPreviewMode] = useState(false);
-
-	useEffect(() => {
-		const initialBpm = parseFloat(calculateBPM(setting.delayTime));
-		setBPM(isNaN(initialBpm) ? 0 : initialBpm);
-	}, []);
-
 	const calculateBPM = (delayTime: number): string => {
 		return (60000 / (64 * delayTime)).toFixed(0);
 	};
+
+	useEffect(() => {
+		const initialBpm = parseFloat(calculateBPM(setting.delayTime));
+		setBPM(Number.isNaN(initialBpm) ? 0 : initialBpm);
+	}, [calculateBPM, setting.delayTime]);
 
 	const calculateDelayTime = (bpm: number): number => {
 		return Math.round(60000 / (64 * bpm));
@@ -91,7 +90,7 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 			navigation.navigate("Settings", { setting });
 		} else {
 			const settings = await loadData();
-			const updatedSettings = settings!.map((s) =>
+			const updatedSettings = settings?.map((s) =>
 				s.name === setting.name
 					? {
 							...s,

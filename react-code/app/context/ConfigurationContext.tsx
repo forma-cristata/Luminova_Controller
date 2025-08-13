@@ -1,9 +1,4 @@
-import React, {
-	createContext,
-	type ReactNode,
-	useContext,
-	useState,
-} from "react";
+import { createContext, type ReactNode, useContext, useState } from "react";
 import type Setting from "@/app/interface/setting-interface";
 
 interface ConfigurationContextType {

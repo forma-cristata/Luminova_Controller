@@ -6,17 +6,26 @@ import { useNavigation } from '@react-navigation/native';
 
 interface BackButtonProps {
     beforePress?: () => void | Promise<void>;
+    afterPress?: () => void;
+    onPress?: () => void;
     style?: any;
 }
 
-export default function BackButton({ beforePress, style }: BackButtonProps) {
+export default function BackButton({ beforePress, afterPress, onPress, style }: BackButtonProps) {
     const navigation = useNavigation();
 
     const handlePress = async () => {
         if (beforePress) {
             await beforePress();
         }
-        navigation.goBack();
+        if (onPress) {
+            onPress();
+        } else {
+            navigation.goBack();
+        }
+        if (afterPress) {
+            setTimeout(afterPress, 0);
+        }
     };
 
     return (

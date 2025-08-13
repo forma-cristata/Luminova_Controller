@@ -4,7 +4,7 @@ import Carousel, {
     ICarouselInstance,
 } from "react-native-reanimated-carousel";
 import React from "react";
-import Setting from "@/app/interface/setting-interface";
+import {Setting} from "@/app/interface/setting-interface";
 import SettingBlock from "@/app/components/settingBlock";
 import * as FileSystem from 'expo-file-system';
 import jsonData from './configurations/modes.json';
@@ -13,6 +13,7 @@ import {Ionicons} from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import InfoButton from "@/app/components/InfoButton";
 import BackButton from "@/app/components/BackButton";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 let data = jsonData.settings as Setting[];
 console.log("JSON Default Data: ", jsonData);
@@ -70,11 +71,6 @@ export default function Settings({navigation}: any) {
     const progress = useSharedValue<number>(0);
     const [currentIndex, setCurrentIndex] = React.useState(0);
     const [isInitialRender, setIsInitialRender] = React.useState(true);
-
-    const updateSettings = async (updatedSettings: Setting[]) => {
-        setSettingsData(updatedSettings);
-        await saveData(updatedSettings);
-    };
 
    const createNewSetting = () => {
        const newSetting: Setting = {
@@ -234,27 +230,19 @@ export default function Settings({navigation}: any) {
         }
     };
 
-    function navigateToInfo() {
-        navigation.navigate("Info");
-    }
-
     return (
-        <SafeAreaView style={styles.container}>
-            <InfoButton onPress={navigateToInfo} />            <BackButton onPress={() => {
-                setLastEdited('0');
-                navigation.navigate('Welcome', {animation: 'slideFromLeft'});
-                setTimeout(() => {
-                    setLastEdited('0');
-                }, 0);
-            }} />
-
+        <SafeAreaProvider>
+        <SafeAreaView style={styles.container}>            
+        <InfoButton />              
+        <BackButton 
+                beforePress={() => setLastEdited('0')}
+                onPress={() => navigation.navigate('Welcome', {animation: 'slideFromLeft'})}
+                afterPress={() => setLastEdited('0')}
+            />
             <View style={styles.notBackButton}>
-                {/*Title*/}
                 <View style={styles.title}>
                     <Text style={styles.text}>Settings</Text>
                 </View>
-
-                {/*Carousel Focus Item*/}
                 <View style={[styles.focusedItem, {position: "relative"}]}>
                     {currentIndex < 0 && (<View></View>)}
                     {currentIndex < settingsData.length && (
@@ -295,7 +283,6 @@ export default function Settings({navigation}: any) {
                             />
                         </>
                     )}
-
                     {currentIndex >= settingsData.length &&
                        ( <>
                             <TouchableOpacity
@@ -308,8 +295,6 @@ export default function Settings({navigation}: any) {
                     }
 
                 </View>
-
-                {/*Carousel*/}
                 <View style={styles.carCont}>
                     <Carousel
                         ref={ref}
@@ -340,6 +325,7 @@ export default function Settings({navigation}: any) {
                 </View>
             </View>
         </SafeAreaView>
+        </SafeAreaProvider>
     );
 }
 
@@ -367,9 +353,6 @@ const styles = StyleSheet.create({
         height: height * 9 / 50,
         justifyContent: "center",
         alignItems: "center"
-    },
-    whiteText: {
-        color: "white",
     },
     carCont: {
         flex: 1,
@@ -401,7 +384,6 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center"
     },
-
     newSettingButton: {
         width: '80%',
         height: '40%',

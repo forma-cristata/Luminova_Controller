@@ -17,6 +17,7 @@ import InfoButton from "@/app/components/InfoButton";
 import BackButton from "@/app/components/BackButton";
 import { COMMON_STYLES, COLORS, FONTS } from "@/app/components/SharedStyles";
 import { ApiService } from "@/app/services/ApiService";
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 export default function ColorEditor({navigation, route}: any) {
     const { currentConfiguration, setLastEdited } = useConfiguration();
@@ -359,10 +360,6 @@ export default function ColorEditor({navigation, route}: any) {
       setHasChanges(true);
     };
 
-    function navigateToInfo() {
-        navigation.navigate("Info");
-    }
-
     const renderTitle = () => {
         if (isNew) {
             return (
@@ -430,11 +427,12 @@ export default function ColorEditor({navigation, route}: any) {
     };
 
     return (
+        <SafeAreaProvider>
         <GestureHandlerRootView style={{flex:1}}>
             <PanGestureHandler onGestureEvent={panGestureEvent}>
                 <Animated.View style={{flex:1}}>
                     <SafeAreaView style={COMMON_STYLES.container}>                        
-                        <InfoButton onPress={navigateToInfo} />                        
+                        <InfoButton />                        
                         <BackButton beforePress={previewMode ? unPreviewAPI : undefined} />
                         {renderTitle()}
                         <ColorDots
@@ -595,6 +593,7 @@ export default function ColorEditor({navigation, route}: any) {
                 </Animated.View>
             </PanGestureHandler>
         </GestureHandlerRootView>
+        </SafeAreaProvider>
     );
 }
 
@@ -607,14 +606,6 @@ const styles = StyleSheet.create({
         fontSize: 30 * scale,
         fontFamily: FONTS.SIGNATURE,
         textAlign: "center",
-    },
-    backButton: {
-        height: height / 20,
-        width: "100%",
-    },
-    backB: {
-        color: COLORS.WHITE,
-        fontSize: 30 * scale,
     },
     sliderRow: {
         marginVertical: 5 * scale,

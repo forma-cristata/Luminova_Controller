@@ -1,18 +1,12 @@
 import React, {useEffect, useState} from 'react';
-import {SafeAreaView, ScrollView, StyleSheet, Text, View, Dimensions, TouchableOpacity, Alert, Linking, Platform} from 'react-native';
+import {SafeAreaView, ScrollView, StyleSheet, Text, View, TouchableOpacity, Alert, Linking, Platform} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import BackButton from '@/app/components/BackButton';
-import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from './index';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 
 export default function Info() {
-    const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
     const [textColor, setTextColor] = useState("#ffffff");
-
-
     useEffect(() => {
         const animationColors = ['#ff0000', '#000000', '#ff4400', '#000000', '#ff6a00', '#000000', '#ff9100', '#000000', '#ffee00', '#000000', '#00ff1e', '#000000', '#00ff44', '#000000', '#00ff95', '#000000', '#00ffff', '#000000', '#0088ff', '#000000', '#0000ff', '#000000', '#8800ff', '#000000', '#d300ff', '#000000', '#ff00BB', '#000000', '#ff0088', '#000000', '#ff0031', '#000000'];
         let colorIndex = 0;
@@ -72,10 +66,9 @@ export default function Info() {
       );
     };
 
-    return (     <SafeAreaProvider>
-            <SafeAreaView style={styles.container}>
-                <BackButton onPress={() => navigation.goBack()} style={styles.backButton} />
-
+    return (     <SafeAreaProvider>            
+        <SafeAreaView style={styles.container}>
+                <BackButton />
                 <TouchableOpacity
                     style={styles.feedbackButton}
                     onPress={showFeedbackAlert}
@@ -83,16 +76,12 @@ export default function Info() {
                     <Ionicons name="chatbubble-outline" size={24} color="white" />
                     <Text style={styles.feedbackText}>Feedback</Text>
                 </TouchableOpacity>
-
-
             <Text style={[styles.title, {color: textColor}]}>How to Use This App</Text>
-
             <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
                 <Section title="Home Screen">
                     <BulletPoint text="Wait for the power toggle to synchronize with your device's state - the toggle will then control turning your device on and off." />
                     <BulletPoint text="Access your saved settings and customization options by tapping the 'Create' button." />
                 </Section>
-
                 <Section title="Settings Screen">
                     <BulletPoint text="Navigate settings by swiping left or right on the bottom menu." />
                     <BulletPoint text="The selected setting displays in the center of the screen." />
@@ -101,9 +90,7 @@ export default function Info() {
                     <BulletPoint text="Remove custom settings using the trash icon." />
                     <BulletPoint text="Broadcast settings to your device by tapping 'Flash'." />
                     <BulletPoint text="Access settings editor by tapping 'Edit'." />
-
                 </Section>
-
                 <Section title="Color Modification">
                     <BulletPoint text="Select a color by tapping it - selected colors appear larger." />
                     <BulletPoint text="Use HSB sliders to adjust Hue, Saturation, and Brightness values." />
@@ -116,7 +103,6 @@ export default function Info() {
                     <BulletPoint text="Preserve changes by tapping 'Save'." />
                     <BulletPoint text="Preview changes temporarily using 'Preview'." />
                 </Section>
-
                 <Section title="Flashing Pattern Modification">
                     <BulletPoint text="Select patterns using the pattern picker." />
                     <BulletPoint text="Match music tempo using the BPM slider." />
@@ -124,7 +110,6 @@ export default function Info() {
                     <BulletPoint text="Save changes by tapping 'Save'." />
                     <BulletPoint text="Preview changes temporarily using 'Preview'." />
                 </Section>
-
                 <Section title="Tips & Tricks">
                     <BulletPoint text="Default settings can be modified but not deleted." />
                     <BulletPoint text="Using black can create distinct setting variations.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      " />
@@ -154,10 +139,6 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#000000',
         padding: 20,
-    },
-    backButton: {
-        marginTop: 20,
-        marginBottom: 10,
     },
     title: {
         color: 'white',
@@ -201,19 +182,6 @@ const styles = StyleSheet.create({
         fontFamily: 'Clearlight-lJlq',
         fontSize: 26,
         flex: 1,
-    },
-    backB: {
-        color: '#ffffff',
-        textAlign: 'left',
-        fontSize: 30
-    },
-    header: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        width: '100%',
-        marginTop: 20,
-        marginBottom: 10,
     },
     feedbackButton: {
         flexDirection: 'row',

@@ -6,12 +6,11 @@ import Picker from "@/app/components/Picker";
 import {useThrottle} from "expo-dev-launcher/bundle/hooks/useDebounce";
 import {loadData, saveData} from "@/app/settings";
 import {useConfiguration} from "@/app/context/ConfigurationContext";
-import {IP} from "@/app/configurations/constants";
 import InfoButton from "@/app/components/InfoButton";
 import BackButton from "@/app/components/BackButton";
-import { COMMON_STYLES, COLORS, FONTS, DIMENSIONS } from "@/app/components/SharedStyles";
+import { COMMON_STYLES, COLORS, FONTS } from "@/app/components/SharedStyles";
 import { ApiService } from "@/app/services/ApiService";
-
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 /**
  * This page should edit:
@@ -20,7 +19,6 @@ import { ApiService } from "@/app/services/ApiService";
  *      The delayTime - this should be a ratio of the value the user chooses.
  *          The user should choose the 'speed'
  *          The greater the speed, the shorter the delay time.*/
-
 export default function FlashingPatternEditor({ route, navigation }: any) {
     const { currentConfiguration, setLastEdited } = useConfiguration();
 
@@ -115,25 +113,15 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
         }
     };
 
-    function navigateToInfo() {
-        navigation.navigate("Info");
-    }
-
     return (
-        <SafeAreaView style={COMMON_STYLES.container}>
-            <InfoButton onPress={navigateToInfo} />            <BackButton 
-                onPress={() => {
-                    unPreviewAPI();
-                    navigation.goBack();
-                }}
-                style={styles.backButton}
-            />
+        <SafeAreaProvider>
+        <SafeAreaView style={COMMON_STYLES.container}>            
+        <InfoButton />
+            <BackButton beforePress={previewMode ? unPreviewAPI : undefined} />
             <Text style={styles.whiteText}>{setting.name}</Text>
-
             <View>
                 {modeDots()}
             </View>
-
             <View style={styles.fpContainer}>
                 <Picker
                     navigation={navigation}
@@ -142,7 +130,6 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
                     setSelectedPattern={setFlashingPattern}
                 />
             </View>
-
             <View style={COMMON_STYLES.sliderContainer}>
                 <View style={styles.sliderRow}>
                     <Text style={COMMON_STYLES.sliderText}>Speed: {BPM.toFixed(0)} bpm</Text>
@@ -162,7 +149,6 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
                     />
                 </View>
             </View>
-
             <View style={COMMON_STYLES.buttonContainer}>
                 <View style={COMMON_STYLES.buttonRow}>
                     <TouchableOpacity
@@ -199,6 +185,7 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
                 </View>
             </View>
         </SafeAreaView>
+        </SafeAreaProvider>
     );
 }
 
@@ -206,15 +193,6 @@ const { width, height } = Dimensions.get('window');
 const scale = Math.min(width, height) / 375;
 
 const styles = StyleSheet.create({
-    backButton: {
-        height: height / 12,
-        width: "100%",
-        marginBottom: scale * 10,
-    },
-    backB: {
-        color: COLORS.WHITE,
-        fontSize: 30 * scale,
-    },
     whiteText: {
         color: COLORS.WHITE,
         fontSize: 50 * scale,
@@ -226,13 +204,6 @@ const styles = StyleSheet.create({
         borderBottomWidth: 2,
         borderColor: COLORS.WHITE,
         width: width * 0.8,
-    },
-    flashingPatternText: {
-        color: COLORS.WHITE,
-        fontSize: 22 * scale,
-        fontFamily: FONTS.CLEAR,
-        letterSpacing: 2,
-        padding: 15 * scale,
     },
     fpContainer: {
         flexDirection: 'row',

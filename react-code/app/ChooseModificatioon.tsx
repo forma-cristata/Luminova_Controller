@@ -4,6 +4,7 @@ import {Setting} from "@/app/interface/setting-interface";
 import AnimatedDots from "@/app/components/AnimatedDots";
 import InfoButton from "@/app/components/InfoButton";
 import BackButton from "@/app/components/BackButton";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 export default function ChooseModificatioon({navigation, route}: any) {
     const setting = route.params?.setting as Setting;
@@ -11,13 +12,10 @@ export default function ChooseModificatioon({navigation, route}: any) {
         return <AnimatedDots navigation={navigation} setting={setting}/>;
     };
 
-    function navigateToInfo() {
-        navigation.navigate("Info");
-    }
-
     return (
+        <SafeAreaProvider>
         <SafeAreaView style={styles.container}>            
-        <InfoButton onPress={navigateToInfo} />
+        <InfoButton />
             <BackButton onPress={() => navigation.goBack()} />
             <View style={styles.notBackButton}>
                 <View style={styles.modeSection}>
@@ -38,6 +36,7 @@ export default function ChooseModificatioon({navigation, route}: any) {
                 </View>
             </View>
         </SafeAreaView>
+        </SafeAreaProvider>
     );
 }
 

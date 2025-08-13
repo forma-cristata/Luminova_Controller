@@ -1,16 +1,21 @@
 import React from 'react';
 import { TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../index';
 
-interface InfoButtonProps {
-    onPress: () => void;
-}
+export default function InfoButton() {
+    const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
-export default function InfoButton({ onPress }: InfoButtonProps) {
+    const handlePress = () => {
+        navigation.navigate("Info");
+    };
+
     return (
         <TouchableOpacity
             style={styles.infoButton}
-            onPress={onPress}
+            onPress={handlePress}
         >
             <Ionicons name="information-circle-outline" size={32} color="white" />
         </TouchableOpacity>

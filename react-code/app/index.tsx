@@ -7,7 +7,7 @@ import * as SplashScreen from "expo-splash-screen";
 import ChooseModificatioon from "@/app/ChooseModificatioon";
 import ColorEditor from "@/app/ColorEditor";
 import FlashingPatternEditor from "@/app/FlashingPatternEditor";
-import Setting from "@/app/interface/setting-interface";
+import { Setting } from "@/app/interface/setting-interface";
 import {ConfigurationProvider} from "@/app/context/ConfigurationContext";
 import {GestureHandlerRootView} from "react-native-gesture-handler";
 import Info from "@/app/Info";
@@ -22,7 +22,6 @@ export type RootStackParamList = {
 }
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
-
 SplashScreen.preventAutoHideAsync();
 
 function Index(){

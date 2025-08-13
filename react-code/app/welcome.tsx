@@ -2,7 +2,7 @@ import { useConfiguration } from './context/ConfigurationContext';
 import {Text, StyleSheet, SafeAreaView, Switch, TouchableOpacity} from "react-native";
 import {SafeAreaProvider} from "react-native-safe-area-context";
 import React, { useState, useEffect} from "react";
-import Setting from "@/app/interface/setting-interface";
+import {Setting} from "@/app/interface/setting-interface";
 import InfoButton from "@/app/components/InfoButton";
 import { COMMON_STYLES, COLORS, FONTS } from "@/app/components/SharedStyles";
 import { ApiService } from "@/app/services/ApiService";
@@ -46,10 +46,6 @@ export default function Welcome({navigation}: any) {
 
     function createButtonPressed() {
         navigation.navigate("Settings");
-    }
-
-    function navigateToInfo() {
-        navigation.navigate("Info");
     }
 
     const [isEnabled, setIsEnabled] = useState(false);
@@ -114,7 +110,7 @@ export default function Welcome({navigation}: any) {
     return (
         <SafeAreaProvider>
             <SafeAreaView style={styles.container}>
-                <InfoButton onPress={navigateToInfo} />
+                <InfoButton/>
                 <Text style={[styles.text, {color: textColor}]} key={textColor}>{displayText}</Text>
                 <TouchableOpacity style={COMMON_STYLES.welcomeButton} onPress={createButtonPressed}>
                     <Text style={styles.button}>Create     ⟩</Text>

@@ -1,7 +1,8 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {SafeAreaView, SectionList, StyleSheet, Text, View, TouchableOpacity, Alert, Linking, Platform} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import BackButton from '@/app/components/BackButton';
+import AnimatedTitle from '@/app/components/AnimatedTitle';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 
@@ -131,8 +132,12 @@ export default function Info() {
                 >
                     <Ionicons name="chatbubble-outline" size={24} color="white" />
                     <Text style={styles.feedbackText}>Feedback</Text>
-                </TouchableOpacity>
-                <Text style={[styles.title, {color: textColor}]}>How to Use This App</Text>
+                </TouchableOpacity>                <AnimatedTitle
+                    text="How to Use This App"
+                    fontSize={50}
+                    marginBottom={15}
+                    marginTop={50}
+                />
                 <SectionList
                     sections={sections}
                     style={styles.scrollView}

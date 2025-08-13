@@ -4,14 +4,13 @@ import {SafeAreaProvider} from "react-native-safe-area-context";
 import React, { useState, useEffect} from "react";
 import {Setting} from "@/app/interface/setting-interface";
 import InfoButton from "@/app/components/InfoButton";
+import AnimatedTitle from '@/app/components/AnimatedTitle';
 import { COMMON_STYLES, COLORS, FONTS } from "@/app/components/SharedStyles";
 import { ApiService } from "@/app/services/ApiService";
 
 export default function Welcome({navigation}: any) {
     const { currentConfiguration, setCurrentConfiguration, setLastEdited } = useConfiguration();
-
     const [displayText, setDisplayText] = useState("");
-    const [textColor, setTextColor] = useState("#ffffff");
     const fullText = "Hello";
 
     useEffect(() => {
@@ -29,20 +28,6 @@ export default function Welcome({navigation}: any) {
             }
         }
     }, [displayText, fullText]);
-
-    useEffect(() => {
-        const animationColors = ['#ff0000', '#000000', '#ff4400', '#000000', '#ff6a00', '#000000', '#ff9100', '#000000', '#ffee00', '#000000', '#00ff1e', '#000000', '#00ff44', '#000000', '#00ff95', '#000000', '#00ffff', '#000000', '#0088ff', '#000000', '#0000ff', '#000000', '#8800ff', '#000000', '#d300ff', '#000000', '#ff00BB', '#000000', '#ff0088', '#000000', '#ff0031', '#000000'];
-        let colorIndex = 0;
-
-        const colorInterval = setInterval(() => {
-            setTextColor(animationColors[colorIndex]);
-            colorIndex = (colorIndex + 1) % animationColors.length;
-        }, 5);
-
-        return () => {
-            clearInterval(colorInterval);
-        }
-    }, []);
 
     function createButtonPressed() {
         navigation.navigate("Settings");
@@ -110,18 +95,22 @@ export default function Welcome({navigation}: any) {
     return (
         <SafeAreaProvider>
             <SafeAreaView style={styles.container}>
-                <InfoButton/>
-                <Text style={[styles.text, {color: textColor}]} key={textColor}>{displayText}</Text>
+                <InfoButton/>                <AnimatedTitle 
+                    text={displayText} 
+                    fontSize={130}
+                    marginBottom="20%"
+                />
                 <TouchableOpacity style={COMMON_STYLES.welcomeButton} onPress={createButtonPressed}>
                     <Text style={styles.button}>Create     ⟩</Text>
                 </TouchableOpacity>
-                <Switch onValueChange={toggleSwitch}
-                        value={isEnabled}
-                        trackColor={{false: '#665e73', true: '#ffffff'}}
-                        thumbColor={isEnabled ? '#665e73' : '#f4f3f4'}
-                        ios_backgroundColor="#3e3e3e"
-                        style={styles.switch}
-                        disabled={isLoading}
+                <Switch
+                    onValueChange={toggleSwitch}
+                    value={isEnabled}
+                    trackColor={{false: '#665e73', true: '#ffffff'}}
+                    thumbColor={isEnabled ? '#665e73' : '#f4f3f4'}
+                    ios_backgroundColor="#3e3e3e"
+                    style={styles.switch}
+                    disabled={isLoading}
                 />
             </SafeAreaView>
         </SafeAreaProvider>
@@ -134,11 +123,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: COLORS.BLACK,
-    },
-    text: {
-        marginBottom: "20%",
-        fontFamily: FONTS.SIGNATURE,
-        fontSize: 130,
     },
     button: {
         color: COLORS.WHITE,

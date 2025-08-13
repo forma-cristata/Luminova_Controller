@@ -13,6 +13,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import AnimatedDots from "@/app/components/AnimatedDots";
 import BackButton from "@/app/components/BackButton";
 import InfoButton from "@/app/components/InfoButton";
+import MetronomeButton from "@/app/components/MetronomeButton";
 import Picker from "@/app/components/Picker";
 import RandomizeButton from "@/app/components/RandomizeButton";
 import { COLORS, COMMON_STYLES, FONTS } from "@/app/components/SharedStyles";
@@ -157,6 +158,12 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 						}}
 					/>
 					<Text style={styles.whiteText}>{setting.name}</Text>
+					<MetronomeButton
+						onPress={() => {
+							// Open a tap tempo interface or similar metronome functionality
+							console.log("Metronome button pressed");
+						}}
+					/>
 				</View>
 				<View style={styles.dotPadding}>{modeDots()}</View>
 				<View style={styles.fpContainer}>
@@ -275,8 +282,7 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 const { width, height } = Dimensions.get("window");
 const scale = Math.min(width, height) / 375;
 
-const styles = StyleSheet.create({
-    titleContainer: {
+const styles = StyleSheet.create({    titleContainer: {
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "center",
@@ -289,7 +295,7 @@ const styles = StyleSheet.create({
     },
     whiteText: {
         color: COLORS.WHITE,
-        fontSize: 50 * scale,
+        fontSize: 30 * scale,
         fontFamily: FONTS.SIGNATURE,
         textAlign: "center",
         flex: 1,

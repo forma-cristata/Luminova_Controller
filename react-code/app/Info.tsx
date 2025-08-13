@@ -4,6 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from './index';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 
 export default function Info() {
@@ -71,7 +72,8 @@ export default function Info() {
     };
 
     return (
-        <SafeAreaView style={styles.container}>
+     <SafeAreaProvider>
+            <SafeAreaView style={styles.container}>
             <View style={styles.header}>
                 <TouchableOpacity
                     style={styles.backButton}
@@ -136,6 +138,7 @@ export default function Info() {
                 </Section>
             </ScrollView>
         </SafeAreaView>
+    </SafeAreaProvider>
     );
 }
 

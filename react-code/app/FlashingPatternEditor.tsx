@@ -8,6 +8,7 @@ import {loadData, saveData} from "@/app/settings";
 import {useConfiguration} from "@/app/context/ConfigurationContext";
 import {IP} from "@/app/configurations/constants";
 import InfoButton from "@/app/components/InfoButton";
+import BackButton from "@/app/components/BackButton";
 import { COMMON_STYLES, COLORS, FONTS, DIMENSIONS } from "@/app/components/SharedStyles";
 import { ApiService } from "@/app/services/ApiService";
 
@@ -120,15 +121,13 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 
     return (
         <SafeAreaView style={COMMON_STYLES.container}>
-            <InfoButton onPress={navigateToInfo} />
-            <View style={styles.backButton}>
-                <TouchableOpacity onPress={() => {
+            <InfoButton onPress={navigateToInfo} />            <BackButton 
+                onPress={() => {
                     unPreviewAPI();
                     navigation.goBack();
-                }}>
-                    <Text style={styles.backB}>    ⪡    </Text>
-                </TouchableOpacity>
-            </View>
+                }}
+                style={styles.backButton}
+            />
             <Text style={styles.whiteText}>{setting.name}</Text>
 
             <View>

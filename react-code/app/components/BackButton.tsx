@@ -1,27 +1,39 @@
 import React from 'react';
-import { TouchableOpacity, StyleSheet } from 'react-native';
+import { TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { COLORS } from './SharedStyles';
+import { useNavigation } from '@react-navigation/native';
 
 interface BackButtonProps {
-    onPress: () => void;
+    beforePress?: () => void | Promise<void>;
+    style?: any;
 }
 
-export default function BackButton({ onPress }: BackButtonProps) {
+export default function BackButton({ beforePress, style }: BackButtonProps) {
+    const navigation = useNavigation();
+
+    const handlePress = async () => {
+        if (beforePress) {
+            await beforePress();
+        }
+        navigation.goBack();
+    };
+
     return (
         <TouchableOpacity
             style={styles.backButton}
-            onPress={onPress}
+            onPress={handlePress}
         >
-            <Ionicons name="information-circle-outline" size={32} color="white" />
+            <Ionicons name="chevron-back-circle-outline" size={32} color="white" />
         </TouchableOpacity>
     );
 }
 
-const styles = StyleSheet.create({
-    infoButton: {
+const styles = StyleSheet.create({    
+    backButton: {
         position: 'absolute',
         top: 60,
-        right: 20,
+        left: 20,
         zIndex: 10,
     }
 });

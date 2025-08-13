@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {SafeAreaView, ScrollView, StyleSheet, Text, View, Dimensions, TouchableOpacity, Alert, Linking, Platform} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import BackButton from '@/app/components/BackButton';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from './index';
@@ -71,16 +72,9 @@ export default function Info() {
       );
     };
 
-    return (
-     <SafeAreaProvider>
+    return (     <SafeAreaProvider>
             <SafeAreaView style={styles.container}>
-            <View style={styles.header}>
-                <TouchableOpacity
-                    style={styles.backButton}
-                    onPress={() => navigation.goBack()}
-                >
-                    <Text style={styles.backB}> ⪡ </Text>
-                </TouchableOpacity>
+                <BackButton onPress={() => navigation.goBack()} style={styles.backButton} />
 
                 <TouchableOpacity
                     style={styles.feedbackButton}
@@ -89,7 +83,6 @@ export default function Info() {
                     <Ionicons name="chatbubble-outline" size={24} color="white" />
                     <Text style={styles.feedbackText}>Feedback</Text>
                 </TouchableOpacity>
-            </View>
 
 
             <Text style={[styles.title, {color: textColor}]}>How to Use This App</Text>

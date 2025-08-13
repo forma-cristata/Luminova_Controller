@@ -12,6 +12,7 @@ import {useConfiguration} from "@/app/context/ConfigurationContext";
 import {Ionicons} from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import InfoButton from "@/app/components/InfoButton";
+import BackButton from "@/app/components/BackButton";
 
 let data = jsonData.settings as Setting[];
 console.log("JSON Default Data: ", jsonData);
@@ -239,19 +240,13 @@ export default function Settings({navigation}: any) {
 
     return (
         <SafeAreaView style={styles.container}>
-            <InfoButton onPress={navigateToInfo} />
-            {/*Back Button*/}
-            <View style={styles.backButton}>
-                <TouchableOpacity onPress={() => {
+            <InfoButton onPress={navigateToInfo} />            <BackButton onPress={() => {
+                setLastEdited('0');
+                navigation.navigate('Welcome', {animation: 'slideFromLeft'});
+                setTimeout(() => {
                     setLastEdited('0');
-                    navigation.navigate('Welcome', {animation: 'slideFromLeft'});
-                    setTimeout(() => {
-                        setLastEdited('0');
-                    }, 0);
-                }}>
-                    <Text style={styles.backB}> ⪡ </Text>
-                </TouchableOpacity>
-            </View>
+                }, 0);
+            }} />
 
             <View style={styles.notBackButton}>
                 {/*Title*/}
@@ -360,10 +355,6 @@ const styles = StyleSheet.create({
         fontSize: 130,
         color: "#ffffff",
     },
-    backButton: {
-        height: height / 10,
-        width: "100%",
-    },
     notBackButton: {
         height: "90%",
     },
@@ -405,11 +396,6 @@ const styles = StyleSheet.create({
         height: height * 2 / 10,
         justifyContent: "center",
         alignItems: "center"
-    },
-    backB: {
-        color: '#ffffff',
-        textAlign: 'left',
-        fontSize: 30
     },
     nothing: {
         justifyContent: "center",

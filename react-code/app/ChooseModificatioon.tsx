@@ -1,8 +1,9 @@
 import {StyleSheet, SafeAreaView, TouchableOpacity, View, Text, Dimensions} from "react-native";
 import ColorDots from "@/app/components/ColorDots";
-import Setting from "@/app/interface/setting-interface";
+import {Setting} from "@/app/interface/setting-interface";
 import AnimatedDots from "@/app/components/AnimatedDots";
 import InfoButton from "@/app/components/InfoButton";
+import BackButton from "@/app/components/BackButton";
 
 export default function ChooseModificatioon({navigation, route}: any) {
     const setting = route.params?.setting as Setting;
@@ -15,39 +16,27 @@ export default function ChooseModificatioon({navigation, route}: any) {
     }
 
     return (
-        <SafeAreaView style={styles.container}>
-            <InfoButton onPress={navigateToInfo} />
-            {/*Back Button*/}
-            <View style={styles.backButton}>
-                <TouchableOpacity onPress={() => navigation.goBack()}>
-                    <Text style={styles.backB}>    ⪡    </Text>
-                </TouchableOpacity>
-            </View>
+        <SafeAreaView style={styles.container}>            
+        <InfoButton onPress={navigateToInfo} />
+            <BackButton onPress={() => navigation.goBack()} />
             <View style={styles.notBackButton}>
                 <View style={styles.modeSection}>
                     <Text style={styles.whiteText}>Flashing Pattern</Text>
-
                     <View style={styles.dotContainer}>
                         <TouchableOpacity onPress={() => navigation.navigate("FlashingPatternEditor", {setting: setting})}>
                             {modeDots()}
                         </TouchableOpacity>
                     </View>
                 </View>
-
                 <View style={styles.colorSection}>
                     <View style={styles.dotContainer}>
-
                         <TouchableOpacity onPress={() => navigation.navigate("ColorEditor", {setting: setting})}>
                             <ColorDots colors={setting.colors} />
                         </TouchableOpacity>
-
                     </View>
                     <Text style={styles.whiteTextColor}>Colors</Text>
-
                 </View>
             </View>
-
-
         </SafeAreaView>
     );
 }
@@ -96,13 +85,6 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: "#000000",
     },
-    backButton: {
-        position: "absolute",
-        top: 50,
-        left: 0,
-        width: "100%",
-        height: Dimensions.get('window').height * 0.05,
-    },
     notBackButton: {
         flex: 1,
         flexDirection: "row",
@@ -114,10 +96,6 @@ const styles = StyleSheet.create({
         marginTop: 50,
     },
     text: {
-        color: "white",
-        fontSize: 30,
-    },
-    backB: {
         color: "white",
         fontSize: 30,
     }

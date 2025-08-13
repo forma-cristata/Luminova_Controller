@@ -14,7 +14,8 @@ import Animated, {
 import HueSliderBackground from "@/app/components/HueSliderBackground";
 import {useConfiguration} from "@/app/context/ConfigurationContext";
 import InfoButton from "@/app/components/InfoButton";
-import { COMMON_STYLES, COLORS, FONTS, DIMENSIONS } from "@/app/components/SharedStyles";
+import BackButton from "@/app/components/BackButton";
+import { COMMON_STYLES, COLORS, FONTS } from "@/app/components/SharedStyles";
 import { ApiService } from "@/app/services/ApiService";
 
 export default function ColorEditor({navigation, route}: any) {
@@ -139,7 +140,6 @@ export default function ColorEditor({navigation, route}: any) {
             console.log("no keyboard to dismiss");
         }
 
-
         setSelectedDot(index);
         setHexInput(colors[index].replace('#', ''));
         const rgb = hexToRgb(colors[index]);
@@ -162,7 +162,6 @@ export default function ColorEditor({navigation, route}: any) {
             newColors[selectedDot] = hexValue;
             setColors(newColors);
             setHasChanges(true);
-
             const rgb = hexToRgb(hexValue);
             if (rgb) {
                 const hsv = rgbToHsv(rgb.r, rgb.g, rgb.b);
@@ -184,7 +183,6 @@ export default function ColorEditor({navigation, route}: any) {
                 setSettingName(setting.name);
                 setNameError(null);
             }
-
             if (selectedDot !== null) {
                 setHexInput(setting.colors[selectedDot].replace('#', ''));
                 const rgb = hexToRgb(setting.colors[selectedDot]);
@@ -261,7 +259,6 @@ export default function ColorEditor({navigation, route}: any) {
         for (let i = 0; i < 8; i++) {
             newColors[i] = colors[7 - i];
         }
-
         setColors(newColors);
         setColorHistory([...colorHistory, [...colors]]);
         setHasChanges(true);
@@ -272,7 +269,6 @@ export default function ColorEditor({navigation, route}: any) {
         for (let i = 0; i < 8; i++) {
             newColors[i+8] = colors[15 - i];
         }
-
         setColors(newColors);
         setColorHistory([...colorHistory, [...colors]]);
         setHasChanges(true);
@@ -290,7 +286,6 @@ export default function ColorEditor({navigation, route}: any) {
             const initX = startX.value;
             const deltaY = event.absoluteY - initY;
             const deltaX = event.absoluteX - initX;
-
             if((Math.abs(deltaX)) < 50) {
                 if (deltaY > 100) {
                     runOnJS(handleCopyToBottom)();
@@ -309,11 +304,9 @@ export default function ColorEditor({navigation, route}: any) {
                         console.log("Reversed bottom row");
                     }
                 }
-
             }
             startY.value = 0;
             startX.value = 0;
-
         },
         onFinish: () => {
             startY.value = 0;
@@ -359,11 +352,8 @@ export default function ColorEditor({navigation, route}: any) {
         }
         return { color, h: 0, s: 0, v: 0 };
       });
-
       colorsWithHSV.sort((a, b) => a.h - b.h);
-
       const sortedColors = colorsWithHSV.map(item => item.color);
-
       setColorHistory([...colorHistory, [...colors]]);
       setColors(sortedColors);
       setHasChanges(true);
@@ -388,11 +378,9 @@ export default function ColorEditor({navigation, route}: any) {
                             setColors(shuffled);
                             setColorHistory([...colorHistory, [...colors]]);
                             setHasChanges(true);
-                        }}
-                    >
+                        }}>
                         <Text style={styles.shuffleIcon}>⟳</Text>
                     </TouchableOpacity>
-
                     <View style={styles.nameInputContainer}>
                         <Text style={COMMON_STYLES.sliderText}>Setting Name:</Text>
                         <TextInput
@@ -404,14 +392,11 @@ export default function ColorEditor({navigation, route}: any) {
                             onChangeText={handleNameChange}
                             placeholder="Enter setting name"
                             placeholderTextColor={COLORS.PLACEHOLDER}
-                            maxLength={20}
-                        />
+                            maxLength={20}/>
                     </View>
-
                     <TouchableOpacity
                         style={styles.sortButton}
-                        onPress={sortColorsByHue}
-                    >
+                        onPress={sortColorsByHue}>
                         <Text style={styles.sortIcon}>↹</Text>
                     </TouchableOpacity>
                 </View>
@@ -430,17 +415,13 @@ export default function ColorEditor({navigation, route}: any) {
                             setColors(shuffled);
                             setColorHistory([...colorHistory, [...colors]]);
                             setHasChanges(true);
-                        }}
-                    >
+                        }}>
                         <Text style={styles.shuffleIcon}>⟳</Text>
                     </TouchableOpacity>
-
                     <Text style={styles.whiteText}>{setting.name}</Text>
-
                     <TouchableOpacity
                         style={styles.sortButton}
-                        onPress={sortColorsByHue}
-                    >
+                        onPress={sortColorsByHue}>
                         <Text style={styles.sortIcon}>↹</Text>
                     </TouchableOpacity>
                 </View>
@@ -452,28 +433,16 @@ export default function ColorEditor({navigation, route}: any) {
         <GestureHandlerRootView style={{flex:1}}>
             <PanGestureHandler onGestureEvent={panGestureEvent}>
                 <Animated.View style={{flex:1}}>
-                    <SafeAreaView style={COMMON_STYLES.container}>
-                        <InfoButton onPress={navigateToInfo} />
-
-                        <View style={styles.backButton}>
-                            <TouchableOpacity onPress={() => {
-                                unPreviewAPI();
-                                navigation.goBack();
-                            }}>
-                                <Text style={styles.backB}>    ⪡    </Text>
-                            </TouchableOpacity>
-                        </View>
-
+                    <SafeAreaView style={COMMON_STYLES.container}>                        
+                        <InfoButton onPress={navigateToInfo} />                        
+                        <BackButton beforePress={previewMode ? unPreviewAPI : undefined} />
                         {renderTitle()}
-
                         <ColorDots
                             colors={colors}
                             onDotSelect={handleDotSelect}
                             selectedDot={selectedDot}
                             layout='two-rows'
-                            key={colors.join(',')}
-                        />
-
+                            key={colors.join(',')}/>
                         <View style={[styles.hexContainer, { opacity: selectedDot !== null ? 1 : 0.5 }]}>
                             <Text style={COMMON_STYLES.sliderText}>Hex: #</Text>
                             <TextInput
@@ -498,9 +467,7 @@ export default function ColorEditor({navigation, route}: any) {
                                     onPress={() => {
                                         if (selectedDot !== null) {
                                             handleHexInput('FFFFFF');
-                                        }
-                                    }}
-                                >
+                                        }}}>
                                     <Text style={styles.colorButtonText}>W</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity
@@ -509,14 +476,11 @@ export default function ColorEditor({navigation, route}: any) {
                                     onPress={() => {
                                         if (selectedDot !== null) {
                                             handleHexInput('000000');
-                                        }
-                                    }}
-                                >
+                                        }}}>
                                     <Text style={styles.colorButtonText}>B</Text>
                                 </TouchableOpacity>
                             </View>
                         </View>
-
                         <View style={[COMMON_STYLES.sliderContainer, { opacity: selectedDot !== null ? 1 : 0.5 }]}>
                             <View style={styles.sliderRow}>
                                 <Text style={COMMON_STYLES.sliderText}>Hue: {Math.round(hue)}°</Text>
@@ -538,20 +502,16 @@ export default function ColorEditor({navigation, route}: any) {
                                                 }
                                                 setHue(value);
                                                 updateColor(value, saturation, brightness);
-                                            }
-                                        }}
+                                            }}}
                                         onSlidingComplete={value => {
                                             if (selectedDot !== null) {
                                                 handleSliderComplete(value, saturation, brightness);
-                                            }
-                                        }}
+                                            }}}
                                         minimumTrackTintColor="#ff0000"
                                         maximumTrackTintColor={COLORS.WHITE}
-                                        thumbTintColor={COLORS.WHITE}
-                                    />
+                                        thumbTintColor={COLORS.WHITE}/>
                                 </View>
                             </View>
-
                             <View style={styles.sliderRow}>
                                 <Text style={COMMON_STYLES.sliderText}>Saturation: {Math.round(saturation)}%</Text>
                                 <Slider
@@ -576,7 +536,6 @@ export default function ColorEditor({navigation, route}: any) {
                                     thumbTintColor={COLORS.WHITE}
                                 />
                             </View>
-
                             <View style={styles.sliderRow}>
                                 <Text style={COMMON_STYLES.sliderText}>Brightness: {Math.round(brightness)}%</Text>
                                 <Slider
@@ -602,7 +561,6 @@ export default function ColorEditor({navigation, route}: any) {
                                 />
                             </View>
                         </View>
-
                         <View style={COMMON_STYLES.buttonContainer}>
                             <View style={COMMON_STYLES.buttonRow}>
                                 <TouchableOpacity

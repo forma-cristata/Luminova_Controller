@@ -1,10 +1,10 @@
-export {Setting};
+export type { Setting };
 
 interface Setting {
-    name: string;
-    colors: string[];
-    whiteValues: number[];
-    brightnessValues: number[];
-    flashingPattern: string;
-    delayTime: number;
+	name: string;
+	colors: string[];
+	whiteValues: number[];
+	brightnessValues: number[];
+	flashingPattern: string;
+	delayTime: number;
 }

@@ -1,32 +1,30 @@
-import React from 'react';
-import { TouchableOpacity, StyleSheet } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../index';
+import { Ionicons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import React from "react";
+import { StyleSheet, TouchableOpacity } from "react-native";
+import type { RootStackParamList } from "../index";
 
 export default function InfoButton() {
-    const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+	const navigation =
+		useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
-    const handlePress = () => {
-        navigation.navigate("Info");
-    };
+	const handlePress = () => {
+		navigation.navigate("Info");
+	};
 
-    return (
-        <TouchableOpacity
-            style={styles.infoButton}
-            onPress={handlePress}
-        >
-            <Ionicons name="information-circle-outline" size={32} color="white" />
-        </TouchableOpacity>
-    );
+	return (
+		<TouchableOpacity style={styles.infoButton} onPress={handlePress}>
+			<Ionicons name="information-circle-outline" size={32} color="white" />
+		</TouchableOpacity>
+	);
 }
 
 const styles = StyleSheet.create({
-    infoButton: {
-        position: 'absolute',
-        top: 60,
-        right: 20,
-        zIndex: 10,
-    }
+	infoButton: {
+		position: "absolute",
+		top: 60,
+		right: 20,
+		zIndex: 10,
+	},
 });

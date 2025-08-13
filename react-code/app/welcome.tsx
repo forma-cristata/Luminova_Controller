@@ -1,136 +1,157 @@
-import { useConfiguration } from './context/ConfigurationContext';
-import {Text, StyleSheet, SafeAreaView, Switch, TouchableOpacity} from "react-native";
-import {SafeAreaProvider} from "react-native-safe-area-context";
-import React, { useState, useEffect} from "react";
-import {Setting} from "@/app/interface/setting-interface";
+import React, { useEffect, useState } from "react";
+import {
+	SafeAreaView,
+	StyleSheet,
+	Switch,
+	Text,
+	TouchableOpacity,
+} from "react-native";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import AnimatedTitle from "@/app/components/AnimatedTitle";
 import InfoButton from "@/app/components/InfoButton";
-import AnimatedTitle from '@/app/components/AnimatedTitle';
-import { COMMON_STYLES, COLORS, FONTS } from "@/app/components/SharedStyles";
+import { COLORS, COMMON_STYLES, FONTS } from "@/app/components/SharedStyles";
+import type { Setting } from "@/app/interface/setting-interface";
 import { ApiService } from "@/app/services/ApiService";
+import { useConfiguration } from "./context/ConfigurationContext";
 
-export default function Welcome({navigation}: any) {
-    const { currentConfiguration, setCurrentConfiguration, setLastEdited } = useConfiguration();
-    const [displayText, setDisplayText] = useState("");
-    const fullText = "Hello";
+export default function Welcome({ navigation }: any) {
+	const { currentConfiguration, setCurrentConfiguration, setLastEdited } =
+		useConfiguration();
+	const [displayText, setDisplayText] = useState("");
+	const fullText = "Hello";
 
-    useEffect(() => {
-        setLastEdited("0");
-    }, []);
+	useEffect(() => {
+		setLastEdited("0");
+	}, []);
 
-    useEffect(() => {
-        if (displayText.length < fullText.length) {
-            const timeout1 = setTimeout(() => {
-                setDisplayText(fullText.substring(0, displayText.length + 1));
-            }, 300);
+	useEffect(() => {
+		if (displayText.length < fullText.length) {
+			const timeout1 = setTimeout(() => {
+				setDisplayText(fullText.substring(0, displayText.length + 1));
+			}, 300);
 
-            return () => {
-                clearTimeout(timeout1);
-            }
-        }
-    }, [displayText, fullText]);
+			return () => {
+				clearTimeout(timeout1);
+			};
+		}
+	}, [displayText, fullText]);
 
-    function createButtonPressed() {
-        navigation.navigate("Settings");
-    }
+	function createButtonPressed() {
+		navigation.navigate("Settings");
+	}
 
-    const [isEnabled, setIsEnabled] = useState(false);
-    const [isLoading, setIsLoading] = useState(true);
+	const [isEnabled, setIsEnabled] = useState(false);
+	const [isLoading, setIsLoading] = useState(true);
 
-    useEffect(() => {
-        const fetchInitialStatus = async () => {
-            try {
-                const data = await ApiService.getStatus();
-                setIsEnabled(data.shelfOn);
-            } catch (error) {
-                console.error("Error fetching status:", error);
-            } finally {
-                setIsLoading(false);
-            }
-        };
+	useEffect(() => {
+		const fetchInitialStatus = async () => {
+			try {
+				const data = await ApiService.getStatus();
+				setIsEnabled(data.shelfOn);
+			} catch (error) {
+				console.error("Error fetching status:", error);
+			} finally {
+				setIsLoading(false);
+			}
+		};
 
-        fetchInitialStatus();
-    }, []);
+		fetchInitialStatus();
+	}, []);
 
-    const toggleSwitch = async() => {
-        const newState = !isEnabled;
-        setIsEnabled(newState);
+	const toggleSwitch = async () => {
+		const newState = !isEnabled;
+		setIsEnabled(newState);
 
-        if(!currentConfiguration) {
-            let startConfig: Setting = {
-                name: "still",
-                colors: [
-                    "#ff0000", "#ff4400", "#ff6a00", "#ff9100", "#ffee00",
-                    "#00ff1e", "#00ff44", "#00ff95", "#00ffff", "#0088ff",
-                    "#0000ff", "#8800ff", "#ff00ff", "#ff00bb", "#ff0088", "#ff0044"
-                ],
-                whiteValues: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                brightnessValues: [255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255],
-                flashingPattern: "6",
-                delayTime: 3
-            }
-            setCurrentConfiguration(startConfig);
-        }
-        else {
-            let startConfig: Setting = {
-                name: currentConfiguration.name,
-                colors: currentConfiguration.colors,
-                whiteValues: currentConfiguration.whiteValues,
-                brightnessValues: currentConfiguration.brightnessValues,
-                flashingPattern: currentConfiguration.flashingPattern,
-                delayTime: currentConfiguration.delayTime
-            }
-            setCurrentConfiguration(startConfig);
-        }
+		if (!currentConfiguration) {
+			const startConfig: Setting = {
+				name: "still",
+				colors: [
+					"#ff0000",
+					"#ff4400",
+					"#ff6a00",
+					"#ff9100",
+					"#ffee00",
+					"#00ff1e",
+					"#00ff44",
+					"#00ff95",
+					"#00ffff",
+					"#0088ff",
+					"#0000ff",
+					"#8800ff",
+					"#ff00ff",
+					"#ff00bb",
+					"#ff0088",
+					"#ff0044",
+				],
+				whiteValues: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+				brightnessValues: [
+					255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+					255, 255,
+				],
+				flashingPattern: "6",
+				delayTime: 3,
+			};
+			setCurrentConfiguration(startConfig);
+		} else {
+			const startConfig: Setting = {
+				name: currentConfiguration.name,
+				colors: currentConfiguration.colors,
+				whiteValues: currentConfiguration.whiteValues,
+				brightnessValues: currentConfiguration.brightnessValues,
+				flashingPattern: currentConfiguration.flashingPattern,
+				delayTime: currentConfiguration.delayTime,
+			};
+			setCurrentConfiguration(startConfig);
+		}
 
-        try{
-            const endpoint = newState ? 'on': 'off';
-            await ApiService.toggleLed(endpoint);
-            console.log(`LED toggled ${endpoint}`);
-        }
-        catch (error){
-            console.error("Error toggling LED:", error);
-        }
-    }
+		try {
+			const endpoint = newState ? "on" : "off";
+			await ApiService.toggleLed(endpoint);
+			console.log(`LED toggled ${endpoint}`);
+		} catch (error) {
+			console.error("Error toggling LED:", error);
+		}
+	};
 
-    return (
-        <SafeAreaProvider>
-            <SafeAreaView style={styles.container}>
-                <InfoButton/>                <AnimatedTitle 
-                    text={displayText} 
-                    fontSize={130}
-                    marginBottom="20%"
-                />
-                <TouchableOpacity style={COMMON_STYLES.welcomeButton} onPress={createButtonPressed}>
-                    <Text style={styles.button}>Create     ⟩</Text>
-                </TouchableOpacity>
-                <Switch
-                    onValueChange={toggleSwitch}
-                    value={isEnabled}
-                    trackColor={{false: '#665e73', true: '#ffffff'}}
-                    thumbColor={isEnabled ? '#665e73' : '#f4f3f4'}
-                    ios_backgroundColor="#3e3e3e"
-                    style={styles.switch}
-                    disabled={isLoading}
-                />
-            </SafeAreaView>
-        </SafeAreaProvider>
-    );
+	return (
+		<SafeAreaProvider>
+			<SafeAreaView style={styles.container}>
+				<InfoButton />{" "}
+				<AnimatedTitle text={displayText} fontSize={130} marginBottom="20%" />
+				<TouchableOpacity
+					style={COMMON_STYLES.welcomeButton}
+					onPress={createButtonPressed}
+				>
+					<Text style={styles.button}>Create ⟩</Text>
+				</TouchableOpacity>
+				<Switch
+					onValueChange={toggleSwitch}
+					value={isEnabled}
+					trackColor={{ false: "#665e73", true: "#ffffff" }}
+					thumbColor={isEnabled ? "#665e73" : "#f4f3f4"}
+					ios_backgroundColor="#3e3e3e"
+					style={styles.switch}
+					disabled={isLoading}
+				/>
+			</SafeAreaView>
+		</SafeAreaProvider>
+	);
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: COLORS.BLACK,
-    },
-    button: {
-        color: COLORS.WHITE,
-        fontSize: 40,
-        fontFamily: FONTS.SIGNATURE,
-    },
-    switch: {
-        transformOrigin: "center",
-        transform: "scale(1.5)",
-    }
+	container: {
+		flex: 1,
+		alignItems: "center",
+		justifyContent: "center",
+		backgroundColor: COLORS.BLACK,
+	},
+	button: {
+		color: COLORS.WHITE,
+		fontSize: 40,
+		fontFamily: FONTS.SIGNATURE,
+	},
+	switch: {
+		transformOrigin: "center",
+		transform: "scale(1.5)",
+	},
 });

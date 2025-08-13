@@ -1,4 +1,6 @@
-export default interface Setting {
+export {Setting};
+
+interface Setting {
     name: string;
     colors: string[];
     whiteValues: number[];

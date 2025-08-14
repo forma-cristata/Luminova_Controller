@@ -15,6 +15,16 @@ interface SettingItemProps {
 	index?: number;
 }
 
+// Custom comparison function to prevent unnecessary re-renders
+const areEqual = (prevProps: SettingItemProps, nextProps: SettingItemProps) => {
+	return (
+		prevProps.setting?.name === nextProps.setting?.name &&
+		prevProps.animated === nextProps.animated &&
+		prevProps.index === nextProps.index &&
+		JSON.stringify(prevProps.setting?.colors) === JSON.stringify(nextProps.setting?.colors)
+	);
+};
+
 const SettingBlock = ({
 	navigation,
 	setting,
@@ -29,13 +39,14 @@ const SettingBlock = ({
 		return null;
 	}
 
-	const dotsRendered = () => {
+	// Memoize the dots rendering to prevent unnecessary re-renders
+	const dotsRendered = React.useMemo(() => {
 		if (animated) {
 			return <AnimatedDots navigation={navigation} setting={setting} />;
 		} else {
 			return <ColorDots colors={setting.colors} />;
 		}
-	};
+	}, [animated, navigation, setting]);
 
 	const handleFlash = async () => {
 		try {
@@ -61,7 +72,7 @@ const SettingBlock = ({
 						</Text>
 					</View>
 
-					{dotsRendered()}
+					{dotsRendered}
 					<View style={styles.buttonsContainer}>
 						<TouchableOpacity
 							style={COMMON_STYLES.wideButton}
@@ -91,12 +102,13 @@ const SettingBlock = ({
 					>
 						{setting.name.toLowerCase()}
 					</Text>
-					{dotsRendered()}
+					{dotsRendered}
 				</View>
 			)}
 		</>
 	);
 };
+
 
 const styles = StyleSheet.create({
 	whiteText: {
@@ -139,4 +151,4 @@ const styles = StyleSheet.create({
 	},
 });
 
-export default SettingBlock;
+export default React.memo(SettingBlock, areEqual);

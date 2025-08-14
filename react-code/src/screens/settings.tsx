@@ -33,6 +33,9 @@ export default function Settings({ navigation }: any) {
 	const [currentIndex, setCurrentIndex] = React.useState(0);
 	const [isInitialRender, setIsInitialRender] = React.useState(true);
 
+	// Memoize carousel data to prevent unnecessary re-renders
+	const carouselData = React.useMemo(() => [...settingsData, "new"] as (Setting | "new")[], [settingsData]);
+
 	const createNewSetting = () => {
 		const newSetting: Setting = {
 			name: `Setting ${settingsData.length + 1}`,
@@ -93,7 +96,7 @@ export default function Settings({ navigation }: any) {
 		}
 	}, [settingsData.length, lastEdited]);
 
-	const handleProgressChange = (offset: number, absoluteProgress: number) => {
+	const handleProgressChange = React.useCallback((offset: number, absoluteProgress: number) => {
 		// Only block during the initial positioning, not after navigation returns
 		if (isInitialRender && Math.abs(offset) < 0.1) {
 			return;
@@ -106,8 +109,15 @@ export default function Settings({ navigation }: any) {
 
 		progress.value = offset;
 		const newIndex = Math.round(absoluteProgress);
-		setCurrentIndex(newIndex);
-	};
+		
+		// Only update if index actually changed to prevent unnecessary re-renders
+		if (newIndex !== currentIndex) {
+			// Use requestAnimationFrame to ensure smooth updates
+			requestAnimationFrame(() => {
+				setCurrentIndex(newIndex);
+			});
+		}
+	}, [isInitialRender, currentIndex, progress]);
 
 	const handleDelete = async () => {
 		if (currentIndex < 12) {
@@ -206,6 +216,51 @@ export default function Settings({ navigation }: any) {
 		}, 100);
 	};
 
+	// Memoize the focused setting block to prevent unnecessary re-renders
+	const focusedSettingBlock = React.useMemo(() => {
+		if (currentIndex < settingsData.length && settingsData[currentIndex]) {
+			return (
+				<SettingBlock
+					navigation={navigation}
+					animated={true}
+					style={styles.nothing}
+					setting={settingsData[currentIndex]}
+					index={currentIndex}
+				/>
+			);
+		}
+		return null;
+	}, [navigation, settingsData, currentIndex]);
+
+	// Memoize the render item function to prevent recreation on every render
+	const renderItem = React.useCallback(({
+		item,
+		index,
+	}: {
+		item: Setting | "new";
+		index: number;
+	}) => {
+		if (item === "new") {
+			return (
+				<Text
+					style={styles.newSettingItemText}
+					key={`new-item`}
+				/>
+			);
+		}
+		
+		return (
+			<SettingBlock
+				key={`setting-${item.name}-${index}`}
+				navigation={navigation}
+				animated={false}
+				style={styles.renderItem}
+				setting={item}
+				index={index}
+			/>
+		);
+	}, [navigation]);
+
 	return (
 		<SafeAreaProvider>
 			<SafeAreaView style={styles.container}>
@@ -251,22 +306,15 @@ export default function Settings({ navigation }: any) {
 									onPress={() => {
 										handleDelete();
 									}}
-								>
-									<Ionicons 
-										name="trash-outline" 
-										size={24} 
-										color={currentIndex < 12 ? "#666" : "white"} 
-									/>
-								</TouchableOpacity>
-								<SettingBlock
-									navigation={navigation}
-									animated={true}
-									style={styles.nothing}
-									setting={settingsData[currentIndex]}
-									index={currentIndex}
+								>								<Ionicons 
+									name="trash-outline" 
+									size={24} 
+									color={currentIndex < 12 ? "#666" : "white"} 
 								/>
-							</>
-						)}
+							</TouchableOpacity>
+							{focusedSettingBlock}
+						</>
+					)}
 						{currentIndex >= settingsData.length && (
 							<TouchableOpacity
 								style={styles.newSettingButton}
@@ -279,36 +327,17 @@ export default function Settings({ navigation }: any) {
 					<View style={styles.carCont}>
 						<Carousel
 							ref={ref}
-							data={[...settingsData, "new"]}
+							data={carouselData}
 							width={width}
-							defaultIndex={Math.abs(currentIndex % (settingsData.length + 1))}
+							defaultIndex={0}
 							enabled={true}
-							onProgressChange={(offset, absoluteProgress) => {
-								handleProgressChange(offset, absoluteProgress);
-							}}
-							renderItem={({
-								item,
-								index,
-							}: {
-								item: Setting | "new";
-								index: number;
-							}) =>
-								item === "new" ? (
-									<Text
-										style={styles.newSettingItemText}
-										key={item + index.toString()}
-									/>
-								) : (
-									<SettingBlock
-										key={item + index.toString()}
-										navigation={navigation}
-										animated={false}
-										style={styles.renderItem}
-										setting={item}
-										index={index}
-									/>
-								)
-							}
+							loop={true}
+							autoPlay={false}
+							windowSize={1}
+							pagingEnabled={true}
+							snapEnabled={true}
+							onProgressChange={handleProgressChange}
+							renderItem={renderItem}
 							mode="parallax"
 							style={styles.carousel}
 						/>

@@ -5,8 +5,8 @@ import { StyleSheet, TouchableOpacity } from "react-native";
 import type { RootStackParamList } from "../../screens/index";
 import React from "react";
 
-export default function InfoButton() {
-	const navigation =
+export default function InfoButton( ) {
+	const navigation    =
 		useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
 	const handlePress = () => {

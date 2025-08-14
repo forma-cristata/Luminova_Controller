@@ -1,4 +1,5 @@
 import { IP } from "@/app/configurations/constants";
+import { Setting } from "@/app/interface/setting-interface";
 
 interface ApiConfig {
 	colors?: string[];
@@ -73,7 +74,7 @@ export class ApiService {
 	}
 
 	// Convenience methods for common operations
-	static async previewSetting(setting: any): Promise<any> {
+	static async previewSetting(setting: Partial<Setting>): Promise<any> {
 		return ApiService.postConfig({
 			colors: setting.colors,
 			effectNumber: setting.flashingPattern,
@@ -81,17 +82,17 @@ export class ApiService {
 		});
 	}
 
-	static async flashSetting(setting: any): Promise<any> {
+	static async flashSetting(setting: Setting): Promise<any> {
 		return ApiService.postConfig({
-			delayTime: parseInt(String(setting.delayTime)),
-			effectNumber: parseInt(setting.flashingPattern),
+			delayTime: setting.delayTime,
+			effectNumber: setting.flashingPattern,
 			whiteValues: setting.whiteValues,
 			brightnessValues: setting.brightnessValues,
 			colors: setting.colors,
 		});
 	}
 
-	static async restoreConfiguration(config: any): Promise<any> {
+	static async restoreConfiguration(config: Partial<Setting>): Promise<any> {
 		return ApiService.postConfig({
 			delayTime: config?.delayTime,
 			effectNumber: config?.flashingPattern,

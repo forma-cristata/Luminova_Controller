@@ -3,7 +3,7 @@ import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import ChooseModificatioon from "@/app/ChooseModificatioon";
+import ChooseModification from "@/app/ChooseModification";
 import ColorEditor from "@/app/ColorEditor";
 import { ConfigurationProvider } from "@/app/context/ConfigurationContext";
 import FlashingPatternEditor from "@/app/FlashingPatternEditor";
@@ -17,7 +17,7 @@ export type RootStackParamList = {
 	Welcome: undefined;
 	Settings: undefined;
 	ChooseModification: { setting: Setting };
-	ColorEditor: { setting: Setting; isNew?: boolean };
+	ColorEditor: { setting: Setting; isNew?: boolean; originalName?: string };
 	FlashingPatternEditor: { setting: Setting; isNew?: boolean };
 	Info: undefined;
 };
@@ -53,7 +53,7 @@ function Index() {
 					<Stack.Screen name="Settings" component={Settings} />
 					<Stack.Screen
 						name="ChooseModification"
-						component={ChooseModificatioon}
+						component={ChooseModification}
 					/>
 					<Stack.Screen name="ColorEditor" component={ColorEditor} />
 					<Stack.Screen

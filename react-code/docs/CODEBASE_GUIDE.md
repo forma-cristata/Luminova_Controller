@@ -57,10 +57,10 @@ react-code/
 │   ├── configurations/           # App configuration and constants
 │   ├── context/                  # React Context providers
 │   ├── interface/                # TypeScript interfaces
-│   ├── services/                 # API and external service layers
-│   └── [screens].tsx            # Main application screens
+│   └── [screens].tsx             # Main application screens
 ├── assets/                       # Static assets (fonts, images)
-└── [config files]              # Build and configuration files
+├── services/                     # API and external service layers
+└── [config files]                # Build and configuration files
 ```
 
 ## Main Application Screens
@@ -87,7 +87,7 @@ Welcome → Settings → ChooseModification → [ColorEditor | FlashingPatternEd
   - Setting preview with animated dots
 - **Data Management**: Handles local storage of settings via `FileSystem`
 
-#### `/app/ChooseModificatioon.tsx`
+#### `/app/ChooseModification.tsx`
 - **Purpose**: Choice screen for editing colors vs flashing patterns
 - **Layout**: Split-screen design (left: patterns, right: colors)
 
@@ -297,11 +297,11 @@ Welcome → Settings → ChooseModification → [ColorEditor | FlashingPatternEd
 
 ### 🛠️ Code Organization
 
-- **Components**: Reusable UI elements in `/components/`
-- **Screens**: Main app screens in root `/app/`
-- **Shared Logic**: Utilities in `/services/` and `/context/`
-- **Types**: Interfaces in `/interface/`
-- **Styling**: Centralized in `SharedStyles.ts`
+- **Components**: Reusable UI elements in `app/components/`
+- **Screens**: Main app screens in root `app/`
+- **Shared Logic**: Utilities in `services/` and `app/context/`
+- **Types**: Interfaces in `app/interface/`
+- **Styling**: Centralized in `app/components/SharedStyles.ts`
 
 ### 🎨 Styling Standards
 

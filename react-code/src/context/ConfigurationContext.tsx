@@ -1,5 +1,5 @@
+import type { Setting } from "@/src/interface/setting-interface";
 import React, { createContext, type ReactNode, useContext, useState } from "react";
-import type {Setting} from "@/app/interface/setting-interface";
 
 interface ConfigurationContextType {
 	currentConfiguration: Setting | null;

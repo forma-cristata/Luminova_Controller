@@ -13,8 +13,8 @@ import {
 	View,
 } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import AnimatedTitle from "@/app/components/AnimatedTitle";
-import BackButton from "@/app/components/BackButton";
+import AnimatedTitle from "@/src/components/AnimatedTitle";
+import BackButton from "@/src/components/BackButton";
 import React from "react";
 
 export default function Info() {

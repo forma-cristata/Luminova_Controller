@@ -1,12 +1,13 @@
 import { useFocusEffect } from "@react-navigation/native";
 
 import React, { useEffect, useRef, useState } from "react";
+import { View } from "react-native";
 
 import { SafeAreaView, StyleSheet } from "react-native";
 
-import Dot from "@/app/components/Dot";
+import Dot from "@/src/components/Dot";
 
-import type { Setting } from "@/app/interface/setting-interface";
+import type { Setting } from "@/src/interface/setting-interface";
 
 interface AnimatedDotsProps {
 	navigation: any;

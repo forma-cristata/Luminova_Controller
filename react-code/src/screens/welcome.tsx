@@ -7,12 +7,12 @@ import {
 	TouchableOpacity,
 } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import AnimatedTitle from "@/app/components/AnimatedTitle";
-import InfoButton from "@/app/components/InfoButton";
-import { COLORS, COMMON_STYLES, FONTS } from "@/app/components/SharedStyles";
-import type { Setting } from "@/app/interface/setting-interface";
-import { ApiService } from "@/services/ApiService";
-import { useConfiguration } from "./context/ConfigurationContext";
+import AnimatedTitle from "@/src/components/AnimatedTitle";
+import InfoButton from "@/src/components/InfoButton";
+import { COLORS, COMMON_STYLES, FONTS } from "@/src/components/SharedStyles";
+import type { Setting } from "@/src/interface/setting-interface";
+import { ApiService } from "@/src/services/ApiService";
+import { useConfiguration } from "@/src/context/ConfigurationContext";
 import React from "react";
 
 export default function Welcome({ navigation }: any) {

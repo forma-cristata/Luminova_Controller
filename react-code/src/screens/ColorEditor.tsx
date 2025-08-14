@@ -1,5 +1,8 @@
 import Slider from "@react-native-community/slider";
-import { useThrottle } from "expo-dev-launcher/bundle/hooks/useDebounce";
+import { ApiService } from "@/src/services/ApiService";
+import { useConfiguration } from "@/src/context/ConfigurationContext";
+import { useDebounce } from "@/src/hooks/useDebounce";
+import { SettingsService } from "@/src/services/SettingsService";
 import { useState } from "react";
 import {
 	Dimensions,
@@ -21,15 +24,13 @@ import Animated, {
 	useSharedValue,
 } from "react-native-reanimated";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import BackButton from "@/app/components/BackButton";
-import ColorDots from "@/app/components/ColorDots";
-import HueSliderBackground from "@/app/components/HueSliderBackground";
-import InfoButton from "@/app/components/InfoButton";
-import RandomizeButton from "@/app/components/RandomizeButton";
-import { COLORS, COMMON_STYLES, FONTS } from "@/app/components/SharedStyles";
-import { useConfiguration } from "@/app/context/ConfigurationContext";
-import { ApiService } from "@/services/ApiService";
-import { loadData, saveData } from "@/app/settings";
+import BackButton from "@/src/components/BackButton";
+import ColorDots from "@/src/components/ColorDots";
+import HueSliderBackground from "@/src/components/HueSliderBackground";
+import InfoButton from "@/src/components/InfoButton";
+import RandomizeButton from "@/src/components/RandomizeButton";
+import { COLORS, COMMON_STYLES, FONTS } from "@/src/components/SharedStyles";
+import type { Setting } from "@/src/interface/setting-interface";
 import React from "react";
 
 export default function ColorEditor({ navigation, route }: any) {
@@ -42,13 +43,13 @@ export default function ColorEditor({ navigation, route }: any) {
 	const [colors, setColors] = useState([...setting.colors]);
 	const [selectedDot, setSelectedDot] = useState<number | null>(null);
 	const [hue, setHue] = useState(0);
-	const throttledHue = useThrottle(hue);
+	const debouncedHue = useDebounce(hue, 50);
 
 	const [brightness, setBrightness] = useState(100);
-	const throttledBrightness = useThrottle(brightness);
+	const debouncedBrightness = useDebounce(brightness, 50);
 
 	const [saturation, setSaturation] = useState(0);
-	const throttledSaturation = useThrottle(saturation);
+	const debouncedSaturation = useDebounce(saturation, 50);
 
 	const [hexInput, setHexInput] = useState("");
 	const [colorHistory, setColorHistory] = useState<string[][]>([]);
@@ -68,9 +69,9 @@ export default function ColorEditor({ navigation, route }: any) {
 		setHasChanges(true);
 
 		if (isNew) {
-			const settings = await loadData();
+			const settings = await SettingsService.loadSettings();
 			const nameExists = settings?.some(
-				(s: any) =>
+				(s: Setting) =>
 					s.name.toLowerCase() === text.toLowerCase() &&
 					s.name !== originalName,
 			);
@@ -252,14 +253,14 @@ export default function ColorEditor({ navigation, route }: any) {
 				isNew: true,
 			});
 		} else {
-			const settings = await loadData();
-			const updatedSettings = settings?.map((s) =>
-				s.name === setting.name ? { ...s, colors: [...colors] } : s,
+			const updatedSetting = { ...setting, colors: [...colors] };
+			const updatedSettings = await SettingsService.updateSetting(
+				originalName,
+				updatedSetting,
 			);
-			await saveData(updatedSettings);
 
 			const currentIndex = updatedSettings.findIndex(
-				(s) => s.name === setting.name,
+				(s: Setting) => s.name === updatedSetting.name,
 			);
 			setLastEdited(currentIndex.toString());
 
@@ -556,7 +557,7 @@ export default function ColorEditor({ navigation, route }: any) {
 											]}
 											minimumValue={0}
 											maximumValue={360}
-											value={throttledHue}
+											value={debouncedHue}
 											disabled={selectedDot === null}
 											onValueChange={(value) => {
 												if (selectedDot !== null) {
@@ -592,7 +593,7 @@ export default function ColorEditor({ navigation, route }: any) {
 										minimumValue={0}
 										maximumValue={100}
 										disabled={selectedDot === null}
-										value={throttledSaturation}
+										value={debouncedSaturation}
 										onValueChange={(value) => {
 											if (selectedDot !== null) {
 												setSaturation(value);
@@ -621,7 +622,7 @@ export default function ColorEditor({ navigation, route }: any) {
 										minimumValue={0}
 										maximumValue={100}
 										disabled={selectedDot === null}
-										value={throttledBrightness}
+										value={debouncedBrightness}
 										onValueChange={(value) => {
 											if (selectedDot !== null) {
 												setBrightness(value);

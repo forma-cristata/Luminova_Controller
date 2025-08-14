@@ -52,12 +52,12 @@ The Luminova Controller is a React Native application that controls LED lighting
 
 ```
 react-code/
-├── app/                          # Main application code
+├── src/                          # Main application code
 │   ├── components/               # Reusable UI components
 │   ├── configurations/           # App configuration and constants
 │   ├── context/                  # React Context providers
 │   ├── interface/                # TypeScript interfaces
-│   └── [screens].tsx             # Main application screens
+│   └── screens/                  # Main application screens
 ├── assets/                       # Static assets (fonts, images)
 ├── services/                     # API and external service layers
 └── [config files]                # Build and configuration files
@@ -71,7 +71,7 @@ react-code/
 Welcome → Settings → ChooseModification → [ColorEditor | FlashingPatternEditor]
 ```
 
-#### `/app/welcome.tsx`
+#### `src/screens/welcome.tsx`
 - **Purpose**: Entry point with LED on/off toggle
 - **Features**: 
   - Animated text display
@@ -79,7 +79,7 @@ Welcome → Settings → ChooseModification → [ColorEditor | FlashingPatternEd
   - Navigation to Settings
 - **API Integration**: Uses `ApiService` for status and LED control
 
-#### `/app/settings.tsx`
+#### `src/screens/settings.tsx`
 - **Purpose**: Main settings management screen
 - **Features**:
   - Carousel view of all lighting configurations
@@ -87,11 +87,11 @@ Welcome → Settings → ChooseModification → [ColorEditor | FlashingPatternEd
   - Setting preview with animated dots
 - **Data Management**: Handles local storage of settings via `FileSystem`
 
-#### `/app/ChooseModification.tsx`
+#### `src/screens/ChooseModification.tsx`
 - **Purpose**: Choice screen for editing colors vs flashing patterns
 - **Layout**: Split-screen design (left: patterns, right: colors)
 
-#### `/app/ColorEditor.tsx`
+#### `src/screens/ColorEditor.tsx`
 - **Purpose**: Advanced color editing interface
 - **Features**:
   - 16-dot color grid (2 rows of 8)
@@ -101,7 +101,7 @@ Welcome → Settings → ChooseModification → [ColorEditor | FlashingPatternEd
   - Preview functionality
 - **Modes**: Handles both new setting creation and existing setting editing
 
-#### `/app/FlashingPatternEditor.tsx`
+#### `src/screens/FlashingPatternEditor.tsx`
 - **Purpose**: Animation pattern and timing configuration
 - **Features**:
   - Pattern picker with 12 different animations
@@ -113,12 +113,12 @@ Welcome → Settings → ChooseModification → [ColorEditor | FlashingPatternEd
 
 ### 🎨 Dot Components
 
-#### `/app/components/Dot.tsx`
+#### `src/components/Dot.tsx`
 - **Purpose**: Single LED representation
 - **Props**: `color`, `id`
 - **Usage**: Building block for all dot displays
 
-#### `/app/components/ColorDots.tsx`
+#### `src/components/ColorDots.tsx`
 - **Purpose**: Unified, modular component for LED dot display and interaction
 - **Modes**:
   - **Static Display**: `layout='single-row'` (default) - for previews in settings carousel
@@ -143,7 +143,7 @@ Welcome → Settings → ChooseModification → [ColorEditor | FlashingPatternEd
   />
   ```
 
-#### `/app/components/AnimatedDots.tsx`
+#### `src/components/AnimatedDots.tsx`
 - **Purpose**: Animated dot patterns for previewing effects
 - **Features**:
   - 12 different animation patterns
@@ -153,24 +153,24 @@ Welcome → Settings → ChooseModification → [ColorEditor | FlashingPatternEd
 
 ### 🎛️ Control Components
 
-#### `/app/components/Picker.tsx`
+#### `src/components/Picker.tsx`
 - **Purpose**: Scrollable pattern selection
 - **Features**:
   - 12 predefined patterns with friendly names
   - Auto-scroll to selected pattern
   - Visual feedback for selection
 
-#### `/app/components/HueSliderBackground.tsx`
+#### `src/components/HueSliderBackground.tsx`
 - **Purpose**: Rainbow background for hue slider
 - **Implementation**: Gradient background component
 
-#### `/app/components/InfoButton.tsx`
+#### `src/components/InfoButton.tsx`
 - **Purpose**: Reusable info button across all screens
 - **Design**: Consistent positioning and styling
 
 ### 📱 Layout Components
 
-#### `/app/components/settingBlock.tsx`
+#### `src/components/settingBlock.tsx`
 - **Purpose**: Setting display component used in carousel
 - **Modes**:
   - **Animated**: Full display with Edit/Flash buttons
@@ -181,7 +181,7 @@ Welcome → Settings → ChooseModification → [ColorEditor | FlashingPatternEd
 
 ### 🎨 Styling System
 
-#### `/app/components/SharedStyles.ts`
+#### `src/components/SharedStyles.ts`
 - **Purpose**: Centralized styling constants and common styles
 - **Contents**:
   - Color palette (`COLORS`)
@@ -192,7 +192,7 @@ Welcome → Settings → ChooseModification → [ColorEditor | FlashingPatternEd
 
 ### 🌐 API Integration
 
-#### `/app/services/ApiService.ts`
+#### `src/services/ApiService.ts`
 - **Purpose**: Centralized API communication layer
 - **Methods**:
   - `flashSetting()` - Send configuration to hardware
@@ -204,7 +204,7 @@ Welcome → Settings → ChooseModification → [ColorEditor | FlashingPatternEd
 
 ### 🔄 State Management
 
-#### `/app/context/ConfigurationContext.tsx`
+#### `src/context/ConfigurationContext.tsx`
 - **Purpose**: Global state management for current configuration
 - **State**:
   - `currentConfiguration` - Active LED configuration
@@ -213,7 +213,7 @@ Welcome → Settings → ChooseModification → [ColorEditor | FlashingPatternEd
 
 ### 📊 Data Models
 
-#### `/app/interface/setting-interface.ts`
+#### `src/interface/setting-interface.ts`
 - **Purpose**: TypeScript interface for lighting configurations
 - **Properties**:
   - `name` - User-friendly setting name
@@ -227,11 +227,11 @@ Welcome → Settings → ChooseModification → [ColorEditor | FlashingPatternEd
 
 ### ⚙️ App Configuration
 
-#### `/app/configurations/constants.ts`
+#### `src/configurations/constants.ts`
 - **Purpose**: Environment and API configuration
 - **Contains**: API endpoint (`IP`), hardware communication settings
 
-#### `/app/configurations/modes.json`
+#### `src/configurations/modes.json`
 - **Purpose**: Default lighting presets
 - **Contents**: 12 pre-configured lighting schemes
 - **Usage**: Loaded as fallback when no user settings exist
@@ -240,7 +240,7 @@ Welcome → Settings → ChooseModification → [ColorEditor | FlashingPatternEd
 
 ### 🧭 Navigation Structure
 
-#### `/app/index.tsx`
+#### `src/screens/index.tsx`
 - **Purpose**: Root navigation configuration
 - **Stack Navigator**: 
   - Welcome
@@ -297,11 +297,11 @@ Welcome → Settings → ChooseModification → [ColorEditor | FlashingPatternEd
 
 ### 🛠️ Code Organization
 
-- **Components**: Reusable UI elements in `app/components/`
-- **Screens**: Main app screens in root `app/`
-- **Shared Logic**: Utilities in `services/` and `app/context/`
-- **Types**: Interfaces in `app/interface/`
-- **Styling**: Centralized in `app/components/SharedStyles.ts`
+- **Components**: Reusable UI elements in `src/components/`
+- **Screens**: Main app screens in `src/screens/`
+- **Shared Logic**: Utilities in `services/` and `src/context/`
+- **Types**: Interfaces in `src/interface/`
+- **Styling**: Centralized in `src/components/SharedStyles.ts`
 
 ### 🎨 Styling Standards
 

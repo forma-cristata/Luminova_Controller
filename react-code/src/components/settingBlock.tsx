@@ -1,11 +1,11 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { Setting } from "../interface/setting-interface";
-import { ApiService } from "@/services/ApiService";
-import { COLORS, COMMON_STYLES, FONTS } from "./SharedStyles";
-import AnimatedDots from "@/app/components/AnimatedDots";
-import ColorDots from "@/app/components/ColorDots";
-import { useConfiguration } from "@/app/context/ConfigurationContext";
 import React from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import AnimatedDots from "@/src/components/AnimatedDots";
+import ColorDots from "@/src/components/ColorDots";
+import { useConfiguration } from "@/src/context/ConfigurationContext";
+import { ApiService } from "@/src/services/ApiService";
+import type { Setting } from "../interface/setting-interface";
+import { COLORS, COMMON_STYLES, FONTS } from "./SharedStyles";
 
 interface SettingItemProps {
 	navigation: any;
@@ -52,7 +52,13 @@ const SettingBlock = ({
 			{animated && (
 				<View style={[style]}>
 					<View style={styles.headerContainer}>
-						<Text style={styles.whiteText}>{setting.name.toLowerCase()}</Text>
+						<Text 
+							style={styles.whiteText}
+							numberOfLines={1}
+							ellipsizeMode="tail"
+						>
+							{setting.name.toLowerCase()}
+						</Text>
 					</View>
 
 					{dotsRendered()}
@@ -78,7 +84,11 @@ const SettingBlock = ({
 
 			{!animated && (
 				<View style={style}>
-					<Text style={styles.whiteTextSmaller}>
+					<Text 
+						style={styles.whiteTextSmaller}
+						numberOfLines={1}
+						ellipsizeMode="tail"
+					>
 						{setting.name.toLowerCase()}
 					</Text>
 					{dotsRendered()}
@@ -100,6 +110,7 @@ const styles = StyleSheet.create({
 		color: COLORS.WHITE,
 		fontSize: 60,
 		fontFamily: FONTS.SIGNATURE,
+		paddingHorizontal: 20,
 	},
 	buttonsContainer: {
 		flexDirection: "row",

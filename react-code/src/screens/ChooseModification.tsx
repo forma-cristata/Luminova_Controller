@@ -7,11 +7,11 @@ import {
 	View,
 } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import AnimatedDots from "@/app/components/AnimatedDots";
-import BackButton from "@/app/components/BackButton";
-import ColorDots from "@/app/components/ColorDots";
-import InfoButton from "@/app/components/InfoButton";
-import { Setting } from "@/app/interface/setting-interface";
+import AnimatedDots from "@/src/components/AnimatedDots";
+import BackButton from "@/src/components/BackButton";
+import ColorDots from "@/src/components/ColorDots";
+import InfoButton from "@/src/components/InfoButton";
+import { Setting } from "@/src/interface/setting-interface";
 import React from "react";
 
 interface Props {

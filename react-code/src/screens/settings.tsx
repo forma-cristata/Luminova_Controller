@@ -1,5 +1,4 @@
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
-import * as FileSystem from "expo-file-system";
 import React from "react";
 import {
 	Alert,
@@ -15,63 +14,15 @@ import Carousel, {
 	type ICarouselInstance,
 } from "react-native-reanimated-carousel";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import BackButton from "@/app/components/BackButton";
-import InfoButton from "@/app/components/InfoButton";
-import SettingBlock from "@/app/components/settingBlock";
-import { useConfiguration } from "@/app/context/ConfigurationContext";
-import type { Setting } from "@/app/interface/setting-interface";
-import jsonData from "./configurations/modes.json";
-
-let data = jsonData.settings as Setting[];
-console.log("JSON Default Data: ", jsonData);
+import BackButton from "@/src/components/BackButton";
+import InfoButton from "@/src/components/InfoButton";
+import SettingBlock from "@/src/components/settingBlock";
+import { useConfiguration } from "@/src/context/ConfigurationContext";
+import type { Setting } from "@/src/interface/setting-interface";
+import { SettingsService } from "@/src/services/SettingsService";
 
 const width = Dimensions.get("window").width;
 const height = Dimensions.get("window").height;
-
-const FILE_URI = `${FileSystem.documentDirectory}settings.json`;
-
-const _deleteSettingsFile = async () => {
-	try {
-		const fileInfo = await FileSystem.getInfoAsync(FILE_URI);
-		if (fileInfo.exists) {
-			await FileSystem.deleteAsync(FILE_URI);
-			console.log("Settings file deleted successfully");
-			Alert.alert(
-				"Success",
-				"Settings file has been deleted. The app will now use default settings.",
-			);
-		} else {
-			Alert.alert("Info", "No settings file found to delete.");
-		}
-	} catch (error) {
-		console.error("Error deleting settings file:", error);
-		Alert.alert("Error", "Failed to delete settings file.");
-	}
-};
-
-export const loadData = async () => {
-	// Uncomment line and load this page to restore defaults. Then uncomment this line and save again
-	//await deleteSettingsFile();
-	try {
-		const fileInfo = await FileSystem.getInfoAsync(FILE_URI);
-		if (fileInfo.exists) {
-			const fileContent = await FileSystem.readAsStringAsync(FILE_URI);
-			console.log("Loaded data from file:", fileContent);
-			return JSON.parse(fileContent) as Setting[];
-		} else {
-			console.log("No existing file found, using default data.");
-			console.log(`jsonData: ${JSON.stringify(jsonData)}`);
-			return data;
-		}
-	} catch (e) {
-		console.error("Error loading data:", e);
-		return [];
-	}
-};
-
-export const saveData = async (newSettings: Setting[]) => {
-	await FileSystem.writeAsStringAsync(FILE_URI, JSON.stringify(newSettings));
-};
 
 export default function Settings({ navigation }: any) {
 	const { lastEdited, setLastEdited } = useConfiguration();
@@ -104,11 +55,10 @@ export default function Settings({ navigation }: any) {
 		const unsubscribe = navigation.addListener("focus", () => {
 			const initializeData = async () => {
 				try {
-					const loadedData = await loadData();
+					const loadedData = await SettingsService.loadSettings();
 					if (loadedData && loadedData.length > 0) {
 						const deepCopy = JSON.parse(JSON.stringify(loadedData));
 						setSettingsData(deepCopy);
-						data = loadedData;
 
 						const lastEditedIndex = lastEdited ? parseInt(lastEdited) : 0;
 						setCurrentIndex(lastEditedIndex);
@@ -160,6 +110,9 @@ export default function Settings({ navigation }: any) {
 	};
 
 	const handleDelete = async () => {
+		if (currentIndex < 12) {
+			return; // Simply do nothing for default settings
+		}
 		Alert.alert(
 			"Delete Setting",
 			"Are you sure you want to delete this setting?",
@@ -173,13 +126,13 @@ export default function Settings({ navigation }: any) {
 					style: "destructive",
 					onPress: async () => {
 						try {
-							const currentSettings = await loadData();
+							const currentSettings = await SettingsService.loadSettings();
 
 							const updatedSettings = currentSettings.filter(
 								(_, i) => i !== currentIndex,
 							);
 
-							await saveData(updatedSettings);
+							await SettingsService.saveSettings(updatedSettings);
 
 							if (lastEdited === currentIndex.toString()) {
 								setLastEdited("0");
@@ -191,7 +144,7 @@ export default function Settings({ navigation }: any) {
 							// Simply reload the current screen's data instead
 							const initializeData = async () => {
 								try {
-									const loadedData = await loadData();
+									const loadedData = await SettingsService.loadSettings();
 									if (loadedData && loadedData.length > 0) {
 										const deepCopy = JSON.parse(JSON.stringify(loadedData));
 										setSettingsData(deepCopy);
@@ -199,14 +152,25 @@ export default function Settings({ navigation }: any) {
 										const targetIndex = 0; // Go to first setting after delete
 										setCurrentIndex(targetIndex);
 										setLastEdited("0");
-										setIsInitialRender(true);
+
+										setTimeout(() => {
+											if (ref.current) {
+												ref.current.scrollTo({
+													index: targetIndex,
+													animated: false,
+												});
+											}
+										}, 100);
+									} else {
+										// Handle case where all settings are deleted
+										setSettingsData([]);
+										setCurrentIndex(0);
 									}
 								} catch (error) {
-									console.error("Error reloading data:", error);
+									console.error("Error re-initializing data:", error);
 								}
 							};
-
-							await initializeData();
+							initializeData();
 						} catch (error) {
 							console.error("Error deleting setting:", error);
 						}
@@ -216,29 +180,30 @@ export default function Settings({ navigation }: any) {
 		);
 	};
 
-	const getUniqueName = (baseName: string, settings: Setting[]) => {
-		let newName = `${baseName} Copy`;
-		let counter = 1;
-		const names = settings.map((s) => s.name);
-		while (names.includes(newName)) {
-			newName = `${baseName} Copy ${counter++}`;
-		}
-		return newName;
-	};
+	const handleDuplicate = async () => {
+		const currentSetting = settingsData[currentIndex];
+		const newName = `${currentSetting.name} (copy)`;
 
-	const handleDuplicate = () => {
-		if (currentIndex < settingsData.length && currentIndex >= 0) {
-			const original = settingsData[currentIndex];
-			const duplicated = {
-				...original,
-				name: getUniqueName(original.name, settingsData),
-			};
-			navigation.navigate("ColorEditor", {
-				setting: duplicated,
-				isNew: true,
-				originalName: duplicated.name,
-			});
-		}
+		const newSetting: Setting = {
+			...currentSetting,
+			name: newName,
+		};
+
+		const currentSettings = await SettingsService.loadSettings();
+		const updatedSettings = [...currentSettings, newSetting];
+		await SettingsService.saveSettings(updatedSettings);
+
+		const newIndex = updatedSettings.length - 1;
+		setLastEdited(newIndex.toString());
+
+		// Reload data to reflect the new setting
+		const loadedData = await SettingsService.loadSettings();
+		setSettingsData(loadedData);
+
+		// Navigate to the new duplicated setting
+		setTimeout(() => {
+			ref.current?.scrollTo({ index: newIndex, animated: true });
+		}, 100);
 	};
 
 	return (
@@ -282,11 +247,16 @@ export default function Settings({ navigation }: any) {
 										zIndex: 1,
 										opacity: currentIndex < 12 ? 0.3 : 1,
 									}}
+									disabled={currentIndex < 12}
 									onPress={() => {
-										if (currentIndex >= 12) handleDelete().then(() => {});
+										handleDelete();
 									}}
 								>
-									<Ionicons name="trash-outline" size={24} color="white" />
+									<Ionicons 
+										name="trash-outline" 
+										size={24} 
+										color={currentIndex < 12 ? "#666" : "white"} 
+									/>
 								</TouchableOpacity>
 								<SettingBlock
 									navigation={navigation}
@@ -424,5 +394,11 @@ const styles = StyleSheet.create({
 		color: "white",
 		fontSize: 20,
 		fontFamily: "Clearlight-lJlq",
+	},
+	sideButton: {
+		position: "absolute",
+		top: 10,
+		right: 10,
+		zIndex: 1,
 	},
 });

@@ -1,5 +1,4 @@
 import Slider from "@react-native-community/slider";
-import { useThrottle } from "expo-dev-launcher/bundle/hooks/useDebounce";
 import * as React from "react";
 
 const { useEffect, useState } = React;
@@ -13,17 +12,19 @@ import {
 	View,
 } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import AnimatedDots from "@/app/components/AnimatedDots";
-import BackButton from "@/app/components/BackButton";
-import BPMMeasurer from "@/app/components/BPMMeasurer";
-import InfoButton from "@/app/components/InfoButton";
-import MetronomeButton from "@/app/components/MetronomeButton";
-import Picker from "@/app/components/Picker";
-import RandomizeButton from "@/app/components/RandomizeButton";
-import { COLORS, COMMON_STYLES, FONTS } from "@/app/components/SharedStyles";
-import { useConfiguration } from "@/app/context/ConfigurationContext";
-import { ApiService } from "@/services/ApiService";
-import { loadData, saveData } from "@/app/settings";
+import AnimatedDots from "@/src/components/AnimatedDots";
+import BackButton from "@/src/components/BackButton";
+import BPMMeasurer from "@/src/components/BPMMeasurer";
+import InfoButton from "@/src/components/InfoButton";
+import MetronomeButton from "@/src/components/MetronomeButton";
+import Picker from "@/src/components/Picker";
+import RandomizeButton from "@/src/components/RandomizeButton";
+import { COLORS, COMMON_STYLES, FONTS } from "@/src/components/SharedStyles";
+import { ANIMATION_PATTERNS } from "@/src/configurations/patterns";
+import { useConfiguration } from "@/src/context/ConfigurationContext";
+import { useDebounce } from "@/src/hooks/useDebounce";
+import { ApiService } from "@/src/services/ApiService";
+import { SettingsService } from "@/src/services/SettingsService";
 
 /**
  * This page should edit:
@@ -42,13 +43,13 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 	const [initialFlashingPattern] = React.useState(setting.flashingPattern);
 
 	const [BPM, setBPM] = React.useState(0);
-	const throttledBPM = useThrottle(BPM);
+	const debouncedBPM = useDebounce(BPM, 200);
 	const [delayTime, setDelayTime] = React.useState(setting.delayTime);
-	const throttledDelayTime = useThrottle(delayTime);
+	const debouncedDelayTime = useDebounce(delayTime, 200);
 	const [flashingPattern, setFlashingPattern] = React.useState(
 		setting.flashingPattern,
 	);
-	const throttledFlashingPattern = useThrottle(flashingPattern);
+	const debouncedFlashingPattern = useDebounce(flashingPattern, 50);
 
 	const [previewMode, setPreviewMode] = useState(false);
 	const [showBPMMeasurer, setShowBPMMeasurer] = useState(false);
@@ -67,7 +68,7 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 	const modeDots = () => {
 		const newSetting = {
 			...setting,
-			delayTime: throttledDelayTime,
+			delayTime: debouncedDelayTime,
 			flashingPattern: flashingPattern,
 		};
 		return <AnimatedDots navigation={navigation} setting={newSetting} />;
@@ -78,16 +79,16 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 		setting.flashingPattern = flashingPattern;
 
 		if (isNew) {
-			const settings = await loadData();
+			const settings = await SettingsService.loadSettings();
 			const updatedSettings = [...settings, setting];
-			await saveData(updatedSettings);
+			await SettingsService.saveSettings(updatedSettings);
 
 			const newIndex = updatedSettings.length - 1;
 			setLastEdited(newIndex.toString());
 
 			navigation.navigate("Settings", { setting });
 		} else {
-			const settings = await loadData();
+			const settings = await SettingsService.loadSettings();
 			const updatedSettings = settings?.map((s) =>
 				s.name === setting.name
 					? {
@@ -97,7 +98,7 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 						}
 					: s,
 			);
-			await saveData(updatedSettings);
+			await SettingsService.saveSettings(updatedSettings);
 			const currentIndex = updatedSettings.findIndex(
 				(s) => s.name === setting.name,
 			);
@@ -133,21 +134,6 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 		}
 	};
 
-	// Pattern IDs (excluding "Still" which is "6")
-	const ANIMATION_PATTERNS = [
-		"0",
-		"1",
-		"2",
-		"3",
-		"4",
-		"5",
-		"7",
-		"8",
-		"9",
-		"10",
-		"11",
-	];
-
 	return (
 		<SafeAreaProvider>
 			<SafeAreaView style={COMMON_STYLES.container}>
@@ -181,7 +167,7 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 					<Picker
 						navigation={navigation}
 						setting={setting}
-						selectedPattern={throttledFlashingPattern}
+						selectedPattern={debouncedFlashingPattern}
 						setSelectedPattern={setFlashingPattern}
 					/>
 				</View>
@@ -195,7 +181,7 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 								style={styles.slider}
 								minimumValue={40}
 								maximumValue={180}
-								value={throttledBPM}
+								value={debouncedBPM}
 								onValueChange={(value) => {
 									setBPM(value);
 									const newDelayTime = calculateDelayTime(value);

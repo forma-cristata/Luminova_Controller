@@ -23,6 +23,7 @@ Your terminal default path is C:/Users/frisk/Documents/T6_25/Capstone/Luminova_C
 #### **After Every Change:**
 1. **Update CODEBASE_GUIDE.md** if changes affect:
    - Component structure or behavior
+   - Codebase file structure in any way
    - Navigation flow
    - Data models or interfaces
    - API integration patterns
@@ -35,7 +36,8 @@ Your terminal default path is C:/Users/frisk/Documents/T6_25/Capstone/Luminova_C
    - Updated troubleshooting information
 
 3. **Maintain Accuracy:**
-   - Remove references to deleted/deprecated components
+   - Remove references to deleted/deprecated components/files/functions/hooks.
+   - Deleted components/files/functions/hooks/etc. deprecated by your changes.
    - Update file paths if components are moved
    - Revise feature descriptions for modified functionality
    - Keep animation pattern lists current
@@ -43,6 +45,7 @@ Your terminal default path is C:/Users/frisk/Documents/T6_25/Capstone/Luminova_C
 ### 🛠️ **Development Standards**
 
 #### **Before Making Changes:**
+- If the prompt uses all capital letters, summarize our conversation history.
 - Scan related components to understand dependencies
 - Check for existing patterns in SharedStyles.ts and ApiService.ts
 - Review similar implementations in the codebase

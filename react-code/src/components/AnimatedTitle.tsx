@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { type DimensionValue, StyleSheet, Text } from "react-native";
 import { FONTS } from "./SharedStyles";
 import React from "react";
+import { ANIMATION_COLORS } from "../configurations/constants";
 
 interface AnimatedTitleProps {
 	text: string;
@@ -21,40 +22,7 @@ export default function AnimatedTitle({
 	const [textColor, setTextColor] = useState("#ffffff");
 
 	useEffect(() => {
-		const animationColors = [
-			"#ff0000",
-			"#000000",
-			"#ff4400",
-			"#000000",
-			"#ff6a00",
-			"#000000",
-			"#ff9100",
-			"#000000",
-			"#ffee00",
-			"#000000",
-			"#00ff1e",
-			"#000000",
-			"#00ff44",
-			"#000000",
-			"#00ff95",
-			"#000000",
-			"#00ffff",
-			"#000000",
-			"#0088ff",
-			"#000000",
-			"#0000ff",
-			"#000000",
-			"#8800ff",
-			"#000000",
-			"#d300ff",
-			"#000000",
-			"#ff00BB",
-			"#000000",
-			"#ff0088",
-			"#000000",
-			"#ff0031",
-			"#000000",
-		];
+		const animationColors = ANIMATION_COLORS;
 		let colorIndex = 0;
 
 		const colorInterval = setInterval(() => {

@@ -3,14 +3,14 @@ import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import ChooseModification from "@/app/ChooseModification";
-import ColorEditor from "@/app/ColorEditor";
-import { ConfigurationProvider } from "@/app/context/ConfigurationContext";
-import FlashingPatternEditor from "@/app/FlashingPatternEditor";
-import Info from "@/app/Info";
-import type { Setting } from "@/app/interface/setting-interface";
-import Settings from "@/app/settings";
-import Welcome from "@/app/welcome";
+import ChooseModification from "./ChooseModification";
+import ColorEditor from "./ColorEditor";
+import { ConfigurationProvider } from "@/src/context/ConfigurationContext";
+import FlashingPatternEditor from "./FlashingPatternEditor";
+import Info from "./Info";
+import type { Setting } from "@/src/interface/setting-interface";
+import Settings from "./settings";
+import Welcome from "./welcome";
 import React from "react";
 
 export type RootStackParamList = {
@@ -27,8 +27,8 @@ SplashScreen.preventAutoHideAsync();
 
 function Index() {
 	const [loaded, error] = useFonts({
-		Thesignature: require("../assets/fonts/Thesignature.ttf"),
-		"Clearlight-lJlq": require("../assets/fonts/Clearlight-lJlq.ttf"),
+		Thesignature: require("../../assets/fonts/Thesignature.ttf"),
+		"Clearlight-lJlq": require("../../assets/fonts/Clearlight-lJlq.ttf"),
 	});
 
 	useEffect(() => {

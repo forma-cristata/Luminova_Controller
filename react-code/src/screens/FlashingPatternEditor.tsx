@@ -53,25 +53,43 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 
 	const [previewMode, setPreviewMode] = useState(false);
 	const [showBPMMeasurer, setShowBPMMeasurer] = useState(false);
+	
 	const calculateBPM = (delayTime: number): string => {
 		return (60000 / (64 * delayTime)).toFixed(0);
 	};
 
-	useEffect(() => {
-		const initialBpm = parseFloat(calculateBPM(setting.delayTime));
-		setBPM(Number.isNaN(initialBpm) ? 0 : initialBpm);
-	}, [calculateBPM, setting.delayTime]);
-
 	const calculateDelayTime = (bpm: number): number => {
 		return Math.round(60000 / (64 * bpm));
 	};
+
+	// Throttle expensive operations but keep slider responsive
+	const throttledSetDelayTime = React.useCallback(
+		React.useMemo(() => {
+			let timeoutId: ReturnType<typeof setTimeout> | null = null;
+			return (bpm: number) => {
+				if (timeoutId) {
+					clearTimeout(timeoutId);
+				}
+				timeoutId = setTimeout(() => {
+					const newDelayTime = calculateDelayTime(bpm);
+					setDelayTime(newDelayTime);
+				}, 50);
+			};
+		}, []),
+		[]
+	);
+
+	useEffect(() => {
+		const initialBpm = parseFloat(calculateBPM(setting.delayTime));
+		setBPM(Number.isNaN(initialBpm) ? 0 : initialBpm);
+	}, [setting.delayTime]); // Only depend on setting.delayTime, not calculateBPM
 	const modeDots = () => {
 		const newSetting = {
 			...setting,
-			delayTime: debouncedDelayTime,
+			delayTime: debouncedDelayTime, // Use throttled/debounced value for consistency
 			flashingPattern: flashingPattern,
 		};
-		return <AnimatedDots navigation={navigation} setting={newSetting} />;
+		return <AnimatedDots key={`${debouncedDelayTime}-${flashingPattern}`} navigation={navigation} setting={newSetting} />;
 	};
 
 	const handleSave = async () => {
@@ -181,11 +199,10 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 								style={styles.slider}
 								minimumValue={40}
 								maximumValue={180}
-								value={debouncedBPM}
+								value={BPM}
 								onValueChange={(value) => {
 									setBPM(value);
-									const newDelayTime = calculateDelayTime(value);
-									setDelayTime(newDelayTime);
+									throttledSetDelayTime(value);
 								}}
 								minimumTrackTintColor="#ff0000"
 								maximumTrackTintColor={COLORS.WHITE}

@@ -8,6 +8,7 @@ import { SafeAreaView, StyleSheet } from "react-native";
 import Dot from "@/src/components/Dot";
 
 import type { Setting } from "@/src/interface/SettingInterface";
+import { getStableSettingId } from "@/src/utils/settingUtils";
 
 interface AnimatedDotsProps {
 	navigation: any;
@@ -811,27 +812,15 @@ export default function AnimatedDots({ setting }: AnimatedDotsProps) {
 
 			clearAllTimeouts();
 		};
-	}, [setting.colors, setting.delayTime, setting.flashingPattern]);
+	}, [setting]);
 
 	return (
 		<SafeAreaView style={styles.background}>
-			{dotColors ? 
-				Array.isArray(dotColors) 
-					? dotColors.map((color, index) => {
-						// Safety checks
-						if (typeof color !== 'string') {
-							return null;
-						}
-						
-						// Use stable setting ID with color hash for truly stable keys (no index)
-						const baseId = getStableSettingId(setting);
-						const colorHash = color.replace('#', '');
-						const THISISNOTTHERIGHTWAYTOCREATEATHISISNOTTHERIGHTWAYTOCREATEASTABLEKEYUSETHEFUNCTIONINSETTINGUTILSUSETHEFUNCTIONINSETTINGUTILS = `${baseId}-dot-${colorHash}-${index < 8 ? 'top' : 'bottom'}-${index % 8}`;
-						return (
-							<Dot key={THISISNOTTHERIGHTWAYTOCREATEASTABLEKEYUSETHEFUNCTIONINSETTINGUTILS} color={color} id={`dot_${index + 1}`} />
-						);
-					}).filter(Boolean) 
-					: null
+			{dotColors
+				? dotColors.map((color, index) => {
+						const stableKey = `${getStableSettingId(setting)}-dot-${index}`;
+						return <Dot key={stableKey} color={color || black} id={`dot_${index + 1}`}/>;
+				  })
 				: null}
 		</SafeAreaView>
 	);

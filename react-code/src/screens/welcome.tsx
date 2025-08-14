@@ -8,8 +8,9 @@ import {
 } from "react-native";
 
 import AnimatedTitle from "@/src/components/AnimatedTitle";
-import InfoButton from "@/src/components/InfoButton";
-import { COLORS, COMMON_STYLES, FONTS } from "@/src/components/SharedStyles";
+import Button from "@/src/components/buttons/Button";
+import InfoButton from "@/src/components/buttons/InfoButton";
+import { COLORS, FONTS } from "@/src/components/SharedStyles";
 import type { Setting } from "@/src/interface/SettingInterface";
 import { ApiService } from "@/src/services/ApiService";
 import { useConfiguration } from "@/src/context/ConfigurationContext";
@@ -118,12 +119,12 @@ export default function Welcome({ navigation }: any) {
 		<SafeAreaView style={styles.container}>
 			<InfoButton />
 			<AnimatedTitle text={displayText} fontSize={130} marginBottom="20%" />
-			<TouchableOpacity
-				style={COMMON_STYLES.welcomeButton}
+			<Button
+				title="Create ⟩"
 				onPress={createButtonPressed}
-			>
-				<Text style={styles.button}>Create ⟩</Text>
-			</TouchableOpacity>
+				variant="welcome"
+				textStyle={styles.buttonText}
+			/>
 			<Switch
 				onValueChange={toggleSwitch}
 				value={isEnabled}
@@ -144,7 +145,7 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		backgroundColor: COLORS.BLACK,
 	},
-	button: {
+	buttonText: {
 		color: COLORS.WHITE,
 		fontSize: 40,
 		fontFamily: FONTS.SIGNATURE,

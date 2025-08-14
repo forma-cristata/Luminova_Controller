@@ -14,7 +14,7 @@ import {
 } from "react-native";
 
 import AnimatedTitle from "@/src/components/AnimatedTitle";
-import BackButton from "@/src/components/BackButton";
+import BackButton from "@/src/components/buttons/BackButton";
 import { FONTS } from "@/src/components/SharedStyles";
 import React from "react";
 

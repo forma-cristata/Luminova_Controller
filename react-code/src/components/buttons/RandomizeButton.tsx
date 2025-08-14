@@ -1,6 +1,6 @@
 import React from "react";
 import { Dimensions, StyleSheet, Text, TouchableOpacity } from "react-native";
-import { COLORS } from "./SharedStyles";
+import { COLORS } from "../SharedStyles";
 
 interface RandomizeButtonProps {
 	onPress: () => void;

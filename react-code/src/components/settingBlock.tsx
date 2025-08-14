@@ -2,8 +2,8 @@ import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import AnimatedDots from "@/src/components/AnimatedDots";
 import ColorDots from "@/src/components/ColorDots";
-import EditButton from "@/src/components/EditButton";
-import FlashButton from "@/src/components/FlashButton";
+import EditButton from "@/src/components/buttons/EditButton";
+import FlashButton from "@/src/components/buttons/FlashButton";
 import type { Setting } from "../interface/SettingInterface";
 import { COLORS, COMMON_STYLES, FONTS } from "./SharedStyles";
 

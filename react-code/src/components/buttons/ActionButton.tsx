@@ -1,7 +1,7 @@
 import React from "react";
 import { ViewStyle, TextStyle } from "react-native";
 import Button, { BaseButtonProps } from "./Button";
-import { COLORS } from "./SharedStyles";
+import { COLORS } from "../SharedStyles";
 
 export type ActionButtonVariant = "primary" | "disabled" | "preview";
 

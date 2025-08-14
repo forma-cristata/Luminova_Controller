@@ -14,8 +14,9 @@ import Carousel, {
 	type ICarouselInstance,
 } from "react-native-reanimated-carousel";
 
-import BackButton from "@/src/components/BackButton";
-import InfoButton from "@/src/components/InfoButton";
+import BackButton from "@/src/components/buttons/BackButton";
+import CreateButton from "@/src/components/buttons/CreateButton";
+import InfoButton from "@/src/components/buttons/InfoButton";
 import SettingBlock from "@/src/components/SettingBlock";
 import { FONTS } from "@/src/components/SharedStyles";
 import { useConfiguration } from "@/src/context/ConfigurationContext";
@@ -313,12 +314,7 @@ export default function Settings({ navigation }: any) {
 						</>
 					) : null}
 					{currentIndex >= settingsData.length ? (
-						<TouchableOpacity
-							style={styles.newSettingButton}
-							onPress={createNewSetting}
-						>
-							<Text style={styles.newSettingText}>+</Text>
-						</TouchableOpacity>
+						<CreateButton onPress={createNewSetting} />
 					) : null}
 				</View>
 				<View style={styles.carCont}>
@@ -398,17 +394,6 @@ const styles = StyleSheet.create({
 	nothing: {
 		justifyContent: "center",
 		alignItems: "center",
-	},
-	newSettingButton: {
-		width: "80%",
-		height: "40%",
-		justifyContent: "center",
-		alignItems: "center",
-	},
-	newSettingText: {
-		color: "white",
-		fontSize: 100,
-		fontFamily: FONTS.CLEAR,
 	},
 	newSettingItem: {
 		borderColor: "black",

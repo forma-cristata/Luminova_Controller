@@ -24,13 +24,13 @@ import Animated, {
 	useSharedValue,
 } from "react-native-reanimated";
 
-import ActionButton from "@/src/components/ActionButton";
-import BackButton from "@/src/components/BackButton";
-import ColorButton from "@/src/components/ColorButton";
+import ActionButton from "@/src/components/buttons/ActionButton";
+import BackButton from "@/src/components/buttons/BackButton";
+import ColorButton from "@/src/components/buttons/ColorButton";
 import ColorDots from "@/src/components/ColorDots";
 import HueSliderBackground from "@/src/components/HueSliderBackground";
-import InfoButton from "@/src/components/InfoButton";
-import RandomizeButton from "@/src/components/RandomizeButton";
+import InfoButton from "@/src/components/buttons/InfoButton";
+import RandomizeButton from "@/src/components/buttons/RandomizeButton";
 import { COLORS, COMMON_STYLES, FONTS } from "@/src/components/SharedStyles";
 import type { Setting } from "@/src/interface/SettingInterface";
 import React from "react";

@@ -1,7 +1,7 @@
 import React from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { Dimensions, StyleSheet, TouchableOpacity } from "react-native";
-import { COLORS } from "./SharedStyles";
+import { COLORS } from "../SharedStyles";
 
 const { width, height } = Dimensions.get("window");
 const scale = Math.min(width, height) / 375;

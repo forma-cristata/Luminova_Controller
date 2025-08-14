@@ -1,6 +1,6 @@
 import React from "react";
 import { Text, TouchableOpacity, ViewStyle, TextStyle } from "react-native";
-import { COLORS } from "./SharedStyles";
+import { COLORS } from "../SharedStyles";
 
 interface ColorButtonProps {
 	color: "white" | "black";

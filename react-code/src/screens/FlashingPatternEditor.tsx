@@ -14,14 +14,14 @@ import {
 	View,
 } from "react-native";
 
-import ActionButton from "@/src/components/ActionButton";
+import ActionButton from "@/src/components/buttons/ActionButton";
 import AnimatedDots from "@/src/components/AnimatedDots";
-import BackButton from "@/src/components/BackButton";
+import BackButton from "@/src/components/buttons/BackButton";
 import BPMMeasurer from "@/src/components/BPMMeasurer";
-import InfoButton from "@/src/components/InfoButton";
-import MetronomeButton from "@/src/components/MetronomeButton";
+import InfoButton from "@/src/components/buttons/InfoButton";
+import MetronomeButton from "@/src/components/buttons/MetronomeButton";
 import Picker from "@/src/components/Picker";
-import RandomizeButton from "@/src/components/RandomizeButton";
+import RandomizeButton from "@/src/components/buttons/RandomizeButton";
 import { COLORS, COMMON_STYLES, FONTS } from "@/src/components/SharedStyles";
 import { ANIMATION_PATTERNS } from "@/src/configurations/patterns";
 import { useConfiguration } from "@/src/context/ConfigurationContext";

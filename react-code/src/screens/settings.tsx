@@ -218,10 +218,11 @@ export default function Settings({ navigation }: any) {
 	};
 	// Memoize the focused setting block to prevent unnecessary re-renders
 	const focusedSettingBlock = React.useMemo(() => {
-		return (currentIndex < settingsData.length && settingsData[currentIndex]) ? (
+		return currentIndex < settingsData.length && settingsData[currentIndex] ? (
 			<SettingBlock
 				navigation={navigation}
-				animated={true}
+				layout="full"
+				isAnimated={false}
 				style={styles.nothing}
 				setting={settingsData[currentIndex]}
 				index={currentIndex}
@@ -229,29 +230,31 @@ export default function Settings({ navigation }: any) {
 		) : null;
 	}, [navigation, settingsData, currentIndex]);
 	// Memoize the render item function to prevent recreation on every render
-	const renderItem = React.useCallback(({
-		item,
-		index,
-	}: {
-		item: Setting | "new";
-		index: number;
-	}) => {
-		return item === "new" ? (
-			<Text
-				style={styles.newSettingItemText}
-				key={`new-item`}
-			></Text>
-		) : (
-			<SettingBlock
-				key={`setting-${item.name}-${index}`}
-				navigation={navigation}
-				animated={false}
-				style={styles.renderItem}
-				setting={item}
-				index={index}
-			/>
-		);
-	}, [navigation]);return (
+	const renderItem = React.useCallback(
+		({ item, index }: { item: Setting | "new"; index: number }) => {
+			if (item === "new") {
+				return (
+					<Text style={styles.newSettingItemText} key={`new-item`}></Text>
+				);
+			}
+
+			// The main item is animated, others are not.
+			const isAnimated = index === currentIndex;
+
+			return (
+				<SettingBlock
+					key={`setting-${item.name}-${index}`}
+					navigation={navigation}
+					layout="compact"
+					isAnimated={isAnimated}
+					style={styles.renderItem}
+					setting={item}
+					index={index}
+				/>
+			);
+		},
+		[navigation, currentIndex],
+	);return (
 		<SafeAreaView style={styles.container}>
 			<InfoButton />			<BackButton
 				beforePress={() => setLastEdited("0")}

@@ -11,7 +11,8 @@ interface SettingItemProps {
 	navigation: any;
 	setting: Setting;
 	style: any;
-	animated: boolean;
+	layout: "full" | "compact";
+	isAnimated: boolean;
 	index?: number;
 }
 
@@ -19,9 +20,11 @@ interface SettingItemProps {
 const areEqual = (prevProps: SettingItemProps, nextProps: SettingItemProps) => {
 	return (
 		prevProps.setting?.name === nextProps.setting?.name &&
-		prevProps.animated === nextProps.animated &&
+		prevProps.layout === nextProps.layout &&
+		prevProps.isAnimated === nextProps.isAnimated &&
 		prevProps.index === nextProps.index &&
-		JSON.stringify(prevProps.setting?.colors) === JSON.stringify(nextProps.setting?.colors)
+		JSON.stringify(prevProps.setting?.colors) ===
+			JSON.stringify(nextProps.setting?.colors)
 	);
 };
 
@@ -29,7 +32,8 @@ const SettingBlock = ({
 	navigation,
 	setting,
 	style,
-	animated,
+	layout,
+	isAnimated,
 	index,
 }: SettingItemProps) => {
 	const { setLastEdited } = useConfiguration();
@@ -39,14 +43,19 @@ const SettingBlock = ({
 	}
 	// Memoize the dots rendering to prevent unnecessary re-renders
 	const dotsRendered = React.useMemo(() => {
-		return animated ? <AnimatedDots navigation={navigation} setting={setting} /> : <ColorDots colors={setting.colors} />;
-	}, [animated, navigation, setting]);
+		return isAnimated ? (
+			<AnimatedDots navigation={navigation} setting={setting} />
+		) : (
+			<ColorDots colors={setting.colors} />
+		);
+	}, [isAnimated, navigation, setting, setting.colors]);
 
-	return (		<>
-			{animated ? (
+	return (
+		<>
+			{layout === "full" ? (
 				<View style={[style]}>
 					<View style={styles.headerContainer}>
-						<Text 
+						<Text
 							style={styles.whiteText}
 							numberOfLines={1}
 							ellipsizeMode="tail"
@@ -56,35 +65,34 @@ const SettingBlock = ({
 					</View>
 
 					{dotsRendered}
-					<View style={styles.buttonsContainer}>						
+					<View style={styles.buttonsContainer}>
 						<TouchableOpacity
 							style={COMMON_STYLES.wideButton}
 							onPress={() => {
 								setLastEdited(index?.toString() ?? null);
-								navigation.navigate("ChooseModification", { 
-									setting: setting, 
-									settingIndex: index 
+								navigation.navigate("ChooseModification", {
+									setting: setting,
+									settingIndex: index,
 								});
 							}}
 						>
 							<Text style={styles.buttons}>Edit</Text>
-						</TouchableOpacity>						
+						</TouchableOpacity>
 						<FlashButton
 							setting={setting}
 							style={COMMON_STYLES.wideButton}
-						/>					</View>
+						/>
+					</View>
 				</View>
 			) : null}
 
-			{!animated ? (
+			{layout === "compact" ? (
 				<View style={style}>
-					<Text 
-						style={styles.whiteTextSmaller}
-						numberOfLines={1}
-						ellipsizeMode="tail"
-					>
-						{setting.name.toLowerCase()}
-					</Text>					{dotsRendered}
+					{dotsRendered}
+					<FlashButton
+						setting={setting}
+						style={styles.flashButtonCompact}
+					/>
 				</View>
 			) : null}
 		</>
@@ -124,6 +132,12 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		paddingHorizontal: 40,
 		position: "relative",
+	},
+	flashButtonCompact: {
+		...COMMON_STYLES.wideButton,
+		marginTop: 10,
+		paddingVertical: 5,
+		paddingHorizontal: 15,
 	},
 	deleteButton: {
 		position: "absolute",

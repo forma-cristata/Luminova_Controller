@@ -5,9 +5,11 @@ const { useEffect, useState } = React;
 
 import {
 	Dimensions,
+	Keyboard,
 	SafeAreaView,
 	StyleSheet,
 	Text,
+	TextInput,
 	TouchableOpacity,
 	View,
 } from "react-native";
@@ -23,6 +25,7 @@ import { COLORS, COMMON_STYLES, FONTS } from "@/src/components/SharedStyles";
 import { ANIMATION_PATTERNS } from "@/src/configurations/patterns";
 import { useConfiguration } from "@/src/context/ConfigurationContext";
 import { useDebounce } from "@/src/hooks/useDebounce";
+import type { Setting } from "@/src/interface/setting-interface";
 import { ApiService } from "@/src/services/ApiService";
 import { SettingsService } from "@/src/services/SettingsService";
 
@@ -38,6 +41,7 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 
 	const setting = route.params?.setting;
 	const isNew = route.params?.isNew || false;
+	const settingIndex = route.params?.settingIndex; // Add support for index-based editing
 
 	const [initialDelayTime] = React.useState(setting.delayTime);
 	const [initialFlashingPattern] = React.useState(setting.flashingPattern);
@@ -53,6 +57,26 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 
 	const [previewMode, setPreviewMode] = useState(false);
 	const [showBPMMeasurer, setShowBPMMeasurer] = useState(false);
+	
+	// Name editing state (now used for both new and existing settings)
+	const [settingName, setSettingName] = useState(setting.name);
+	const [nameError, setNameError] = useState<string | null>(null);
+	const [hasChanges, setHasChanges] = useState(false);
+
+	const handleNameChange = async (text: string) => {
+		setSettingName(text);
+		setHasChanges(true);
+
+		// Check for duplicate names
+		const settings = await SettingsService.loadSettings();
+		const nameExists = settings?.some(
+			(s: Setting, index: number) =>
+				s.name.toLowerCase() === text.toLowerCase() &&
+				s.name !== setting.name &&
+				(!isNew || index !== settingIndex) // Exclude current setting for existing settings
+		);
+		setNameError(nameExists ? "Name already exists." : null);
+	};
 	
 	const calculateBPM = (delayTime: number): string => {
 		return (60000 / (64 * delayTime)).toFixed(0);
@@ -83,6 +107,13 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 		const initialBpm = parseFloat(calculateBPM(setting.delayTime));
 		setBPM(Number.isNaN(initialBpm) ? 0 : initialBpm);
 	}, [setting.delayTime]); // Only depend on setting.delayTime, not calculateBPM
+	
+	// Track changes when values differ from initial values
+	useEffect(() => {
+		const hasPatternChanges = delayTime !== initialDelayTime || flashingPattern !== initialFlashingPattern;
+		const hasNameChanges = settingName !== setting.name;
+		setHasChanges(hasPatternChanges || hasNameChanges);
+	}, [delayTime, initialDelayTime, flashingPattern, initialFlashingPattern, settingName, setting.name]);
 	const modeDots = () => {
 		const newSetting = {
 			...setting,
@@ -95,6 +126,7 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 	const handleSave = async () => {
 		setting.delayTime = Math.round(delayTime);
 		setting.flashingPattern = flashingPattern;
+		setting.name = settingName; // Update name for both new and existing settings
 
 		if (isNew) {
 			const settings = await SettingsService.loadSettings();
@@ -106,20 +138,18 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 
 			navigation.navigate("Settings", { setting });
 		} else {
-			const settings = await SettingsService.loadSettings();
-			const updatedSettings = settings?.map((s) =>
-				s.name === setting.name
-					? {
-							...s,
-							delayTime: Math.round(delayTime),
-							flashingPattern: flashingPattern,
-						}
-					: s,
+			const updatedSetting = {
+				...setting,
+				name: settingName,
+				delayTime: Math.round(delayTime),
+				flashingPattern: flashingPattern,
+			};
+			const updatedSettings = await SettingsService.updateSetting(
+				settingIndex,
+				updatedSetting,
 			);
-			await SettingsService.saveSettings(updatedSettings);
-			const currentIndex = updatedSettings.findIndex(
-				(s) => s.name === setting.name,
-			);
+			
+			const currentIndex = settingIndex; // Use the existing index
 			setLastEdited(currentIndex.toString());
 			navigation.navigate("Settings", { setting });
 		}
@@ -172,7 +202,25 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 							setFlashingPattern(randomPattern);
 						}}
 					/>
-					<Text style={styles.whiteText}>{setting.name}</Text>{" "}
+					<View style={styles.nameInputContainer}>
+						<Text style={COMMON_STYLES.sliderText}>Setting Name:</Text>
+						<TextInput
+							style={[
+								styles.nameInput,
+								nameError ? { color: COLORS.ERROR } : null,
+							]}
+							value={settingName}
+							onChangeText={handleNameChange}
+							placeholder="Enter setting name"
+							placeholderTextColor={COLORS.PLACEHOLDER}
+							maxLength={20}
+							onBlur={() => {
+								Keyboard.dismiss();
+							}}
+							autoCapitalize="words"
+							keyboardAppearance="dark"
+						/>
+					</View>
 					<MetronomeButton
 						onPress={() => {
 							setShowBPMMeasurer(true);
@@ -217,8 +265,7 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 								COMMON_STYLES.styleAButton,
 								{
 									opacity:
-										delayTime !== initialDelayTime ||
-										flashingPattern !== initialFlashingPattern
+										hasChanges
 											? 1
 											: COLORS.DISABLED_OPACITY,
 								},
@@ -227,12 +274,11 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 								setDelayTime(initialDelayTime);
 								setBPM(parseFloat(calculateBPM(initialDelayTime)));
 								setFlashingPattern(initialFlashingPattern);
+								setSettingName(setting.name); // Reset name
+								setNameError(null); // Clear name error
 								unPreviewAPI();
 							}}
-							disabled={
-								delayTime === initialDelayTime &&
-								flashingPattern === initialFlashingPattern
-							}
+							disabled={!hasChanges}
 						>
 							<Text style={COMMON_STYLES.buttonText}>Reset</Text>
 						</TouchableOpacity>
@@ -242,47 +288,31 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 								COMMON_STYLES.styleAButton,
 								{
 									opacity:
-										delayTime !== initialDelayTime ||
-										flashingPattern !== initialFlashingPattern ||
-										isNew
+										hasChanges && !nameError
 											? 1
 											: COLORS.DISABLED_OPACITY,
 								},
 							]}
 							onPress={handleSave}
-							disabled={
-								!isNew &&
-								delayTime === initialDelayTime &&
-								flashingPattern === initialFlashingPattern
-							}
+							disabled={!hasChanges || !!nameError}
 						>
 							<Text style={COMMON_STYLES.buttonText}>Save</Text>
 						</TouchableOpacity>
 
 						<TouchableOpacity
 							style={
-								!(
-									delayTime !== initialDelayTime ||
-									flashingPattern !== initialFlashingPattern
-								) && previewMode
+								!hasChanges && previewMode
 									? COMMON_STYLES.styleADisabledButton
 									: COMMON_STYLES.styleAButton
 							}
-							key={(
-								delayTime !== initialDelayTime ||
-								flashingPattern !== initialFlashingPattern
-							).toString()}
+							key={hasChanges.toString()}
 							onPress={() => {
 								previewAPI();
 								setPreviewMode(true);
 							}}
 						>
 							<Text style={COMMON_STYLES.buttonText}>
-								{previewMode &&
-								(delayTime !== initialDelayTime ||
-									flashingPattern !== initialFlashingPattern)
-									? "Update"
-									: "Preview"}
+								{previewMode && hasChanges ? "Update" : "Preview"}
 							</Text>
 						</TouchableOpacity>
 					</View>
@@ -345,5 +375,18 @@ const styles = StyleSheet.create({
 	},
 	sliderPadding: {
 		marginBottom: 20,
+	},
+	nameInputContainer: {
+		flex: 1,
+		justifyContent: "center",
+		alignItems: "center",
+	},
+	nameInput: {
+		color: COLORS.WHITE,
+		fontSize: 30 * scale,
+		fontFamily: FONTS.SIGNATURE,
+		textAlign: "center",
+		minWidth: width * 0.6,
+		padding: 10,
 	},
 });

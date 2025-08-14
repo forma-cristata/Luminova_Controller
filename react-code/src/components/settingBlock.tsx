@@ -73,12 +73,14 @@ const SettingBlock = ({
 					</View>
 
 					{dotsRendered}
-					<View style={styles.buttonsContainer}>
-						<TouchableOpacity
+					<View style={styles.buttonsContainer}>						<TouchableOpacity
 							style={COMMON_STYLES.wideButton}
 							onPress={() => {
 								setLastEdited(index?.toString() ?? null);
-								navigation.navigate("ChooseModification", { setting: setting });
+								navigation.navigate("ChooseModification", { 
+									setting: setting, 
+									settingIndex: index 
+								});
 							}}
 						>
 							<Text style={styles.buttons}>Edit</Text>

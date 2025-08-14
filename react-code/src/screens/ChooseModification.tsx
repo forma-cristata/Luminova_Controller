@@ -18,6 +18,7 @@ interface Props {
 	route: {
 		params?: {
 			setting: Setting;
+			settingIndex: number;
 		};
 	};
 	navigation: {
@@ -28,6 +29,7 @@ interface Props {
 
 export default function ChooseModificatioon({ navigation, route }: Props) {
 	const setting = route.params!.setting;
+	const settingIndex = route.params!.settingIndex;
 	const modeDots = () => {
 		return <AnimatedDots navigation={navigation} setting={setting} />;
 	};
@@ -44,6 +46,7 @@ export default function ChooseModificatioon({ navigation, route }: Props) {
 								onPress={() =>
 									navigation.navigate("FlashingPatternEditor", {
 										setting: setting,
+										settingIndex: settingIndex,
 									})
 								}
 							>
@@ -55,7 +58,10 @@ export default function ChooseModificatioon({ navigation, route }: Props) {
 						<View style={styles.dotContainer}>
 							<TouchableOpacity
 								onPress={() =>
-									navigation.navigate("ColorEditor", { setting: setting })
+									navigation.navigate("ColorEditor", { 
+										setting: setting,
+										settingIndex: settingIndex,
+									})
 								}
 							>
 								<ColorDots colors={setting.colors} />

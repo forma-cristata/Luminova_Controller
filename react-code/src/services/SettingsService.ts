@@ -22,17 +22,15 @@ export class SettingsService {
 			return DEFAULT_SETTINGS;
 		}
 	}
-
 	static async updateSetting(
-		originalName: string,
+		settingIndex: number,
 		updatedSetting: Setting,
 	): Promise<Setting[]> {
 		const settings = await this.loadSettings();
-		const settingIndex = settings.findIndex((s) => s.name === originalName);
 
-		if (settingIndex === -1) {
-			console.error(`Setting with name "${originalName}" not found.`);
-			return settings; // Return original settings if not found
+		if (settingIndex < 0 || settingIndex >= settings.length) {
+			console.error(`Setting index ${settingIndex} is out of bounds.`);
+			return settings; // Return original settings if index is invalid
 		}
 
 		const newSettings = [...settings];

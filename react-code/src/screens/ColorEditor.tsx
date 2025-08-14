@@ -39,6 +39,7 @@ export default function ColorEditor({ navigation, route }: any) {
 	const setting = route.params?.setting;
 	const isNew = route.params?.isNew || false;
 	const originalName = route.params?.originalName || setting.name;
+	const settingIndex = route.params?.settingIndex; // Add support for index-based editing
 
 	const [colors, setColors] = useState([...setting.colors]);
 	const [selectedDot, setSelectedDot] = useState<number | null>(null);
@@ -60,7 +61,7 @@ export default function ColorEditor({ navigation, route }: any) {
 
 	const [previewMode, setPreviewMode] = useState(false);
 
-	// Name editing state (only used for new settings)
+	// Name editing state (now used for both new and existing settings)
 	const [settingName, setSettingName] = useState(setting.name);
 	const [nameError, setNameError] = useState<string | null>(null);
 
@@ -68,15 +69,15 @@ export default function ColorEditor({ navigation, route }: any) {
 		setSettingName(text);
 		setHasChanges(true);
 
-		if (isNew) {
-			const settings = await SettingsService.loadSettings();
-			const nameExists = settings?.some(
-				(s: Setting) =>
-					s.name.toLowerCase() === text.toLowerCase() &&
-					s.name !== originalName,
-			);
-			setNameError(nameExists ? "Name already exists." : null);
-		}
+		// Check for duplicate names
+		const settings = await SettingsService.loadSettings();
+		const nameExists = settings?.some(
+			(s: Setting, index: number) =>
+				s.name.toLowerCase() === text.toLowerCase() &&
+				s.name !== originalName &&
+				(!isNew || index !== settingIndex) // Exclude current setting for existing settings
+		);
+		setNameError(nameExists ? "Name already exists." : null);
 	};
 
 	const hexToRgb = (hex: string) => {
@@ -224,10 +225,10 @@ export default function ColorEditor({ navigation, route }: any) {
 			setColorHistory([]);
 			setHasChanges(false);
 
-			if (isNew) {
-				setSettingName(setting.name);
-				setNameError(null);
-			}
+			// Reset name for both new and existing settings
+			setSettingName(setting.name);
+			setNameError(null);
+			
 			if (selectedDot !== null) {
 				setHexInput(setting.colors[selectedDot].replace("#", ""));
 				const rgb = hexToRgb(setting.colors[selectedDot]);
@@ -242,9 +243,8 @@ export default function ColorEditor({ navigation, route }: any) {
 	};
 
 	const handleSave = async () => {
-		if (isNew) {
-			setting.name = settingName;
-		}
+		// Always update the setting name
+		setting.name = settingName;
 		setting.colors = [...colors];
 
 		if (isNew) {
@@ -253,18 +253,16 @@ export default function ColorEditor({ navigation, route }: any) {
 				isNew: true,
 			});
 		} else {
-			const updatedSetting = { ...setting, colors: [...colors] };
+			const updatedSetting = { ...setting, name: settingName, colors: [...colors] };
 			const updatedSettings = await SettingsService.updateSetting(
-				originalName,
+				settingIndex,
 				updatedSetting,
 			);
 
-			const currentIndex = updatedSettings.findIndex(
-				(s: Setting) => s.name === updatedSetting.name,
-			);
+			const currentIndex = settingIndex; // Use the existing index
 			setLastEdited(currentIndex.toString());
 
-			// Fix: Navigate directly to Settings, skipping ChooseModification
+			// Navigate directly to Settings
 			navigation.navigate("Settings");
 		}
 	};
@@ -403,62 +401,40 @@ export default function ColorEditor({ navigation, route }: any) {
 	};
 
 	const renderTitle = () => {
-		if (isNew) {
-			return (
-				<View style={styles.titleContainer}>
-					<RandomizeButton
-						onPress={() => {
-							const shuffled = [...colors];
-							for (let i = shuffled.length - 1; i > 0; i--) {
-								const j = Math.floor(Math.random() * (i + 1));
-								[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-							}
-							setColors(shuffled);
-							setColorHistory([...colorHistory, [...colors]]);
-							setHasChanges(true);
-						}}
+		// Always show name input for both new and existing settings
+		return (
+			<View style={styles.titleContainer}>
+				<RandomizeButton
+					onPress={() => {
+						const shuffled = [...colors];
+						for (let i = shuffled.length - 1; i > 0; i--) {
+							const j = Math.floor(Math.random() * (i + 1));
+							[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+						}
+						setColors(shuffled);
+						setColorHistory([...colorHistory, [...colors]]);
+						setHasChanges(true);
+					}}
+				/>
+				<View style={styles.nameInputContainer}>
+					<Text style={COMMON_STYLES.sliderText}>Setting Name:</Text>
+					<TextInput
+						style={[
+							styles.nameInput,
+							nameError ? { color: COLORS.ERROR } : null,
+						]}
+						value={settingName}
+						onChangeText={handleNameChange}
+						placeholder="Enter setting name"
+						placeholderTextColor={COLORS.PLACEHOLDER}
+						maxLength={20}
 					/>
-					<View style={styles.nameInputContainer}>
-						<Text style={COMMON_STYLES.sliderText}>Setting Name:</Text>
-						<TextInput
-							style={[
-								styles.nameInput,
-								nameError ? { color: COLORS.ERROR } : null,
-							]}
-							value={settingName}
-							onChangeText={handleNameChange}
-							placeholder="Enter setting name"
-							placeholderTextColor={COLORS.PLACEHOLDER}
-							maxLength={20}
-						/>
-					</View>
-					<TouchableOpacity style={styles.sortButton} onPress={sortColorsByHue}>
-						<Text style={styles.sortIcon}>↹</Text>
-					</TouchableOpacity>
 				</View>
-			);
-		} else {
-			return (
-				<View style={styles.titleContainer}>
-					<RandomizeButton
-						onPress={() => {
-							const shuffled = [...colors];
-							for (let i = shuffled.length - 1; i > 0; i--) {
-								const j = Math.floor(Math.random() * (i + 1));
-								[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-							}
-							setColors(shuffled);
-							setColorHistory([...colorHistory, [...colors]]);
-							setHasChanges(true);
-						}}
-					/>
-					<Text style={styles.whiteText}>{setting.name}</Text>
-					<TouchableOpacity style={styles.sortButton} onPress={sortColorsByHue}>
-						<Text style={styles.sortIcon}>↹</Text>
-					</TouchableOpacity>
-				</View>
-			);
-		}
+				<TouchableOpacity style={styles.sortButton} onPress={sortColorsByHue}>
+					<Text style={styles.sortIcon}>↹</Text>
+				</TouchableOpacity>
+			</View>
+		);
 	};
 
 	return (
@@ -652,18 +628,17 @@ export default function ColorEditor({ navigation, route }: any) {
 										<Text style={COMMON_STYLES.buttonText}>Reset</Text>
 									</TouchableOpacity>
 
-									<TouchableOpacity
-										style={[
-											COMMON_STYLES.styleAButton,
-											{
-												opacity:
-													hasChanges && (!isNew || !nameError)
-														? 1
-														: COLORS.DISABLED_OPACITY,
-											},
-										]}
-										onPress={handleSave}
-										disabled={!hasChanges || (isNew && !!nameError)}
+									<TouchableOpacity									style={[
+										COMMON_STYLES.styleAButton,
+										{
+											opacity:
+												hasChanges && !nameError
+													? 1
+													: COLORS.DISABLED_OPACITY,
+										},
+									]}
+									onPress={handleSave}
+									disabled={!hasChanges || !!nameError}
 									>
 										<Text style={COMMON_STYLES.buttonText}>Save</Text>
 									</TouchableOpacity>

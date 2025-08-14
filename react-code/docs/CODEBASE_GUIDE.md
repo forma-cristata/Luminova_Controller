@@ -99,7 +99,9 @@ Welcome → Settings → ChooseModification → [ColorEditor | FlashingPatternEd
   - Hex input with validation
   - Gesture controls (swipe to copy/reverse rows)
   - Preview functionality
+  - **Name editing for both new and existing settings**
 - **Modes**: Handles both new setting creation and existing setting editing
+- **Identification**: Uses index-based setting identification for consistency
 
 #### `src/screens/FlashingPatternEditor.tsx`
 - **Purpose**: Animation pattern and timing configuration
@@ -107,7 +109,9 @@ Welcome → Settings → ChooseModification → [ColorEditor | FlashingPatternEd
   - Pattern picker with 12 different animations
   - BPM-based speed control
   - Real-time preview
+  - **Name editing for both new and existing settings**
 - **Patterns**: Supports 12 distinct animation patterns (0-11)
+- **Identification**: Uses index-based setting identification for consistency
 
 ## Component Library
 
@@ -251,9 +255,9 @@ Welcome → Settings → ChooseModification → [ColorEditor | FlashingPatternEd
   - Info
 
 #### Navigation Parameters
-- **ColorEditor**: `{ setting: Setting, isNew?: boolean, originalName?: string }`
-- **FlashingPatternEditor**: `{ setting: Setting, isNew?: boolean }`
-- **ChooseModification**: `{ setting: Setting }`
+- **ColorEditor**: `{ setting: Setting, isNew?: boolean, settingIndex?: number }`
+- **FlashingPatternEditor**: `{ setting: Setting, isNew?: boolean, settingIndex?: number }`
+- **ChooseModification**: `{ setting: Setting, settingIndex: number }`
 
 ## Animation Patterns
 

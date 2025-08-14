@@ -1,1 +1,3 @@
+#!/bin/sh
+echo "Running pre-push hook: formatting code..."
 npm run format

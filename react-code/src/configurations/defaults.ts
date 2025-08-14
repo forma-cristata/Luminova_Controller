@@ -2,6 +2,34 @@ import type { Setting } from "@/src/interface/setting-interface";
 
 export const DEFAULT_SETTINGS: Setting[] = [
 	{
+		name: "Edit Me!",
+		colors: [
+			"#F0F0F2",
+			"#6C6F73",
+			"#87898C",
+			"#BABCBF",
+			"#3A3E40",
+			"#F0F0F2",
+			"#6C6F73",
+			"#87898C",
+			"#BABCBF",
+			"#3A3E40",
+			"#F0F0F2",
+			"#6C6F73",
+			"#87898C",
+			"#BABCBF",
+			"#3A3E40",
+			"#F0F0F2",
+		],
+		whiteValues: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+		brightnessValues: [
+			255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+			255, 255, 255,
+		],
+		flashingPattern: "3",
+		delayTime: 3,
+	},
+	{
 		name: "Homeostasis",
 		colors: [
 			"#ff0000",

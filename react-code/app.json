@@ -1,11 +1,14 @@
-{
-  "expo": {
+{  "expo": {
     "name": "Luminova Controller",
     "slug": "Luminova_Controller",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "myapp",    "userInterfaceStyle": "automatic",
+    "scheme": "myapp",
+    "userInterfaceStyle": "automatic",
+    "description": "A React Native LED controller app for creating and managing custom lighting configurations with various animation patterns and color schemes.",
+    "keywords": ["LED", "lighting", "controller", "animation", "color", "patterns", "arduino", "neopixel", "FastLED", "controller", "luminova"],
+    "privacy": "public",
     "ios": {
 		"jsEngine": "jsc",
       "supportsTablet": false,

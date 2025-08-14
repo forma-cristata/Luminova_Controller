@@ -269,9 +269,6 @@ export default function Settings({ navigation }: any) {
 				afterPress={() => setLastEdited("0")}
 			/>
 			<View style={styles.notBackButton}>
-				<View style={styles.title}>
-					<Text style={styles.text}>Settings</Text>
-				</View>{" "}
 				<View style={[styles.focusedItem, { position: "relative" }]}>
 					{currentIndex < 0 ? <View></View> : null}
 					{currentIndex < settingsData.length ? (
@@ -353,7 +350,10 @@ const styles = StyleSheet.create({
 		color: "#ffffff",
 	},
 	notBackButton: {
-		height: "90%",
+		flex: 1,
+		justifyContent: "center",
+		alignItems: "center",
+		paddingTop: 100,
 	},
 	renderItem: {
 		borderStyle: "solid",
@@ -369,10 +369,10 @@ const styles = StyleSheet.create({
 		flex: 1,
 		justifyContent: "center",
 		alignItems: "center",
+		marginTop: 20,
 	},
 	carousel: {
 		flex: 1,
-		height: (height * 2) / 10,
 		width: width * 0.9,
 		justifyContent: "center",
 		alignItems: "flex-end",

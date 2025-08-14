@@ -4,8 +4,11 @@ import {
 	TouchableOpacity,
 	type ViewStyle,
 	type TextStyle,
+	Dimensions,
 } from "react-native";
 import { COLORS, FONTS } from "../SharedStyles";
+
+const { height } = Dimensions.get("window");
 
 interface CreateButtonProps {
 	onPress: () => void;
@@ -21,8 +24,8 @@ interface CreateButtonProps {
 const CreateButton = React.memo(
 	({ onPress, style, textStyle, symbol = "+" }: CreateButtonProps) => {
 		const defaultStyle: ViewStyle = {
-			width: "80%",
-			height: "40%",
+			width: 365,
+			height: "100%",
 			justifyContent: "center",
 			alignItems: "center",
 		};

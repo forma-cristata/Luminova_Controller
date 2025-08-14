@@ -74,14 +74,13 @@ const SettingBlock = ({
 						</Text>
 					</View>
 
-					{dotsRendered}
+					<View style={styles.dotsContainer}>{dotsRendered}</View>
 					<View style={styles.buttonsContainer}>
 						<EditButton
 							navigation={navigation}
 							setting={setting}
 							settingIndex={index}
 						/>
-						<FlashButton setting={setting} />
 					</View>
 				</View>
 			) : null}
@@ -99,7 +98,7 @@ const SettingBlock = ({
 const styles = StyleSheet.create({
 	whiteText: {
 		color: COLORS.WHITE,
-		fontSize: 50,
+		fontSize: 70,
 		fontFamily: FONTS.SIGNATURE,
 		textAlign: "center",
 		flexWrap: "nowrap",
@@ -123,6 +122,12 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		paddingHorizontal: 40,
 		position: "relative",
+	},
+	dotsContainer: {
+		paddingHorizontal: 15,
+		paddingVertical: 20,
+		alignItems: "center",
+		justifyContent: "center",
 	},
 	flashButtonCompact: {
 		...COMMON_STYLES.wideButton,

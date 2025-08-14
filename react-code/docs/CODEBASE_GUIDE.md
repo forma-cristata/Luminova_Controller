@@ -230,6 +230,7 @@ react-code/
 ├── src/                          # Main application code
 │   ├── components/               # Reusable UI components (PascalCase)
 │   │   ├── AnimatedDots.tsx     # Animation preview component
+│   │   ├── FlashButton.tsx      # Reusable flash button component
 │   │   ├── SettingBlock.tsx     # Setting display component
 │   │   ├── SharedStyles.ts      # Centralized styling constants
 │   │   └── ...
@@ -383,6 +384,15 @@ Welcome → Settings → ChooseModification → [ColorEditor | FlashingPatternEd
 - **Purpose**: Reusable info button across all screens
 - **Design**: Consistent positioning and styling
 
+#### `src/components/FlashButton.tsx`
+- **Purpose**: Reusable flash button component for sending settings to hardware
+- **Features**:
+  - API integration via ApiService
+  - Customizable styling and text
+  - Success/error callback support
+  - Configuration context integration
+- **Props**: `setting`, `style`, `disabled`, `onPress`, `onSuccess`, `onError`, `textStyle`
+
 ### 📱 Layout Components
 
 #### `src/components/SettingBlock.tsx`
@@ -390,7 +400,7 @@ Welcome → Settings → ChooseModification → [ColorEditor | FlashingPatternEd
 - **Modes**:
   - **Animated**: Full display with Edit/Flash buttons
   - **Static**: Simplified preview for carousel
-- **Features**: API integration for flashing settings to hardware
+- **Features**: Uses FlashButton component for hardware communication
 
 ## Shared Resources
 
@@ -572,6 +582,22 @@ const throttledUpdate = useMemo(() => {
     }, 50);
   };
 }, []);
+```
+
+#### **FlashButton Usage**
+```typescript
+// Basic usage with default styling
+<FlashButton setting={setting} />
+
+// Custom styling and callbacks
+<FlashButton
+  setting={setting}
+  style={COMMON_STYLES.styleAButton}
+  textStyle={customTextStyle}
+  onSuccess={(setting) => console.log(`Flashed: ${setting.name}`)}
+  onError={(error) => Alert.alert("Flash Error", error.message)}
+  disabled={!setting}
+/>
 ```
 
 ### 🎭 **Animation Patterns**

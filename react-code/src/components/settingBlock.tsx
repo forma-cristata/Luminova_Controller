@@ -2,8 +2,8 @@ import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import AnimatedDots from "@/src/components/AnimatedDots";
 import ColorDots from "@/src/components/ColorDots";
+import FlashButton from "@/src/components/FlashButton";
 import { useConfiguration } from "@/src/context/ConfigurationContext";
-import { ApiService } from "@/src/services/ApiService";
 import type { Setting } from "../interface/SettingInterface";
 import { COLORS, COMMON_STYLES, FONTS } from "./SharedStyles";
 
@@ -32,8 +32,7 @@ const SettingBlock = ({
 	animated,
 	index,
 }: SettingItemProps) => {
-	const { currentConfiguration, setCurrentConfiguration, setLastEdited } =
-		useConfiguration();
+	const { setLastEdited } = useConfiguration();
 
 	if (!setting) {
 		return null;
@@ -47,16 +46,6 @@ const SettingBlock = ({
 			return <ColorDots colors={setting.colors} />;
 		}
 	}, [animated, navigation, setting]);
-
-	const handleFlash = async () => {
-		try {
-			await ApiService.flashSetting(setting);
-			setCurrentConfiguration(setting);
-			console.log(`Current Configuration: ${setting.name}`);
-		} catch (error) {
-			console.error("Flash error:", error);
-		}
-	};
 
 	return (
 		<>
@@ -84,13 +73,10 @@ const SettingBlock = ({
 							}}
 						>
 							<Text style={styles.buttons}>Edit</Text>
-						</TouchableOpacity>
-						<TouchableOpacity
+						</TouchableOpacity>						<FlashButton
+							setting={setting}
 							style={COMMON_STYLES.wideButton}
-							onPress={handleFlash}
-						>
-							<Text style={styles.buttons}>Flash</Text>
-						</TouchableOpacity>
+						/>
 					</View>
 				</View>
 			)}

@@ -486,6 +486,7 @@ Welcome → Settings → ChooseModification → [ColorEditor | FlashingPatternEd
 
 #### `src/components/EditButton.tsx`
 - **Purpose**: Reusable edit button component for navigating to setting modification
+- **Usage**: Now primarily used in compact layout carousel items; focused settings use direct touch interaction
 - **Features**:
   - Navigation integration with parameter passing
   - Configuration context integration
@@ -505,15 +506,25 @@ Welcome → Settings → ChooseModification → [ColorEditor | FlashingPatternEd
 ### 📱 Layout Components
 
 #### `src/components/SettingBlock.tsx`
-- **Purpose**: Setting display component used in carousel
+- **Purpose**: Setting display component used in carousel and focused settings
 - **Modes**:
-  - **Animated**: Full display with Edit/Flash buttons
-  - **Static**: Simplified preview for carousel
-- **Features**: Uses EditButton and FlashButton components for user interactions
+  - **Full Layout** (`layout="full"`): Fully interactive touchable setting block for focused view
+    - Entire block is touchable via TouchableOpacity
+    - Displays setting name, dots preview, and "tap to edit" hint
+    - Tapping anywhere navigates to ChooseModification screen
+    - Visual feedback with activeOpacity on touch
+  - **Compact Layout** (`layout="compact"`): Simplified preview for carousel items
+    - Static display with FlashButton for quick actions
+    - Used in Settings screen carousel
+- **Features**: 
+  - Direct edit functionality - entire focused block acts as edit trigger
+  - Integrated ConfigurationContext for state management
+  - Responsive touch area that fills entire container
 - **Optimizations**: 
   - Memoized dots rendering with specific dependencies to prevent unnecessary re-renders
   - Unique keys for AnimatedDots components to ensure proper lifecycle management
   - Fixed carousel animation freezing after navigation by improving memoization dependencies
+  - TouchableOpacity with explicit dimensions for reliable touch registration
 
 ## Shared Resources
 
@@ -710,6 +721,17 @@ The app uses a custom splash screen (`./assets/images/splash-screen.png`) that d
 - **InfoButton**: Positioned consistently in top-left corner
 - **BackButton**: Positioned consistently in top-left corner (when applicable)
 - **Responsive Scaling**: All components scale based on screen dimensions
+
+#### **Touch Interaction Patterns**
+- **Focused Settings**: Entire setting block is touchable for editing
+  - TouchableOpacity with `activeOpacity={0.8}` for visual feedback
+  - "tap to edit" hint text at bottom of focused settings
+  - Full container dimensions for reliable touch registration
+- **Carousel Items**: Traditional button-based interactions
+  - EditButton for navigation to modification screens
+  - FlashButton for quick hardware actions
+- **Responsive Touch Areas**: All interactive elements have explicit dimensions for consistent touch response
+- **Visual Feedback**: All touchable elements provide immediate visual feedback through opacity changes
 
 ### 🧩 **Component Patterns**
 
@@ -1114,6 +1136,7 @@ The app sends JSON configurations to the hardware with:
 - **API Errors**: Verify network connectivity and endpoint configuration
 - **Performance**: Monitor timeout cleanup and memory usage
 - **Carousel Animation Freezing**: After navigation, animated dots in carousel may stop rendering. Fixed by using unique keys and proper memoization dependencies in `SettingBlock.tsx`
+- **Touch Registration Issues**: If TouchableOpacity doesn't respond across entire component area, ensure explicit width/height dimensions. Use `width: "100%", height: "100%"` in style and verify parent container has proper dimensions.
 - **SafeAreaProvider Nesting Error**: This app uses a global SafeAreaProvider from expo-router. Individual screens should ONLY use `SafeAreaView`, not wrap content in additional `SafeAreaProvider` components, as this causes context conflicts and crashes during carousel navigation.
 
 ### ⚠️ Common Warnings

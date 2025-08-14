@@ -1,11 +1,12 @@
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import AnimatedDots from "@/src/components/AnimatedDots";
 import ColorDots from "@/src/components/ColorDots";
 import EditButton from "@/src/components/buttons/EditButton";
 import FlashButton from "@/src/components/buttons/FlashButton";
 import type { Setting } from "../interface/SettingInterface";
 import { COLORS, COMMON_STYLES, FONTS } from "./SharedStyles";
+import { useConfiguration } from "@/src/context/ConfigurationContext";
 
 interface SettingItemProps {
 	navigation: any;
@@ -36,9 +37,19 @@ const SettingBlock = ({
 	isAnimated,
 	index,
 }: SettingItemProps) => {
+	const { setLastEdited } = useConfiguration();
+
 	if (!setting) {
 		return null;
 	}
+
+	const handleEdit = () => {
+		setLastEdited(index?.toString() ?? null);
+		navigation.navigate("ChooseModification", {
+			setting: setting,
+			settingIndex: index,
+		});
+	};
 	// Memoize the dots rendering to prevent unnecessary re-renders
 	const dotsRendered = React.useMemo(() => {
 		return isAnimated ? (
@@ -63,7 +74,11 @@ const SettingBlock = ({
 	return (
 		<>
 			{layout === "full" ? (
-				<View style={[style]}>
+				<TouchableOpacity 
+					style={[styles.fullTouchableContainer, style]} 
+					onPress={handleEdit}
+					activeOpacity={0.8}
+				>
 					<View style={styles.headerContainer}>
 						<Text
 							style={styles.whiteText}
@@ -75,14 +90,10 @@ const SettingBlock = ({
 					</View>
 
 					<View style={styles.dotsContainer}>{dotsRendered}</View>
-					<View style={styles.buttonsContainer}>
-						<EditButton
-							navigation={navigation}
-							setting={setting}
-							settingIndex={index}
-						/>
+					<View style={styles.tapToEditContainer}>
+						<Text style={styles.tapToEditText}>tap to edit</Text>
 					</View>
-				</View>
+				</TouchableOpacity>
 			) : null}
 
 			{layout === "compact" ? (
@@ -96,6 +107,12 @@ const SettingBlock = ({
 };
 
 const styles = StyleSheet.create({
+	fullTouchableContainer: {
+		width: "100%",
+		height: "100%",
+		justifyContent: "center",
+		alignItems: "center",
+	},
 	whiteText: {
 		color: COLORS.WHITE,
 		fontSize: 70,
@@ -107,13 +124,6 @@ const styles = StyleSheet.create({
 		color: COLORS.WHITE,
 		fontSize: 60,
 		fontFamily: FONTS.SIGNATURE,
-		paddingHorizontal: 20,
-	},
-	buttonsContainer: {
-		flexDirection: "row",
-		justifyContent: "space-between",
-		marginTop: 40,
-		width: "100%",
 		paddingHorizontal: 20,
 	},
 	headerContainer: {
@@ -128,6 +138,17 @@ const styles = StyleSheet.create({
 		paddingVertical: 20,
 		alignItems: "center",
 		justifyContent: "center",
+	},
+	tapToEditContainer: {
+		marginTop: 30,
+		alignItems: "center",
+		justifyContent: "center",
+	},
+	tapToEditText: {
+		color: COLORS.WHITE,
+		fontSize: 20,
+		fontFamily: FONTS.CLEAR,
+		opacity: 0.7,
 	},
 	flashButtonCompact: {
 		...COMMON_STYLES.wideButton,

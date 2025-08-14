@@ -1,5 +1,5 @@
 import { IP } from "@/src/configurations/constants";
-import { Setting } from "@/src/interface/SettingInterface";
+import type { Setting } from "@/src/interface/SettingInterface";
 
 interface ApiConfig {
 	colors?: string[];

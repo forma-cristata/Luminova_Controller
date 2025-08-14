@@ -14,7 +14,7 @@ export class SettingsService {
 				return JSON.parse(fileContent) as Setting[];
 			}
 			// If no file exists, initialize with default settings
-			await this.saveSettings(DEFAULT_SETTINGS);
+			await SettingsService.saveSettings(DEFAULT_SETTINGS);
 			return DEFAULT_SETTINGS;
 		} catch (e) {
 			console.error("Error loading settings:", e);
@@ -26,7 +26,7 @@ export class SettingsService {
 		settingIndex: number,
 		updatedSetting: Setting,
 	): Promise<Setting[]> {
-		const settings = await this.loadSettings();
+		const settings = await SettingsService.loadSettings();
 
 		if (settingIndex < 0 || settingIndex >= settings.length) {
 			console.error(`Setting index ${settingIndex} is out of bounds.`);
@@ -36,7 +36,7 @@ export class SettingsService {
 		const newSettings = [...settings];
 		newSettings[settingIndex] = updatedSetting;
 
-		await this.saveSettings(newSettings);
+		await SettingsService.saveSettings(newSettings);
 		return newSettings;
 	}
 

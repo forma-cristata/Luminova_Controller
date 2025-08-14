@@ -15,6 +15,109 @@ The Luminova Controller is a React Native application that controls LED lighting
 
 ## Development Standards & Best Practices
 
+### 📁 **File Naming Convention**
+
+The project follows a consistent naming pattern across all file types:
+
+#### **Components & Screens** - `PascalCase`
+- React components use PascalCase for both file names and component names
+- Examples: `SettingBlock.tsx`, `ColorEditor.tsx`, `AnimatedDots.tsx`
+- Screen components follow the same pattern: `Settings.tsx`, `Welcome.tsx`
+
+#### **Services & Utilities** - `PascalCase`
+- Service classes use PascalCase for consistency with components
+- Examples: `ApiService.ts`, `SettingsService.ts`
+
+#### **Interfaces & Types** - `PascalCase`
+- TypeScript interfaces and type definitions use PascalCase
+- Examples: `SettingInterface.ts`
+- Interface names should be descriptive: `Setting` interface in `SettingInterface.ts`
+
+#### **Hooks** - `camelCase`
+- Custom React hooks use camelCase starting with "use"
+- Examples: `useDebounce.ts`
+- Hook function names match file names: `useDebounce()` function
+
+#### **Configuration & Constants** - `camelCase`
+- Configuration files and constants use camelCase
+- Examples: `constants.ts`, `patterns.ts`, `defaults.ts`
+- Export names use SCREAMING_SNAKE_CASE for constants: `FLASHING_PATTERNS`, `API_ENDPOINTS`
+
+#### **Context** - `PascalCase`
+- React Context files use PascalCase
+- Examples: `ConfigurationContext.tsx`
+- Context names should end with "Context": `ConfigurationContext`
+
+### 🧩 **Component Creation Guidelines**
+
+#### **1. File Structure**
+```typescript
+// ComponentName.tsx
+import React from 'react';
+import { View, Text, StyleSheet } from 'react-native';
+import { COLORS, FONTS, COMMON_STYLES } from '@/src/components/SharedStyles';
+
+interface ComponentNameProps {
+  // Define props with proper TypeScript typing
+  title: string;
+  onPress?: () => void;
+  disabled?: boolean;
+}
+
+export default function ComponentName({ title, onPress, disabled = false }: ComponentNameProps) {
+  return (
+    <View style={styles.container}>
+      <Text style={styles.title}>{title}</Text>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    // Use SharedStyles constants
+    backgroundColor: COLORS.BACKGROUND,
+  },
+  title: {
+    fontFamily: FONTS.SIGNATURE,
+    color: COLORS.WHITE,
+  },
+});
+```
+
+#### **2. Import Organization**
+```typescript
+// External libraries first
+import React from 'react';
+import { View, Text } from 'react-native';
+import { useFonts } from 'expo-font';
+
+// Internal components
+import BackButton from '@/src/components/BackButton';
+import InfoButton from '@/src/components/InfoButton';
+
+// Shared resources
+import { COLORS, COMMON_STYLES } from '@/src/components/SharedStyles';
+
+// Services and utilities
+import { ApiService } from '@/src/services/ApiService';
+
+// Types and interfaces
+import type { Setting } from '@/src/interface/SettingInterface';
+```
+
+#### **3. Component Standards**
+- **Props Interface**: Always define TypeScript interfaces for props
+- **Default Props**: Use ES6 default parameters instead of defaultProps
+- **Styling**: Use SharedStyles constants (COLORS, FONTS, DIMENSIONS)
+- **Memoization**: Use React.memo() for performance-critical components
+- **Error Handling**: Implement proper error boundaries and fallbacks
+
+#### **4. State Management**
+- **Local State**: Use useState for component-specific state
+- **Global State**: Use ConfigurationContext for app-wide state
+- **Side Effects**: Use useEffect with proper cleanup
+- **Performance**: Use useCallback/useMemo for expensive operations
+
 ### 🧹 **Code Cleanup Protocol**
 - **MANDATORY**: Always remove deprecated code when implementing fixes or new features
 - **Remove**: Unused state variables, functions, imports, and components
@@ -42,6 +145,78 @@ The Luminova Controller is a React Native application that controls LED lighting
 - Test component integration patterns
 - Verify no broken imports or dependencies
 
+### 🎨 **Component Creation Standards**
+
+#### **Adding a New Component**
+
+1. **Choose Appropriate Location**
+   ```
+   src/components/     # Reusable UI components
+   src/screens/        # Screen-level components
+   ```
+
+2. **Create Component File**
+   - Use PascalCase: `NewComponent.tsx`
+   - Include proper TypeScript interfaces
+   - Follow established import organization
+
+3. **Implement Component Structure**
+   ```typescript
+   // Required imports
+   import React from 'react';
+   import { StyleSheet } from 'react-native';
+   import { COLORS, FONTS, COMMON_STYLES } from '@/src/components/SharedStyles';
+   
+   // Props interface
+   interface NewComponentProps {
+     title: string;
+     onPress?: () => void;
+   }
+   
+   // Component implementation
+   export default function NewComponent({ title, onPress }: NewComponentProps) {
+     // Component logic
+   }
+   
+   // Styles using SharedStyles constants
+   const styles = StyleSheet.create({
+     // Component-specific styles
+   });
+   ```
+
+4. **Follow Established Patterns**
+   - Use `COMMON_STYLES` for consistent styling
+   - Leverage `ApiService` for API communications
+   - Use `ConfigurationContext` for global state
+   - Implement proper TypeScript typing
+
+5. **Export and Integration**
+   - Export as default from component file
+   - Import using absolute paths: `@/src/components/NewComponent`
+   - Update documentation if component introduces new patterns
+
+#### **Component Organization Principles**
+
+- **Single Responsibility**: Each component should have one clear purpose
+- **Composition**: Build complex UIs from simple, reusable components
+- **Consistency**: Follow established visual and behavioral patterns
+- **Performance**: Use memoization and proper key props
+- **Accessibility**: Include proper accessibility props where needed
+
+#### **Styling Guidelines**
+
+- **Use SharedStyles**: Import and use `COLORS`, `FONTS`, `DIMENSIONS`
+- **Responsive Design**: Use `DIMENSIONS.SCALE` for responsive sizing
+- **Consistent Spacing**: Follow established margin/padding patterns
+- **Dark Theme**: All components should work with the dark color scheme
+
+#### **Component Testing**
+
+- Test component in both animated and static modes
+- Verify proper prop handling and TypeScript compliance
+- Test integration with existing navigation flow
+- Validate performance with large datasets
+
 ### 📚 **Documentation Maintenance**
 - Update this guide when adding new components or patterns
 - Document new shared utilities or optimization techniques
@@ -53,15 +228,51 @@ The Luminova Controller is a React Native application that controls LED lighting
 ```
 react-code/
 ├── src/                          # Main application code
-│   ├── components/               # Reusable UI components
-│   ├── configurations/           # App configuration and constants
-│   ├── context/                  # React Context providers
-│   ├── interface/                # TypeScript interfaces
-│   └── screens/                  # Main application screens
-├── assets/                       # Static assets (fonts, images)
-├── services/                     # API and external service layers
-└── [config files]                # Build and configuration files
+│   ├── components/               # Reusable UI components (PascalCase)
+│   │   ├── AnimatedDots.tsx     # Animation preview component
+│   │   ├── SettingBlock.tsx     # Setting display component
+│   │   ├── SharedStyles.ts      # Centralized styling constants
+│   │   └── ...
+│   ├── configurations/           # App configuration (camelCase)
+│   │   ├── constants.ts         # API endpoints and app constants
+│   │   ├── patterns.ts          # Animation pattern definitions
+│   │   ├── defaults.ts          # Default settings data
+│   │   └── ...
+│   ├── context/                  # React Context providers (PascalCase)
+│   │   ├── ConfigurationContext.tsx
+│   │   └── ...
+│   ├── hooks/                    # Custom React hooks (camelCase)
+│   │   ├── useDebounce.ts
+│   │   └── ...
+│   ├── interface/                # TypeScript interfaces (PascalCase)
+│   │   ├── SettingInterface.ts
+│   │   └── ...
+│   ├── screens/                  # Main application screens (PascalCase)
+│   │   ├── Settings.tsx         # Main settings management
+│   │   ├── ColorEditor.tsx      # Color editing interface
+│   │   ├── Welcome.tsx          # Entry point screen
+│   │   └── ...
+│   └── services/                 # API and service layers (PascalCase)
+│       ├── ApiService.ts        # Hardware API communication
+│       ├── SettingsService.ts   # Settings data management
+│       └── ...
+├── assets/                       # Static assets
+│   ├── fonts/                   # Custom fonts
+│   └── images/                  # App icons and images
+├── docs/                        # Documentation
+│   └── CODEBASE_GUIDE.md       # This guide
+└── [config files]              # Build and configuration files
 ```
+
+### 📁 **Directory Guidelines**
+
+- **components/**: Reusable UI elements that can be used across multiple screens
+- **screens/**: Full-screen components that represent app pages
+- **services/**: Business logic and external API communication
+- **configurations/**: App constants, default data, and configuration
+- **context/**: React Context for global state management
+- **hooks/**: Custom React hooks for reusable logic
+- **interface/**: TypeScript type definitions and interfaces
 
 ## Main Application Screens
 
@@ -71,7 +282,7 @@ react-code/
 Welcome → Settings → ChooseModification → [ColorEditor | FlashingPatternEditor]
 ```
 
-#### `src/screens/welcome.tsx`
+#### `src/screens/Welcome.tsx`
 - **Purpose**: Entry point with LED on/off toggle
 - **Features**: 
   - Animated text display
@@ -79,7 +290,7 @@ Welcome → Settings → ChooseModification → [ColorEditor | FlashingPatternEd
   - Navigation to Settings
 - **API Integration**: Uses `ApiService` for status and LED control
 
-#### `src/screens/settings.tsx`
+#### `src/screens/Settings.tsx`
 - **Purpose**: Main settings management screen
 - **Features**:
   - Carousel view of all lighting configurations
@@ -297,52 +508,308 @@ Welcome → Settings → ChooseModification → [ColorEditor | FlashingPatternEd
 7. **Preview**: Test settings before saving
 8. **Flash**: Send to hardware for immediate use
 
+## Established Patterns & Conventions
+
+### 🎨 **UI/UX Patterns**
+
+#### **Color System**
+- **Primary**: Black background (`#000000`) for all screens
+- **Text**: White (`#FFFFFF`) for all text elements
+- **Accents**: Red (`#FF0000`) for sliders and interactive elements
+- **Disabled**: 50% opacity for disabled states
+- **Error**: Red tinting for error states
+
+#### **Typography**
+- **Headers**: `Thesignature` font for titles and branding
+- **Body**: `Clearlight-lJlq` font for UI text and labels
+- **Consistent Sizing**: Use scale-based sizing for responsive design
+
+#### **Layout Patterns**
+- **SafeAreaView**: Used on all screens for proper device compatibility
+- **InfoButton**: Positioned consistently in top-left corner
+- **BackButton**: Positioned consistently in top-left corner (when applicable)
+- **Responsive Scaling**: All components scale based on screen dimensions
+
+### 🧩 **Component Patterns**
+
+#### **State Management**
+```typescript
+// Local component state
+const [value, setValue] = useState<Type>(initialValue);
+
+// Global state access
+const { currentConfiguration, setLastEdited } = useConfiguration();
+
+// Debounced values for performance
+const debouncedValue = useDebounce(value, 200);
+```
+
+#### **API Integration**
+```typescript
+// Always use ApiService for API calls
+try {
+  await ApiService.flashSetting(setting);
+  console.log("Operation successful");
+} catch (error) {
+  console.error("Operation failed:", error);
+}
+```
+
+#### **Event Handling**
+```typescript
+// Memoized callbacks for performance
+const handlePress = useCallback(() => {
+  // Handle action
+}, [dependencies]);
+
+// Throttled operations for sliders
+const throttledUpdate = useMemo(() => {
+  let timeoutId: ReturnType<typeof setTimeout> | null = null;
+  return (value: number) => {
+    if (timeoutId) clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => {
+      updateValue(value);
+    }, 50);
+  };
+}, []);
+```
+
+### 🎭 **Animation Patterns**
+
+#### **Dot Animations**
+- **Cleanup**: Always clear timeouts on component unmount
+- **State Isolation**: Each animation maintains its own state
+- **Performance**: Use requestAnimationFrame for smooth animations
+
+#### **Carousel Navigation**
+- **Smooth Transitions**: Use react-native-reanimated-carousel
+- **State Persistence**: Maintain scroll position across navigation
+- **Performance**: Memoize render items and data
+
+### 🔧 **Service Patterns**
+
+#### **Settings Management**
+```typescript
+// Always use SettingsService for data operations
+const settings = await SettingsService.loadSettings();
+await SettingsService.saveSettings(updatedSettings);
+const updated = await SettingsService.updateSetting(index, setting);
+```
+
+#### **Error Handling**
+```typescript
+// Consistent error handling pattern
+try {
+  const result = await apiOperation();
+  return result;
+} catch (error) {
+  console.error("Operation description:", error);
+  // Optional: Show user-friendly error message
+  Alert.alert("Error", "User-friendly error message");
+  throw error; // Re-throw if needed by caller
+}
+```
+
+### 📱 **Navigation Patterns**
+
+#### **Parameter Passing**
+```typescript
+// Type-safe navigation parameters
+navigation.navigate("ScreenName", {
+  setting: setting,
+  isNew: boolean,
+  settingIndex: number,
+});
+
+// Parameter extraction in target screen
+const setting = route.params?.setting;
+const isNew = route.params?.isNew || false;
+const settingIndex = route.params?.settingIndex;
+```
+
+#### **Back Navigation**
+```typescript
+// Consistent back button behavior
+<BackButton 
+  beforePress={() => cleanupOperations()}
+  onPress={() => navigation.goBack()}
+  afterPress={() => resetState()}
+/>
+```
+
+### 🎨 **Styling Patterns**
+
+#### **Component Styles**
+```typescript
+// Use SharedStyles constants
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: COLORS.BACKGROUND,
+    flex: 1,
+  },
+  text: {
+    color: COLORS.WHITE,
+    fontFamily: FONTS.CLEAR,
+    fontSize: 20 * DIMENSIONS.SCALE,
+  },
+  button: {
+    ...COMMON_STYLES.styleAButton,
+    // Component-specific overrides
+  },
+});
+```
+
+#### **Responsive Design**
+```typescript
+// Scale-based responsive sizing
+const { width, height } = Dimensions.get("window");
+const scale = Math.min(width, height) / 375;
+
+const styles = StyleSheet.create({
+  element: {
+    width: 100 * scale,
+    height: 50 * scale,
+    fontSize: 16 * scale,
+  },
+});
+```
+
+### 🔄 **Data Flow Patterns**
+
+#### **Configuration Updates**
+```typescript
+// Update pattern for settings
+const updatedSetting = {
+  ...existingSetting,
+  modifiedProperty: newValue,
+};
+
+await SettingsService.updateSetting(index, updatedSetting);
+setLastEdited(index.toString());
+```
+
+#### **Preview Functionality**
+```typescript
+// Consistent preview pattern
+const handlePreview = async () => {
+  try {
+    setPreviewMode(true);
+    await ApiService.previewSetting(setting);
+  } catch (error) {
+    console.error("Preview error:", error);
+  }
+};
+
+const handleUnpreview = async () => {
+  setPreviewMode(false);
+  if (currentConfiguration) {
+    await ApiService.restoreConfiguration(currentConfiguration);
+  }
+};
+```
+
 ## Development Guidelines
 
 ### 🛠️ Code Organization
 
-- **Components**: Reusable UI elements in `src/components/`
-- **Screens**: Main app screens in `src/screens/`
-- **Shared Logic**: Utilities in `services/` and `src/context/`
-- **Types**: Interfaces in `src/interface/`
+- **Components**: Reusable UI elements in `src/components/` (PascalCase)
+- **Screens**: Main app screens in `src/screens/` (PascalCase)
+- **Services**: Business logic in `src/services/` (PascalCase)
+- **Hooks**: Custom hooks in `src/hooks/` (camelCase)
+- **Types**: Interfaces in `src/interface/` (PascalCase)
+- **Configuration**: Constants in `src/configurations/` (camelCase)
+- **Context**: Global state in `src/context/` (PascalCase)
 - **Styling**: Centralized in `src/components/SharedStyles.ts`
 
 ### 🎨 Styling Standards
 
-- Use `SharedStyles.ts` for common styles
-- Reference `COLORS` and `FONTS` constants
+- Use `SharedStyles.ts` for common styles and constants
+- Reference `COLORS`, `FONTS`, and `DIMENSIONS` from SharedStyles
 - Responsive scaling with `DIMENSIONS.SCALE`
-- Consistent button styles from shared library
+- Consistent button styles from `COMMON_STYLES`
+- Dark theme compatibility throughout
 
 ### 🔌 API Integration
 
 - Always use `ApiService` for API calls
-- Handle errors consistently
+- Handle errors consistently across all service methods
 - Use appropriate service methods for different operations
 - Maintain state consistency between app and hardware
+- Follow the established request/response patterns
+
+### 📝 Naming Conventions Summary
+
+| File Type | Convention | Example |
+|-----------|------------|---------|
+| Components | PascalCase | `SettingBlock.tsx` |
+| Screens | PascalCase | `ColorEditor.tsx` |
+| Services | PascalCase | `ApiService.ts` |
+| Hooks | camelCase | `useDebounce.ts` |
+| Interfaces | PascalCase | `SettingInterface.ts` |
+| Configuration | camelCase | `constants.ts` |
+| Context | PascalCase | `ConfigurationContext.tsx` |
+
+### 🔄 Import Path Standards
+
+- **Absolute Imports**: Use `@/src/` prefix for all internal imports
+- **External Libraries**: Import from node_modules normally
+- **Type Imports**: Use `import type` for TypeScript types
+- **Consistent Ordering**: External → Internal → Types → Relative
+
+Example:
+```typescript
+import React from 'react';
+import { View, Text } from 'react-native';
+import BackButton from '@/src/components/BackButton';
+import { COLORS } from '@/src/components/SharedStyles';
+import type { Setting } from '@/src/interface/SettingInterface';
+```
 
 ## Common Tasks
 
 ### 🎯 Adding a New Animation Pattern
 
 1. Add pattern logic to `AnimatedDots.tsx`
-2. Update pattern list in `Picker.tsx`
+2. Update pattern list in `patterns.ts` configuration
 3. Add case to switch statement in animation effect
 4. Test with different color schemes
+5. Update documentation with pattern description
 
 ### 🎨 Adding New Color Tools
 
-1. Implement in `ColorEditor.tsx`
-2. Add UI controls and handlers
+1. Implement in `ColorEditor.tsx` following component standards
+2. Add UI controls using SharedStyles constants
 3. Update gesture recognizers if needed
-4. Ensure preview functionality works
+4. Ensure preview functionality works with ApiService
+5. Test across different screen sizes
 
 ### 🔧 Modifying API Integration
 
-1. Update method in `ApiService.ts`
-2. Update calling components
-3. Test error handling
+1. Update method in `ApiService.ts` with proper typing
+2. Update calling components to use new API
+3. Test error handling and edge cases
 4. Verify hardware communication
+5. Update documentation if endpoints change
+
+### 🧩 Creating a New Component
+
+1. **File Creation**: Use PascalCase naming (`NewComponent.tsx`)
+2. **Location**: Choose appropriate directory (`components/` or `screens/`)
+3. **Structure**: Follow established component template
+4. **Styling**: Use SharedStyles constants and patterns
+5. **Types**: Define proper TypeScript interfaces
+6. **Testing**: Verify integration and performance
+7. **Documentation**: Update this guide if introducing new patterns
+
+### 📱 Adding a New Screen
+
+1. **File Creation**: Create in `src/screens/` with PascalCase naming
+2. **Navigation**: Add to navigation stack in `index.tsx`
+3. **Parameters**: Define proper navigation parameter types
+4. **Layout**: Use established screen layout patterns
+5. **State**: Integrate with ConfigurationContext if needed
+6. **Styling**: Follow responsive design patterns
+7. **Testing**: Test navigation flow and state management
 
 ## Hardware Integration
 

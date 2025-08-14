@@ -20,6 +20,25 @@
 - **COMPONENT RELATIONSHIPS**: Understand the interconnections between all components before making changes
 - **PATTERN CONSISTENCY**: Maintain established patterns (SharedStyles, ApiService, etc.)
 
+#### **3. Component Standards**
+- **Props Interface**: Always define TypeScript interfaces for props
+- **Default Props**: Use ES6 default parameters instead of defaultProps
+- **Styling**: Use SharedStyles constants (COLORS, FONTS, DIMENSIONS)
+- **Memoization**: Use React.memo() for performance-critical components
+- **Error Handling**: Implement proper error boundaries and fallbacks
+
+#### **4. State Management**
+- **Local State**: Use useState for component-specific state
+- **Global State**: Use ConfigurationContext for app-wide state
+- **Side Effects**: Use useEffect with proper cleanup
+- **Performance**: Use useCallback/useMemo for expensive operations
+
+### 🧹 **Code Cleanup Protocol**
+- **MANDATORY**: Always remove deprecated code when implementing fixes or new features
+- **Remove**: Unused state variables, functions, imports, and components
+- **Clean**: Old useEffect hooks, event listeners, and temporary debugging code
+- **Validate**: Use TypeScript errors and linting to identify deprecated patterns
+
 ### 🔄 **Documentation Maintenance Protocol**
 
 #### **After Every Change:**

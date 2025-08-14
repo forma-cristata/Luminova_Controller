@@ -8,12 +8,13 @@
 	"files": {
 		"ignoreUnknown": false,
 		"includes": [
-			"app/*",
-			"app/**/*",
+			"src/*",
+			"src/**/*",
 			"docs/*",
 			"docs/**/*",
 			".github/*",
-			".github/**/*"
+			".github/**/*",
+			"*/*"
 		]
 	},
 	"formatter": {

@@ -74,8 +74,8 @@ const SettingBlock = ({
 	return (
 		<>
 			{layout === "full" ? (
-				<TouchableOpacity 
-					style={[styles.fullTouchableContainer, style]} 
+				<TouchableOpacity
+					style={[styles.fullTouchableContainer, style]}
 					onPress={handleEdit}
 					activeOpacity={0.8}
 				>

@@ -88,7 +88,7 @@ export default function Settings({ navigation }: any) {
 	React.useEffect(() => {
 		// Don't interfere if we're in the middle of a deletion
 		if (isDeletingRef.current) return;
-		
+
 		if (settingsData.length > 0 && ref.current) {
 			// Set carousel ready after a short delay to ensure component is mounted
 			setTimeout(() => {
@@ -150,7 +150,7 @@ export default function Settings({ navigation }: any) {
 						try {
 							// Set deletion flag to prevent other effects from interfering
 							isDeletingRef.current = true;
-							
+
 							const currentSettings = await SettingsService.loadSettings();
 
 							const updatedSettings = currentSettings.filter(
@@ -161,7 +161,10 @@ export default function Settings({ navigation }: any) {
 
 							// Calculate target index before updating state
 							let targetIndex = currentIndex - 1;
-							targetIndex = Math.max(0, Math.min(targetIndex, updatedSettings.length - 1));
+							targetIndex = Math.max(
+								0,
+								Math.min(targetIndex, updatedSettings.length - 1),
+							);
 
 							// Update lastEdited based on deletion position
 							if (lastEdited === currentIndex.toString()) {
@@ -188,7 +191,6 @@ export default function Settings({ navigation }: any) {
 									isDeletingRef.current = false;
 								}, 100);
 							}, 50);
-
 						} catch (error) {
 							console.error("Error deleting setting:", error);
 							isDeletingRef.current = false;

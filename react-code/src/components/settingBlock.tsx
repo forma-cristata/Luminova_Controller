@@ -1,9 +1,9 @@
 import React from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import AnimatedDots from "@/src/components/AnimatedDots";
 import ColorDots from "@/src/components/ColorDots";
+import EditButton from "@/src/components/EditButton";
 import FlashButton from "@/src/components/FlashButton";
-import { useConfiguration } from "@/src/context/ConfigurationContext";
 import type { Setting } from "../interface/SettingInterface";
 import { COLORS, COMMON_STYLES, FONTS } from "./SharedStyles";
 
@@ -36,8 +36,6 @@ const SettingBlock = ({
 	isAnimated,
 	index,
 }: SettingItemProps) => {
-	const { setLastEdited } = useConfiguration();
-
 	if (!setting) {
 		return null;
 	}
@@ -66,21 +64,13 @@ const SettingBlock = ({
 
 					{dotsRendered}
 					<View style={styles.buttonsContainer}>
-						<TouchableOpacity
-							style={COMMON_STYLES.wideButton}
-							onPress={() => {
-								setLastEdited(index?.toString() ?? null);
-								navigation.navigate("ChooseModification", {
-									setting: setting,
-									settingIndex: index,
-								});
-							}}
-						>
-							<Text style={styles.buttons}>Edit</Text>
-						</TouchableOpacity>
+						<EditButton
+							navigation={navigation}
+							setting={setting}
+							settingIndex={index}
+						/>
 						<FlashButton
 							setting={setting}
-							style={COMMON_STYLES.wideButton}
 						/>
 					</View>
 				</View>
@@ -120,11 +110,6 @@ const styles = StyleSheet.create({
 		marginTop: 40,
 		width: "100%",
 		paddingHorizontal: 20,
-	},
-	buttons: {
-		color: COLORS.WHITE,
-		fontSize: 40,
-		fontFamily: FONTS.CLEAR,
 	},
 	headerContainer: {
 		width: "100%",

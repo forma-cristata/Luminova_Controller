@@ -272,6 +272,7 @@ react-code/
 ├── src/                          # Main application code
 │   ├── components/               # Reusable UI components (PascalCase)
 │   │   ├── AnimatedDots.tsx     # Animation preview component
+│   │   ├── EditButton.tsx       # Reusable edit button component
 │   │   ├── FlashButton.tsx      # Reusable flash button component
 │   │   ├── SettingBlock.tsx     # Setting display component
 │   │   ├── SharedStyles.ts      # Centralized styling constants
@@ -426,6 +427,15 @@ Welcome → Settings → ChooseModification → [ColorEditor | FlashingPatternEd
 - **Purpose**: Reusable info button across all screens
 - **Design**: Consistent positioning and styling
 
+#### `src/components/EditButton.tsx`
+- **Purpose**: Reusable edit button component for navigating to setting modification
+- **Features**:
+  - Navigation integration with parameter passing
+  - Configuration context integration
+  - Customizable styling and text
+  - Consistent behavior across components
+- **Props**: `navigation`, `setting`, `settingIndex`, `style`, `disabled`, `onPress`, `textStyle`
+
 #### `src/components/FlashButton.tsx`
 - **Purpose**: Reusable flash button component for sending settings to hardware
 - **Features**:
@@ -442,7 +452,7 @@ Welcome → Settings → ChooseModification → [ColorEditor | FlashingPatternEd
 - **Modes**:
   - **Animated**: Full display with Edit/Flash buttons
   - **Static**: Simplified preview for carousel
-- **Features**: Uses FlashButton component for hardware communication
+- **Features**: Uses EditButton and FlashButton components for user interactions
 
 ## Shared Resources
 
@@ -682,6 +692,27 @@ const throttledUpdate = useMemo(() => {
     }, 50);
   };
 }, []);
+```
+
+#### **EditButton Usage**
+```typescript
+// Basic usage with navigation
+<EditButton 
+  navigation={navigation}
+  setting={setting}
+  settingIndex={index}
+/>
+
+// Custom styling and callbacks
+<EditButton
+  navigation={navigation}
+  setting={setting}
+  settingIndex={index}
+  style={COMMON_STYLES.styleAButton}
+  textStyle={customTextStyle}
+  onPress={() => console.log("Edit button pressed")}
+  disabled={!setting}
+/>
 ```
 
 #### **FlashButton Usage**

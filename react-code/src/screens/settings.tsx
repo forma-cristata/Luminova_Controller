@@ -261,12 +261,9 @@ export default function Settings({ navigation }: any) {
 		);
 	}, [navigation]);	return (
 		<SafeAreaView style={styles.container}>
-			<InfoButton />
-			<BackButton
+			<InfoButton />			<BackButton
 				beforePress={() => setLastEdited("0")}
-				onPress={() =>
-					navigation.navigate("Welcome", { animation: "slideFromLeft" })
-				}
+				onPress={() => navigation.popToTop()}
 				afterPress={() => setLastEdited("0")}
 			/>
 			<View style={styles.notBackButton}>

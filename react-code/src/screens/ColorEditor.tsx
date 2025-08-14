@@ -30,7 +30,7 @@ import HueSliderBackground from "@/src/components/HueSliderBackground";
 import InfoButton from "@/src/components/InfoButton";
 import RandomizeButton from "@/src/components/RandomizeButton";
 import { COLORS, COMMON_STYLES, FONTS } from "@/src/components/SharedStyles";
-import type { Setting } from "@/src/interface/setting-interface";
+import type { Setting } from "@/src/interface/SettingInterface";
 import React from "react";
 
 export default function ColorEditor({ navigation, route }: any) {

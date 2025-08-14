@@ -11,7 +11,6 @@ import AnimatedDots from "@/src/components/AnimatedDots";
 import BackButton from "@/src/components/BackButton";
 import ColorDots from "@/src/components/ColorDots";
 import InfoButton from "@/src/components/InfoButton";
-import { Setting } from "@/src/interface/setting-interface";
 import React from "react";
 
 export default function ChooseModification({ navigation, route }: any) {

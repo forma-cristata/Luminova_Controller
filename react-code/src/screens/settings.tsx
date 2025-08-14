@@ -16,9 +16,9 @@ import Carousel, {
 
 import BackButton from "@/src/components/BackButton";
 import InfoButton from "@/src/components/InfoButton";
-import SettingBlock from "@/src/components/settingBlock";
+import SettingBlock from "@/src/components/SettingBlock";
 import { useConfiguration } from "@/src/context/ConfigurationContext";
-import type { Setting } from "@/src/interface/setting-interface";
+import type { Setting } from "@/src/interface/SettingInterface";
 import { SettingsService } from "@/src/services/SettingsService";
 
 const width = Dimensions.get("window").width;

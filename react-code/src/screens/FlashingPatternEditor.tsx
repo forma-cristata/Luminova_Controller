@@ -25,7 +25,7 @@ import { COLORS, COMMON_STYLES, FONTS } from "@/src/components/SharedStyles";
 import { ANIMATION_PATTERNS } from "@/src/configurations/patterns";
 import { useConfiguration } from "@/src/context/ConfigurationContext";
 import { useDebounce } from "@/src/hooks/useDebounce";
-import type { Setting } from "@/src/interface/setting-interface";
+import type { Setting } from "@/src/interface/SettingInterface";
 import { ApiService } from "@/src/services/ApiService";
 import { SettingsService } from "@/src/services/SettingsService";
 

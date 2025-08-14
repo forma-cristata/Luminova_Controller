@@ -7,7 +7,7 @@ import { SafeAreaView, StyleSheet } from "react-native";
 
 import Dot from "@/src/components/Dot";
 
-import type { Setting } from "@/src/interface/setting-interface";
+import type { Setting } from "@/src/interface/SettingInterface";
 
 interface AnimatedDotsProps {
 	navigation: any;

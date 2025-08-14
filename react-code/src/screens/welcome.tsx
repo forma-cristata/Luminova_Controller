@@ -10,7 +10,7 @@ import {
 import AnimatedTitle from "@/src/components/AnimatedTitle";
 import InfoButton from "@/src/components/InfoButton";
 import { COLORS, COMMON_STYLES, FONTS } from "@/src/components/SharedStyles";
-import type { Setting } from "@/src/interface/setting-interface";
+import type { Setting } from "@/src/interface/SettingInterface";
 import { ApiService } from "@/src/services/ApiService";
 import { useConfiguration } from "@/src/context/ConfigurationContext";
 import React from "react";

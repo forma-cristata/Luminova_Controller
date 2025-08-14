@@ -174,7 +174,7 @@ Welcome → Settings → ChooseModification → [ColorEditor | FlashingPatternEd
 
 ### 📱 Layout Components
 
-#### `src/components/settingBlock.tsx`
+#### `src/components/SettingBlock.tsx`
 - **Purpose**: Setting display component used in carousel
 - **Modes**:
   - **Animated**: Full display with Edit/Flash buttons
@@ -217,7 +217,7 @@ Welcome → Settings → ChooseModification → [ColorEditor | FlashingPatternEd
 
 ### 📊 Data Models
 
-#### `src/interface/setting-interface.ts`
+#### `src/interface/SettingInterface.ts`
 - **Purpose**: TypeScript interface for lighting configurations
 - **Properties**:
   - `name` - User-friendly setting name

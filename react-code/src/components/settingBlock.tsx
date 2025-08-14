@@ -4,7 +4,7 @@ import AnimatedDots from "@/src/components/AnimatedDots";
 import ColorDots from "@/src/components/ColorDots";
 import { useConfiguration } from "@/src/context/ConfigurationContext";
 import { ApiService } from "@/src/services/ApiService";
-import type { Setting } from "../interface/setting-interface";
+import type { Setting } from "../interface/SettingInterface";
 import { COLORS, COMMON_STYLES, FONTS } from "./SharedStyles";
 
 interface SettingItemProps {

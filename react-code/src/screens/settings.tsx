@@ -34,6 +34,7 @@ export default function Settings({ navigation }: any) {
 	const progress = useSharedValue<number>(0);
 	const [currentIndex, setCurrentIndex] = React.useState(0);
 	const [isInitialRender, setIsInitialRender] = React.useState(true);
+	const isDeletingRef = React.useRef(false);
 
 	// Memoize carousel data to prevent unnecessary re-renders
 	const carouselData = React.useMemo(
@@ -85,12 +86,15 @@ export default function Settings({ navigation }: any) {
 
 	// Handle carousel positioning when ready
 	React.useEffect(() => {
+		// Don't interfere if we're in the middle of a deletion
+		if (isDeletingRef.current) return;
+		
 		if (settingsData.length > 0 && ref.current) {
 			// Set carousel ready after a short delay to ensure component is mounted
 			setTimeout(() => {
 				const targetIndex = lastEdited ? parseInt(lastEdited) : 0;
 				setTimeout(() => {
-					if (ref.current) {
+					if (ref.current && !isDeletingRef.current) {
 						ref.current.scrollTo({ index: targetIndex, animated: false });
 					}
 					setTimeout(() => {
@@ -144,6 +148,9 @@ export default function Settings({ navigation }: any) {
 					style: "destructive",
 					onPress: async () => {
 						try {
+							// Set deletion flag to prevent other effects from interfering
+							isDeletingRef.current = true;
+							
 							const currentSettings = await SettingsService.loadSettings();
 
 							const updatedSettings = currentSettings.filter(
@@ -152,45 +159,39 @@ export default function Settings({ navigation }: any) {
 
 							await SettingsService.saveSettings(updatedSettings);
 
+							// Calculate target index before updating state
+							let targetIndex = currentIndex - 1;
+							targetIndex = Math.max(0, Math.min(targetIndex, updatedSettings.length - 1));
+
+							// Update lastEdited based on deletion position
 							if (lastEdited === currentIndex.toString()) {
-								setLastEdited("0");
+								setLastEdited(targetIndex.toString());
 							} else if (parseInt(lastEdited!) > currentIndex) {
 								setLastEdited((parseInt(lastEdited!) - 1).toString());
 							}
 
-							// Fix: Remove the problematic navigation.reset that corrupts the stack
-							// Simply reload the current screen's data instead
-							const initializeData = async () => {
-								try {
-									const loadedData = await SettingsService.loadSettings();
-									if (loadedData && loadedData.length > 0) {
-										const deepCopy = JSON.parse(JSON.stringify(loadedData));
-										setSettingsData(deepCopy);
+							// Single, coordinated state update
+							const deepCopy = JSON.parse(JSON.stringify(updatedSettings));
+							setSettingsData(deepCopy);
+							setCurrentIndex(targetIndex);
 
-										const targetIndex = 0; // Go to first setting after delete
-										setCurrentIndex(targetIndex);
-										setLastEdited("0");
-
-										setTimeout(() => {
-											if (ref.current) {
-												ref.current.scrollTo({
-													index: targetIndex,
-													animated: false,
-												});
-											}
-										}, 100);
-									} else {
-										// Handle case where all settings are deleted
-										setSettingsData([]);
-										setCurrentIndex(0);
-									}
-								} catch (error) {
-									console.error("Error re-initializing data:", error);
+							// Single carousel scroll after state is updated
+							setTimeout(() => {
+								if (ref.current) {
+									ref.current.scrollTo({
+										index: targetIndex,
+										animated: false,
+									});
 								}
-							};
-							initializeData();
+								// Clear deletion flag after operation is complete
+								setTimeout(() => {
+									isDeletingRef.current = false;
+								}, 100);
+							}, 50);
+
 						} catch (error) {
 							console.error("Error deleting setting:", error);
+							isDeletingRef.current = false;
 						}
 					},
 				},
@@ -240,7 +241,7 @@ export default function Settings({ navigation }: any) {
 	const renderItem = React.useCallback(
 		({ item, index }: { item: Setting | "new"; index: number }) => {
 			if (item === "new") {
-				return <Text style={styles.newSettingItemText} key={`new-item`}></Text>;
+				return <View style={styles.newSettingItem} key={`new-item`} />;
 			}
 
 			// The main item is animated, others are not.
@@ -399,11 +400,6 @@ const styles = StyleSheet.create({
 		borderColor: "black",
 		justifyContent: "center",
 		alignItems: "center",
-	},
-	newSettingItemText: {
-		color: "white",
-		fontSize: 20,
-		fontFamily: FONTS.CLEAR,
 	},
 	sideButton: {
 		position: "absolute",

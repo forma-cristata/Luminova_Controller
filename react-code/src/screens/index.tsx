@@ -1,4 +1,5 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { NavigationContainer } from "@react-navigation/native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import ChooseModification from "./ChooseModification";
 import ColorEditor from "./ColorEditor";
@@ -24,25 +25,27 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 function Index() {
 	return (
 		<ConfigurationProvider>
-			<GestureHandlerRootView>
-				<Stack.Navigator
-					screenOptions={{
-						headerShown: false,
-					}}
-				>
-					<Stack.Screen name="Welcome" component={Welcome} />
-					<Stack.Screen name="Settings" component={Settings} />
-					<Stack.Screen
-						name="ChooseModification"
-						component={ChooseModification}
-					/>
-					<Stack.Screen name="ColorEditor" component={ColorEditor} />
-					<Stack.Screen
-						name="FlashingPatternEditor"
-						component={FlashingPatternEditor}
-					/>
-					<Stack.Screen name="Info" component={Info} />
-				</Stack.Navigator>
+			<GestureHandlerRootView style={{ flex: 1 }}>
+				<NavigationContainer>
+					<Stack.Navigator
+						screenOptions={{
+							headerShown: false,
+						}}
+					>
+						<Stack.Screen name="Welcome" component={Welcome} />
+						<Stack.Screen name="Settings" component={Settings} />
+						<Stack.Screen
+							name="ChooseModification"
+							component={ChooseModification}
+						/>
+						<Stack.Screen name="ColorEditor" component={ColorEditor} />
+						<Stack.Screen
+							name="FlashingPatternEditor"
+							component={FlashingPatternEditor}
+						/>
+						<Stack.Screen name="Info" component={Info} />
+					</Stack.Navigator>
+				</NavigationContainer>
 			</GestureHandlerRootView>
 		</ConfigurationProvider>
 	);

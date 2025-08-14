@@ -55,14 +55,14 @@ export default function Picker({
 							key={pattern.id}
 							style={[
 								styles.patternOption,
-								selectedPattern === pattern.id && styles.selectedOption,
+								selectedPattern === pattern.id ? styles.selectedOption : null,
 							]}
 							onPress={() => handlePatternSelect(pattern.id)}
 						>
 							<Text
 								style={[
 									styles.patternText,
-									selectedPattern === pattern.id && styles.selectedText,
+									selectedPattern === pattern.id ? styles.selectedText : null,
 								]}
 							>
 								{pattern.name}

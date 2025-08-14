@@ -37,11 +37,7 @@ function Index() {
 		}
 	}, [loaded, error]);
 
-	if (!loaded && !error) {
-		return null;
-	}
-
-	return (
+	return (!loaded && !error) ? null : (
 		<ConfigurationProvider>
 			<GestureHandlerRootView>
 				<Stack.Navigator

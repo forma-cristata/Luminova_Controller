@@ -37,19 +37,13 @@ const SettingBlock = ({
 	if (!setting) {
 		return null;
 	}
-
 	// Memoize the dots rendering to prevent unnecessary re-renders
 	const dotsRendered = React.useMemo(() => {
-		if (animated) {
-			return <AnimatedDots navigation={navigation} setting={setting} />;
-		} else {
-			return <ColorDots colors={setting.colors} />;
-		}
+		return animated ? <AnimatedDots navigation={navigation} setting={setting} /> : <ColorDots colors={setting.colors} />;
 	}, [animated, navigation, setting]);
 
-	return (
-		<>
-			{animated && (
+	return (		<>
+			{animated ? (
 				<View style={[style]}>
 					<View style={styles.headerContainer}>
 						<Text 
@@ -62,7 +56,8 @@ const SettingBlock = ({
 					</View>
 
 					{dotsRendered}
-					<View style={styles.buttonsContainer}>						<TouchableOpacity
+					<View style={styles.buttonsContainer}>						
+						<TouchableOpacity
 							style={COMMON_STYLES.wideButton}
 							onPress={() => {
 								setLastEdited(index?.toString() ?? null);
@@ -73,15 +68,15 @@ const SettingBlock = ({
 							}}
 						>
 							<Text style={styles.buttons}>Edit</Text>
-						</TouchableOpacity>						<FlashButton
+						</TouchableOpacity>						
+						<FlashButton
 							setting={setting}
 							style={COMMON_STYLES.wideButton}
-						/>
-					</View>
+						/>					</View>
 				</View>
-			)}
+			) : null}
 
-			{!animated && (
+			{!animated ? (
 				<View style={style}>
 					<Text 
 						style={styles.whiteTextSmaller}
@@ -89,10 +84,9 @@ const SettingBlock = ({
 						ellipsizeMode="tail"
 					>
 						{setting.name.toLowerCase()}
-					</Text>
-					{dotsRendered}
+					</Text>					{dotsRendered}
 				</View>
-			)}
+			) : null}
 		</>
 	);
 };

@@ -45,10 +45,9 @@ export class ApiService {
 
 			// Handle cases where the response might be empty
 			const contentType = response.headers.get("content-type");
-			if (contentType && contentType.indexOf("application/json") !== -1) {
-				return await response.json();
-			}
-			return {}; // Return empty object for non-json responses
+			return (contentType && contentType.indexOf("application/json") !== -1) 
+				? await response.json()
+				: {}; // Return empty object for non-json responses
 		} catch (error: unknown) {
 			clearTimeout(timeoutId);
 			if (error instanceof Error && error.name === "AbortError") {

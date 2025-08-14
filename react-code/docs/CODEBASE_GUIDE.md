@@ -111,6 +111,7 @@ import type { Setting } from '@/src/interface/SettingInterface';
 - **Styling**: Use SharedStyles constants (COLORS, FONTS, DIMENSIONS)
 - **Memoization**: Use React.memo() for performance-critical components
 - **Error Handling**: Implement proper error boundaries and fallbacks
+- **Conditional Rendering**: Always use ternary operators (`? :`) instead of logical AND (`&&`) for JSX conditional rendering
 
 #### **4. State Management**
 - **Local State**: Use useState for component-specific state
@@ -123,6 +124,46 @@ import type { Setting } from '@/src/interface/SettingInterface';
 - **Remove**: Unused state variables, functions, imports, and components
 - **Clean**: Old useEffect hooks, event listeners, and temporary debugging code
 - **Validate**: Use TypeScript errors and linting to identify deprecated patterns
+
+### 🎨 **Conditional Rendering Standards**
+
+#### **Always Use Ternary Operators**
+The codebase follows a strict standard of using ternary operators (`? :`) instead of logical AND (`&&`) for all JSX conditional rendering.
+
+**✅ Correct Pattern:**
+```typescript
+// For simple conditional rendering
+{condition ? <Component /> : null}
+
+// For conditional content with fallback
+{condition ? <ActiveComponent /> : <FallbackComponent />}
+
+// For complex conditional blocks
+{condition ? (
+  <>
+    <Component1 />
+    <Component2 />
+  </>
+) : null}
+```
+
+**❌ Avoid This Pattern:**
+```typescript
+// Don't use logical AND operators
+{condition && <Component />}
+{condition && (
+  <>
+    <Component1 />
+    <Component2 />
+  </>
+)}
+```
+
+#### **Benefits of Ternary Operators**
+- **Explicit null handling**: Makes it clear what happens when condition is false
+- **Type safety**: Better TypeScript inference and error detection
+- **Consistency**: Uniform pattern across all conditional rendering
+- **Readability**: Clearer intent for both true and false conditions
 
 ### 🔧 **Implementation Standards**
 
@@ -202,6 +243,7 @@ import type { Setting } from '@/src/interface/SettingInterface';
 - **Consistency**: Follow established visual and behavioral patterns
 - **Performance**: Use memoization and proper key props
 - **Accessibility**: Include proper accessibility props where needed
+- **Conditional Rendering**: Use ternary operators (`? :`) instead of logical AND (`&&`) for all JSX conditional rendering
 
 #### **Styling Guidelines**
 

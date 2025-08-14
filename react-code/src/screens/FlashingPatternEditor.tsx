@@ -288,9 +288,9 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 								COMMON_STYLES.styleAButton,
 								{
 									opacity:
-										hasChanges && !nameError
+										hasChanges ? (!nameError
 											? 1
-											: COLORS.DISABLED_OPACITY,
+											: COLORS.DISABLED_OPACITY) : COLORS.DISABLED_OPACITY,
 								},
 							]}
 							onPress={handleSave}
@@ -301,9 +301,9 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 
 						<TouchableOpacity
 							style={
-								!hasChanges && previewMode
+								!hasChanges ? (previewMode
 									? COMMON_STYLES.styleADisabledButton
-									: COMMON_STYLES.styleAButton
+									: COMMON_STYLES.styleAButton) : COMMON_STYLES.styleAButton
 							}
 							key={hasChanges.toString()}
 							onPress={() => {
@@ -312,7 +312,7 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 							}}
 						>
 							<Text style={COMMON_STYLES.buttonText}>
-								{previewMode && hasChanges ? "Update" : "Preview"}
+								{previewMode ? (hasChanges ? "Update" : "Preview") : "Preview"}
 							</Text>
 						</TouchableOpacity>
 					</View>

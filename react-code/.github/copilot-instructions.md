@@ -26,6 +26,7 @@
 - **Styling**: Use SharedStyles constants (COLORS, FONTS, DIMENSIONS)
 - **Memoization**: Use React.memo() for performance-critical components
 - **Error Handling**: Implement proper error boundaries and fallbacks
+- **Conditional Rendering**: Always use ternary operators (`? :`) instead of logical AND (`&&`) for JSX conditional rendering
 
 #### **4. State Management**
 - **Local State**: Use useState for component-specific state
@@ -176,6 +177,7 @@ When creating new components:
 - Consider reusability across screens
 - Document purpose and usage patterns
 - Integrate with existing state management
+- **Use ternary operators (`? :`) for all conditional rendering instead of logical AND (`&&`)**
 
 
 This instruction set ensures consistent, informed development while maintaining the high-quality architecture already established in the Luminova Controller codebase.

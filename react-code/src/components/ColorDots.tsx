@@ -57,7 +57,7 @@ const ColorDots = React.memo(
 				marginHorizontal: spacing,
 				transform: isInteractive ? [{ scale: scales[index] }] : [],
 				// Add shadow for black dots in interactive mode
-				...(isInteractive && isBlack
+				...(isInteractive ? (isBlack
 					? {
 							shadowColor: getFirstNonBlackColor(),
 							shadowOffset: { width: 0, height: 0 },
@@ -65,22 +65,20 @@ const ColorDots = React.memo(
 							shadowRadius: 5,
 							elevation: 5,
 						}
-					: {}),
+					: {}) : {}),
 			};
 		};
 
 		const renderDot = (index: number) => {
 			const dotStyle = getDotStyle(index);
 
-			if (isInteractive) {
-				return (
-					<TouchableOpacity key={index} onPress={() => handleDotPress(index)}>
-						<View style={dotStyle} />
-					</TouchableOpacity>
-				);
-			} else {
-				return <View key={index} style={dotStyle} />;
-			}
+			return isInteractive ? (
+				<TouchableOpacity key={index} onPress={() => handleDotPress(index)}>
+					<View style={dotStyle} />
+				</TouchableOpacity>
+			) : (
+				<View key={index} style={dotStyle} />
+			);
 		};
 
 		// Single row layout (original ColorDots behavior)

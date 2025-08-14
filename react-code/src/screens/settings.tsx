@@ -215,23 +215,18 @@ export default function Settings({ navigation }: any) {
 			ref.current?.scrollTo({ index: newIndex, animated: true });
 		}, 100);
 	};
-
 	// Memoize the focused setting block to prevent unnecessary re-renders
 	const focusedSettingBlock = React.useMemo(() => {
-		if (currentIndex < settingsData.length && settingsData[currentIndex]) {
-			return (
-				<SettingBlock
-					navigation={navigation}
-					animated={true}
-					style={styles.nothing}
-					setting={settingsData[currentIndex]}
-					index={currentIndex}
-				/>
-			);
-		}
-		return null;
+		return (currentIndex < settingsData.length && settingsData[currentIndex]) ? (
+			<SettingBlock
+				navigation={navigation}
+				animated={true}
+				style={styles.nothing}
+				setting={settingsData[currentIndex]}
+				index={currentIndex}
+			/>
+		) : null;
 	}, [navigation, settingsData, currentIndex]);
-
 	// Memoize the render item function to prevent recreation on every render
 	const renderItem = React.useCallback(({
 		item,
@@ -240,16 +235,12 @@ export default function Settings({ navigation }: any) {
 		item: Setting | "new";
 		index: number;
 	}) => {
-		if (item === "new") {
-			return (
-				<Text
-					style={styles.newSettingItemText}
-					key={`new-item`}
-				></Text>
-			);
-		}
-		
-		return (
+		return item === "new" ? (
+			<Text
+				style={styles.newSettingItemText}
+				key={`new-item`}
+			></Text>
+		) : (
 			<SettingBlock
 				key={`setting-${item.name}-${index}`}
 				navigation={navigation}
@@ -259,7 +250,7 @@ export default function Settings({ navigation }: any) {
 				index={index}
 			/>
 		);
-	}, [navigation]);	return (
+	}, [navigation]);return (
 		<SafeAreaView style={styles.container}>
 			<InfoButton />			<BackButton
 				beforePress={() => setLastEdited("0")}
@@ -269,10 +260,9 @@ export default function Settings({ navigation }: any) {
 			<View style={styles.notBackButton}>
 				<View style={styles.title}>
 					<Text style={styles.text}>Settings</Text>
-				</View>
-				<View style={[styles.focusedItem, { position: "relative" }]}>
-					{currentIndex < 0 && <View></View>}
-					{currentIndex < settingsData.length && (
+				</View>				<View style={[styles.focusedItem, { position: "relative" }]}>
+					{currentIndex < 0 ? <View></View> : null}
+					{currentIndex < settingsData.length ? (
 						<>
 							<TouchableOpacity
 								style={{
@@ -308,15 +298,15 @@ export default function Settings({ navigation }: any) {
 						</TouchableOpacity>
 						{focusedSettingBlock}
 					</>
-				)}
-					{currentIndex >= settingsData.length && (
+				) : null}
+					{currentIndex >= settingsData.length ? (
 						<TouchableOpacity
 							style={styles.newSettingButton}
 							onPress={createNewSetting}
 						>
 							<Text style={styles.newSettingText}>+</Text>
 						</TouchableOpacity>
-					)}
+					) : null}
 				</View>
 				<View style={styles.carCont}>
 					<Carousel

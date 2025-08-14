@@ -42,11 +42,15 @@ const SettingBlock = ({
 	// Memoize the dots rendering to prevent unnecessary re-renders
 	const dotsRendered = React.useMemo(() => {
 		return isAnimated ? (
-			<AnimatedDots navigation={navigation} setting={setting} />
+			<AnimatedDots 
+				key={`animated-${setting.name}-${index}`}
+				navigation={navigation} 
+				setting={setting} 
+			/>
 		) : (
 			<ColorDots colors={setting.colors} />
 		);
-	}, [isAnimated, navigation, setting, setting.colors]);
+	}, [isAnimated, setting.name, setting.colors, setting.delayTime, setting.flashingPattern, index, navigation]);
 
 	return (
 		<>

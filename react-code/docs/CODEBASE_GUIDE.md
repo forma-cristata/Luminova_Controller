@@ -453,6 +453,10 @@ Welcome → Settings → ChooseModification → [ColorEditor | FlashingPatternEd
   - **Animated**: Full display with Edit/Flash buttons
   - **Static**: Simplified preview for carousel
 - **Features**: Uses EditButton and FlashButton components for user interactions
+- **Optimizations**: 
+  - Memoized dots rendering with specific dependencies to prevent unnecessary re-renders
+  - Unique keys for AnimatedDots components to ensure proper lifecycle management
+  - Fixed carousel animation freezing after navigation by improving memoization dependencies
 
 ## Shared Resources
 
@@ -737,11 +741,14 @@ const throttledUpdate = useMemo(() => {
 - **Cleanup**: Always clear timeouts on component unmount
 - **State Isolation**: Each animation maintains its own state
 - **Performance**: Use requestAnimationFrame for smooth animations
+- **Memoization**: Use specific dependencies instead of whole objects to prevent unnecessary re-renders
+- **Component Keys**: Use unique keys for AnimatedDots to ensure proper lifecycle management
 
 #### **Carousel Navigation**
 - **Smooth Transitions**: Use react-native-reanimated-carousel
 - **State Persistence**: Maintain scroll position across navigation
 - **Performance**: Memoize render items and data
+- **Animation Continuity**: Fixed animation freezing after navigation with improved memoization patterns
 
 ### 🔧 **Service Patterns**
 
@@ -994,6 +1001,7 @@ The app sends JSON configurations to the hardware with:
 - **State Inconsistency**: Check `ConfigurationContext` usage
 - **API Errors**: Verify network connectivity and endpoint configuration
 - **Performance**: Monitor timeout cleanup and memory usage
+- **Carousel Animation Freezing**: After navigation, animated dots in carousel may stop rendering. Fixed by using unique keys and proper memoization dependencies in `SettingBlock.tsx`
 - **SafeAreaProvider Nesting Error**: This app uses a global SafeAreaProvider from expo-router. Individual screens should ONLY use `SafeAreaView`, not wrap content in additional `SafeAreaProvider` components, as this causes context conflicts and crashes during carousel navigation.
 
 ### ⚠️ Common Warnings

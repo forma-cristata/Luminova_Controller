@@ -14,20 +14,7 @@ import InfoButton from "@/src/components/InfoButton";
 import { Setting } from "@/src/interface/setting-interface";
 import React from "react";
 
-interface Props {
-	route: {
-		params?: {
-			setting: Setting;
-			settingIndex: number;
-		};
-	};
-	navigation: {
-		goBack: () => void;
-		navigate: (screen: string, params?: any) => void;
-	};
-}
-
-export default function ChooseModificatioon({ navigation, route }: Props) {
+export default function ChooseModification({ navigation, route }: any) {
 	const setting = route.params!.setting;
 	const settingIndex = route.params!.settingIndex;
 	const modeDots = () => {

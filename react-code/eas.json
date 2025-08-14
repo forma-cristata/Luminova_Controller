@@ -15,12 +15,19 @@
 			}
 		},
 		"preview": {
-			"distribution": "internal"
+			"distribution": "internal",
+			"android": {
+				"buildType": "apk",
+				"gradleCommand": ":app:assembleRelease",
+				"credentialsSource": "local"
+			}
 		},
 		"production": {
 			"autoIncrement": true,
 			"android": {
-				"buildType": "apk"
+				"buildType": "apk",
+				"gradleCommand": ":app:assembleRelease",
+				"credentialsSource": "local"
 			}
 		},
 		"development-simulator": {

@@ -6,7 +6,7 @@ import {
 	TouchableOpacity,
 	View,
 } from "react-native";
-import { SafeAreaProvider } from "react-native-safe-area-context";
+
 import AnimatedDots from "@/src/components/AnimatedDots";
 import BackButton from "@/src/components/BackButton";
 import ColorDots from "@/src/components/ColorDots";
@@ -33,8 +33,7 @@ export default function ChooseModificatioon({ navigation, route }: Props) {
 	};
 
 	return (
-		<SafeAreaProvider>
-			<SafeAreaView style={styles.container}>
+		<SafeAreaView style={styles.container}>
 				<InfoButton />
 				<BackButton onPress={() => navigation.goBack()} />
 				<View style={styles.notBackButton}>
@@ -66,7 +65,6 @@ export default function ChooseModificatioon({ navigation, route }: Props) {
 					</View>
 				</View>
 			</SafeAreaView>
-		</SafeAreaProvider>
 	);
 }
 

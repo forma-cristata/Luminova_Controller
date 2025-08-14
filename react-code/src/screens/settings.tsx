@@ -13,7 +13,7 @@ import { useSharedValue } from "react-native-reanimated";
 import Carousel, {
 	type ICarouselInstance,
 } from "react-native-reanimated-carousel";
-import { SafeAreaProvider } from "react-native-safe-area-context";
+
 import BackButton from "@/src/components/BackButton";
 import InfoButton from "@/src/components/InfoButton";
 import SettingBlock from "@/src/components/settingBlock";
@@ -245,7 +245,7 @@ export default function Settings({ navigation }: any) {
 				<Text
 					style={styles.newSettingItemText}
 					key={`new-item`}
-				/>
+				></Text>
 			);
 		}
 		
@@ -259,92 +259,88 @@ export default function Settings({ navigation }: any) {
 				index={index}
 			/>
 		);
-	}, [navigation]);
-
-	return (
-		<SafeAreaProvider>
-			<SafeAreaView style={styles.container}>
-				<InfoButton />
-				<BackButton
-					beforePress={() => setLastEdited("0")}
-					onPress={() =>
-						navigation.navigate("Welcome", { animation: "slideFromLeft" })
-					}
-					afterPress={() => setLastEdited("0")}
-				/>
-				<View style={styles.notBackButton}>
-					<View style={styles.title}>
-						<Text style={styles.text}>Settings</Text>
-					</View>
-					<View style={[styles.focusedItem, { position: "relative" }]}>
-						{currentIndex < 0 && <View></View>}
-						{currentIndex < settingsData.length && (
-							<>
-								<TouchableOpacity
-									style={{
-										position: "absolute",
-										top: 10,
-										left: 10,
-										zIndex: 1,
-									}}
-									onPress={() => {
-										handleDuplicate();
-									}}
-								>
-									<MaterialIcons name="content-copy" size={24} color="white" />
-								</TouchableOpacity>
-								<TouchableOpacity
-									key={currentIndex.toString()}
-									style={{
-										position: "absolute",
-										top: 10,
-										right: 10,
-										zIndex: 1,
-										opacity: currentIndex < 12 ? 0.3 : 1,
-									}}
-									disabled={currentIndex < 12}
-									onPress={() => {
-										handleDelete();
-									}}
-								>								<Ionicons 
-									name="trash-outline" 
-									size={24} 
-									color={currentIndex < 12 ? "#666" : "white"} 
-								/>
-							</TouchableOpacity>
-							{focusedSettingBlock}
-						</>
-					)}
-						{currentIndex >= settingsData.length && (
-							<TouchableOpacity
-								style={styles.newSettingButton}
-								onPress={createNewSetting}
-							>
-								<Text style={styles.newSettingText}>+</Text>
-							</TouchableOpacity>
-						)}
-					</View>
-					<View style={styles.carCont}>
-						<Carousel
-							ref={ref}
-							data={carouselData}
-							width={width}
-							defaultIndex={0}
-							enabled={true}
-							loop={true}
-							autoPlay={false}
-							windowSize={1}
-							pagingEnabled={true}
-							snapEnabled={true}
-							onProgressChange={handleProgressChange}
-							renderItem={renderItem}
-							mode="parallax"
-							style={styles.carousel}
-						/>
-					</View>
+	}, [navigation]);	return (
+		<SafeAreaView style={styles.container}>
+			<InfoButton />
+			<BackButton
+				beforePress={() => setLastEdited("0")}
+				onPress={() =>
+					navigation.navigate("Welcome", { animation: "slideFromLeft" })
+				}
+				afterPress={() => setLastEdited("0")}
+			/>
+			<View style={styles.notBackButton}>
+				<View style={styles.title}>
+					<Text style={styles.text}>Settings</Text>
 				</View>
-			</SafeAreaView>
-		</SafeAreaProvider>
+				<View style={[styles.focusedItem, { position: "relative" }]}>
+					{currentIndex < 0 && <View></View>}
+					{currentIndex < settingsData.length && (
+						<>
+							<TouchableOpacity
+								style={{
+									position: "absolute",
+									top: 10,
+									left: 10,
+									zIndex: 1,
+								}}
+								onPress={() => {
+									handleDuplicate();
+								}}
+							>
+								<MaterialIcons name="content-copy" size={24} color="white" />
+							</TouchableOpacity>
+							<TouchableOpacity
+								key={currentIndex.toString()}
+								style={{
+									position: "absolute",
+									top: 10,
+									right: 10,
+									zIndex: 1,
+									opacity: currentIndex < 12 ? 0.3 : 1,
+								}}
+								disabled={currentIndex < 12}
+								onPress={() => {
+									handleDelete();
+								}}
+							>								<Ionicons 
+								name="trash-outline" 
+								size={24} 
+								color={currentIndex < 12 ? "#666" : "white"} 
+							/>
+						</TouchableOpacity>
+						{focusedSettingBlock}
+					</>
+				)}
+					{currentIndex >= settingsData.length && (
+						<TouchableOpacity
+							style={styles.newSettingButton}
+							onPress={createNewSetting}
+						>
+							<Text style={styles.newSettingText}>+</Text>
+						</TouchableOpacity>
+					)}
+				</View>
+				<View style={styles.carCont}>
+					<Carousel
+						ref={ref}
+						data={carouselData}
+						width={width}
+						defaultIndex={0}
+						enabled={true}
+						loop={true}
+						autoPlay={false}
+						windowSize={1}
+						pagingEnabled={true}
+						snapEnabled={true}
+						onProgressChange={handleProgressChange}
+						renderItem={renderItem}
+						mode="parallax"
+						style={styles.carousel}
+					/>
+				</View>
+			</View>
+		</SafeAreaView>
 	);
 }
 

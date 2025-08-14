@@ -11,7 +11,7 @@ import {
 	TouchableOpacity,
 	View,
 } from "react-native";
-import { SafeAreaProvider } from "react-native-safe-area-context";
+
 import AnimatedDots from "@/src/components/AnimatedDots";
 import BackButton from "@/src/components/BackButton";
 import BPMMeasurer from "@/src/components/BPMMeasurer";
@@ -153,8 +153,7 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 	};
 
 	return (
-		<SafeAreaProvider>
-			<SafeAreaView style={COMMON_STYLES.container}>
+		<SafeAreaView style={COMMON_STYLES.container}>
 				<InfoButton />
 				<BackButton beforePress={previewMode ? unPreviewAPI : undefined} />
 				<View style={styles.titleContainer}>
@@ -293,11 +292,9 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 					onClose={() => setShowBPMMeasurer(false)}
 					onBPMDetected={(bpm) => {
 						setBPM(bpm);
-						setDelayTime(calculateDelayTime(bpm));
-					}}
-				/>
-			</SafeAreaView>
-		</SafeAreaProvider>
+						setDelayTime(calculateDelayTime(bpm));				}}
+			/>
+		</SafeAreaView>
 	);
 }
 

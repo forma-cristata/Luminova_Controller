@@ -6,7 +6,7 @@ import {
 	Text,
 	TouchableOpacity,
 } from "react-native";
-import { SafeAreaProvider } from "react-native-safe-area-context";
+
 import AnimatedTitle from "@/src/components/AnimatedTitle";
 import InfoButton from "@/src/components/InfoButton";
 import { COLORS, COMMON_STYLES, FONTS } from "@/src/components/SharedStyles";
@@ -115,27 +115,25 @@ export default function Welcome({ navigation }: any) {
 	};
 
 	return (
-		<SafeAreaProvider>
-			<SafeAreaView style={styles.container}>
-				<InfoButton />
-				<AnimatedTitle text={displayText} fontSize={130} marginBottom="20%" />
-				<TouchableOpacity
-					style={COMMON_STYLES.welcomeButton}
-					onPress={createButtonPressed}
-				>
-					<Text style={styles.button}>Create ⟩</Text>
-				</TouchableOpacity>
-				<Switch
-					onValueChange={toggleSwitch}
-					value={isEnabled}
-					trackColor={{ false: "#665e73", true: "#ffffff" }}
-					thumbColor={isEnabled ? "#665e73" : "#f4f3f4"}
-					ios_backgroundColor="#3e3e3e"
-					style={styles.switch}
-					disabled={isLoading}
-				/>
-			</SafeAreaView>
-		</SafeAreaProvider>
+		<SafeAreaView style={styles.container}>
+			<InfoButton />
+			<AnimatedTitle text={displayText} fontSize={130} marginBottom="20%" />
+			<TouchableOpacity
+				style={COMMON_STYLES.welcomeButton}
+				onPress={createButtonPressed}
+			>
+				<Text style={styles.button}>Create ⟩</Text>
+			</TouchableOpacity>
+			<Switch
+				onValueChange={toggleSwitch}
+				value={isEnabled}
+				trackColor={{ false: "#665e73", true: "#ffffff" }}
+				thumbColor={isEnabled ? "#665e73" : "#f4f3f4"}
+				ios_backgroundColor="#3e3e3e"
+				style={styles.switch}
+				disabled={isLoading}
+			/>
+		</SafeAreaView>
 	);
 }
 

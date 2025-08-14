@@ -366,9 +366,11 @@ The app sends JSON configurations to the hardware with:
 - **State Inconsistency**: Check `ConfigurationContext` usage
 - **API Errors**: Verify network connectivity and endpoint configuration
 - **Performance**: Monitor timeout cleanup and memory usage
+- **SafeAreaProvider Nesting Error**: This app uses a global SafeAreaProvider from expo-router. Individual screens should ONLY use `SafeAreaView`, not wrap content in additional `SafeAreaProvider` components, as this causes context conflicts and crashes during carousel navigation.
 
 ### ⚠️ Common Warnings
 - **`EDGE_TO_EDGE_PLUGIN` on Android**: This warning appears when the app does not properly resize when the software keyboard is shown. To resolve this, add `"softwareKeyboardLayoutMode": "resize"` to the `android` configuration in `app.json`. This ensures the UI adapts to the keyboard, preventing it from obscuring input fields.
+- **`RNCSafeAreaProvider` Stack Trace**: This error occurs when multiple SafeAreaProviders are nested. Ensure only one SafeAreaProvider exists at the app root level.
 
 ### 🔍 Debugging Tips
 

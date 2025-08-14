@@ -12,7 +12,7 @@ import {
 	TouchableOpacity,
 	View,
 } from "react-native";
-import { SafeAreaProvider } from "react-native-safe-area-context";
+
 import AnimatedTitle from "@/src/components/AnimatedTitle";
 import BackButton from "@/src/components/BackButton";
 import React from "react";
@@ -163,8 +163,7 @@ export default function Info() {
 	];
 
 	return (
-		<SafeAreaProvider>
-			<SafeAreaView style={styles.container}>
+		<SafeAreaView style={styles.container}>
 				<BackButton />
 				<TouchableOpacity
 					style={styles.feedbackButton}
@@ -198,11 +197,9 @@ export default function Info() {
 					renderItem={({ item }) => <BulletPoint text={item} />}
 					keyExtractor={(item, index) => index.toString() + item.toString()}
 					SectionSeparatorComponent={() => (
-						<View style={styles.sectionSeparator} />
-					)}
-				/>
-			</SafeAreaView>
-		</SafeAreaProvider>
+						<View style={styles.sectionSeparator} />			)}
+			/>
+		</SafeAreaView>
 	);
 }
 

@@ -23,7 +23,7 @@ import Animated, {
 	useAnimatedGestureHandler,
 	useSharedValue,
 } from "react-native-reanimated";
-import { SafeAreaProvider } from "react-native-safe-area-context";
+
 import BackButton from "@/src/components/BackButton";
 import ColorDots from "@/src/components/ColorDots";
 import HueSliderBackground from "@/src/components/HueSliderBackground";
@@ -462,11 +462,10 @@ export default function ColorEditor({ navigation, route }: any) {
 	};
 
 	return (
-		<SafeAreaProvider>
-			<GestureHandlerRootView style={{ flex: 1 }}>
-				<PanGestureHandler onGestureEvent={panGestureEvent}>
-					<Animated.View style={{ flex: 1 }}>
-						<SafeAreaView style={COMMON_STYLES.container}>
+		<GestureHandlerRootView style={{ flex: 1 }}>
+			<PanGestureHandler onGestureEvent={panGestureEvent}>
+				<Animated.View style={{ flex: 1 }}>
+					<SafeAreaView style={COMMON_STYLES.container}>
 							<InfoButton />
 							<BackButton
 								beforePress={previewMode ? unPreviewAPI : undefined}
@@ -691,7 +690,6 @@ export default function ColorEditor({ navigation, route }: any) {
 					</Animated.View>
 				</PanGestureHandler>
 			</GestureHandlerRootView>
-		</SafeAreaProvider>
 	);
 }
 

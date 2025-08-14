@@ -1,7 +1,6 @@
 import React from "react";
 import { useEffect, useRef } from "react";
 import {
-	Dimensions,
 	ScrollView,
 	StyleSheet,
 	Text,
@@ -9,9 +8,9 @@ import {
 	View,
 } from "react-native";
 import { FLASHING_PATTERNS } from "../configurations/patterns";
+import { COLORS, FONTS, DIMENSIONS } from "./SharedStyles";
 
-const { width, height } = Dimensions.get("window");
-const scale = Math.min(width, height) / 375;
+const { scale } = DIMENSIONS;
 
 export default function Picker({
 	setting,
@@ -82,9 +81,9 @@ const styles = StyleSheet.create({
 		width: "100%",
 	},
 	label: {
-		color: "white",
+		color: COLORS.WHITE,
 		fontSize: 18 * scale,
-		fontFamily: "Clearlight-lJlq",
+		fontFamily: FONTS.CLEAR,
 		marginBottom: 8 * scale,
 	},
 	pickerContainer: {
@@ -109,9 +108,9 @@ const styles = StyleSheet.create({
 		color: "darkgray",
 		fontSize: 25 * scale,
 		textAlign: "center",
-		fontFamily: "Clearlight-lJlq",
+		fontFamily: FONTS.CLEAR,
 	},
 	selectedText: {
-		color: "#ffffff",
+		color: COLORS.WHITE,
 	},
 });

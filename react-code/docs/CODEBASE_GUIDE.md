@@ -367,6 +367,9 @@ The app sends JSON configurations to the hardware with:
 - **API Errors**: Verify network connectivity and endpoint configuration
 - **Performance**: Monitor timeout cleanup and memory usage
 
+### ⚠️ Common Warnings
+- **`EDGE_TO_EDGE_PLUGIN` on Android**: This warning appears when the app does not properly resize when the software keyboard is shown. To resolve this, add `"softwareKeyboardLayoutMode": "resize"` to the `android` configuration in `app.json`. This ensures the UI adapts to the keyboard, preventing it from obscuring input fields.
+
 ### 🔍 Debugging Tips
 
 - Check console logs for API responses

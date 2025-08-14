@@ -15,6 +15,7 @@ import {
 
 import AnimatedTitle from "@/src/components/AnimatedTitle";
 import BackButton from "@/src/components/BackButton";
+import { FONTS } from "@/src/components/SharedStyles";
 import React from "react";
 
 export default function Info() {
@@ -247,7 +248,7 @@ const styles = StyleSheet.create({
 	},
 	sectionTitle: {
 		color: "white",
-		fontFamily: "Clearlight-lJlq",
+		fontFamily: FONTS.CLEAR,
 		fontSize: 36,
 		borderBottomWidth: 1,
 		borderBottomColor: "#333",
@@ -278,7 +279,7 @@ const styles = StyleSheet.create({
 	},
 	bulletText: {
 		color: "white",
-		fontFamily: "Clearlight-lJlq",
+		fontFamily: FONTS.CLEAR,
 		fontSize: 26,
 		flex: 1,
 	},
@@ -293,7 +294,7 @@ const styles = StyleSheet.create({
 	},
 	feedbackText: {
 		color: "white",
-		fontFamily: "Clearlight-lJlq",
+		fontFamily: FONTS.CLEAR,
 		fontSize: 16,
 		marginLeft: 5,
 	},

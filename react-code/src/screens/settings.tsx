@@ -17,6 +17,7 @@ import Carousel, {
 import BackButton from "@/src/components/BackButton";
 import InfoButton from "@/src/components/InfoButton";
 import SettingBlock from "@/src/components/SettingBlock";
+import { FONTS } from "@/src/components/SharedStyles";
 import { useConfiguration } from "@/src/context/ConfigurationContext";
 import type { Setting } from "@/src/interface/SettingInterface";
 import { SettingsService } from "@/src/services/SettingsService";
@@ -395,7 +396,7 @@ const styles = StyleSheet.create({
 	newSettingText: {
 		color: "white",
 		fontSize: 100,
-		fontFamily: "Clearlight-lJlq",
+		fontFamily: FONTS.CLEAR,
 	},
 	newSettingItem: {
 		borderColor: "black",
@@ -405,7 +406,7 @@ const styles = StyleSheet.create({
 	newSettingItemText: {
 		color: "white",
 		fontSize: 20,
-		fontFamily: "Clearlight-lJlq",
+		fontFamily: FONTS.CLEAR,
 	},
 	sideButton: {
 		position: "absolute",

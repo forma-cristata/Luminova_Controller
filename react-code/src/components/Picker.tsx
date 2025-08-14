@@ -1,5 +1,4 @@
-import React from "react";
-import { useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import {
 	ScrollView,
 	StyleSheet,
@@ -10,7 +9,7 @@ import {
 import { FLASHING_PATTERNS } from "../configurations/patterns";
 import { COLORS, FONTS, DIMENSIONS } from "./SharedStyles";
 
-const { scale } = DIMENSIONS;
+const { SCALE: scale } = DIMENSIONS;
 
 export default function Picker({
 	setting,

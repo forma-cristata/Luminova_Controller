@@ -14,7 +14,7 @@ export const COLORS = {
 
 export const FONTS = {
 	SIGNATURE: "Thesignature",
-	CLEAR: "Clearlight-lJlq",
+	CLEAR: "Clearlight",
 };
 
 export const DIMENSIONS = {

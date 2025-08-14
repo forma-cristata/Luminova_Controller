@@ -631,7 +631,7 @@ The app uses a custom splash screen (`./assets/images/splash-screen.png`) that d
 
 #### **Typography**
 - **Headers**: `Thesignature` font for titles and branding
-- **Body**: `Clearlight-lJlq` font for UI text and labels
+- **Body**: `Clearlight` font for UI text and labels
 - **Consistent Sizing**: Use scale-based sizing for responsive design
 
 #### **Layout Patterns**

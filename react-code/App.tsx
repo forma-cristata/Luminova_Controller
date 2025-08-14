@@ -10,7 +10,7 @@ SplashScreen.preventAutoHideAsync();
 
 export default function App() {	const [loaded, error] = useFonts({
 		Thesignature: require("./assets/fonts/Thesignature.ttf"),
-		"Clearlight-lJlq": require("./assets/fonts/Clearlight-lJlq.ttf"),
+		"Clearlight": require("./assets/fonts/Clearlight-lJlq.ttf"),
 	});
 
 	useEffect(() => {

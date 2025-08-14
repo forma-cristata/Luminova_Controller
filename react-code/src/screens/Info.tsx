@@ -165,40 +165,41 @@ export default function Info() {
 
 	return (
 		<SafeAreaView style={styles.container}>
-				<BackButton />
-				<TouchableOpacity
-					style={styles.feedbackButton}
-					onPress={showFeedbackAlert}
-				>
-					<Ionicons name="chatbubble-outline" size={24} color="white" />
-					<Text style={styles.feedbackText}>Feedback</Text>
-				</TouchableOpacity>{" "}
-				<AnimatedTitle
-					text="How to Use This App"
-					fontSize={50}
-					marginBottom={15}
-					marginTop={50}
-				/>
-				<SectionList
-					sections={sections}
-					style={styles.scrollView}
-					contentContainerStyle={styles.scrollContent}
-					stickySectionHeadersEnabled={true}
-					renderSectionHeader={({ section: { title } }) => (
-						<View style={styles.sectionHeaderWrapper}>
-							<View style={styles.sectionTitleContainer}>
-								<Text style={styles.sectionTitle}>{title}</Text>
-							</View>
-							<LinearGradient
-								colors={["#000000", "transparent"]}
-								style={styles.fadeGradient}
-							/>
+			<BackButton />
+			<TouchableOpacity
+				style={styles.feedbackButton}
+				onPress={showFeedbackAlert}
+			>
+				<Ionicons name="chatbubble-outline" size={24} color="white" />
+				<Text style={styles.feedbackText}>Feedback</Text>
+			</TouchableOpacity>{" "}
+			<AnimatedTitle
+				text="How to Use This App"
+				fontSize={50}
+				marginBottom={15}
+				marginTop={50}
+			/>
+			<SectionList
+				sections={sections}
+				style={styles.scrollView}
+				contentContainerStyle={styles.scrollContent}
+				stickySectionHeadersEnabled={true}
+				renderSectionHeader={({ section: { title } }) => (
+					<View style={styles.sectionHeaderWrapper}>
+						<View style={styles.sectionTitleContainer}>
+							<Text style={styles.sectionTitle}>{title}</Text>
 						</View>
-					)}
-					renderItem={({ item }) => <BulletPoint text={item} />}
-					keyExtractor={(item, index) => index.toString() + item.toString()}
-					SectionSeparatorComponent={() => (
-						<View style={styles.sectionSeparator} />			)}
+						<LinearGradient
+							colors={["#000000", "transparent"]}
+							style={styles.fadeGradient}
+						/>
+					</View>
+				)}
+				renderItem={({ item }) => <BulletPoint text={item} />}
+				keyExtractor={(item, index) => index.toString() + item.toString()}
+				SectionSeparatorComponent={() => (
+					<View style={styles.sectionSeparator} />
+				)}
 			/>
 		</SafeAreaView>
 	);

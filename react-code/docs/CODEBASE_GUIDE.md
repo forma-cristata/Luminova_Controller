@@ -368,6 +368,28 @@ Welcome → Settings → ChooseModification → [ColorEditor | FlashingPatternEd
 - **Patterns**: Supports 12 distinct animation patterns (0-11)
 - **Identification**: Uses index-based setting identification for consistency
 
+## Recent Optimizations & Component Consolidation
+
+### ✅ **Button Componentization (Latest)**
+- **ActionButton**: Consolidated repetitive Reset/Save/Preview button patterns across ColorEditor and FlashingPatternEditor
+  - Eliminated 12+ lines of repetitive TouchableOpacity code per button
+  - Centralized opacity/disabled state logic
+  - Consistent styling with variant support
+- **ColorButton**: Unified White/Black color preset buttons in ColorEditor
+  - Removed duplicate styling definitions
+  - Scale-responsive design
+  - Centralized color logic
+- **Deprecated Code Removal**: Cleaned up unused button styles and imports
+- **Benefits**: Reduced code duplication by ~60 lines, improved maintainability, consistent UI behavior
+
+### ✅ **Previous Optimizations**
+- **InfoButton component**: Reusable across all screens
+- **SharedStyles system**: Centralized theming and styling constants
+- **Button style consolidation**: Consistent UI patterns
+- **API service layer**: Unified error handling and communication
+- **Animation state isolation**: Prevents state bleeding between components
+- **EditButton & FlashButton**: Reusable action components with callback support
+
 ## Component Library
 
 ### 🎨 Dot Components
@@ -426,6 +448,24 @@ Welcome → Settings → ChooseModification → [ColorEditor | FlashingPatternEd
 #### `src/components/InfoButton.tsx`
 - **Purpose**: Reusable info button across all screens
 - **Design**: Consistent positioning and styling
+
+#### `src/components/ActionButton.tsx`
+- **Purpose**: Reusable action button component for common operations (Reset, Save, Preview, etc.)
+- **Features**:
+  - Consistent styling with COMMON_STYLES
+  - Built-in disabled/opacity state handling
+  - Variant support (primary, disabled, preview)
+  - Customizable style and text overrides
+- **Props**: `title`, `onPress`, `disabled`, `variant`, `style`, `textStyle`, `opacity`
+
+#### `src/components/ColorButton.tsx`
+- **Purpose**: Reusable color selection button component for White/Black color presets
+- **Features**:
+  - Predefined white and black color styling
+  - Scale-responsive design
+  - Consistent with color picker interface
+  - Disabled state support
+- **Props**: `color`, `onPress`, `disabled`, `style`, `textStyle`, `scale`
 
 #### `src/components/EditButton.tsx`
 - **Purpose**: Reusable edit button component for navigating to setting modification
@@ -696,6 +736,61 @@ const throttledUpdate = useMemo(() => {
     }, 50);
   };
 }, []);
+```
+
+#### **ActionButton Usage**
+```typescript
+// Basic usage for standard actions
+<ActionButton 
+  title="Save"
+  onPress={handleSave}
+  disabled={!hasChanges}
+/>
+
+// With custom opacity and variant
+<ActionButton
+  title="Reset"
+  onPress={handleReset}
+  disabled={!hasChanges}
+  opacity={hasChanges ? 1 : COLORS.DISABLED_OPACITY}
+/>
+
+// Preview button with dynamic text and variant
+<ActionButton
+  title={previewMode ? (hasChanges ? "Update" : "Preview") : "Preview"}
+  onPress={() => {
+    previewAPI();
+    setPreviewMode(true);
+  }}
+  variant={!hasChanges && previewMode ? "disabled" : "primary"}
+/>
+```
+
+#### **ColorButton Usage**
+```typescript
+// White color preset button
+<ColorButton
+  color="white"
+  disabled={selectedDot === null}
+  onPress={() => {
+    if (selectedDot !== null) {
+      handleHexInput("FFFFFF");
+    }
+  }}
+  scale={scale}
+/>
+
+// Black color preset button
+<ColorButton
+  color="black"
+  disabled={selectedDot === null}
+  onPress={() => {
+    if (selectedDot !== null) {
+      handleHexInput("000000");
+    }
+  }}
+  scale={scale}
+/>
 ```
 
 #### **EditButton Usage**

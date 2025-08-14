@@ -35,7 +35,10 @@ export default function Settings({ navigation }: any) {
 	const [isInitialRender, setIsInitialRender] = React.useState(true);
 
 	// Memoize carousel data to prevent unnecessary re-renders
-	const carouselData = React.useMemo(() => [...settingsData, "new"] as (Setting | "new")[], [settingsData]);
+	const carouselData = React.useMemo(
+		() => [...settingsData, "new"] as (Setting | "new")[],
+		[settingsData],
+	);
 
 	const createNewSetting = () => {
 		const newSetting: Setting = {
@@ -97,28 +100,31 @@ export default function Settings({ navigation }: any) {
 		}
 	}, [settingsData.length, lastEdited]);
 
-	const handleProgressChange = React.useCallback((offset: number, absoluteProgress: number) => {
-		// Only block during the initial positioning, not after navigation returns
-		if (isInitialRender && Math.abs(offset) < 0.1) {
-			return;
-		}
+	const handleProgressChange = React.useCallback(
+		(offset: number, absoluteProgress: number) => {
+			// Only block during the initial positioning, not after navigation returns
+			if (isInitialRender && Math.abs(offset) < 0.1) {
+				return;
+			}
 
-		// Reset initial render flag once user starts scrolling
-		if (isInitialRender) {
-			setIsInitialRender(false);
-		}
+			// Reset initial render flag once user starts scrolling
+			if (isInitialRender) {
+				setIsInitialRender(false);
+			}
 
-		progress.value = offset;
-		const newIndex = Math.round(absoluteProgress);
-		
-		// Only update if index actually changed to prevent unnecessary re-renders
-		if (newIndex !== currentIndex) {
-			// Use requestAnimationFrame to ensure smooth updates
-			requestAnimationFrame(() => {
-				setCurrentIndex(newIndex);
-			});
-		}
-	}, [isInitialRender, currentIndex, progress]);
+			progress.value = offset;
+			const newIndex = Math.round(absoluteProgress);
+
+			// Only update if index actually changed to prevent unnecessary re-renders
+			if (newIndex !== currentIndex) {
+				// Use requestAnimationFrame to ensure smooth updates
+				requestAnimationFrame(() => {
+					setCurrentIndex(newIndex);
+				});
+			}
+		},
+		[isInitialRender, currentIndex, progress],
+	);
 
 	const handleDelete = async () => {
 		if (currentIndex < 12) {
@@ -233,9 +239,7 @@ export default function Settings({ navigation }: any) {
 	const renderItem = React.useCallback(
 		({ item, index }: { item: Setting | "new"; index: number }) => {
 			if (item === "new") {
-				return (
-					<Text style={styles.newSettingItemText} key={`new-item`}></Text>
-				);
+				return <Text style={styles.newSettingItemText} key={`new-item`}></Text>;
 			}
 
 			// The main item is animated, others are not.
@@ -254,9 +258,11 @@ export default function Settings({ navigation }: any) {
 			);
 		},
 		[navigation, currentIndex],
-	);return (
+	);
+	return (
 		<SafeAreaView style={styles.container}>
-			<InfoButton />			<BackButton
+			<InfoButton />{" "}
+			<BackButton
 				beforePress={() => setLastEdited("0")}
 				onPress={() => navigation.popToTop()}
 				afterPress={() => setLastEdited("0")}
@@ -264,7 +270,8 @@ export default function Settings({ navigation }: any) {
 			<View style={styles.notBackButton}>
 				<View style={styles.title}>
 					<Text style={styles.text}>Settings</Text>
-				</View>				<View style={[styles.focusedItem, { position: "relative" }]}>
+				</View>{" "}
+				<View style={[styles.focusedItem, { position: "relative" }]}>
 					{currentIndex < 0 ? <View></View> : null}
 					{currentIndex < settingsData.length ? (
 						<>
@@ -294,15 +301,17 @@ export default function Settings({ navigation }: any) {
 								onPress={() => {
 									handleDelete();
 								}}
-							>								<Ionicons 
-								name="trash-outline" 
-								size={24} 
-								color={currentIndex < 12 ? "#666" : "white"} 
-							/>
-						</TouchableOpacity>
-						{focusedSettingBlock}
-					</>
-				) : null}
+							>
+								{" "}
+								<Ionicons
+									name="trash-outline"
+									size={24}
+									color={currentIndex < 12 ? "#666" : "white"}
+								/>
+							</TouchableOpacity>
+							{focusedSettingBlock}
+						</>
+					) : null}
 					{currentIndex >= settingsData.length ? (
 						<TouchableOpacity
 							style={styles.newSettingButton}

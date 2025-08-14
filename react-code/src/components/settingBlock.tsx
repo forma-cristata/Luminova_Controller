@@ -42,15 +42,23 @@ const SettingBlock = ({
 	// Memoize the dots rendering to prevent unnecessary re-renders
 	const dotsRendered = React.useMemo(() => {
 		return isAnimated ? (
-			<AnimatedDots 
+			<AnimatedDots
 				key={`animated-${setting.name}-${index}`}
-				navigation={navigation} 
-				setting={setting} 
+				navigation={navigation}
+				setting={setting}
 			/>
 		) : (
 			<ColorDots colors={setting.colors} />
 		);
-	}, [isAnimated, setting.name, setting.colors, setting.delayTime, setting.flashingPattern, index, navigation]);
+	}, [
+		isAnimated,
+		setting.name,
+		setting.colors,
+		setting.delayTime,
+		setting.flashingPattern,
+		index,
+		navigation,
+	]);
 
 	return (
 		<>
@@ -73,9 +81,7 @@ const SettingBlock = ({
 							setting={setting}
 							settingIndex={index}
 						/>
-						<FlashButton
-							setting={setting}
-						/>
+						<FlashButton setting={setting} />
 					</View>
 				</View>
 			) : null}
@@ -83,16 +89,12 @@ const SettingBlock = ({
 			{layout === "compact" ? (
 				<View style={style}>
 					{dotsRendered}
-					<FlashButton
-						setting={setting}
-						style={styles.flashButtonCompact}
-					/>
+					<FlashButton setting={setting} style={styles.flashButtonCompact} />
 				</View>
 			) : null}
 		</>
 	);
 };
-
 
 const styles = StyleSheet.create({
 	whiteText: {

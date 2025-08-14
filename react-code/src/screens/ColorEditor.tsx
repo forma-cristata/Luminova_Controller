@@ -24,7 +24,9 @@ import Animated, {
 	useSharedValue,
 } from "react-native-reanimated";
 
+import ActionButton from "@/src/components/ActionButton";
 import BackButton from "@/src/components/BackButton";
+import ColorButton from "@/src/components/ColorButton";
 import ColorDots from "@/src/components/ColorDots";
 import HueSliderBackground from "@/src/components/HueSliderBackground";
 import InfoButton from "@/src/components/InfoButton";
@@ -75,7 +77,7 @@ export default function ColorEditor({ navigation, route }: any) {
 			(s: Setting, index: number) =>
 				s.name.toLowerCase() === text.toLowerCase() &&
 				s.name !== originalName &&
-				(!isNew || index !== settingIndex) // Exclude current setting for existing settings
+				(!isNew || index !== settingIndex), // Exclude current setting for existing settings
 		);
 		setNameError(nameExists ? "Name already exists." : null);
 	};
@@ -228,7 +230,7 @@ export default function ColorEditor({ navigation, route }: any) {
 			// Reset name for both new and existing settings
 			setSettingName(setting.name);
 			setNameError(null);
-			
+
 			if (selectedDot !== null) {
 				setHexInput(setting.colors[selectedDot].replace("#", ""));
 				const rgb = hexToRgb(setting.colors[selectedDot]);
@@ -253,7 +255,11 @@ export default function ColorEditor({ navigation, route }: any) {
 				isNew: true,
 			});
 		} else {
-			const updatedSetting = { ...setting, name: settingName, colors: [...colors] };
+			const updatedSetting = {
+				...setting,
+				name: settingName,
+				colors: [...colors],
+			};
 			const updatedSettings = await SettingsService.updateSetting(
 				settingIndex,
 				updatedSetting,
@@ -442,229 +448,207 @@ export default function ColorEditor({ navigation, route }: any) {
 			<PanGestureHandler onGestureEvent={panGestureEvent}>
 				<Animated.View style={{ flex: 1 }}>
 					<SafeAreaView style={COMMON_STYLES.container}>
-							<InfoButton />
-							<BackButton
-								beforePress={previewMode ? unPreviewAPI : undefined}
+						<InfoButton />
+						<BackButton beforePress={previewMode ? unPreviewAPI : undefined} />
+						{renderTitle()}
+						<ColorDots
+							colors={colors}
+							onDotSelect={handleDotSelect}
+							selectedDot={selectedDot}
+							layout="two-rows"
+							key={colors.join(",")}
+						/>
+						<View
+							style={[
+								styles.hexContainer,
+								{ opacity: selectedDot !== null ? 1 : 0.5 },
+							]}
+						>
+							<Text style={COMMON_STYLES.sliderText}>Hex: #</Text>
+							<TextInput
+								style={[styles.hexInput]}
+								value={hexInput.toUpperCase()}
+								onChangeText={(text) => {
+									const hex = text.slice(0, 6).replace(/[^0-9A-Fa-f]/g, "");
+									handleHexInput(hex);
+								}}
+								placeholder="FFFFFF"
+								placeholderTextColor={COLORS.PLACEHOLDER}
+								editable={selectedDot !== null}
+								onBlur={() => {
+									Keyboard.dismiss();
+								}}
+								autoCapitalize="characters"
+								keyboardAppearance="dark"
+								keyboardType="default"
 							/>
-							{renderTitle()}
-							<ColorDots
-								colors={colors}
-								onDotSelect={handleDotSelect}
-								selectedDot={selectedDot}
-								layout="two-rows"
-								key={colors.join(",")}
-							/>
-							<View
-								style={[
-									styles.hexContainer,
-									{ opacity: selectedDot !== null ? 1 : 0.5 },
-								]}
-							>
-								<Text style={COMMON_STYLES.sliderText}>Hex: #</Text>
-								<TextInput
-									style={[styles.hexInput]}
-									value={hexInput.toUpperCase()}
-									onChangeText={(text) => {
-										const hex = text.slice(0, 6).replace(/[^0-9A-Fa-f]/g, "");
-										handleHexInput(hex);
+							<View style={styles.colorButtons}>
+								<ColorButton
+									color="white"
+									disabled={selectedDot === null}
+									onPress={() => {
+										if (selectedDot !== null) {
+											handleHexInput("FFFFFF");
+										}
 									}}
-									placeholder="FFFFFF"
-									placeholderTextColor={COLORS.PLACEHOLDER}
-									editable={selectedDot !== null}
-									onBlur={() => {
-										Keyboard.dismiss();
-									}}
-									autoCapitalize="characters"
-									keyboardAppearance="dark"
-									keyboardType="default"
+									scale={scale}
 								/>
-								<View style={styles.colorButtons}>
-									<TouchableOpacity
-										style={[
-											styles.colorButton,
-											{ backgroundColor: COLORS.WHITE },
-										]}
-										disabled={selectedDot === null}
-										onPress={() => {
-											if (selectedDot !== null) {
-												handleHexInput("FFFFFF");
-											}
-										}}
-									>
-										<Text style={styles.colorButtonText}>W</Text>
-									</TouchableOpacity>
-									<TouchableOpacity
-										style={[
-											styles.colorButton,
-											{
-												backgroundColor: COLORS.BLACK,
-												borderColor: COLORS.WHITE,
-												borderWidth: 1,
-											},
-										]}
-										disabled={selectedDot === null}
-										onPress={() => {
-											if (selectedDot !== null) {
-												handleHexInput("000000");
-											}
-										}}
-									>
-										<Text style={styles.colorButtonText}>B</Text>
-									</TouchableOpacity>
-								</View>
+								<ColorButton
+									color="black"
+									disabled={selectedDot === null}
+									onPress={() => {
+										if (selectedDot !== null) {
+											handleHexInput("000000");
+										}
+									}}
+									scale={scale}
+								/>
 							</View>
-							<View
-								style={[
-									COMMON_STYLES.sliderContainer,
-									{ opacity: selectedDot !== null ? 1 : 0.5 },
-								]}
-							>
-								<View style={styles.sliderRow}>
-									<Text style={COMMON_STYLES.sliderText}>
-										Hue: {Math.round(hue)}°
-									</Text>
-									<View style={styles.sliderWrapper}>
-										<HueSliderBackground />
-										<Slider
-											style={[
-												styles.slider,
-												{ opacity: selectedDot !== null ? 1 : 0.5 },
-											]}
-											minimumValue={0}
-											maximumValue={360}
-											value={debouncedHue}
-											disabled={selectedDot === null}
-											onValueChange={(value) => {
-												if (selectedDot !== null) {
-													try {
-														Keyboard.dismiss();
-													} catch {
-														console.log("no keyboard to dismiss");
-													}
-													setHue(value);
-													updateColor(value, saturation, brightness);
-												}
-											}}
-											onSlidingComplete={(value) => {
-												if (selectedDot !== null) {
-													handleSliderComplete(value, saturation, brightness);
-												}
-											}}
-											minimumTrackTintColor="#ff0000"
-											maximumTrackTintColor={COLORS.WHITE}
-											thumbTintColor={COLORS.WHITE}
-										/>
-									</View>
-								</View>
-								<View style={styles.sliderRow}>
-									<Text style={COMMON_STYLES.sliderText}>
-										Saturation: {Math.round(saturation)}%
-									</Text>
+						</View>
+						<View
+							style={[
+								COMMON_STYLES.sliderContainer,
+								{ opacity: selectedDot !== null ? 1 : 0.5 },
+							]}
+						>
+							<View style={styles.sliderRow}>
+								<Text style={COMMON_STYLES.sliderText}>
+									Hue: {Math.round(hue)}°
+								</Text>
+								<View style={styles.sliderWrapper}>
+									<HueSliderBackground />
 									<Slider
 										style={[
 											styles.slider,
 											{ opacity: selectedDot !== null ? 1 : 0.5 },
 										]}
 										minimumValue={0}
-										maximumValue={100}
+										maximumValue={360}
+										value={debouncedHue}
 										disabled={selectedDot === null}
-										value={debouncedSaturation}
 										onValueChange={(value) => {
 											if (selectedDot !== null) {
-												setSaturation(value);
-												updateColor(hue, value, brightness);
+												try {
+													Keyboard.dismiss();
+												} catch {
+													console.log("no keyboard to dismiss");
+												}
+												setHue(value);
+												updateColor(value, saturation, brightness);
 											}
 										}}
 										onSlidingComplete={(value) => {
 											if (selectedDot !== null) {
-												handleSliderComplete(hue, value, brightness);
+												handleSliderComplete(value, saturation, brightness);
 											}
 										}}
-										minimumTrackTintColor={COLORS.WHITE}
-										maximumTrackTintColor="#333333"
-										thumbTintColor={COLORS.WHITE}
-									/>
-								</View>
-								<View style={styles.sliderRow}>
-									<Text style={COMMON_STYLES.sliderText}>
-										Brightness: {Math.round(brightness)}%
-									</Text>
-									<Slider
-										style={[
-											styles.slider,
-											{ opacity: selectedDot !== null ? 1 : 0.5 },
-										]}
-										minimumValue={0}
-										maximumValue={100}
-										disabled={selectedDot === null}
-										value={debouncedBrightness}
-										onValueChange={(value) => {
-											if (selectedDot !== null) {
-												setBrightness(value);
-												updateColor(hue, saturation, value);
-											}
-										}}
-										onSlidingComplete={(value) => {
-											if (selectedDot !== null) {
-												handleSliderComplete(hue, saturation, value);
-											}
-										}}
-										minimumTrackTintColor={COLORS.WHITE}
-										maximumTrackTintColor="#333333"
+										minimumTrackTintColor="#ff0000"
+										maximumTrackTintColor={COLORS.WHITE}
 										thumbTintColor={COLORS.WHITE}
 									/>
 								</View>
 							</View>
-							<View style={COMMON_STYLES.buttonContainer}>
-								<View style={COMMON_STYLES.buttonRow}>
-									<TouchableOpacity
-										style={[
-											COMMON_STYLES.styleAButton,
-											{ opacity: hasChanges ? 1 : COLORS.DISABLED_OPACITY },
-										]}
-										onPress={handleReset}
-										disabled={!hasChanges}
-									>
-										<Text style={COMMON_STYLES.buttonText}>Reset</Text>
-									</TouchableOpacity>
-
-									<TouchableOpacity									style={[
-										COMMON_STYLES.styleAButton,
-										{
-											opacity:
-												hasChanges ? (!nameError
-													? 1
-													: COLORS.DISABLED_OPACITY) : COLORS.DISABLED_OPACITY,
-										},
+							<View style={styles.sliderRow}>
+								<Text style={COMMON_STYLES.sliderText}>
+									Saturation: {Math.round(saturation)}%
+								</Text>
+								<Slider
+									style={[
+										styles.slider,
+										{ opacity: selectedDot !== null ? 1 : 0.5 },
 									]}
+									minimumValue={0}
+									maximumValue={100}
+									disabled={selectedDot === null}
+									value={debouncedSaturation}
+									onValueChange={(value) => {
+										if (selectedDot !== null) {
+											setSaturation(value);
+											updateColor(hue, value, brightness);
+										}
+									}}
+									onSlidingComplete={(value) => {
+										if (selectedDot !== null) {
+											handleSliderComplete(hue, value, brightness);
+										}
+									}}
+									minimumTrackTintColor={COLORS.WHITE}
+									maximumTrackTintColor="#333333"
+									thumbTintColor={COLORS.WHITE}
+								/>
+							</View>
+							<View style={styles.sliderRow}>
+								<Text style={COMMON_STYLES.sliderText}>
+									Brightness: {Math.round(brightness)}%
+								</Text>
+								<Slider
+									style={[
+										styles.slider,
+										{ opacity: selectedDot !== null ? 1 : 0.5 },
+									]}
+									minimumValue={0}
+									maximumValue={100}
+									disabled={selectedDot === null}
+									value={debouncedBrightness}
+									onValueChange={(value) => {
+										if (selectedDot !== null) {
+											setBrightness(value);
+											updateColor(hue, saturation, value);
+										}
+									}}
+									onSlidingComplete={(value) => {
+										if (selectedDot !== null) {
+											handleSliderComplete(hue, saturation, value);
+										}
+									}}
+									minimumTrackTintColor={COLORS.WHITE}
+									maximumTrackTintColor="#333333"
+									thumbTintColor={COLORS.WHITE}
+								/>
+							</View>
+						</View>
+						<View style={COMMON_STYLES.buttonContainer}>
+							<View style={COMMON_STYLES.buttonRow}>
+								<ActionButton
+									title="Reset"
+									onPress={handleReset}
+									disabled={!hasChanges}
+									opacity={hasChanges ? 1 : COLORS.DISABLED_OPACITY}
+								/>
+
+								<ActionButton
+									title="Save"
 									onPress={handleSave}
 									disabled={!hasChanges || !!nameError}
-									>
-										<Text style={COMMON_STYLES.buttonText}>Save</Text>
-									</TouchableOpacity>
+									opacity={
+										hasChanges
+											? !nameError
+												? 1
+												: COLORS.DISABLED_OPACITY
+											: COLORS.DISABLED_OPACITY
+									}
+								/>
 
-									<TouchableOpacity
-										style={
-											!hasChanges ? (previewMode
-												? COMMON_STYLES.styleADisabledButton
-												: COMMON_STYLES.styleAButton) : COMMON_STYLES.styleAButton
-										}
-										key={hasChanges.toString()}
-										onPress={() => {
-											previewAPI();
-											setPreviewMode(true);
-										}}
-									>
-										<Text style={COMMON_STYLES.buttonText}>
-											{previewMode ? (hasChanges ? "Update" : "Preview") : "Preview"}
-										</Text>
-									</TouchableOpacity>
-								</View>
+								<ActionButton
+									title={
+										previewMode
+											? hasChanges
+												? "Update"
+												: "Preview"
+											: "Preview"
+									}
+									onPress={() => {
+										previewAPI();
+										setPreviewMode(true);
+									}}
+									variant={!hasChanges && previewMode ? "disabled" : "primary"}
+								/>
 							</View>
-						</SafeAreaView>
-					</Animated.View>
-				</PanGestureHandler>
-			</GestureHandlerRootView>
+						</View>
+					</SafeAreaView>
+				</Animated.View>
+			</PanGestureHandler>
+		</GestureHandlerRootView>
 	);
 }
 
@@ -741,19 +725,6 @@ const styles = StyleSheet.create({
 	colorButtons: {
 		flexDirection: "row",
 		marginLeft: 30 * scale,
-	},
-	colorButton: {
-		width: 40 * scale,
-		height: 40 * scale,
-		borderRadius: 15 * scale,
-		justifyContent: "center",
-		alignItems: "center",
-		marginLeft: 10 * scale,
-	},
-	colorButtonText: {
-		color: COLORS.PLACEHOLDER,
-		fontSize: 14 * scale,
-		fontWeight: "bold",
 	},
 	nameInputContainer: {
 		flex: 1,

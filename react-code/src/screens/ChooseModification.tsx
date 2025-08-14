@@ -22,41 +22,41 @@ export default function ChooseModification({ navigation, route }: any) {
 
 	return (
 		<SafeAreaView style={styles.container}>
-				<InfoButton />
-				<BackButton onPress={() => navigation.goBack()} />
-				<View style={styles.notBackButton}>
-					<View style={styles.modeSection}>
-						<Text style={styles.whiteText}>Flashing Pattern</Text>
-						<View style={styles.dotContainer}>
-							<TouchableOpacity
-								onPress={() =>
-									navigation.navigate("FlashingPatternEditor", {
-										setting: setting,
-										settingIndex: settingIndex,
-									})
-								}
-							>
-								{modeDots()}
-							</TouchableOpacity>
-						</View>
-					</View>
-					<View style={styles.colorSection}>
-						<View style={styles.dotContainer}>
-							<TouchableOpacity
-								onPress={() =>
-									navigation.navigate("ColorEditor", { 
-										setting: setting,
-										settingIndex: settingIndex,
-									})
-								}
-							>
-								<ColorDots colors={setting.colors} />
-							</TouchableOpacity>
-						</View>
-						<Text style={styles.whiteTextColor}>Colors</Text>
+			<InfoButton />
+			<BackButton onPress={() => navigation.goBack()} />
+			<View style={styles.notBackButton}>
+				<View style={styles.modeSection}>
+					<Text style={styles.whiteText}>Flashing Pattern</Text>
+					<View style={styles.dotContainer}>
+						<TouchableOpacity
+							onPress={() =>
+								navigation.navigate("FlashingPatternEditor", {
+									setting: setting,
+									settingIndex: settingIndex,
+								})
+							}
+						>
+							{modeDots()}
+						</TouchableOpacity>
 					</View>
 				</View>
-			</SafeAreaView>
+				<View style={styles.colorSection}>
+					<View style={styles.dotContainer}>
+						<TouchableOpacity
+							onPress={() =>
+								navigation.navigate("ColorEditor", {
+									setting: setting,
+									settingIndex: settingIndex,
+								})
+							}
+						>
+							<ColorDots colors={setting.colors} />
+						</TouchableOpacity>
+					</View>
+					<Text style={styles.whiteTextColor}>Colors</Text>
+				</View>
+			</View>
+		</SafeAreaView>
 	);
 }
 

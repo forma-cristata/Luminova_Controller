@@ -15,47 +15,45 @@ interface EditButtonProps {
 	textStyle?: any;
 }
 
-const EditButton = React.memo(({
-	navigation,
-	setting,
-	settingIndex,
-	style = COMMON_STYLES.wideButton,
-	disabled = false,
-	onPress,
-	textStyle,
-}: EditButtonProps) => {
-	const { setLastEdited } = useConfiguration();
+const EditButton = React.memo(
+	({
+		navigation,
+		setting,
+		settingIndex,
+		style = COMMON_STYLES.wideButton,
+		disabled = false,
+		onPress,
+		textStyle,
+	}: EditButtonProps) => {
+		const { setLastEdited } = useConfiguration();
 
-	const handleEdit = () => {
-		// Call custom onPress if provided
-		if (onPress) {
-			onPress();
-		}
+		const handleEdit = () => {
+			// Call custom onPress if provided
+			if (onPress) {
+				onPress();
+			}
 
-		setLastEdited(settingIndex?.toString() ?? null);
-		navigation.navigate("ChooseModification", {
-			setting: setting,
-			settingIndex: settingIndex,
-		});
-	};
+			setLastEdited(settingIndex?.toString() ?? null);
+			navigation.navigate("ChooseModification", {
+				setting: setting,
+				settingIndex: settingIndex,
+			});
+		};
 
-	// Default text style that matches SettingBlock buttons
-	const defaultTextStyle = {
-		color: COLORS.WHITE,
-		fontSize: 40,
-		fontFamily: FONTS.CLEAR,
-	};
+		// Default text style that matches SettingBlock buttons
+		const defaultTextStyle = {
+			color: COLORS.WHITE,
+			fontSize: 40,
+			fontFamily: FONTS.CLEAR,
+		};
 
-	return (
-		<TouchableOpacity
-			style={style}
-			onPress={handleEdit}
-			disabled={disabled}
-		>
-			<Text style={textStyle || defaultTextStyle}>Edit</Text>
-		</TouchableOpacity>
-	);
-});
+		return (
+			<TouchableOpacity style={style} onPress={handleEdit} disabled={disabled}>
+				<Text style={textStyle || defaultTextStyle}>Edit</Text>
+			</TouchableOpacity>
+		);
+	},
+);
 
 EditButton.displayName = "EditButton";
 

@@ -57,15 +57,17 @@ const ColorDots = React.memo(
 				marginHorizontal: spacing,
 				transform: isInteractive ? [{ scale: scales[index] }] : [],
 				// Add shadow for black dots in interactive mode
-				...(isInteractive ? (isBlack
-					? {
-							shadowColor: getFirstNonBlackColor(),
-							shadowOffset: { width: 0, height: 0 },
-							shadowOpacity: 0.6,
-							shadowRadius: 5,
-							elevation: 5,
-						}
-					: {}) : {}),
+				...(isInteractive
+					? isBlack
+						? {
+								shadowColor: getFirstNonBlackColor(),
+								shadowOffset: { width: 0, height: 0 },
+								shadowOpacity: 0.6,
+								shadowRadius: 5,
+								elevation: 5,
+							}
+						: {}
+					: {}),
 			};
 		};
 

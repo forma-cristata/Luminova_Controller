@@ -14,6 +14,7 @@ import {
 	View,
 } from "react-native";
 
+import ActionButton from "@/src/components/ActionButton";
 import AnimatedDots from "@/src/components/AnimatedDots";
 import BackButton from "@/src/components/BackButton";
 import BPMMeasurer from "@/src/components/BPMMeasurer";
@@ -57,7 +58,7 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 
 	const [previewMode, setPreviewMode] = useState(false);
 	const [showBPMMeasurer, setShowBPMMeasurer] = useState(false);
-	
+
 	// Name editing state (now used for both new and existing settings)
 	const [settingName, setSettingName] = useState(setting.name);
 	const [nameError, setNameError] = useState<string | null>(null);
@@ -73,11 +74,11 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 			(s: Setting, index: number) =>
 				s.name.toLowerCase() === text.toLowerCase() &&
 				s.name !== setting.name &&
-				(!isNew || index !== settingIndex) // Exclude current setting for existing settings
+				(!isNew || index !== settingIndex), // Exclude current setting for existing settings
 		);
 		setNameError(nameExists ? "Name already exists." : null);
 	};
-	
+
 	const calculateBPM = (delayTime: number): string => {
 		return (60000 / (64 * delayTime)).toFixed(0);
 	};
@@ -100,27 +101,42 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 				}, 50);
 			};
 		}, []),
-		[]
+		[],
 	);
 
 	useEffect(() => {
 		const initialBpm = parseFloat(calculateBPM(setting.delayTime));
 		setBPM(Number.isNaN(initialBpm) ? 0 : initialBpm);
 	}, [setting.delayTime]); // Only depend on setting.delayTime, not calculateBPM
-	
+
 	// Track changes when values differ from initial values
 	useEffect(() => {
-		const hasPatternChanges = delayTime !== initialDelayTime || flashingPattern !== initialFlashingPattern;
+		const hasPatternChanges =
+			delayTime !== initialDelayTime ||
+			flashingPattern !== initialFlashingPattern;
 		const hasNameChanges = settingName !== setting.name;
 		setHasChanges(hasPatternChanges || hasNameChanges);
-	}, [delayTime, initialDelayTime, flashingPattern, initialFlashingPattern, settingName, setting.name]);
+	}, [
+		delayTime,
+		initialDelayTime,
+		flashingPattern,
+		initialFlashingPattern,
+		settingName,
+		setting.name,
+	]);
 	const modeDots = () => {
 		const newSetting = {
 			...setting,
 			delayTime: debouncedDelayTime, // Use throttled/debounced value for consistency
 			flashingPattern: flashingPattern,
 		};
-		return <AnimatedDots key={`${debouncedDelayTime}-${flashingPattern}`} navigation={navigation} setting={newSetting} />;
+		return (
+			<AnimatedDots
+				key={`${debouncedDelayTime}-${flashingPattern}`}
+				navigation={navigation}
+				setting={newSetting}
+			/>
+		);
 	};
 
 	const handleSave = async () => {
@@ -148,7 +164,7 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 				settingIndex,
 				updatedSetting,
 			);
-			
+
 			const currentIndex = settingIndex; // Use the existing index
 			setLastEdited(currentIndex.toString());
 			navigation.navigate("Settings", { setting });
@@ -184,145 +200,128 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 
 	return (
 		<SafeAreaView style={COMMON_STYLES.container}>
-				<InfoButton />
-				<BackButton beforePress={previewMode ? unPreviewAPI : undefined} />
-				<View style={styles.titleContainer}>
-					<RandomizeButton
-						onPress={() => {
-							// Random BPM between 40 and 180
-							const randomBPM = Math.floor(Math.random() * (180 - 40) + 40);
-							setBPM(randomBPM);
-							setDelayTime(calculateDelayTime(randomBPM));
+			<InfoButton />
+			<BackButton beforePress={previewMode ? unPreviewAPI : undefined} />
+			<View style={styles.titleContainer}>
+				<RandomizeButton
+					onPress={() => {
+						// Random BPM between 40 and 180
+						const randomBPM = Math.floor(Math.random() * (180 - 40) + 40);
+						setBPM(randomBPM);
+						setDelayTime(calculateDelayTime(randomBPM));
 
-							// Random pattern from valid animation patterns (excluding STILL)
-							const randomPattern =
-								ANIMATION_PATTERNS[
-									Math.floor(Math.random() * ANIMATION_PATTERNS.length)
-								];
-							setFlashingPattern(randomPattern);
+						// Random pattern from valid animation patterns (excluding STILL)
+						const randomPattern =
+							ANIMATION_PATTERNS[
+								Math.floor(Math.random() * ANIMATION_PATTERNS.length)
+							];
+						setFlashingPattern(randomPattern);
+					}}
+				/>
+				<View style={styles.nameInputContainer}>
+					<Text style={COMMON_STYLES.sliderText}>Setting Name:</Text>
+					<TextInput
+						style={[
+							styles.nameInput,
+							nameError ? { color: COLORS.ERROR } : null,
+						]}
+						value={settingName}
+						onChangeText={handleNameChange}
+						placeholder="Enter setting name"
+						placeholderTextColor={COLORS.PLACEHOLDER}
+						maxLength={20}
+						onBlur={() => {
+							Keyboard.dismiss();
 						}}
+						autoCapitalize="words"
+						keyboardAppearance="dark"
 					/>
-					<View style={styles.nameInputContainer}>
-						<Text style={COMMON_STYLES.sliderText}>Setting Name:</Text>
-						<TextInput
-							style={[
-								styles.nameInput,
-								nameError ? { color: COLORS.ERROR } : null,
-							]}
-							value={settingName}
-							onChangeText={handleNameChange}
-							placeholder="Enter setting name"
-							placeholderTextColor={COLORS.PLACEHOLDER}
-							maxLength={20}
-							onBlur={() => {
-								Keyboard.dismiss();
+				</View>
+				<MetronomeButton
+					onPress={() => {
+						setShowBPMMeasurer(true);
+					}}
+				/>
+			</View>
+			<View style={styles.dotPadding}>{modeDots()}</View>
+			<View style={styles.fpContainer}>
+				<Picker
+					navigation={navigation}
+					setting={setting}
+					selectedPattern={debouncedFlashingPattern}
+					setSelectedPattern={setFlashingPattern}
+				/>
+			</View>
+			<View style={styles.sliderPadding}>
+				<View style={COMMON_STYLES.sliderContainer}>
+					<View style={styles.sliderRow}>
+						<Text style={COMMON_STYLES.sliderText}>
+							Speed: {BPM.toFixed(0)} bpm
+						</Text>
+						<Slider
+							style={styles.slider}
+							minimumValue={40}
+							maximumValue={180}
+							value={BPM}
+							onValueChange={(value) => {
+								setBPM(value);
+								throttledSetDelayTime(value);
 							}}
-							autoCapitalize="words"
-							keyboardAppearance="dark"
+							minimumTrackTintColor="#ff0000"
+							maximumTrackTintColor={COLORS.WHITE}
+							thumbTintColor={COLORS.WHITE}
 						/>
 					</View>
-					<MetronomeButton
+				</View>
+			</View>
+			<View style={COMMON_STYLES.buttonContainer}>
+				<View style={COMMON_STYLES.buttonRow}>
+					<ActionButton
+						title="Reset"
 						onPress={() => {
-							setShowBPMMeasurer(true);
+							setDelayTime(initialDelayTime);
+							setBPM(parseFloat(calculateBPM(initialDelayTime)));
+							setFlashingPattern(initialFlashingPattern);
+							setSettingName(setting.name); // Reset name
+							setNameError(null); // Clear name error
+							unPreviewAPI();
 						}}
+						disabled={!hasChanges}
+						opacity={hasChanges ? 1 : COLORS.DISABLED_OPACITY}
+					/>
+
+					<ActionButton
+						title="Save"
+						onPress={handleSave}
+						disabled={!hasChanges || !!nameError}
+						opacity={
+							hasChanges
+								? !nameError
+									? 1
+									: COLORS.DISABLED_OPACITY
+								: COLORS.DISABLED_OPACITY
+						}
+					/>
+
+					<ActionButton
+						title={
+							previewMode ? (hasChanges ? "Update" : "Preview") : "Preview"
+						}
+						onPress={() => {
+							previewAPI();
+							setPreviewMode(true);
+						}}
+						variant={!hasChanges && previewMode ? "disabled" : "primary"}
 					/>
 				</View>
-				<View style={styles.dotPadding}>{modeDots()}</View>
-				<View style={styles.fpContainer}>
-					<Picker
-						navigation={navigation}
-						setting={setting}
-						selectedPattern={debouncedFlashingPattern}
-						setSelectedPattern={setFlashingPattern}
-					/>
-				</View>
-				<View style={styles.sliderPadding}>
-					<View style={COMMON_STYLES.sliderContainer}>
-						<View style={styles.sliderRow}>
-							<Text style={COMMON_STYLES.sliderText}>
-								Speed: {BPM.toFixed(0)} bpm
-							</Text>
-							<Slider
-								style={styles.slider}
-								minimumValue={40}
-								maximumValue={180}
-								value={BPM}
-								onValueChange={(value) => {
-									setBPM(value);
-									throttledSetDelayTime(value);
-								}}
-								minimumTrackTintColor="#ff0000"
-								maximumTrackTintColor={COLORS.WHITE}
-								thumbTintColor={COLORS.WHITE}
-							/>
-						</View>
-					</View>
-				</View>
-				<View style={COMMON_STYLES.buttonContainer}>
-					<View style={COMMON_STYLES.buttonRow}>
-						<TouchableOpacity
-							style={[
-								COMMON_STYLES.styleAButton,
-								{
-									opacity:
-										hasChanges
-											? 1
-											: COLORS.DISABLED_OPACITY,
-								},
-							]}
-							onPress={() => {
-								setDelayTime(initialDelayTime);
-								setBPM(parseFloat(calculateBPM(initialDelayTime)));
-								setFlashingPattern(initialFlashingPattern);
-								setSettingName(setting.name); // Reset name
-								setNameError(null); // Clear name error
-								unPreviewAPI();
-							}}
-							disabled={!hasChanges}
-						>
-							<Text style={COMMON_STYLES.buttonText}>Reset</Text>
-						</TouchableOpacity>
-
-						<TouchableOpacity
-							style={[
-								COMMON_STYLES.styleAButton,
-								{
-									opacity:
-										hasChanges ? (!nameError
-											? 1
-											: COLORS.DISABLED_OPACITY) : COLORS.DISABLED_OPACITY,
-								},
-							]}
-							onPress={handleSave}
-							disabled={!hasChanges || !!nameError}
-						>
-							<Text style={COMMON_STYLES.buttonText}>Save</Text>
-						</TouchableOpacity>
-
-						<TouchableOpacity
-							style={
-								!hasChanges ? (previewMode
-									? COMMON_STYLES.styleADisabledButton
-									: COMMON_STYLES.styleAButton) : COMMON_STYLES.styleAButton
-							}
-							key={hasChanges.toString()}
-							onPress={() => {
-								previewAPI();
-								setPreviewMode(true);
-							}}
-						>
-							<Text style={COMMON_STYLES.buttonText}>
-								{previewMode ? (hasChanges ? "Update" : "Preview") : "Preview"}
-							</Text>
-						</TouchableOpacity>
-					</View>
-				</View>{" "}
-				<BPMMeasurer
-					isVisible={showBPMMeasurer}
-					onClose={() => setShowBPMMeasurer(false)}
-					onBPMDetected={(bpm) => {
-						setBPM(bpm);
-						setDelayTime(calculateDelayTime(bpm));				}}
+			</View>{" "}
+			<BPMMeasurer
+				isVisible={showBPMMeasurer}
+				onClose={() => setShowBPMMeasurer(false)}
+				onBPMDetected={(bpm) => {
+					setBPM(bpm);
+					setDelayTime(calculateDelayTime(bpm));
+				}}
 			/>
 		</SafeAreaView>
 	);

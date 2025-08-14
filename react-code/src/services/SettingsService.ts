@@ -42,7 +42,10 @@ export class SettingsService {
 
 	static async saveSettings(newSettings: Setting[]): Promise<void> {
 		try {
-			await FileSystem.writeAsStringAsync(FILE_URI, JSON.stringify(newSettings));
+			await FileSystem.writeAsStringAsync(
+				FILE_URI,
+				JSON.stringify(newSettings),
+			);
 		} catch (e) {
 			console.error("Error saving settings:", e);
 			Alert.alert("Error", "Failed to save settings.");

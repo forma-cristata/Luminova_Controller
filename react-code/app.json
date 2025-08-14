@@ -15,7 +15,7 @@
     "keywords": ["LED", "lighting", "controller", "animation", "color", "patterns", "arduino", "neopixel", "FastLED", "controller", "luminova"],
     "privacy": "public",
     "ios": {
-		"jsEngine": "jsc",
+		"jsEngine": "hermes",
       "supportsTablet": false,
       "bundleIdentifier": "com.formacristata.luminovacontroller",
       "splash": {

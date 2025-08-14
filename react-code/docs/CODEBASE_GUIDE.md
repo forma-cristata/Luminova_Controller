@@ -503,6 +503,64 @@ Welcome → Settings → ChooseModification → [ColorEditor | FlashingPatternEd
 - **Contents**: 12 pre-configured lighting schemes
 - **Usage**: Loaded as fallback when no user settings exist
 
+## Build Configuration
+
+### 🎨 Splash Screen Setup
+
+The app uses a custom splash screen (`./assets/images/splash-screen.png`) that displays while the app loads fonts and initializes. The splash screen is configured for both iOS and Android platforms.
+
+#### **Configuration in `app.json`:**
+
+```json
+{
+  "expo": {
+    "splash": {
+      "image": "./assets/images/splash-screen.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#000000"
+    },
+    "ios": {
+      "splash": {
+        "image": "./assets/images/splash-screen.png",
+        "resizeMode": "contain",
+        "backgroundColor": "#000000"
+      }
+    },
+    "android": {
+      "splash": {
+        "image": "./assets/images/splash-screen.png",
+        "resizeMode": "contain",
+        "backgroundColor": "#000000"
+      }
+    },
+    "plugins": [
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/splash-screen.png",
+          "resizeMode": "contain",
+          "backgroundColor": "#000000"
+        }
+      ]
+    ]
+  }
+}
+```
+
+#### **Implementation in Code:**
+
+- **`App.tsx`**: Main entry point that handles splash screen visibility and font loading
+- **`src/screens/index.tsx`**: Navigation setup wrapped by splash screen logic
+- **Font Loading**: Custom fonts are loaded before hiding the splash screen
+- **Error Handling**: Splash screen hides on both successful font loading and errors
+
+#### **Development Notes:**
+
+- Run `npx expo prebuild --clean` after splash screen changes to regenerate native files
+- Splash screen image should be optimized for both iOS and Android display densities
+- Background color (`#000000`) matches the app's dark theme
+- `resizeMode: "contain"` ensures the image scales properly on all screen sizes
+
 ## Navigation System
 
 ### 🧭 Navigation Structure

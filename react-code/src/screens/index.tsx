@@ -1,7 +1,4 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { useFonts } from "expo-font";
-import * as SplashScreen from "expo-splash-screen";
-import { useEffect } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import ChooseModification from "./ChooseModification";
 import ColorEditor from "./ColorEditor";
@@ -23,21 +20,9 @@ export type RootStackParamList = {
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
-SplashScreen.preventAutoHideAsync();
 
 function Index() {
-	const [loaded, error] = useFonts({
-		Thesignature: require("../../assets/fonts/Thesignature.ttf"),
-		"Clearlight-lJlq": require("../../assets/fonts/Clearlight-lJlq.ttf"),
-	});
-
-	useEffect(() => {
-		if (loaded || error) {
-			SplashScreen.hideAsync();
-		}
-	}, [loaded, error]);
-
-	return (!loaded && !error) ? null : (
+	return (
 		<ConfigurationProvider>
 			<GestureHandlerRootView>
 				<Stack.Navigator

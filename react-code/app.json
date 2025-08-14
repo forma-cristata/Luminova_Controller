@@ -6,6 +6,11 @@
     "icon": "./assets/images/icon.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./assets/images/splash-screen.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#000000"
+    },
     "description": "A React Native LED controller app for creating and managing custom lighting configurations with various animation patterns and color schemes.",
     "keywords": ["LED", "lighting", "controller", "animation", "color", "patterns", "arduino", "neopixel", "FastLED", "controller", "luminova"],
     "privacy": "public",
@@ -13,6 +18,11 @@
 		"jsEngine": "jsc",
       "supportsTablet": false,
       "bundleIdentifier": "com.formacristata.luminovacontroller",
+      "splash": {
+        "image": "./assets/images/splash-screen.png",
+        "resizeMode": "contain",
+        "backgroundColor": "#000000"
+      },
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
         "UIBackgroundModes": ["audio"]
@@ -22,6 +32,11 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/icon.png",
         "backgroundColor": "#ffffff"
+      },
+      "splash": {
+        "image": "./assets/images/splash-screen.png",
+        "resizeMode": "contain",
+        "backgroundColor": "#000000"
       },
       "softwareKeyboardLayoutMode": "resize",      "permissions": [
         "android.permission.RECORD_AUDIO",
@@ -35,6 +50,14 @@
       "favicon": "./assets/images/icon.png"
     },    "plugins": [
       [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/splash-screen.png",
+          "resizeMode": "contain",
+          "backgroundColor": "#000000"
+        }
+      ],
+      [
         "expo-audio",
         {
           "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone."
@@ -45,7 +68,8 @@
         "expo-font",
         {
           "fonts": [
-            "./assets/fonts/Thesignature.ttf"
+            "./assets/fonts/Thesignature.ttf",
+            "./assets/fonts/Clearlight-lJlq.ttf"
           ]
         }      ],
       "expo-web-browser"

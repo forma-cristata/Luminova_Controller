@@ -1,5 +1,10 @@
 import React from "react";
-import { Text, TouchableOpacity, type ViewStyle, type TextStyle } from "react-native";
+import {
+	Text,
+	TouchableOpacity,
+	type ViewStyle,
+	type TextStyle,
+} from "react-native";
 import { COLORS, COMMON_STYLES } from "./SharedStyles";
 
 export interface BaseButtonProps {

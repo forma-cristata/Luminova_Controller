@@ -17,7 +17,6 @@
     "format-lint": "npx @biomejs/biome lint --write",
     "format-lint-org": "npx @biomejs/biome check --write",
     "unsafeFix": "npx biome check --write --unsafe",
-    "prepare": "husky"
   },
   "jest": {
     "preset": "jest-expo"
@@ -84,6 +83,12 @@
         ],
         "listUnknownPackages": false
       }
+    }
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npx @biomejs/biome lint --write",
+      "pre-push": "npx @biomejs/biome lint --write"
     }
   },
   "private": true

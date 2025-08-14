@@ -815,9 +815,24 @@ export default function AnimatedDots({ setting }: AnimatedDotsProps) {
 
 	return (
 		<SafeAreaView style={styles.background}>
-			{dotColors.map((color, index) => (
-				<Dot key={`dot_${index + 1}`} color={color} id={`dot_${index + 1}`} />
-			))}
+			{dotColors ? 
+				Array.isArray(dotColors) 
+					? dotColors.map((color, index) => {
+						// Safety checks
+						if (typeof color !== 'string') {
+							return null;
+						}
+						
+						// Use stable setting ID with color hash for truly stable keys (no index)
+						const baseId = getStableSettingId(setting);
+						const colorHash = color.replace('#', '');
+						const THISISNOTTHERIGHTWAYTOCREATEATHISISNOTTHERIGHTWAYTOCREATEASTABLEKEYUSETHEFUNCTIONINSETTINGUTILSUSETHEFUNCTIONINSETTINGUTILS = `${baseId}-dot-${colorHash}-${index < 8 ? 'top' : 'bottom'}-${index % 8}`;
+						return (
+							<Dot key={THISISNOTTHERIGHTWAYTOCREATEASTABLEKEYUSETHEFUNCTIONINSETTINGUTILS} color={color} id={`dot_${index + 1}`} />
+						);
+					}).filter(Boolean) 
+					: null
+				: null}
 		</SafeAreaView>
 	);
 }

@@ -300,6 +300,9 @@ react-code/
 │       ├── ApiService.ts        # Hardware API communication
 │       ├── SettingsService.ts   # Settings data management
 │       └── ...
+├── utils/                        # Utility functions (camelCase)
+│   ├── settingUtils.ts          # Setting ID generation and utilities
+│   └── ...
 ├── assets/                       # Static assets
 │   ├── fonts/                   # Custom fonts
 │   └── images/                  # App icons and images
@@ -313,6 +316,7 @@ react-code/
 - **components/**: Reusable UI elements that can be used across multiple screens
 - **screens/**: Full-screen components that represent app pages
 - **services/**: Business logic and external API communication
+- **utils/**: Utility functions and helper methods
 - **configurations/**: App constants, default data, and configuration
 - **context/**: React Context for global state management
 - **hooks/**: Custom React hooks for reusable logic
@@ -551,6 +555,190 @@ Welcome → Settings → ChooseModification → [ColorEditor | FlashingPatternEd
   - `toggleLed()` - Control LED power
 - **Benefits**: Consistent error handling, type safety, centralized logging
 
+### 🔑 Key Management & Component Stability
+
+#### `src/utils/settingUtils.ts`
+- **Purpose**: Stable ID generation for React component keys
+- **Critical Rule**: **NEVER use array indices for component keys**
+- **Methods**:
+  - `getStableSettingId(setting)` - Generate content-based stable IDs
+  - `generateUniqueSettingId()` - Create unique IDs for new settings
+
+#### **Why Stable Keys Matter**
+Using array indices as React keys is an anti-pattern that causes:
+- ❌ Text rendering errors during scrolling ("Text strings must be rendered within a <Text> component")
+- ❌ Component state loss during list reordering
+- ❌ Unnecessary re-renders and performance issues
+- ❌ React reconciliation problems
+
+#### **Stable Key Generation Algorithm**
+```typescript
+export const getStableSettingId = (setting: Setting): string => {
+  if (setting.id) {
+    return setting.id; // Use existing ID if available
+  }
+  
+  // Create deterministic ID based on setting content
+  const content = `${setting.name}-${setting.colors.join(',')}-${setting.delayTime}-${setting.flashingPattern}`;
+  
+  // Simple string hash for consistent ID generation
+  let hash = 0;
+  for (let i = 0; i < content.length; i++) {
+    const char = content.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash; // Convert to 32-bit integer
+  }
+  
+  return `setting-${Math.abs(hash)}`;
+};
+```
+
+#### **Key Management Best Practices**
+
+**✅ Correct Key Usage:**
+```typescript
+// Use stable, content-based keys
+{settingsData.map(item => (
+  <SettingBlock
+    key={getStableSettingId(item)}  // ✅ Stable, unique key
+    setting={item}
+    // ... other props
+  />
+))}
+```
+
+**❌ Avoid These Patterns:**
+```typescript
+// Don't use array indices
+{settingsData.map((item, index) => (
+  <SettingBlock
+    key={index}  // ❌ Bad: causes re-render issues
+    key={`item-${index}`}  // ❌ Bad: still index-based
+    // ... props
+  />
+))}
+
+// Don't use unstable generators
+{settingsData.map(item => (
+  <SettingBlock
+    key={Math.random()}  // ❌ Bad: changes every render
+    key={new Date().getTime()}  // ❌ Bad: unstable
+    // ... props
+  />
+))}
+```
+
+#### **Updated Setting Interface**
+```typescript
+interface Setting {
+  id?: string; // Optional unique identifier for stable keys
+  name: string;
+  colors: string[];
+  whiteValues: number[];
+  brightnessValues: number[];
+  flashingPattern: string;
+  delayTime: number;
+}
+```
+
+#### **Implementation Examples**
+```typescript
+// In SettingBlock.tsx
+import { getStableSettingId } from "@/src/utils/settingUtils";
+
+const SettingBlock = ({ setting, ... }) => {
+  const stableId = getStableSettingId(setting);
+  
+  const dotsRendered = React.useMemo(() => {
+    return isAnimated ? (
+      <AnimatedDots key={`animated-${stableId}`} />
+    ) : (
+      <ColorDots key={`static-${stableId}`} />
+    );
+  }, [stableId, ...]);
+};
+
+// In Settings.tsx
+const renderItem = ({ item }) => (
+  <SettingBlock
+    key={getStableSettingId(item)}
+    setting={item}
+  />
+);
+```
+
+#### **Benefits of This Approach**
+- ✅ **Eliminates text rendering errors** during scrolling
+- ✅ **Maintains component state** during list updates
+- ✅ **Improves performance** by preventing unnecessary re-renders
+- ✅ **Provides deterministic behavior** across app sessions
+- ✅ **Follows React best practices** for key management
+- ✅ **Centralized utility** for consistent ID generation across codebase
+
+#### **🚨 CRITICAL DEBUGGING LESSONS - AI STUPIDITY PREVENTION 🚨**
+
+**The "Text strings must be rendered within a <Text> component" Error:**
+
+This error is caused by TWO main issues that must BOTH be fixed:
+
+1. **Logical AND (`&&`) in JSX conditional rendering**
+2. **Array indices used in React component keys**
+
+**🔥 REAL DEBUGGING SESSION EXAMPLE (August 2025):**
+
+**The Problem:** User reported the text rendering error when tapping "create" button.
+
+**AI's Epic Failure Process:**
+1. ✅ **Correctly identified** logical AND in Settings.tsx and fixed it
+2. ❌ **Found the real issue** in AnimatedDots.tsx but then proceeded to be completely stupid
+3. ❌ **Ignored the existing `getStableSettingId` utility** that was RIGHT THERE in the codebase
+4. ❌ **Created increasingly complex key generation schemes** while still using array indices
+5. ❌ **Added unnecessary complexity** (color hashes, position calculations) instead of using the simple utility
+6. ❌ **Required user to literally spell it out** multiple times before understanding
+
+**🎯 THE SIMPLE SOLUTION THAT TOOK FOREVER TO REACH:**
+
+**Before (WRONG):**
+```tsx
+// AnimatedDots.tsx - CAUSES ERRORS
+{dotColors && Array.isArray(dotColors) // ❌ Logical AND
+  ? dotColors.map((color, index) => (
+      <Dot 
+        key={`dot-${index}`}  // ❌ ARRAY INDEX IN KEY!
+        color={color} 
+        id={`dot_${index + 1}`}  // ❌ NO IDS IN REACT NATIVE!
+      />
+    ))
+  : null}
+```
+
+**After (CORRECT):**
+```tsx
+// AnimatedDots.tsx - FIXED
+{dotColors 
+  ? Array.isArray(dotColors) 
+    ? dotColors.map((color, index) => (
+        <Dot 
+          key={getStableSettingId(setting)}  // ✅ USE THE UTILITY FUNCTION!
+          color={color} 
+        />
+      ))
+    : null
+  : null}
+```
+
+**🔥 KEY LESSONS FOR FUTURE AIs:**
+
+1. **USE THE EXISTING UTILITIES** - Don't reinvent the wheel when `getStableSettingId` exists
+2. **NO ARRAY INDICES IN KEYS** - Ever. Period. Use content-based stable IDs
+3. **NO LOGICAL AND (`&&`) IN JSX** - Always use ternary operators for conditional rendering
+4. **NO DOM IDS IN REACT NATIVE** - There are no DOM elements, remove all `id` props
+5. **SIMPLE IS BETTER** - Don't overcomplicate key generation with hashes and calculations
+6. **READ THE EXISTING CODE** - The solution was already implemented in the utils
+
+**🎯 The Ultimate Rule:** 
+When debugging React key issues, just use `getStableSettingId(setting)` and move on. Don't be clever.
+
 ### 🔄 State Management
 
 #### `src/context/ConfigurationContext.tsx`
@@ -565,6 +753,7 @@ Welcome → Settings → ChooseModification → [ColorEditor | FlashingPatternEd
 #### `src/interface/SettingInterface.ts`
 - **Purpose**: TypeScript interface for lighting configurations
 - **Properties**:
+  - `id` - (Optional) Unique identifier for stable React keys
   - `name` - User-friendly setting name
   - `colors` - Array of 16 hex color values
   - `whiteValues` - White LED brightness (0-255)

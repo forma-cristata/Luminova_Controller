@@ -28,6 +28,7 @@
 - **Memoization**: Use React.memo() for performance-critical components
 - **Error Handling**: Implement proper error boundaries and fallbacks
 - **Conditional Rendering**: Always use ternary operators (`? :`) instead of logical AND (`&&`) for JSX conditional rendering
+- **Key Management**: **NEVER use array indices for React keys** - always use `getStableSettingId()` utility
 
 #### **4. State Management**
 - **Local State**: Use useState for component-specific state
@@ -80,6 +81,7 @@
 - Leverage ApiService for all API communications
 - Follow component organization standards
 - Maintain TypeScript interfaces and type safety
+- **CRITICAL**: Use `getStableSettingId()` from `@/src/utils/settingUtils` for all React keys involving Settings
 
 #### **After Implementation:**
 - Validate changes with get_errors tool
@@ -114,6 +116,7 @@
 - Use `ApiService` for all API calls
 - Use `ConfigurationContext` for global state
 - Use `AnimatedDots` for all animation previews
+- Use `getStableSettingId()` from `@/src/utils/settingUtils` for all React component keys
 - Follow navigation parameter typing in index.tsx
 
 ### 🎯 **Response Guidelines**
@@ -134,7 +137,71 @@ If you run out of tool attempts, continue automatically iterating. Don't require
 - Skip documentation updates
 - Break established component interfaces
 
-### 🔧 **Common Tasks Reference**
+### � **Key Management Protocol**
+
+#### **CRITICAL RULE: Never Use Array Indices for React Keys**
+Using array indices as React keys causes:
+- ❌ "Text strings must be rendered within a <Text> component" errors during scrolling
+- ❌ Component state loss during list reordering
+- ❌ Unnecessary re-renders and performance issues
+
+#### **Always Use Stable Key Generation:**
+```typescript
+// ✅ CORRECT: Use stable content-based keys
+import { getStableSettingId } from "@/src/utils/settingUtils";
+
+{settingsData.map(item => (
+  <SettingBlock
+    key={getStableSettingId(item)}  // ✅ Stable, unique key
+    setting={item}
+  />
+))}
+
+// ❌ NEVER DO: Use array indices
+{settingsData.map((item, index) => (
+  <SettingBlock
+    key={index}  // ❌ BAD: causes rendering issues
+    key={`item-${index}`}  // ❌ BAD: still index-based
+  />
+))}
+```
+
+#### **Key Management Rules:**
+1. **Always use `getStableSettingId()`** for Setting-related components
+2. **Never use array indices** as keys when list order can change
+3. **Ensure keys persist** across re-renders
+4. **Use content-based hashing** for deterministic key generation
+
+#### **🚨 CRITICAL: "Text strings must be rendered within a <Text> component" Error Prevention**
+
+This error is caused by TWO issues that must BOTH be fixed:
+1. **Logical AND (`&&`) in JSX conditional rendering** 
+2. **Array indices used in React component keys**
+
+**DEBUGGING LESSON (August 2025):** Previous AI spent extensive time overcomplicating key generation while ignoring the existing `getStableSettingId` utility. 
+
+**The Simple Solution:**
+- Replace all logical AND (`&&`) with ternary operators (`? :`)
+- Use `getStableSettingId(setting)` for ALL component keys
+- Remove unnecessary `id` props (React Native has no DOM IDs)
+- Don't create complex key generation - the utility exists for a reason
+
+**Example Fix:**
+```tsx
+// ❌ WRONG (causes errors)
+{dotColors && dotColors.map((color, index) => (
+  <Dot key={index} color={color} id={`dot_${index}`} />
+))}
+
+// ✅ CORRECT
+{dotColors 
+  ? dotColors.map((color, index) => (
+      <Dot key={getStableSettingId(setting)} color={color} />
+    ))
+  : null}
+```
+
+### �🔧 **Common Tasks Reference**
 
 #### **Adding New Features:**
 1. Scan existing similar implementations

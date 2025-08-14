@@ -22,6 +22,7 @@ import { FONTS } from "@/src/components/SharedStyles";
 import { useConfiguration } from "@/src/context/ConfigurationContext";
 import type { Setting } from "@/src/interface/SettingInterface";
 import { SettingsService } from "@/src/services/SettingsService";
+import { getStableSettingId } from "@/src/utils/settingUtils";
 
 const width = Dimensions.get("window").width;
 const height = Dimensions.get("window").height;
@@ -228,30 +229,38 @@ export default function Settings({ navigation }: any) {
 	};
 	// Memoize the focused setting block to prevent unnecessary re-renders
 	const focusedSettingBlock = React.useMemo(() => {
-		return currentIndex < settingsData.length && settingsData[currentIndex] ? (
-			<SettingBlock
-				navigation={navigation}
-				layout="full"
-				isAnimated={false}
-				style={styles.nothing}
-				setting={settingsData[currentIndex]}
-				index={currentIndex}
-			/>
-		) : null;
+		return currentIndex < settingsData.length 
+			? settingsData[currentIndex] 
+				? (
+					<SettingBlock
+						key={`focused-${getStableSettingId(settingsData[currentIndex])}`}
+						navigation={navigation}
+						layout="full"
+						isAnimated={false}
+						style={styles.nothing}
+						setting={settingsData[currentIndex]}
+						index={currentIndex}
+					/>
+				) 
+				: null
+			: null;
 	}, [navigation, settingsData, currentIndex]);
 	// Memoize the render item function to prevent recreation on every render
 	const renderItem = React.useCallback(
 		({ item, index }: { item: Setting | "new"; index: number }) => {
 			if (item === "new") {
-				return <View style={styles.newSettingItem} key={`new-item`} />;
+				return <View style={styles.newSettingItem} key="new-item-unique" />;
 			}
+
+			// Generate stable ID for the setting using utility function
+			const settingId = getStableSettingId(item);
 
 			// The main item is animated, others are not.
 			const isAnimated = index === currentIndex;
 
 			return (
 				<SettingBlock
-					key={`setting-${item.name}-${index}`}
+					key={settingId}
 					navigation={navigation}
 					layout="compact"
 					isAnimated={isAnimated}
@@ -265,7 +274,7 @@ export default function Settings({ navigation }: any) {
 	);
 	return (
 		<SafeAreaView style={styles.container}>
-			<InfoButton />{" "}
+			<InfoButton />
 			<BackButton
 				beforePress={() => setLastEdited("0")}
 				onPress={() => navigation.popToTop()}
@@ -273,10 +282,11 @@ export default function Settings({ navigation }: any) {
 			/>
 			<View style={styles.notBackButton}>
 				<View style={[styles.focusedItem, { position: "relative" }]}>
-					{currentIndex < 0 ? <View></View> : null}
+					{currentIndex < 0 ? <View key="negative-index" /> : null}
 					{currentIndex < settingsData.length ? (
-						<>
+						<React.Fragment key={`setting-controls-${currentIndex < settingsData.length ? getStableSettingId(settingsData[currentIndex]) : 'no-setting'}`}>
 							<TouchableOpacity
+								key={`duplicate-${currentIndex < settingsData.length ? getStableSettingId(settingsData[currentIndex]) : 'no-setting'}`}
 								style={{
 									position: "absolute",
 									top: 10,
@@ -290,7 +300,7 @@ export default function Settings({ navigation }: any) {
 								<MaterialIcons name="content-copy" size={24} color="white" />
 							</TouchableOpacity>
 							<TouchableOpacity
-								key={currentIndex.toString()}
+								key={`delete-${currentIndex < settingsData.length ? getStableSettingId(settingsData[currentIndex]) : 'no-setting'}`}
 								style={{
 									position: "absolute",
 									top: 10,
@@ -303,7 +313,6 @@ export default function Settings({ navigation }: any) {
 									handleDelete();
 								}}
 							>
-								{" "}
 								<Ionicons
 									name="trash-outline"
 									size={24}
@@ -311,10 +320,13 @@ export default function Settings({ navigation }: any) {
 								/>
 							</TouchableOpacity>
 							{focusedSettingBlock}
-						</>
+						</React.Fragment>
 					) : null}
 					{currentIndex >= settingsData.length ? (
-						<CreateButton onPress={createNewSetting} />
+						<CreateButton 
+							key="create-new-setting" 
+							onPress={createNewSetting} 
+						/>
 					) : null}
 				</View>
 				<View style={styles.carCont}>

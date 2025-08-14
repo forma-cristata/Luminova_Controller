@@ -12,8 +12,6 @@
       "backgroundColor": "#000000"
     },
     "description": "A React Native LED controller app for creating and managing custom lighting configurations with various animation patterns and color schemes.",
-    "keywords": ["LED", "lighting", "controller", "animation", "color", "patterns", "arduino", "neopixel", "FastLED", "controller", "luminova"],
-    "privacy": "public",
     "ios": {
 		"jsEngine": "hermes",
       "supportsTablet": false,

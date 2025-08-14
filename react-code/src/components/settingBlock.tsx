@@ -7,6 +7,7 @@ import FlashButton from "@/src/components/buttons/FlashButton";
 import type { Setting } from "../interface/SettingInterface";
 import { COLORS, COMMON_STYLES, FONTS } from "./SharedStyles";
 import { useConfiguration } from "@/src/context/ConfigurationContext";
+import { getStableSettingId } from "@/src/utils/settingUtils";
 
 interface SettingItemProps {
 	navigation: any;
@@ -39,9 +40,13 @@ const SettingBlock = ({
 }: SettingItemProps) => {
 	const { setLastEdited } = useConfiguration();
 
-	if (!setting) {
+	// Early return if setting is null, undefined, or missing required properties
+	if (!setting || !setting.name || !setting.colors) {
 		return null;
 	}
+
+	// Generate stable ID for the setting using utility function
+	const stableId = getStableSettingId(setting);
 
 	const handleEdit = () => {
 		setLastEdited(index?.toString() ?? null);
@@ -50,24 +55,62 @@ const SettingBlock = ({
 			settingIndex: index,
 		});
 	};
+
+	// Dynamic title processing with character limit and font sizing
+	const processTitle = (title: string | undefined | null) => {
+		const MAX_CHARACTERS = 20; // Slightly longer than "Toter Schmetterling" (18 chars)
+		const BASE_FONT_SIZE = 70;
+		const MIN_FONT_SIZE = 45;
+		
+		// Ensure title is a valid string
+		const safeTitle = String(title || "");
+		
+		// Truncate if longer than character limit
+		const displayTitle = safeTitle.length > MAX_CHARACTERS 
+			? safeTitle.substring(0, MAX_CHARACTERS).trim()
+			: safeTitle;
+		
+		// Calculate dynamic font size based on length
+		let fontSize = BASE_FONT_SIZE;
+		if (displayTitle.length > 12) {
+			// Gradually reduce font size for longer titles
+			const reductionFactor = (displayTitle.length - 12) * 2.5;
+			fontSize = Math.max(MIN_FONT_SIZE, BASE_FONT_SIZE - reductionFactor);
+		}
+		
+		return {
+			text: displayTitle.toLowerCase(),
+			fontSize: fontSize
+		};
+	};
+
+	const { text: displayTitle, fontSize: titleFontSize } = processTitle(setting.name);
 	// Memoize the dots rendering to prevent unnecessary re-renders
 	const dotsRendered = React.useMemo(() => {
+		// Additional safety check to ensure setting has required properties
+		if (!setting || !setting.colors) {
+			return null;
+		}
+
 		return isAnimated ? (
 			<AnimatedDots
-				key={`animated-${setting.name}-${index}`}
+				key={`animated-${stableId}`}
 				navigation={navigation}
 				setting={setting}
 			/>
 		) : (
-			<ColorDots colors={setting.colors} />
+			<ColorDots 
+				key={`static-${stableId}`}
+				colors={setting.colors} 
+			/>
 		);
 	}, [
 		isAnimated,
-		setting.name,
-		setting.colors,
-		setting.delayTime,
-		setting.flashingPattern,
-		index,
+		stableId,
+		setting?.name,
+		setting?.colors,
+		setting?.delayTime,
+		setting?.flashingPattern,
 		navigation,
 	]);
 
@@ -81,11 +124,12 @@ const SettingBlock = ({
 				>
 					<View style={styles.headerContainer}>
 						<Text
-							style={styles.whiteText}
+							style={[styles.whiteText, { fontSize: titleFontSize }]}
 							numberOfLines={1}
-							ellipsizeMode="tail"
+							adjustsFontSizeToFit={true}
+							minimumFontScale={0.7}
 						>
-							{setting.name.toLowerCase()}
+							{displayTitle || ""}
 						</Text>
 					</View>
 
@@ -115,10 +159,10 @@ const styles = StyleSheet.create({
 	},
 	whiteText: {
 		color: COLORS.WHITE,
-		fontSize: 70,
 		fontFamily: FONTS.SIGNATURE,
 		textAlign: "center",
 		flexWrap: "nowrap",
+		// fontSize will be set dynamically via inline style
 	},
 	whiteTextSmaller: {
 		color: COLORS.WHITE,

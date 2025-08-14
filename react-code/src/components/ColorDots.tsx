@@ -23,6 +23,25 @@ const ColorDots = React.memo(
 			spacing = -7,
 		} = props;
 
+		// Early return with safety check
+		if (!colors || !Array.isArray(colors) || colors.length === 0) {
+			return null;
+		}
+
+		// Generate stable ID for the colors array using hash-based approach
+		const getStableColorsId = (colors: string[]): string => {
+			const content = colors.join(',');
+			let hash = 0;
+			for (let i = 0; i < content.length; i++) {
+				const char = content.charCodeAt(i);
+				hash = ((hash << 5) - hash) + char;
+				hash = hash & hash; // Convert to 32-bit integer
+			}
+			return `colors-${Math.abs(hash)}`;
+		};
+
+		const colorsId = getStableColorsId(colors);
+
 		const isInteractive = !!onDotSelect;
 
 		// Memoize scales to prevent unnecessary re-renders
@@ -46,6 +65,17 @@ const ColorDots = React.memo(
 		};
 
 		const getDotStyle = (index: number) => {
+			// Safety check for colors array bounds
+			if (!colors || index >= colors.length) {
+				return {
+					width: dotSize,
+					height: dotSize,
+					backgroundColor: "#000000",
+					borderRadius: "50%",
+					marginHorizontal: spacing,
+				};
+			}
+
 			const isBlack = colors[index] === "#000000";
 			const baseSize = isInteractive ? 55 : dotSize;
 
@@ -72,14 +102,23 @@ const ColorDots = React.memo(
 		};
 
 		const renderDot = (index: number) => {
+			// Safety check before rendering
+			if (!colors || index >= colors.length) {
+				return null;
+			}
+
 			const dotStyle = getDotStyle(index);
+			// Create stable key using colors array hash + color value + unique identifier
+			const colorValue = colors[index] || 'black';
+			const uniqueId = `${colorValue}-${colors.slice(0, index + 1).join('')}`;
+			const stableKey = `${colorsId}-${uniqueId}`;
 
 			return isInteractive ? (
-				<TouchableOpacity key={index} onPress={() => handleDotPress(index)}>
+				<TouchableOpacity key={stableKey} onPress={() => handleDotPress(index)}>
 					<View style={dotStyle} />
 				</TouchableOpacity>
 			) : (
-				<View key={index} style={dotStyle} />
+				<View key={stableKey} style={dotStyle} />
 			);
 		};
 
@@ -87,7 +126,7 @@ const ColorDots = React.memo(
 		if (layout === "single-row") {
 			return (
 				<View style={{ flexDirection: "row" }}>
-					{colors.map((_, index) => renderDot(index))}
+					{colors.map((_, index) => renderDot(index)).filter(Boolean)}
 				</View>
 			);
 		}
@@ -96,7 +135,7 @@ const ColorDots = React.memo(
 		return (
 			<>
 				<View style={{ flexDirection: "row" }}>
-					{[...Array(8)].map((_, index) => renderDot(index))}
+					{[...Array(Math.min(8, colors.length))].map((_, index) => renderDot(index)).filter(Boolean)}
 				</View>
 				<View
 					style={{
@@ -104,10 +143,10 @@ const ColorDots = React.memo(
 						marginTop: 30,
 					}}
 				>
-					{[...Array(8)].map((_, index) => {
+					{[...Array(Math.min(8, Math.max(0, colors.length - 8)))].map((_, index) => {
 						const dotIndex = index + 8;
 						return renderDot(dotIndex);
-					})}
+					}).filter(Boolean)}
 				</View>
 			</>
 		);

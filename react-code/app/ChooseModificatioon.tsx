@@ -12,7 +12,6 @@ import BackButton from "@/app/components/BackButton";
 import ColorDots from "@/app/components/ColorDots";
 import InfoButton from "@/app/components/InfoButton";
 import { Setting } from "@/app/interface/setting-interface";
-import { Stack } from "expo-router";
 import React from "react";
 
 interface Props {

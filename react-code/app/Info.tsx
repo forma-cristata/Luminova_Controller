@@ -15,6 +15,7 @@ import {
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import AnimatedTitle from "@/app/components/AnimatedTitle";
 import BackButton from "@/app/components/BackButton";
+import React from "react";
 
 export default function Info() {
 	const [_textColor, setTextColor] = useState("#ffffff");

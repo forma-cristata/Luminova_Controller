@@ -28,8 +28,9 @@ import InfoButton from "@/app/components/InfoButton";
 import RandomizeButton from "@/app/components/RandomizeButton";
 import { COLORS, COMMON_STYLES, FONTS } from "@/app/components/SharedStyles";
 import { useConfiguration } from "@/app/context/ConfigurationContext";
-import { ApiService } from "@/app/services/ApiService";
+import { ApiService } from "@/services/ApiService";
 import { loadData, saveData } from "@/app/settings";
+import React from "react";
 
 export default function ColorEditor({ navigation, route }: any) {
 	const { currentConfiguration, setLastEdited } = useConfiguration();

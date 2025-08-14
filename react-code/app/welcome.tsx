@@ -11,8 +11,9 @@ import AnimatedTitle from "@/app/components/AnimatedTitle";
 import InfoButton from "@/app/components/InfoButton";
 import { COLORS, COMMON_STYLES, FONTS } from "@/app/components/SharedStyles";
 import type { Setting } from "@/app/interface/setting-interface";
-import { ApiService } from "@/app/services/ApiService";
+import { ApiService } from "@/services/ApiService";
 import { useConfiguration } from "./context/ConfigurationContext";
+import React from "react";
 
 export default function Welcome({ navigation }: any) {
 	const { currentConfiguration, setCurrentConfiguration, setLastEdited } =
@@ -116,7 +117,7 @@ export default function Welcome({ navigation }: any) {
 	return (
 		<SafeAreaProvider>
 			<SafeAreaView style={styles.container}>
-				<InfoButton />{" "}
+				<InfoButton />
 				<AnimatedTitle text={displayText} fontSize={130} marginBottom="20%" />
 				<TouchableOpacity
 					style={COMMON_STYLES.welcomeButton}

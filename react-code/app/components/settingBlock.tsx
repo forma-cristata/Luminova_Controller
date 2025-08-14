@@ -1,10 +1,11 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Setting } from "../interface/setting-interface";
+import { ApiService } from "@/services/ApiService";
+import { COLORS, COMMON_STYLES, FONTS } from "./SharedStyles";
 import AnimatedDots from "@/app/components/AnimatedDots";
 import ColorDots from "@/app/components/ColorDots";
-import { COLORS, COMMON_STYLES, FONTS } from "@/app/components/SharedStyles";
 import { useConfiguration } from "@/app/context/ConfigurationContext";
-import type { Setting } from "@/app/interface/setting-interface";
-import { ApiService } from "@/app/services/ApiService";
+import React from "react";
 
 interface SettingItemProps {
 	navigation: any;
@@ -59,7 +60,7 @@ const SettingBlock = ({
 						<TouchableOpacity
 							style={COMMON_STYLES.wideButton}
 							onPress={() => {
-								setLastEdited(index?.toString());
+								setLastEdited(index?.toString() ?? null);
 								navigation.navigate("ChooseModification", { setting: setting });
 							}}
 						>

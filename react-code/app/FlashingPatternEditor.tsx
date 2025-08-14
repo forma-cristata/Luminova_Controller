@@ -22,7 +22,7 @@ import Picker from "@/app/components/Picker";
 import RandomizeButton from "@/app/components/RandomizeButton";
 import { COLORS, COMMON_STYLES, FONTS } from "@/app/components/SharedStyles";
 import { useConfiguration } from "@/app/context/ConfigurationContext";
-import { ApiService } from "@/app/services/ApiService";
+import { ApiService } from "@/services/ApiService";
 import { loadData, saveData } from "@/app/settings";
 
 /**

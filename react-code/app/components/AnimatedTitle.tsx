@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { type DimensionValue, StyleSheet, Text } from "react-native";
 import { FONTS } from "./SharedStyles";
+import React from "react";
 
 interface AnimatedTitleProps {
 	text: string;

@@ -11,6 +11,7 @@ import Info from "@/app/Info";
 import type { Setting } from "@/app/interface/setting-interface";
 import Settings from "@/app/settings";
 import Welcome from "@/app/welcome";
+import React from "react";
 
 export type RootStackParamList = {
 	Welcome: undefined;

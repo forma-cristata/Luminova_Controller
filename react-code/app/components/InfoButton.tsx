@@ -3,6 +3,7 @@ import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StyleSheet, TouchableOpacity } from "react-native";
 import type { RootStackParamList } from "../index";
+import React from "react";
 
 export default function InfoButton() {
 	const navigation =

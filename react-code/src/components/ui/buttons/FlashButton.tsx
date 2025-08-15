@@ -1,4 +1,5 @@
 import React from "react";
+import { ViewStyle } from "react-native";
 import Button, { type BaseButtonProps } from "@/src/components/ui/buttons/Button";
 import { COLORS, FONTS } from "@/src/styles/SharedStyles";
 import { useConfiguration } from "@/src/context/ConfigurationContext";
@@ -22,9 +23,15 @@ const FlashButton = React.memo(
 		onError,
 		textStyle,
 	}: FlashButtonProps) => {
-		const { setCurrentConfiguration } = useConfiguration();
+		const { setCurrentConfiguration, isShelfConnected, setIsShelfConnected } = useConfiguration();
 
 		const handleFlash = async () => {
+			// Don't proceed if shelf is not connected
+			if (!isShelfConnected) {
+				console.warn("Cannot flash: Shelf is not connected");
+				return;
+			}
+
 			// Call custom onPress if provided
 			if (onPress) {
 				onPress();
@@ -33,6 +40,7 @@ const FlashButton = React.memo(
 			try {
 				await ApiService.flashSetting(setting);
 				setCurrentConfiguration(setting);
+				setIsShelfConnected(true);
 				console.log(`Current Configuration: ${setting.name}`);
 
 				// Call success callback if provided
@@ -41,6 +49,7 @@ const FlashButton = React.memo(
 				}
 			} catch (error) {
 				console.error("Flash error:", error);
+				setIsShelfConnected(false);
 
 				// Call error callback if provided
 				if (onError) {
@@ -56,13 +65,22 @@ const FlashButton = React.memo(
 			fontFamily: FONTS.CLEAR,
 		};
 
+		// Combine external disabled prop with shelf connectivity
+		const isDisabled = disabled || !isShelfConnected;
+
+		// Create combined style with opacity for disabled state
+		const combinedStyle: ViewStyle = {
+			...style,
+			...(isDisabled && { opacity: COLORS.DISABLED_OPACITY })
+		};
+
 		return (
 			<Button
 				title="Flash"
 				onPress={handleFlash}
-				disabled={disabled}
+				disabled={isDisabled}
 				variant="wide"
-				style={style}
+				style={combinedStyle}
 				textStyle={textStyle || defaultTextStyle}
 			/>
 		);

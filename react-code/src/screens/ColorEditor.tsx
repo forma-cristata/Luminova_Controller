@@ -38,7 +38,7 @@ import type { Setting } from "@/src/types/SettingInterface";
 import React from "react";
 
 export default function ColorEditor({ navigation, route }: any) {
-	const { currentConfiguration, setLastEdited } = useConfiguration();
+	const { currentConfiguration, setLastEdited, isShelfConnected, setIsShelfConnected } = useConfiguration();
 
 	const setting = route.params?.setting;
 	const isNew = route.params?.isNew || false;
@@ -384,8 +384,10 @@ export default function ColorEditor({ navigation, route }: any) {
 				delayTime: setting.delayTime,
 			});
 			console.log("Preview successful");
+			setIsShelfConnected(true);
 		} catch (error) {
 			console.error("Preview error:", error);
+			setIsShelfConnected(false);
 		}
 	};
 
@@ -395,8 +397,10 @@ export default function ColorEditor({ navigation, route }: any) {
 			try {
 				await ApiService.restoreConfiguration(currentConfiguration);
 				console.log("Configuration restored");
+				setIsShelfConnected(true);
 			} catch (error) {
 				console.error("Restore error:", error);
+				setIsShelfConnected(false);
 			}
 		}
 	};
@@ -652,10 +656,14 @@ export default function ColorEditor({ navigation, route }: any) {
 												: "Preview"
 										}
 										onPress={() => {
-											previewAPI();
-											setPreviewMode(true);
+											if (isShelfConnected) {
+												previewAPI();
+												setPreviewMode(true);
+											}
 										}}
+										disabled={!isShelfConnected}
 										variant={!hasChanges && previewMode ? "disabled" : "primary"}
+										opacity={!isShelfConnected ? COLORS.DISABLED_OPACITY : undefined}
 									/>
 								</View>
 							</View>

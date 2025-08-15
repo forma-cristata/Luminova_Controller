@@ -1,4 +1,4 @@
-import type { Setting } from "@/src/interface/SettingInterface";
+import type { Setting } from "@/src/types/SettingInterface";
 import React, {
 	createContext,
 	type ReactNode,
@@ -11,6 +11,8 @@ interface ConfigurationContextType {
 	setCurrentConfiguration: (config: Setting | null) => void;
 	lastEdited: string | null;
 	setLastEdited: (timestamp: string | null) => void;
+	isShelfConnected: boolean;
+	setIsShelfConnected: (connected: boolean) => void;
 }
 
 const ConfigurationContext = createContext<
@@ -21,6 +23,7 @@ export function ConfigurationProvider({ children }: { children: ReactNode }) {
 	const [currentConfiguration, setCurrentConfiguration] =
 		useState<Setting | null>(null);
 	const [lastEdited, setLastEdited] = useState<string | null>(null);
+	const [isShelfConnected, setIsShelfConnected] = useState<boolean>(false);
 
 	return (
 		<ConfigurationContext.Provider
@@ -29,6 +32,8 @@ export function ConfigurationProvider({ children }: { children: ReactNode }) {
 				setCurrentConfiguration,
 				lastEdited,
 				setLastEdited,
+				isShelfConnected,
+				setIsShelfConnected,
 			}}
 		>
 			{children}

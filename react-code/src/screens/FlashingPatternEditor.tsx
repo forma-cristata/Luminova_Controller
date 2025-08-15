@@ -40,7 +40,7 @@ import { SettingsService } from "@/src/services/SettingsService";
  *          The user should choose the 'speed'
  *          The greater the speed, the shorter the delay time.*/
 export default function FlashingPatternEditor({ route, navigation }: any) {
-	const { currentConfiguration, setLastEdited } = useConfiguration();
+	const { currentConfiguration, setLastEdited, isShelfConnected, setIsShelfConnected } = useConfiguration();
 
 	const setting = route.params?.setting;
 	const isNew = route.params?.isNew || false;
@@ -187,8 +187,10 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 				delayTime: delayTime,
 			});
 			console.log("Preview successful");
+			setIsShelfConnected(true);
 		} catch (error) {
 			console.error("Preview error:", error);
+			setIsShelfConnected(false);
 		}
 	};
 
@@ -198,8 +200,10 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 			try {
 				await ApiService.restoreConfiguration(currentConfiguration);
 				console.log("Configuration restored");
+				setIsShelfConnected(true);
 			} catch (error) {
 				console.error("Restore error:", error);
+				setIsShelfConnected(false);
 			}
 		}
 	};
@@ -310,10 +314,14 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 								previewMode ? (hasChanges ? "Update" : "Preview") : "Preview"
 							}
 							onPress={() => {
-								previewAPI();
-								setPreviewMode(true);
+								if (isShelfConnected) {
+									previewAPI();
+									setPreviewMode(true);
+								}
 							}}
+							disabled={!isShelfConnected}
 							variant={!hasChanges && previewMode ? "disabled" : "primary"}
+							opacity={!isShelfConnected ? COLORS.DISABLED_OPACITY : undefined}
 						/>
 					</View>
 				</View>

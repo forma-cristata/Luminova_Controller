@@ -22,7 +22,7 @@ import React from "react";
 import { IpConfigService } from "../services/IpConfigService";
 
 export default function Welcome({ navigation }: any) {
-	const { currentConfiguration, setCurrentConfiguration, setLastEdited } =
+	const { currentConfiguration, setCurrentConfiguration, setLastEdited, setIsShelfConnected } =
 		useConfiguration();
 	const [displayText, setDisplayText] = useState("");
 	const fullText = "Hello";
@@ -65,15 +65,17 @@ export default function Welcome({ navigation }: any) {
 			try {
 				const data = await ApiService.getStatus();
 				setIsEnabled(data.shelfOn);
+				setIsShelfConnected(true);
 			} catch (error) {
 				console.error("Error fetching status:", error);
+				setIsShelfConnected(false);
 			} finally {
 				setIsLoading(false);
 			}
 		};
 
 		fetchInitialStatus();
-	}, []);
+	}, [setIsShelfConnected]);
 
 	const validateIp = (ip: string) => {
 		const ipRegex =
@@ -92,15 +94,23 @@ export default function Welcome({ navigation }: any) {
 			return;
 		}
 		await IpConfigService.saveIpAddress(ipAddress);
-		Alert.alert("IP Address Saved", `The new IP address is ${ipAddress}`);
+		Keyboard.dismiss();
 		// Re-check status after saving new IP
 		setIsLoading(true);
 		try {
 			const data = await ApiService.getStatus();
 			setIsEnabled(data.shelfOn);
+			setIsShelfConnected(true);
+
+			// Add delay to show loading state and make detection apparent
+			await new Promise(resolve => setTimeout(resolve, 1000));
 		} catch (error) {
 			console.error("Error fetching status after IP change:", error);
 			setIsEnabled(false); // Assume off if status check fails
+			setIsShelfConnected(false);
+
+			// Add delay even on error to show detection process
+			await new Promise(resolve => setTimeout(resolve, 1000));
 		} finally {
 			setIsLoading(false);
 		}
@@ -109,6 +119,7 @@ export default function Welcome({ navigation }: any) {
 	const toggleSwitch = async () => {
 		const newState = !isEnabled;
 		setIsEnabled(newState);
+		setIsLoading(true); // Show loading state immediately
 
 		if (!currentConfiguration) {
 			const startConfig: Setting = {
@@ -156,8 +167,18 @@ export default function Welcome({ navigation }: any) {
 			const endpoint = newState ? "on" : "off";
 			await ApiService.toggleLed(endpoint);
 			console.log(`LED toggled ${endpoint}`);
+			setIsShelfConnected(true);
+
+			// Add delay to show loading state and make detection apparent
+			await new Promise(resolve => setTimeout(resolve, 1000));
 		} catch (error) {
 			console.error("Error toggling LED:", error);
+			setIsShelfConnected(false);
+
+			// Add delay even on error to show detection process
+			await new Promise(resolve => setTimeout(resolve, 1000));
+		} finally {
+			setIsLoading(false);
 		}
 	};
 

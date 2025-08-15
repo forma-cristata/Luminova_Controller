@@ -256,8 +256,9 @@ The codebase follows a strict standard of using ternary operators (`? :`) instea
 4. **Follow Established Patterns**
    - Use `COMMON_STYLES` for consistent styling
    - Leverage `ApiService` for API communications
-   - Use `ConfigurationContext` for global state
+   - Use `ConfigurationContext` for global state and shelf connectivity
    - Implement proper TypeScript typing
+   - **Hardware Integration**: Use `isShelfConnected` from ConfigurationContext to disable Flash and Preview buttons when shelf is not detectable
 
 5. **Export and Integration**
    - Export as default from component file
@@ -530,10 +531,13 @@ Welcome → Settings → ChooseModification → [ColorEditor | FlashingPatternEd
 - **Purpose**: Reusable flash button component for sending settings to hardware
 - **Features**:
   - API integration via ApiService
+  - Automatic hardware connectivity detection
   - Customizable styling and text
   - Success/error callback support
   - Configuration context integration
+  - **Auto-disables when shelf is not detectable** (transparent and unresponsive)
 - **Props**: `setting`, `style`, `disabled`, `onPress`, `onSuccess`, `onError`, `textStyle`
+- **Connectivity**: Uses `isShelfConnected` from ConfigurationContext to prevent API calls when hardware is offline
 
 ### 📱 Layout Components
 
@@ -787,11 +791,14 @@ When debugging React key issues, just use `getStableSettingId(setting)` and move
 ### 🔄 State Management
 
 #### `src/context/ConfigurationContext.tsx`
-- **Purpose**: Global state management for current configuration
+- **Purpose**: Global state management for current configuration and hardware connectivity
 - **State**:
   - `currentConfiguration` - Active LED configuration
   - `lastEdited` - Index of last edited setting
+  - `isShelfConnected` - Hardware connectivity status (boolean)
+  - `setIsShelfConnected` - Function to update connectivity status
 - **Usage**: Shared across all screens for state consistency
+- **Hardware Integration**: Automatically disables Flash and Preview buttons when shelf is not detectable
 
 ### 📊 Data Models
 

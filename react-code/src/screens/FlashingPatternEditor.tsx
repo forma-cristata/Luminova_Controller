@@ -64,7 +64,7 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 	// Name editing state (now used for both new and existing settings)
 	const [settingName, setSettingName] = useState(setting.name);
 	const [nameError, setNameError] = useState<string | null>(null);
-	const [hasChanges, setHasChanges] = useState(false);
+	const [hasChanges, setHasChanges] = useState(isNew);
 
 	const handleNameChange = async (text: string) => {
 		setSettingName(text);
@@ -110,22 +110,6 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 		const initialBpm = parseFloat(calculateBPM(setting.delayTime));
 		setBPM(Number.isNaN(initialBpm) ? 0 : initialBpm);
 	}, [setting.delayTime]); // Only depend on setting.delayTime, not calculateBPM
-
-	// Track changes when values differ from initial values
-	useEffect(() => {
-		const hasPatternChanges =
-			delayTime !== initialDelayTime ||
-			flashingPattern !== initialFlashingPattern;
-		const hasNameChanges = settingName !== setting.name;
-		setHasChanges(hasPatternChanges || hasNameChanges);
-	}, [
-		delayTime,
-		initialDelayTime,
-		flashingPattern,
-		initialFlashingPattern,
-		settingName,
-		setting.name,
-	]);
 	const modeDots = () => {
 		const newSetting = {
 			...setting,
@@ -139,6 +123,26 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 				setting={newSetting}
 			/>
 		);
+	};
+
+	const handleCancel = () => {
+		unPreviewAPI();
+		const newSettingCarouselIndex = route.params?.newSettingCarouselIndex;
+		if (newSettingCarouselIndex !== undefined) {
+			setLastEdited(newSettingCarouselIndex.toString());
+		}
+		navigation.navigate("Settings");
+	};
+
+	const handleReset = () => {
+		unPreviewAPI();
+		if (hasChanges) {
+			setDelayTime(initialDelayTime);
+			setBPM(parseFloat(calculateBPM(initialDelayTime)));
+			setFlashingPattern(initialFlashingPattern);
+			setSettingName(setting.name); // Reset name
+			setNameError(null); // Clear name error
+		}
 	};
 
 	const handleSave = async () => {
@@ -280,17 +284,12 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 				<View style={COMMON_STYLES.buttonContainer}>
 					<View style={COMMON_STYLES.buttonRow}>
 						<ActionButton
-							title="Reset"
-							onPress={() => {
-								setDelayTime(initialDelayTime);
-								setBPM(parseFloat(calculateBPM(initialDelayTime)));
-								setFlashingPattern(initialFlashingPattern);
-								setSettingName(setting.name); // Reset name
-								setNameError(null); // Clear name error
-								unPreviewAPI();
-							}}
-							disabled={!hasChanges}
-							opacity={hasChanges ? 1 : COLORS.DISABLED_OPACITY}
+							title={isNew ? "Cancel" : "Reset"}
+							onPress={isNew ? handleCancel : handleReset}
+							disabled={!isNew && !hasChanges}
+							opacity={
+								isNew ? 1 : hasChanges ? 1 : COLORS.DISABLED_OPACITY
+							}
 						/>
 
 						<ActionButton

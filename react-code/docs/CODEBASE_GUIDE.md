@@ -401,7 +401,15 @@ Welcome → Settings → ChooseModification → [ColorEditor | FlashingPatternEd
   - Carousel view of all lighting configurations
   - Create, duplicate, and delete settings
   - Setting preview with animated dots
+  - **Visual Scroll Indicators**: Chevron buttons on left/right sides for navigation
+    - Animated pulsing effect when multiple settings are available
+    - Automatically disabled/dimmed when only one setting exists
+    - Supports both touch and swipe navigation
+  - **Page Indicator Dots**: Shows current position in carousel
+    - Only displayed when multiple items are available
+    - Active dot highlighted with scale and opacity changes
 - **Data Management**: Handles local storage of settings via `FileSystem`
+- **Navigation**: Responsive carousel with position memory across screen transitions
 
 #### `src/screens/ChooseModification.tsx`
 - **Purpose**: Choice screen for editing colors vs flashing patterns

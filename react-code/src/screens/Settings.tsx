@@ -14,6 +14,12 @@ import { useSharedValue } from "react-native-reanimated";
 import Carousel, {
 	type ICarouselInstance,
 } from "react-native-reanimated-carousel";
+import Animated, {
+	useAnimatedStyle,
+	useSharedValue as useReanimatedSharedValue,
+	withRepeat,
+	withTiming,
+} from "react-native-reanimated";
 
 import BackButton from "@/src/components/ui/buttons/BackButton";
 import CreateButton from "@/src/components/ui/buttons/CreateButton";
@@ -42,6 +48,26 @@ export default function Settings({ navigation }: any) {
 		() => [...settingsData, "new"] as (Setting | "new")[],
 		[settingsData],
 	);
+
+	// Animation for scroll indicators
+	const pulseOpacity = useReanimatedSharedValue(0.8);
+
+	// Start pulsing animation when there are multiple items
+	React.useEffect(() => {
+		if (carouselData.length > 1) {
+			pulseOpacity.value = withRepeat(
+				withTiming(0.4, { duration: 1500 }),
+				-1,
+				true
+			);
+		} else {
+			pulseOpacity.value = withTiming(0.3, { duration: 300 });
+		}
+	}, [carouselData.length, pulseOpacity]);
+
+	const animatedIndicatorStyle = useAnimatedStyle(() => ({
+		opacity: carouselData.length > 1 ? pulseOpacity.value : 0.3,
+	}));
 
 	const createNewSetting = () => {
 		const newSetting: Setting = {
@@ -331,6 +357,8 @@ export default function Settings({ navigation }: any) {
 					) : null}
 				</View>
 				<View style={styles.carCont}>
+
+
 					<Carousel
 						ref={ref}
 						data={carouselData}
@@ -347,6 +375,46 @@ export default function Settings({ navigation }: any) {
 						mode="parallax"
 						style={styles.carousel}
 					/>
+
+					{/* Left scroll indicator */}
+					<Animated.View style={[animatedIndicatorStyle]}>
+						<TouchableOpacity
+							style={[
+								styles.scrollIndicator,
+								styles.scrollIndicatorLeft
+							]}
+							onPress={() => {
+								if (ref.current && carouselData.length > 1) {
+									const targetIndex = currentIndex === 0 ? carouselData.length - 1 : currentIndex - 1;
+									ref.current.scrollTo({ index: targetIndex, animated: true });
+								}
+							}}
+							activeOpacity={0.5}
+							disabled={carouselData.length <= 1}
+						>
+							<Ionicons name="chevron-back" size={32} color="white" />
+						</TouchableOpacity>
+					</Animated.View>
+
+					{/* Right scroll indicator */}
+					<Animated.View style={[animatedIndicatorStyle]}>
+						<TouchableOpacity
+							style={[
+								styles.scrollIndicator,
+								styles.scrollIndicatorRight
+							]}
+							onPress={() => {
+								if (ref.current && carouselData.length > 1) {
+									const targetIndex = currentIndex === carouselData.length - 1 ? 0 : currentIndex + 1;
+									ref.current.scrollTo({ index: targetIndex, animated: true });
+								}
+							}}
+							activeOpacity={0.5}
+							disabled={carouselData.length <= 1}
+						>
+							<Ionicons name="chevron-forward" size={32} color="white" />
+						</TouchableOpacity>
+					</Animated.View>
 				</View>
 			</View>
 		</SafeAreaView>
@@ -375,7 +443,7 @@ const styles = StyleSheet.create({
 		borderStyle: "solid",
 		borderWidth: 2,
 		width: width,
-		height: (height * 9) / 35,
+		height: (height * 11) / 35,
 		justifyContent: "center",
 		alignItems: "center",
 		shadowColor: "#000",
@@ -393,7 +461,7 @@ const styles = StyleSheet.create({
 		alignItems: "flex-end",
 	},
 	focusedItem: {
-		height: height / 2.5,
+		height: height / 2.3,
 		width: width,
 		borderStyle: "solid",
 		borderWidth: 2,
@@ -421,5 +489,37 @@ const styles = StyleSheet.create({
 		top: 10,
 		right: 10,
 		zIndex: 1,
+	},
+	scrollIndicator: {
+		position: "absolute",
+		zIndex: 2,
+		width: 40,
+		height: 40,
+		justifyContent: "center",
+		alignItems: "center",
+		transform: [{ translateY: -60 }],
+	},
+	scrollIndicatorLeft: {
+		left: 10,
+	},
+	scrollIndicatorRight: {
+		right: 10,
+	},
+	dotsContainer: {
+		flexDirection: "row",
+		justifyContent: "center",
+		alignItems: "center",
+	},
+	dot: {
+		width: 8,
+		height: 8,
+		borderRadius: 4,
+		backgroundColor: "#ffffff",
+		opacity: 0.3,
+		marginHorizontal: 4,
+	},
+	activeDot: {
+		opacity: 1,
+		transform: [{ scale: 1.2 }],
 	},
 });

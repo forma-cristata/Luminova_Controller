@@ -144,7 +144,7 @@ export default function Welcome({ navigation }: any) {
 	// Check if IP has changed and is valid for enabling save button
 	const isIpChanged = debouncedIpAddress !== savedIpAddress;
 	const canSaveIp = isIpChanged && validateIp(debouncedIpAddress) && !isSavingIp;
-	
+
 	// Determine button text based on state
 	const getSaveButtonText = () => {
 		if (isSavingIp) return "Saving...";

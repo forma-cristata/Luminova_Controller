@@ -16,7 +16,7 @@ import {
 import AnimatedTitle from "@/src/components/ui/AnimatedTitle";
 import Button from "@/src/components/ui/buttons/Button";
 import InfoButton from "@/src/components/ui/buttons/InfoButton";
-import { COLORS, FONTS } from "@/src/styles/SharedStyles";
+import { COLORS, FONTS, COMMON_STYLES } from "@/src/styles/SharedStyles";
 import type { Setting } from "@/src/types/SettingInterface";
 import { ApiService } from "@/src/services/ApiService";
 import { useConfiguration } from "@/src/context/ConfigurationContext";
@@ -298,12 +298,31 @@ export default function Welcome({ navigation }: any) {
 		<TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
 			<SafeAreaView style={styles.container}>
 				<InfoButton />
-				<AnimatedTitle text={displayText} fontSize={130} marginBottom="20%" />
 
+				{/* LED Toggle in top left corner */}
+				<Animated.View style={[COMMON_STYLES.navButton, { left: 20, opacity: toggleOpacity }]}>
+					<Switch
+						onValueChange={toggleSwitch}
+						value={isEnabled}
+						trackColor={{ false: "#665e73", true: "#ffffff" }}
+						thumbColor={isEnabled ? "#665e73" : "#f4f3f4"}
+						ios_backgroundColor="#3e3e3e"
+						style={styles.navSwitch}
+						disabled={isLoading || debouncedPendingToggle}
+					/>
+				</Animated.View>
+
+				<AnimatedTitle text={displayText} fontSize={130} marginBottom="10%" />
+				<Button
+					title="Create ⟩"
+					onPress={createButtonPressed}
+					variant="welcome"
+					textStyle={styles.buttonText}
+				/>
 				<View style={styles.ipContainer}>
 					<TextInput
 						ref={octet1Ref}
-						style={[styles.ipOctet, !isOctet1Valid && styles.ipInputError]}
+						style={[styles.ipOctet, !isOctet1Valid ? styles.ipInputError : null]}
 						value={ipOctet1}
 						onChangeText={handleOctet1Change}
 						placeholder="192"
@@ -317,7 +336,7 @@ export default function Welcome({ navigation }: any) {
 					<Text style={styles.ipDot}>.</Text>
 					<TextInput
 						ref={octet2Ref}
-						style={[styles.ipOctet, !isOctet2Valid && styles.ipInputError]}
+						style={[styles.ipOctet, !isOctet2Valid ? styles.ipInputError : null]}
 						value={ipOctet2}
 						onChangeText={handleOctet2Change}
 						placeholder="168"
@@ -331,7 +350,7 @@ export default function Welcome({ navigation }: any) {
 					<Text style={styles.ipDot}>.</Text>
 					<TextInput
 						ref={octet3Ref}
-						style={[styles.ipOctet, !isOctet3Valid && styles.ipInputError]}
+						style={[styles.ipOctet, !isOctet3Valid ? styles.ipInputError : null]}
 						value={ipOctet3}
 						onChangeText={handleOctet3Change}
 						placeholder="1"
@@ -345,7 +364,7 @@ export default function Welcome({ navigation }: any) {
 					<Text style={styles.ipDot}>.</Text>
 					<TextInput
 						ref={octet4Ref}
-						style={[styles.ipOctet, !isOctet4Valid && styles.ipInputError]}
+						style={[styles.ipOctet, !isOctet4Valid ? styles.ipInputError : null]}
 						value={ipOctet4}
 						onChangeText={handleOctet4Change}
 						placeholder="100"
@@ -364,23 +383,7 @@ export default function Welcome({ navigation }: any) {
 					style={getSaveButtonStyle()}
 					disabled={!canSaveIp}
 				/>
-				<Button
-					title="Create ⟩"
-					onPress={createButtonPressed}
-					variant="welcome"
-					textStyle={styles.buttonText}
-				/>
-				<Animated.View style={{ opacity: toggleOpacity }}>
-					<Switch
-						onValueChange={toggleSwitch}
-						value={isEnabled}
-						trackColor={{ false: "#665e73", true: "#ffffff" }}
-						thumbColor={isEnabled ? "#665e73" : "#f4f3f4"}
-						ios_backgroundColor="#3e3e3e"
-						style={styles.switch}
-						disabled={isLoading ? true : debouncedPendingToggle ? true : false}
-					/>
-				</Animated.View>
+
 			</SafeAreaView>
 		</TouchableWithoutFeedback>
 	);
@@ -452,6 +455,11 @@ const styles = StyleSheet.create({
 		fontFamily: FONTS.SIGNATURE,
 	},
 	switch: {
+		transformOrigin: "center",
+		transform: "scale(1.5)",
+		marginTop: 30,
+	},
+	navSwitch: {
 		transformOrigin: "center",
 		transform: "scale(1.5)",
 	},

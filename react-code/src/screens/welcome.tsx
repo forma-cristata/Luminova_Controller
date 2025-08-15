@@ -11,6 +11,8 @@ import {
 	Keyboard,
 	Animated,
 	View,
+	ScrollView,
+	Platform,
 } from "react-native";
 
 import AnimatedTitle from "@/src/components/ui/AnimatedTitle";
@@ -45,6 +47,7 @@ export default function Welcome({ navigation }: any) {
 	const octet2Ref = useRef<TextInput>(null);
 	const octet3Ref = useRef<TextInput>(null);
 	const octet4Ref = useRef<TextInput>(null);
+	const scrollViewRef = useRef<ScrollView>(null);
 
 	// Convert character arrays to display/final values (handles leading zero removal)
 	const getOctetValue = (chars: string[]) => {
@@ -134,6 +137,22 @@ export default function Welcome({ navigation }: any) {
 			useNativeDriver: true,
 		}).start();
 	}, [isLoading, toggleOpacity]);
+
+	// Auto-scroll with keyboard show/hide
+	useEffect(() => {
+		const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
+			scrollViewRef.current?.scrollToEnd({ animated: true });
+		});
+
+		const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
+			scrollViewRef.current?.scrollTo({ y: 0, animated: true });
+		});
+
+		return () => {
+			keyboardDidShowListener?.remove();
+			keyboardDidHideListener?.remove();
+		};
+	}, []);
 
 	const validateIp = (ip: string) => {
 		const ipRegex =
@@ -297,9 +316,10 @@ export default function Welcome({ navigation }: any) {
 	return (
 		<TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
 			<SafeAreaView style={styles.container}>
+				{/* Fixed elements that don't scroll */}
 				<InfoButton />
 
-				{/* LED Toggle in top left corner */}
+				{/* LED Toggle in top left corner - stays fixed */}
 				<Animated.View style={[COMMON_STYLES.navButton, { left: 20, opacity: toggleOpacity }]}>
 					<Switch
 						onValueChange={toggleSwitch}
@@ -312,78 +332,92 @@ export default function Welcome({ navigation }: any) {
 					/>
 				</Animated.View>
 
-				<AnimatedTitle text={displayText} fontSize={130} marginBottom="10%" />
-				<Button
-					title="Create ⟩"
-					onPress={createButtonPressed}
-					variant="welcome"
-					textStyle={styles.buttonText}
-				/>
-				<View style={styles.ipContainer}>
-					<TextInput
-						ref={octet1Ref}
-						style={[styles.ipOctet, !isOctet1Valid ? styles.ipInputError : null]}
-						value={ipOctet1}
-						onChangeText={handleOctet1Change}
-						placeholder="192"
-						placeholderTextColor="#888"
-						keyboardType="numeric"
-						textAlign="center"
-						returnKeyType="next"
-						clearButtonMode="while-editing"
-						onSubmitEditing={() => octet2Ref.current?.focus()}
+				{/* Scrollable content area */}
+				<ScrollView
+					ref={scrollViewRef}
+					contentContainerStyle={styles.scrollContent}
+					showsVerticalScrollIndicator={false}
+					keyboardShouldPersistTaps="handled"
+					style={styles.scrollView}
+					scrollEnabled={false}
+				>
+					<View style={styles.titleContainer}>
+						<AnimatedTitle text={displayText} fontSize={130} marginBottom="10%" />
+					</View>
+					<Button
+						title="Create ⟩"
+						onPress={createButtonPressed}
+						variant="welcome"
+						textStyle={styles.buttonText}
 					/>
-					<Text style={styles.ipDot}>.</Text>
-					<TextInput
-						ref={octet2Ref}
-						style={[styles.ipOctet, !isOctet2Valid ? styles.ipInputError : null]}
-						value={ipOctet2}
-						onChangeText={handleOctet2Change}
-						placeholder="168"
-						placeholderTextColor="#888"
-						keyboardType="numeric"
-						textAlign="center"
-						returnKeyType="next"
-						clearButtonMode="while-editing"
-						onSubmitEditing={() => octet3Ref.current?.focus()}
+					<View style={styles.ipContainer}>
+						<TextInput
+							ref={octet1Ref}
+							style={[styles.ipOctet, !isOctet1Valid ? styles.ipInputError : null]}
+							value={ipOctet1}
+							onChangeText={handleOctet1Change}
+							placeholder="192"
+							placeholderTextColor="#888"
+							keyboardType="numeric"
+							textAlign="center"
+							returnKeyType="next"
+							clearButtonMode="while-editing"
+							onSubmitEditing={() => octet2Ref.current?.focus()}
+						/>
+						<Text style={styles.ipDot}>.</Text>
+						<TextInput
+							ref={octet2Ref}
+							style={[styles.ipOctet, !isOctet2Valid ? styles.ipInputError : null]}
+							value={ipOctet2}
+							onChangeText={handleOctet2Change}
+							placeholder="168"
+							placeholderTextColor="#888"
+							keyboardType="numeric"
+							textAlign="center"
+							returnKeyType="next"
+							clearButtonMode="while-editing"
+							onSubmitEditing={() => octet3Ref.current?.focus()}
+						/>
+						<Text style={styles.ipDot}>.</Text>
+						<TextInput
+							ref={octet3Ref}
+							style={[styles.ipOctet, !isOctet3Valid ? styles.ipInputError : null]}
+							value={ipOctet3}
+							onChangeText={handleOctet3Change}
+							placeholder="1"
+							placeholderTextColor="#888"
+							keyboardType="numeric"
+							textAlign="center"
+							returnKeyType="next"
+							clearButtonMode="while-editing"
+							onSubmitEditing={() => octet4Ref.current?.focus()}
+						/>
+						<Text style={styles.ipDot}>.</Text>
+						<TextInput
+							ref={octet4Ref}
+							style={[styles.ipOctet, !isOctet4Valid ? styles.ipInputError : null]}
+							value={ipOctet4}
+							onChangeText={handleOctet4Change}
+							placeholder="100"
+							placeholderTextColor="#888"
+							keyboardType="numeric"
+							textAlign="center"
+							returnKeyType="done"
+							clearButtonMode="while-editing"
+							onSubmitEditing={handleSaveIp}
+						/>
+					</View>
+					<Button
+						title={getSaveButtonText()}
+						onPress={handleSaveIp}
+						variant="secondary"
+						style={getSaveButtonStyle()}
+						disabled={!canSaveIp}
 					/>
-					<Text style={styles.ipDot}>.</Text>
-					<TextInput
-						ref={octet3Ref}
-						style={[styles.ipOctet, !isOctet3Valid ? styles.ipInputError : null]}
-						value={ipOctet3}
-						onChangeText={handleOctet3Change}
-						placeholder="1"
-						placeholderTextColor="#888"
-						keyboardType="numeric"
-						textAlign="center"
-						returnKeyType="next"
-						clearButtonMode="while-editing"
-						onSubmitEditing={() => octet4Ref.current?.focus()}
-					/>
-					<Text style={styles.ipDot}>.</Text>
-					<TextInput
-						ref={octet4Ref}
-						style={[styles.ipOctet, !isOctet4Valid ? styles.ipInputError : null]}
-						value={ipOctet4}
-						onChangeText={handleOctet4Change}
-						placeholder="100"
-						placeholderTextColor="#888"
-						keyboardType="numeric"
-						textAlign="center"
-						returnKeyType="done"
-						clearButtonMode="while-editing"
-						onSubmitEditing={handleSaveIp}
-					/>
-				</View>
-				<Button
-					title={getSaveButtonText()}
-					onPress={handleSaveIp}
-					variant="secondary"
-					style={getSaveButtonStyle()}
-					disabled={!canSaveIp}
-				/>
 
+					{/* Extra spacing to ensure keyboard clearance */}
+					<View style={{ height: 250 }} />
+				</ScrollView>
 			</SafeAreaView>
 		</TouchableWithoutFeedback>
 	);
@@ -395,6 +429,26 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		justifyContent: "center",
 		backgroundColor: COLORS.BLACK,
+	},
+	keyboardAvoidingView: {
+		flex: 1,
+		width: "100%",
+	},
+	scrollContent: {
+		flexGrow: 1,
+		alignItems: "center",
+		paddingBottom: 50,
+		paddingTop: 120, // Space for fixed elements at top
+		minHeight: "100%", // Ensure content can scroll
+	},
+	scrollView: {
+		flex: 1,
+		width: "100%",
+	},
+	titleContainer: {
+		alignItems: "center",
+		justifyContent: "center",
+		marginBottom: 20,
 	},
 	ipContainer: {
 		flexDirection: "row",

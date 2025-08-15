@@ -144,6 +144,21 @@ export default function Welcome({ navigation }: any) {
 	// Check if IP has changed and is valid for enabling save button
 	const isIpChanged = debouncedIpAddress !== savedIpAddress;
 	const canSaveIp = isIpChanged && validateIp(debouncedIpAddress) && !isSavingIp;
+	
+	// Determine button text based on state
+	const getSaveButtonText = () => {
+		if (isSavingIp) return "Saving...";
+		if (!isOctet1Valid || !isOctet2Valid || !isOctet3Valid || !isOctet4Valid) return "Invalid IP";
+		if (!isIpChanged && validateIp(debouncedIpAddress)) return "Saved";
+		return "Save IP";
+	};
+
+	// Determine button style based on state
+	const getSaveButtonStyle = () => {
+		if (!isOctet1Valid || !isOctet2Valid || !isOctet3Valid || !isOctet4Valid) return styles.saveButtonInvalid;
+		if (canSaveIp) return styles.saveButton;
+		return styles.saveButtonDisabled;
+	};
 
 	// Handle individual octet changes with auto-focus
 	const handleOctet1Change = (value: string) => {
@@ -343,10 +358,10 @@ export default function Welcome({ navigation }: any) {
 					/>
 				</View>
 				<Button
-					title="Save IP"
+					title={getSaveButtonText()}
 					onPress={handleSaveIp}
 					variant="secondary"
-					style={canSaveIp ? styles.saveButton : styles.saveButtonDisabled}
+					style={getSaveButtonStyle()}
 					disabled={!canSaveIp}
 				/>
 				<Button
@@ -424,6 +439,12 @@ const styles = StyleSheet.create({
 	saveButtonDisabled: {
 		marginBottom: 20,
 		opacity: 0.5,
+	},
+	saveButtonInvalid: {
+		marginBottom: 20,
+		opacity: 0.5,
+		borderColor: COLORS.ERROR,
+		borderWidth: 1,
 	},
 	buttonText: {
 		color: COLORS.WHITE,

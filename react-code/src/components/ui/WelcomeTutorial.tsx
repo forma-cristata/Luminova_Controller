@@ -47,7 +47,7 @@ const tutorialPages: TutorialPage[] = [
         content: "Tap the info button in the top-right corner anytime to learn about the app structure, read detailed instructions, and discover all available features. If you wish to return to this menu, tap `Hello` on the home screen five times.",
     },
     {
-        title: "Get Started Creating",
+        title: "Separation of Concerns",
         content: "You don't need a connected device to start editing settings! Jump into 'Create' to explore animations, colors, and patterns. Your settings will be saved and ready when you connect your device and emulated here in the meantime.",
     },
 ];

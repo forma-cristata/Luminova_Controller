@@ -29,12 +29,16 @@ export default function Welcome({ navigation }: any) {
 	const [displayText, setDisplayText] = useState("");
 	const fullText = "Hello";
 	const [ipAddress, setIpAddress] = useState("");
+	const [savedIpAddress, setSavedIpAddress] = useState("");
 	const [isIpValid, setIsIpValid] = useState(true);
+	const [isSavingIp, setIsSavingIp] = useState(false);
+	const debouncedIpAddress = useDebounce(ipAddress, 100);
 
 	useEffect(() => {
 		const loadIp = async () => {
 			const ip = await IpConfigService.getCurrentIp();
 			setIpAddress(ip);
+			setSavedIpAddress(ip);
 		};
 		loadIp();
 	}, []);
@@ -99,30 +103,75 @@ export default function Welcome({ navigation }: any) {
 		return ipRegex.test(ip);
 	};
 
-	const handleIpChange = (ip: string) => {
-		setIpAddress(ip);
-		setIsIpValid(validateIp(ip));
+	// Check if IP has changed and is valid for enabling save button
+	const isIpChanged = debouncedIpAddress !== savedIpAddress;
+	const canSaveIp = isIpChanged && validateIp(debouncedIpAddress) && !isSavingIp;
+
+	const handleIpChange = (newValue: string) => {
+		// Remove any non-digit and non-dot characters
+		const cleaned = newValue.replace(/[^0-9.]/g, '');
+
+		// Prevent multiple consecutive dots
+		const noDuplicateDots = cleaned.replace(/\.{2,}/g, '.');
+
+		// Prevent starting with a dot
+		const noStartingDot = noDuplicateDots.replace(/^\./, '');
+
+		// Limit to 4 quadrants (max 3 dots)
+		const parts = noStartingDot.split('.');
+		if (parts.length > 4) {
+			return; // Don't allow more than 4 parts
+		}
+
+		// Auto-add dots after 3 digits in a quadrant (but only if not manually placing dots)
+		let result = noStartingDot;
+		const shouldAutoAddDot = (text: string) => {
+			const segments = text.split('.');
+			const lastSegment = segments[segments.length - 1];
+			// Only auto-add if last segment has exactly 3 digits and we're not at max quadrants
+			return lastSegment.length === 3 && segments.length < 4 && !text.endsWith('.');
+		};
+
+		if (shouldAutoAddDot(result)) {
+			result = result + '.';
+		}
+
+		// Limit each quadrant to 3 digits
+		const limitedParts = result.split('.').map(part => part.slice(0, 3));
+		result = limitedParts.join('.');
+
+		setIpAddress(result);
+		setIsIpValid(validateIp(result));
 	};
 
 	const handleSaveIp = async () => {
-		if (!isIpValid) {
-			Alert.alert("Invalid IP", "Please enter a valid IP address.");
+		if (!canSaveIp) {
 			return;
 		}
-		await IpConfigService.saveIpAddress(ipAddress);
-		Keyboard.dismiss();
-		// Re-check status after saving new IP
-		setIsLoading(true);
+
+		setIsSavingIp(true);
 		try {
-			const data = await ApiService.getStatus();
-			setIsEnabled(data.shelfOn);
-			setIsShelfConnected(true);
+			await IpConfigService.saveIpAddress(debouncedIpAddress);
+			setSavedIpAddress(debouncedIpAddress);
+			Keyboard.dismiss();
+			// Re-check status after saving new IP
+			setIsLoading(true);
+			try {
+				const data = await ApiService.getStatus();
+				setIsEnabled(data.shelfOn);
+				setIsShelfConnected(true);
+			} catch (error) {
+				console.error("Error fetching status after IP change:", error);
+				setIsEnabled(false); // Assume off if status check fails
+				setIsShelfConnected(false);
+			} finally {
+				setIsLoading(false);
+			}
 		} catch (error) {
-			console.error("Error fetching status after IP change:", error);
-			setIsEnabled(false); // Assume off if status check fails
-			setIsShelfConnected(false);
+			console.error("Error saving IP address:", error);
+			Alert.alert("Error", "Failed to save IP address. Please try again.");
 		} finally {
-			setIsLoading(false);
+			setIsSavingIp(false);
 		}
 	};
 
@@ -212,7 +261,8 @@ export default function Welcome({ navigation }: any) {
 					title="Save IP"
 					onPress={handleSaveIp}
 					variant="secondary"
-					style={styles.saveButton}
+					style={canSaveIp ? styles.saveButton : styles.saveButtonDisabled}
+					disabled={!canSaveIp}
 				/>
 				<Button
 					title="Create ⟩"
@@ -261,6 +311,10 @@ const styles = StyleSheet.create({
 	},
 	saveButton: {
 		marginBottom: 20,
+	},
+	saveButtonDisabled: {
+		marginBottom: 20,
+		opacity: 0.5,
 	},
 	buttonText: {
 		color: COLORS.WHITE,

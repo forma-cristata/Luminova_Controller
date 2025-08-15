@@ -10,6 +10,7 @@ import {
 	TouchableWithoutFeedback,
 	Keyboard,
 	Animated,
+	View,
 } from "react-native";
 
 import AnimatedTitle from "@/src/components/ui/AnimatedTitle";
@@ -28,16 +29,53 @@ export default function Welcome({ navigation }: any) {
 		useConfiguration();
 	const [displayText, setDisplayText] = useState("");
 	const fullText = "Hello";
-	const [ipAddress, setIpAddress] = useState("");
+
+	// Track each octet as an array of up to 4 characters
+	const [octet1Chars, setOctet1Chars] = useState<string[]>([]);
+	const [octet2Chars, setOctet2Chars] = useState<string[]>([]);
+	const [octet3Chars, setOctet3Chars] = useState<string[]>([]);
+	const [octet4Chars, setOctet4Chars] = useState<string[]>([]);
+
 	const [savedIpAddress, setSavedIpAddress] = useState("");
 	const [isIpValid, setIsIpValid] = useState(true);
 	const [isSavingIp, setIsSavingIp] = useState(false);
+
+	// Refs for auto-focusing between inputs
+	const octet1Ref = useRef<TextInput>(null);
+	const octet2Ref = useRef<TextInput>(null);
+	const octet3Ref = useRef<TextInput>(null);
+	const octet4Ref = useRef<TextInput>(null);
+
+	// Convert character arrays to display/final values (handles leading zero removal)
+	const getOctetValue = (chars: string[]) => {
+		let returnOctet = '0';
+		returnOctet = chars[3] !== undefined ? chars.join('').slice(1, 4) : chars[0] ? chars.join('') : '0';
+		return returnOctet;
+	};
+
+	const ipOctet1 = getOctetValue(octet1Chars);
+	const ipOctet2 = getOctetValue(octet2Chars);
+	const ipOctet3 = getOctetValue(octet3Chars);
+	const ipOctet4 = getOctetValue(octet4Chars);
+
+	// Individual octet validation
+	const isOctet1Valid = ipOctet1 === '' || (parseInt(ipOctet1, 10) >= 0 && parseInt(ipOctet1, 10) <= 255);
+	const isOctet2Valid = ipOctet2 === '' || (parseInt(ipOctet2, 10) >= 0 && parseInt(ipOctet2, 10) <= 255);
+	const isOctet3Valid = ipOctet3 === '' || (parseInt(ipOctet3, 10) >= 0 && parseInt(ipOctet3, 10) <= 255);
+	const isOctet4Valid = ipOctet4 === '' || (parseInt(ipOctet4, 10) >= 0 && parseInt(ipOctet4, 10) <= 255);
+
+	// Combine octets into full IP address (no individual debouncing)
+	const ipAddress = `${ipOctet1}.${ipOctet2}.${ipOctet3}.${ipOctet4}`;
 	const debouncedIpAddress = useDebounce(ipAddress, 100);
 
 	useEffect(() => {
 		const loadIp = async () => {
 			const ip = await IpConfigService.getCurrentIp();
-			setIpAddress(ip);
+			const parts = ip.split('.');
+			setOctet1Chars((parts[0] || '0').split(''));
+			setOctet2Chars((parts[1] || '0').split(''));
+			setOctet3Chars((parts[2] || '0').split(''));
+			setOctet4Chars((parts[3] || '0').split(''));
 			setSavedIpAddress(ip);
 		};
 		loadIp();
@@ -107,52 +145,51 @@ export default function Welcome({ navigation }: any) {
 	const isIpChanged = debouncedIpAddress !== savedIpAddress;
 	const canSaveIp = isIpChanged && validateIp(debouncedIpAddress) && !isSavingIp;
 
-	const handleIpChange = (newValue: string) => {
-		// Remove any non-digit and non-dot characters
-		const cleaned = newValue.replace(/[^0-9.]/g, '');
-
-		// Prevent multiple consecutive dots
-		const noDuplicateDots = cleaned.replace(/\.{2,}/g, '.');
-
-		// Prevent starting with a dot
-		const noStartingDot = noDuplicateDots.replace(/^\./, '');
-
-		// Limit to 4 quadrants (max 3 dots)
-		const parts = noStartingDot.split('.');
-		if (parts.length > 4) {
-			return; // Don't allow more than 4 parts
+	// Handle individual octet changes with auto-focus
+	const handleOctet1Change = (value: string) => {
+		const chars = value.split('').slice(0, 4);
+		setOctet1Chars(chars);
+		if ((chars.length === 3 && chars[0] !== '0') || (chars.length === 4 && chars[0] === '0')) {
+			octet2Ref.current?.focus();
 		}
-
-		// Auto-add dots after 3 digits in a quadrant (but only if not manually placing dots)
-		let result = noStartingDot;
-		const shouldAutoAddDot = (text: string) => {
-			const segments = text.split('.');
-			const lastSegment = segments[segments.length - 1];
-			// Only auto-add if last segment has exactly 3 digits and we're not at max quadrants
-			return lastSegment.length === 3 && segments.length < 4 && !text.endsWith('.');
-		};
-
-		if (shouldAutoAddDot(result)) {
-			result = result + '.';
+	}; const handleOctet2Change = (value: string) => {
+		const chars = value.split('').slice(0, 4);
+		setOctet2Chars(chars);
+		if ((chars.length === 3 && chars[0] !== '0') || (chars.length === 4 && chars[0] === '0')) {
+			octet3Ref.current?.focus();
 		}
-
-		// Limit each quadrant to 3 digits
-		const limitedParts = result.split('.').map(part => part.slice(0, 3));
-		result = limitedParts.join('.');
-
-		setIpAddress(result);
-		setIsIpValid(validateIp(result));
 	};
+
+	const handleOctet3Change = (value: string) => {
+		const chars = value.split('').slice(0, 4);
+		setOctet3Chars(chars);
+		if ((chars.length === 3 && chars[0] !== '0') || (chars.length === 4 && chars[0] === '0')) {
+			octet4Ref.current?.focus();
+		}
+	};
+
+	const handleOctet4Change = (value: string) => {
+		const chars = value.split('').slice(0, 4);
+		setOctet4Chars(chars);
+	};
+
+	// Update validation when values change
+	useEffect(() => {
+		setIsIpValid(validateIp(ipAddress));
+	}, [ipAddress]);
 
 	const handleSaveIp = async () => {
 		if (!canSaveIp) {
 			return;
 		}
 
+		// Use the current debounced IP address (already cleaned by getOctetValue)
+		const finalIpAddress = debouncedIpAddress;
+
 		setIsSavingIp(true);
 		try {
-			await IpConfigService.saveIpAddress(debouncedIpAddress);
-			setSavedIpAddress(debouncedIpAddress);
+			await IpConfigService.saveIpAddress(finalIpAddress);
+			setSavedIpAddress(finalIpAddress);
 			Keyboard.dismiss();
 			// Re-check status after saving new IP
 			setIsLoading(true);
@@ -247,16 +284,64 @@ export default function Welcome({ navigation }: any) {
 			<SafeAreaView style={styles.container}>
 				<InfoButton />
 				<AnimatedTitle text={displayText} fontSize={130} marginBottom="20%" />
-				<TextInput
-					style={[styles.ipInput, !isIpValid && styles.ipInputError]}
-					value={ipAddress}
-					onChangeText={handleIpChange}
-					placeholder="Enter Shelf IP Address"
-					placeholderTextColor="#888"
-					onSubmitEditing={handleSaveIp}
-					autoCapitalize="none"
-					keyboardType="numeric"
-				/>
+
+				<View style={styles.ipContainer}>
+					<TextInput
+						ref={octet1Ref}
+						style={[styles.ipOctet, !isOctet1Valid && styles.ipInputError]}
+						value={ipOctet1}
+						onChangeText={handleOctet1Change}
+						placeholder="192"
+						placeholderTextColor="#888"
+						keyboardType="numeric"
+						textAlign="center"
+						returnKeyType="next"
+						clearButtonMode="while-editing"
+						onSubmitEditing={() => octet2Ref.current?.focus()}
+					/>
+					<Text style={styles.ipDot}>.</Text>
+					<TextInput
+						ref={octet2Ref}
+						style={[styles.ipOctet, !isOctet2Valid && styles.ipInputError]}
+						value={ipOctet2}
+						onChangeText={handleOctet2Change}
+						placeholder="168"
+						placeholderTextColor="#888"
+						keyboardType="numeric"
+						textAlign="center"
+						returnKeyType="next"
+						clearButtonMode="while-editing"
+						onSubmitEditing={() => octet3Ref.current?.focus()}
+					/>
+					<Text style={styles.ipDot}>.</Text>
+					<TextInput
+						ref={octet3Ref}
+						style={[styles.ipOctet, !isOctet3Valid && styles.ipInputError]}
+						value={ipOctet3}
+						onChangeText={handleOctet3Change}
+						placeholder="1"
+						placeholderTextColor="#888"
+						keyboardType="numeric"
+						textAlign="center"
+						returnKeyType="next"
+						clearButtonMode="while-editing"
+						onSubmitEditing={() => octet4Ref.current?.focus()}
+					/>
+					<Text style={styles.ipDot}>.</Text>
+					<TextInput
+						ref={octet4Ref}
+						style={[styles.ipOctet, !isOctet4Valid && styles.ipInputError]}
+						value={ipOctet4}
+						onChangeText={handleOctet4Change}
+						placeholder="100"
+						placeholderTextColor="#888"
+						keyboardType="numeric"
+						textAlign="center"
+						returnKeyType="done"
+						clearButtonMode="while-editing"
+						onSubmitEditing={handleSaveIp}
+					/>
+				</View>
 				<Button
 					title="Save IP"
 					onPress={handleSaveIp}
@@ -292,6 +377,30 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		justifyContent: "center",
 		backgroundColor: COLORS.BLACK,
+	},
+	ipContainer: {
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "center",
+		marginBottom: 10,
+	},
+	ipOctet: {
+		backgroundColor: "#333",
+		color: COLORS.WHITE,
+		paddingHorizontal: 8,
+		paddingVertical: 10,
+		borderRadius: 8,
+		width: 70,
+		textAlign: "center",
+		fontSize: 16,
+		borderWidth: 1,
+		borderColor: "#555",
+	},
+	ipDot: {
+		color: COLORS.WHITE,
+		fontSize: 18,
+		marginHorizontal: 5,
+		fontWeight: "bold",
 	},
 	ipInput: {
 		backgroundColor: "#333",

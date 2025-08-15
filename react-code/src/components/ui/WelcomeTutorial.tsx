@@ -8,6 +8,7 @@ import {
     Dimensions,
     SafeAreaView,
     ScrollView,
+    Image,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { COLORS, FONTS, COMMON_STYLES, DIMENSIONS } from "@/src/styles/SharedStyles";
@@ -120,19 +121,19 @@ export default function WelcomeTutorial({ visible, onComplete }: WelcomeTutorial
                             </TouchableOpacity>
                         </View>
 
-                        {/* Content Area */}
-                        <ScrollView
-                            contentContainerStyle={styles.contentContainer}
-                            showsVerticalScrollIndicator={false}
-                        >
+                        {/* Content Area - Dynamic Height */}
+                        <View style={[
+                            styles.dynamicContentArea,
+                            currentPage === 0 ? styles.contentAreaWithIcon : styles.contentAreaNoIcon
+                        ]}>
                             <View style={[styles.pageContent, isAnimating && styles.animating]}>
-                                {/* Icon */}
-                                {currentTutorial.icon ? (
+                                {/* Icon - Only show on first page */}
+                                {currentPage === 0 && currentTutorial.icon ? (
                                     <View style={styles.iconContainer}>
-                                        <Ionicons
-                                            name={currentTutorial.icon as any}
-                                            size={60}
-                                            color={COLORS.WHITE}
+                                        <Image
+                                            source={require("@/assets/images/icon.png")}
+                                            style={styles.appIcon}
+                                            resizeMode="contain"
                                         />
                                     </View>
                                 ) : null}
@@ -144,11 +145,11 @@ export default function WelcomeTutorial({ visible, onComplete }: WelcomeTutorial
                                 <Text style={styles.content}>{currentTutorial.content}</Text>
 
                             </View>
-                        </ScrollView>
+                        </View>
 
-                        {/* Navigation Footer */}
-                        <View style={styles.footer}>
-                            <View style={styles.buttonRow}>
+                        {/* Navigation Footer - Fixed Position */}
+                        <View style={styles.fixedFooter}>
+                            <View style={styles.singleLineNavigation}>
                                 <TouchableOpacity
                                     onPress={handlePrevious}
                                     style={[
@@ -164,6 +165,19 @@ export default function WelcomeTutorial({ visible, onComplete }: WelcomeTutorial
                                     />
                                 </TouchableOpacity>
 
+                                {/* Progress Dots - centered */}
+                                <View style={styles.dotsContainer}>
+                                    {tutorialPages.map((_, index) => (
+                                        <View
+                                            key={index}
+                                            style={[
+                                                styles.dot,
+                                                index === currentPage && styles.activeDot
+                                            ]}
+                                        />
+                                    ))}
+                                </View>
+
                                 <TouchableOpacity
                                     onPress={handleNext}
                                     style={styles.navButton}
@@ -178,17 +192,6 @@ export default function WelcomeTutorial({ visible, onComplete }: WelcomeTutorial
                                         />
                                     )}
                                 </TouchableOpacity>
-                            </View>                            {/* Progress Dots */}
-                            <View style={styles.dotsContainer}>
-                                {tutorialPages.map((_, index) => (
-                                    <View
-                                        key={index}
-                                        style={[
-                                            styles.dot,
-                                            index === currentPage && styles.activeDot
-                                        ]}
-                                    />
-                                ))}
                             </View>
                         </View>
                     </View>
@@ -218,8 +221,9 @@ const styles = StyleSheet.create({
         borderColor: COLORS.WHITE,
         width: "90%",
         minWidth: "90%",
-        maxHeight: "75%",
+        height: 450, // Fixed height so modal doesn't change size
         padding: 20,
+        position: "relative",
     },
     header: {
         flexDirection: "row",
@@ -229,7 +233,7 @@ const styles = StyleSheet.create({
     },
     pageIndicator: {
         ...COMMON_STYLES.hintText,
-        fontSize: 14,
+        fontSize: 18,
     },
     skipButton: {
         padding: 8,
@@ -237,18 +241,29 @@ const styles = StyleSheet.create({
     skipText: {
         color: COLORS.WHITE,
         fontFamily: FONTS.CLEAR,
-        fontSize: 16,
+        fontSize: 20,
         opacity: 0.8,
-    },
-    contentContainer: {
-        justifyContent: "center",
-        paddingBottom: 10,
     },
     pageContent: {
         alignItems: "center",
-        height: 300,
-        justifyContent: "center",
+        justifyContent: "flex-start",
         paddingVertical: 10,
+    },
+    dynamicContentArea: {
+        justifyContent: "flex-start",
+        marginBottom: 80, // Space for fixed footer
+    },
+    contentAreaWithIcon: {
+        height: 300,
+    },
+    contentAreaNoIcon: {
+        height: 200,
+    },
+    pageContentWithIcon: {
+        height: 300,
+    },
+    pageContentNoIcon: {
+        height: 200,
     },
     animating: {
         opacity: 0.3,
@@ -259,19 +274,28 @@ const styles = StyleSheet.create({
         borderRadius: 50,
         borderWidth: 1,
         borderColor: COLORS.WHITE,
+        borderStyle: "dashed",
         opacity: 0.8,
+        alignItems: "center",
+        justifyContent: "center",
+        width: 90,
+        height: 90,
+    },
+    appIcon: {
+        width: 60,
+        height: 60,
     },
     title: {
         ...COMMON_STYLES.whiteText,
-        fontSize: 28 * DIMENSIONS.SCALE,
+        fontSize: 34 * DIMENSIONS.SCALE,
         marginBottom: 20,
         textAlign: "center",
     },
     content: {
         color: COLORS.WHITE,
         fontFamily: FONTS.CLEAR,
-        fontSize: 18 * DIMENSIONS.SCALE,
-        lineHeight: 24 * DIMENSIONS.SCALE,
+        fontSize: 22 * DIMENSIONS.SCALE,
+        lineHeight: 30 * DIMENSIONS.SCALE,
         textAlign: "center",
         marginBottom: 20,
         paddingHorizontal: 10,
@@ -289,7 +313,7 @@ const styles = StyleSheet.create({
     highlightText: {
         color: COLORS.WHITE,
         fontFamily: FONTS.CLEAR,
-        fontSize: 14 * DIMENSIONS.SCALE,
+        fontSize: 18 * DIMENSIONS.SCALE,
         textAlign: "center",
         marginBottom: 8,
     },
@@ -298,6 +322,19 @@ const styles = StyleSheet.create({
     },
     footer: {
         marginTop: 20,
+    },
+    fixedFooter: {
+        position: "absolute",
+        bottom: 20,
+        left: 20,
+        right: 20,
+        height: 60,
+        justifyContent: "center",
+    },
+    singleLineNavigation: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
     },
     buttonRow: {
         flexDirection: "row",
@@ -318,13 +355,14 @@ const styles = StyleSheet.create({
     },
     nextButtonText: {
         color: COLORS.WHITE,
-        fontSize: 18 * DIMENSIONS.SCALE,
+        fontSize: 22 * DIMENSIONS.SCALE,
         fontFamily: FONTS.CLEAR,
     },
     dotsContainer: {
         flexDirection: "row",
         justifyContent: "center",
         alignItems: "center",
+        flex: 1,
     },
     dot: {
         width: 8,

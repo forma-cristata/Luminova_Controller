@@ -365,26 +365,26 @@ export default function Welcome({ navigation }: any) {
 								styles.sunContainer,
 								{ opacity: isEnabled ? 1 : 0.3 }
 							]}>
-								<Ionicons 
-									name="sunny" 
-									size={16} 
-									color="#000000" 
+								<Ionicons
+									name="sunny"
+									size={16}
+									color="#000000"
 								/>
 							</View>
-							
+
 							{/* Moon Icon (Green when available/off, Red when unavailable) */}
 							<View style={[
 								styles.iconContainer,
 								styles.moonContainer,
 								{ opacity: !isEnabled ? 1 : 0.3 }
 							]}>
-								<Ionicons 
-									name="moon" 
-									size={16} 
-									color={isShelfConnected ? "#00ff00" : "#ff4444"} 
+								<Ionicons
+									name="moon"
+									size={16}
+									color={isShelfConnected ? "#00ff00" : "#ff4444"}
 								/>
 							</View>
-							
+
 							{/* Toggle Thumb */}
 							<Animated.View style={[
 								styles.toggleThumb,

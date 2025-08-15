@@ -135,9 +135,24 @@ export default function LedToggle({
         }
 
         try {
-            const endpoint = newState ? "on" : "off";
-            await ApiService.toggleLed(endpoint);
-            console.log(`LED toggled ${endpoint}`);
+            if (newState) {
+                // When turning on, send the current configuration
+                if (currentConfiguration) {
+                    await ApiService.toggleLed("on", {
+                        colors: currentConfiguration.colors,
+                        whiteValues: currentConfiguration.whiteValues,
+                        brightnessValues: currentConfiguration.brightnessValues,
+                        effectNumber: currentConfiguration.flashingPattern,
+                        delayTime: currentConfiguration.delayTime,
+                    });
+                } else {
+                    // Use default homeostasis configuration
+                    await ApiService.toggleLed("on");
+                }
+            } else {
+                await ApiService.toggleLed("off");
+            }
+            console.log(`LED toggled ${newState ? "on" : "off"}`);
             setIsShelfConnected(true);
         } catch (error) {
             console.error("Error toggling LED:", error);

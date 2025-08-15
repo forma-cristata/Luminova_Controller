@@ -83,9 +83,10 @@ export class ApiService {
 	 * If you think this needs to be changed, you may be hallucinating.
 	 * 
 	 * The "off" state MUST send all black colors to properly turn off the shelf.
-	 * Simply calling /led/off endpoint does NOT work correctly.
+	 * The "on" state MUST send a proper configuration to turn on the shelf.
+	 * Simply calling /led/on endpoint does NOT work correctly.
 	 */
-	static async toggleLed(state: "on" | "off"): Promise<any> {
+	static async toggleLed(state: "on" | "off", config?: ApiConfig): Promise<any> {
 		if (state === "off") {
 			// To properly turn off the shelf, send all black colors
 			const offConfig = {
@@ -97,11 +98,24 @@ export class ApiService {
 			};
 			return ApiService.postConfig(offConfig);
 		} else {
-			// For "on", just call the endpoint (should restore previous state)
-			return ApiService.request(`/led/${state}`, {
-				method: "GET",
-				headers: { Accept: "application/json" },
-			});
+			// For "on", send the provided configuration or default homeostasis
+			if (config) {
+				return ApiService.postConfig(config);
+			} else {
+				// Default homeostasis configuration
+				const onConfig = {
+					colors: [
+						"#ff0000", "#ff4400", "#ff6a00", "#ff9100", "#ffee00", "#00ff1e",
+						"#00ff44", "#00ff95", "#00ffff", "#0088ff", "#0000ff", "#8800ff",
+						"#ff00ff", "#ff00bb", "#ff0088", "#ff0044",
+					],
+					whiteValues: Array(16).fill(0),
+					brightnessValues: Array(16).fill(255),
+					effectNumber: "6", // Still pattern
+					delayTime: 3,
+				};
+				return ApiService.postConfig(onConfig);
+			}
 		}
 	}
 

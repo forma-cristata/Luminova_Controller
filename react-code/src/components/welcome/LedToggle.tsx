@@ -70,14 +70,14 @@ export default function LedToggle({
 
     useEffect(() => {
         Animated.timing(thumbPosition, {
-            toValue: isEnabled ? 28 : 2,
+            toValue: isEnabled ? 2 : 28,
             duration: 200,
             useNativeDriver: true,
         }).start();
     }, [isEnabled, thumbPosition]);
 
     useEffect(() => {
-        thumbPosition.setValue(isEnabled ? 28 : 2);
+        thumbPosition.setValue(isEnabled ? 2 : 28);
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     const toggleSwitch = async () => {
@@ -184,10 +184,10 @@ const styles = StyleSheet.create({
         height: 20,
     },
     sunContainer: {
-        left: 6,
+        right: 6,
     },
     moonContainer: {
-        right: 6,
+        left: 6,
     },
     toggleThumb: {
         width: 24,

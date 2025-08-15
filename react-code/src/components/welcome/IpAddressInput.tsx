@@ -7,12 +7,13 @@ import {
     Keyboard,
     Alert,
     Platform,
+    Dimensions,
 } from "react-native";
 import { ApiService } from "@/src/services/ApiService";
 import { IpConfigService } from "@/src/services/IpConfigService";
 import { useDebounce } from "@/src/hooks/useDebounce";
 import Button from "@/src/components/ui/buttons/Button";
-import { COLORS } from "@/src/styles/SharedStyles";
+import { COLORS, FONTS, DIMENSIONS } from "@/src/styles/SharedStyles";
 
 interface IpAddressInputProps {
     onIpSaved: (isEnabled: boolean, isConnected: boolean) => void;
@@ -107,7 +108,9 @@ export default function IpAddressInput({ onIpSaved }: IpAddressInputProps) {
         setter: React.Dispatch<React.SetStateAction<string[]>>,
         nextRef?: React.RefObject<TextInput | null>
     ) => {
-        const chars = value.split("").slice(0, 4);
+        // Limit input length based on first character
+        const maxLength = value[0] === "0" ? 4 : 3;
+        const chars = value.split("").slice(0, maxLength);
         setter(chars);
         if (
             (chars.length === 3 && chars[0] !== "0") ||
@@ -165,12 +168,13 @@ export default function IpAddressInput({ onIpSaved }: IpAddressInputProps) {
                     onChangeText={(text) => handleOctetChange(text, setOctet1Chars, octet2Ref)}
                     onBlur={() => handleOctetBlur(octet1Chars, setOctet1Chars)}
                     placeholder="192"
-                    placeholderTextColor="#888"
+                    placeholderTextColor={COLORS.PLACEHOLDER}
                     keyboardType="numeric"
                     textAlign="center"
                     returnKeyType="next"
                     clearButtonMode="while-editing"
                     blurOnSubmit={false}
+                    keyboardAppearance="dark"
                     onSubmitEditing={() => octet2Ref.current?.focus()}
                 />
                 <Text style={styles.ipDot}>.</Text>
@@ -181,12 +185,13 @@ export default function IpAddressInput({ onIpSaved }: IpAddressInputProps) {
                     onChangeText={(text) => handleOctetChange(text, setOctet2Chars, octet3Ref)}
                     onBlur={() => handleOctetBlur(octet2Chars, setOctet2Chars)}
                     placeholder="168"
-                    placeholderTextColor="#888"
+                    placeholderTextColor={COLORS.PLACEHOLDER}
                     keyboardType="numeric"
                     textAlign="center"
                     returnKeyType="next"
                     clearButtonMode="while-editing"
                     blurOnSubmit={false}
+                    keyboardAppearance="dark"
                     onSubmitEditing={() => octet3Ref.current?.focus()}
                 />
                 <Text style={styles.ipDot}>.</Text>
@@ -197,12 +202,13 @@ export default function IpAddressInput({ onIpSaved }: IpAddressInputProps) {
                     onChangeText={(text) => handleOctetChange(text, setOctet3Chars, octet4Ref)}
                     onBlur={() => handleOctetBlur(octet3Chars, setOctet3Chars)}
                     placeholder="1"
-                    placeholderTextColor="#888"
+                    placeholderTextColor={COLORS.PLACEHOLDER}
                     keyboardType="numeric"
                     textAlign="center"
                     returnKeyType="next"
                     clearButtonMode="while-editing"
                     blurOnSubmit={false}
+                    keyboardAppearance="dark"
                     onSubmitEditing={() => octet4Ref.current?.focus()}
                 />
                 <Text style={styles.ipDot}>.</Text>
@@ -213,11 +219,12 @@ export default function IpAddressInput({ onIpSaved }: IpAddressInputProps) {
                     onChangeText={(text) => handleOctetChange(text, setOctet4Chars, undefined)}
                     onBlur={() => handleOctetBlur(octet4Chars, setOctet4Chars)}
                     placeholder="100"
-                    placeholderTextColor="#888"
+                    placeholderTextColor={COLORS.PLACEHOLDER}
                     keyboardType="numeric"
                     textAlign="center"
                     returnKeyType="done"
                     clearButtonMode="while-editing"
+                    keyboardAppearance="dark"
                     onSubmitEditing={handleSaveIp}
                 />
             </View>
@@ -232,6 +239,9 @@ export default function IpAddressInput({ onIpSaved }: IpAddressInputProps) {
     );
 }
 
+const { width, height } = Dimensions.get("window");
+const scale = DIMENSIONS.SCALE;
+
 const styles = StyleSheet.create({
     ipContainer: {
         flexDirection: "row",
@@ -240,25 +250,28 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     ipOctet: {
-        backgroundColor: "#333",
         color: COLORS.WHITE,
+        fontSize: 22 * scale,
+        fontFamily: FONTS.CLEAR,
+        textTransform: "uppercase",
+        letterSpacing: 2,
+        borderBottomWidth: 1,
+        borderBottomColor: COLORS.WHITE,
+        paddingVertical: 4,
         paddingHorizontal: 8,
-        paddingVertical: 10,
-        borderRadius: 8,
-        width: 70,
+        width: 70 * scale,
         textAlign: "center",
-        fontSize: 16,
-        borderWidth: 1,
-        borderColor: "#555",
+        backgroundColor: "transparent",
     },
     ipDot: {
         color: COLORS.WHITE,
-        fontSize: 18,
+        fontSize: 22 * scale,
         marginHorizontal: 5,
+        fontFamily: FONTS.CLEAR,
         fontWeight: "bold",
     },
     ipInputError: {
-        borderColor: COLORS.ERROR,
+        borderBottomColor: COLORS.ERROR,
     },
     saveButton: {
         marginBottom: 20,

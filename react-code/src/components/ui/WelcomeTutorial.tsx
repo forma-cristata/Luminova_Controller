@@ -39,7 +39,7 @@ const tutorialPages: TutorialPage[] = [
     },
     {
         title: "LED Toggle",
-        content: "The toggle switch shows your device status:\n\n• Green Moon: Device available and off\n• Red Moon: Device not found at the IP given\n• White Sun: Device is connected and on",
+        content: "The toggle switch shows your device status:\n• Green Moon: Device available and off\n• Red Moon: Device not found at the IP given\n• White Sun: Device is connected and on",
         icon: "bulb",
     },
     {
@@ -57,6 +57,13 @@ const tutorialPages: TutorialPage[] = [
 export default function WelcomeTutorial({ visible, onComplete }: WelcomeTutorialProps) {
     const [currentPage, setCurrentPage] = useState(0);
     const [isAnimating, setIsAnimating] = useState(false);
+
+    // Reset to first page whenever modal opens
+    useEffect(() => {
+        if (visible) {
+            setCurrentPage(0);
+        }
+    }, [visible]);
 
     const handleNext = () => {
         if (currentPage < tutorialPages.length - 1) {
@@ -206,7 +213,7 @@ const styles = StyleSheet.create({
         borderWidth: 2,
         borderColor: COLORS.WHITE,
         width: "90%",
-        maxWidth: 350,
+        minWidth: "90%",
         maxHeight: "75%",
         padding: 20,
     },
@@ -230,13 +237,13 @@ const styles = StyleSheet.create({
         opacity: 0.8,
     },
     contentContainer: {
-        flexGrow: 1,
+        justifyContent: "center",
         paddingBottom: 10,
     },
     pageContent: {
         alignItems: "center",
-        minHeight: 250,
-        justifyContent: "flex-start",
+        height: 300,
+        justifyContent: "center",
         paddingVertical: 10,
     },
     animating: {
@@ -260,9 +267,10 @@ const styles = StyleSheet.create({
         color: COLORS.WHITE,
         fontFamily: FONTS.CLEAR,
         fontSize: 18 * DIMENSIONS.SCALE,
-        lineHeight: 26 * DIMENSIONS.SCALE,
+        lineHeight: 24 * DIMENSIONS.SCALE,
         textAlign: "center",
         marginBottom: 20,
+        paddingHorizontal: 10,
     },
     highlightContainer: {
         alignItems: "center",

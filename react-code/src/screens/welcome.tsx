@@ -14,6 +14,7 @@ import {
 	ScrollView,
 	Platform,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 
 import AnimatedTitle from "@/src/components/ui/AnimatedTitle";
 import Button from "@/src/components/ui/buttons/Button";
@@ -27,7 +28,7 @@ import { IpConfigService } from "../services/IpConfigService";
 import { useDebounce } from "@/src/hooks/useDebounce";
 
 export default function Welcome({ navigation }: any) {
-	const { currentConfiguration, setCurrentConfiguration, setLastEdited, setIsShelfConnected } =
+	const { currentConfiguration, setCurrentConfiguration, setLastEdited, isShelfConnected, setIsShelfConnected } =
 		useConfiguration();
 	const [displayText, setDisplayText] = useState("");
 	const fullText = "Hello";
@@ -109,8 +110,9 @@ export default function Welcome({ navigation }: any) {
 	const [pendingToggle, setPendingToggle] = useState(false);
 	const debouncedPendingToggle = useDebounce(pendingToggle, 300);
 
-	// Animation for toggle switch fade-in
+	// Animation for toggle switch fade-in and connection feedback
 	const toggleOpacity = useRef(new Animated.Value(0.3)).current;
+	const thumbPosition = useRef(new Animated.Value(0)).current;
 
 	useEffect(() => {
 		const fetchInitialStatus = async () => {
@@ -129,14 +131,42 @@ export default function Welcome({ navigation }: any) {
 		fetchInitialStatus();
 	}, [setIsShelfConnected]);
 
-	// Animate toggle switch when it becomes available
+	// Animate toggle switch when it becomes available (only for initial load, not IP saves)
 	useEffect(() => {
-		Animated.timing(toggleOpacity, {
-			toValue: isLoading ? 0.3 : 1,
-			duration: 500,
+		// Only animate on initial load, not during IP save operations
+		if (!isSavingIp) {
+			Animated.timing(toggleOpacity, {
+				toValue: isLoading ? 0.3 : 1,
+				duration: 500,
+				useNativeDriver: true,
+			}).start();
+		}
+	}, [isLoading, toggleOpacity, isSavingIp]);
+
+	// Keep toggle dimmed when not connected
+	useEffect(() => {
+		if (!isSavingIp && !isLoading) {
+			Animated.timing(toggleOpacity, {
+				toValue: isShelfConnected ? 1 : 0.7,
+				duration: 300,
+				useNativeDriver: true,
+			}).start();
+		}
+	}, [isShelfConnected, isSavingIp, isLoading, toggleOpacity]);
+
+	// Animate thumb position when toggle state changes
+	useEffect(() => {
+		Animated.timing(thumbPosition, {
+			toValue: isEnabled ? 28 : 2,
+			duration: 200,
 			useNativeDriver: true,
 		}).start();
-	}, [isLoading, toggleOpacity]);
+	}, [isEnabled, thumbPosition]);
+
+	// Initialize thumb position on component mount
+	useEffect(() => {
+		thumbPosition.setValue(isEnabled ? 28 : 2);
+	}, []); // eslint-disable-line react-hooks/exhaustive-deps
 
 	// Auto-scroll with keyboard show/hide
 	useEffect(() => {
@@ -226,7 +256,6 @@ export default function Welcome({ navigation }: any) {
 			setSavedIpAddress(finalIpAddress);
 			Keyboard.dismiss();
 			// Re-check status after saving new IP
-			setIsLoading(true);
 			try {
 				const data = await ApiService.getStatus();
 				setIsEnabled(data.shelfOn);
@@ -235,8 +264,6 @@ export default function Welcome({ navigation }: any) {
 				console.error("Error fetching status after IP change:", error);
 				setIsEnabled(false); // Assume off if status check fails
 				setIsShelfConnected(false);
-			} finally {
-				setIsLoading(false);
 			}
 		} catch (error) {
 			console.error("Error saving IP address:", error);
@@ -319,17 +346,55 @@ export default function Welcome({ navigation }: any) {
 				{/* Fixed elements that don't scroll */}
 				<InfoButton />
 
-				{/* LED Toggle in top left corner - stays fixed */}
+				{/* LED Toggle in top left corner with connection status */}
 				<Animated.View style={[COMMON_STYLES.navButton, { left: 20, opacity: toggleOpacity }]}>
-					<Switch
-						onValueChange={toggleSwitch}
-						value={isEnabled}
-						trackColor={{ false: "#665e73", true: "#ffffff" }}
-						thumbColor={isEnabled ? "#665e73" : "#f4f3f4"}
-						ios_backgroundColor="#3e3e3e"
-						style={styles.navSwitch}
-						disabled={isLoading || debouncedPendingToggle}
-					/>
+					<View style={styles.toggleContainer}>
+						{/* Custom Toggle with Sun/Moon Icons */}
+						<TouchableOpacity
+							style={[
+								styles.customToggle,
+								{ backgroundColor: isEnabled ? "#ffffff" : (isShelfConnected ? "#665e73" : "#444") }
+							]}
+							onPress={toggleSwitch}
+							disabled={isLoading || debouncedPendingToggle || !isShelfConnected}
+							activeOpacity={0.8}
+						>
+							{/* Sun Icon (Always black when on) */}
+							<View style={[
+								styles.iconContainer,
+								styles.sunContainer,
+								{ opacity: isEnabled ? 1 : 0.3 }
+							]}>
+								<Ionicons 
+									name="sunny" 
+									size={16} 
+									color="#000000" 
+								/>
+							</View>
+							
+							{/* Moon Icon (Green when available/off, Red when unavailable) */}
+							<View style={[
+								styles.iconContainer,
+								styles.moonContainer,
+								{ opacity: !isEnabled ? 1 : 0.3 }
+							]}>
+								<Ionicons 
+									name="moon" 
+									size={16} 
+									color={isShelfConnected ? "#00ff00" : "#ff4444"} 
+								/>
+							</View>
+							
+							{/* Toggle Thumb */}
+							<Animated.View style={[
+								styles.toggleThumb,
+								{
+									backgroundColor: !isShelfConnected ? "#666" : (isEnabled ? "#665e73" : "#f4f3f4"),
+									transform: [{ translateX: thumbPosition }]
+								}
+							]} />
+						</TouchableOpacity>
+					</View>
 				</Animated.View>
 
 				{/* Scrollable content area */}
@@ -513,8 +578,42 @@ const styles = StyleSheet.create({
 		transform: "scale(1.5)",
 		marginTop: 30,
 	},
-	navSwitch: {
-		transformOrigin: "center",
-		transform: "scale(1.5)",
+	toggleContainer: {
+		position: 'relative',
+		alignItems: 'center',
+		justifyContent: 'center',
+	},
+	customToggle: {
+		width: 60,
+		height: 32,
+		borderRadius: 16,
+		position: 'relative',
+		justifyContent: 'center',
+		borderWidth: 2,
+		borderColor: '#333',
+	},
+	iconContainer: {
+		position: 'absolute',
+		alignItems: 'center',
+		justifyContent: 'center',
+		width: 20,
+		height: 20,
+	},
+	sunContainer: {
+		left: 6,
+	},
+	moonContainer: {
+		right: 6,
+	},
+	toggleThumb: {
+		width: 24,
+		height: 24,
+		borderRadius: 12,
+		position: 'absolute',
+		shadowColor: '#000',
+		shadowOffset: { width: 0, height: 2 },
+		shadowOpacity: 0.3,
+		shadowRadius: 3,
+		elevation: 3,
 	},
 });

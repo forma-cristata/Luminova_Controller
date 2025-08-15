@@ -1,4 +1,4 @@
-import type { Setting } from "@/src/interface/SettingInterface";
+import type { Setting } from "@/src/types/SettingInterface";
 
 export const DEFAULT_SETTINGS: Setting[] = [
 	{

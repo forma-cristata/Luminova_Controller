@@ -16,10 +16,23 @@ export default function InfoButton() {
 
 	return (
 		<TouchableOpacity
-			style={[COMMON_STYLES.navButton, { right: 20 }]}
+			style={[COMMON_STYLES.navButton, { right: 20 }, styles.glowEffect]}
 			onPress={handlePress}
 		>
 			<Ionicons name="information-circle-outline" size={32} color="white" />
 		</TouchableOpacity>
 	);
 }
+
+const styles = StyleSheet.create({
+	glowEffect: {
+		shadowColor: "#ffffff",
+		shadowOffset: {
+			width: 0,
+			height: 0,
+		},
+		shadowOpacity: 1,
+		shadowRadius: 8,
+		elevation: 8, // For Android
+	},
+});

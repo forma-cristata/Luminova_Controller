@@ -56,7 +56,7 @@ export default function ColorEditor({ navigation, route }: any) {
 
 	const [hexInput, setHexInput] = useState("");
 	const [colorHistory, setColorHistory] = useState<string[][]>([]);
-	const [hasChanges, setHasChanges] = useState(false);
+	const [hasChanges, setHasChanges] = useState(isNew);
 
 	const startY = useSharedValue(0);
 	const startX = useSharedValue(0);
@@ -218,6 +218,15 @@ export default function ColorEditor({ navigation, route }: any) {
 				setSaturation(hsv.s);
 			}
 		}
+	};
+
+	const handleCancel = () => {
+		unPreviewAPI();
+		const newSettingCarouselIndex = route.params?.newSettingCarouselIndex;
+		if (newSettingCarouselIndex !== undefined) {
+			setLastEdited(newSettingCarouselIndex.toString());
+		}
+		navigation.navigate("Settings");
 	};
 
 	const handleReset = () => {
@@ -610,10 +619,12 @@ export default function ColorEditor({ navigation, route }: any) {
 						<View style={COMMON_STYLES.buttonContainer}>
 							<View style={COMMON_STYLES.buttonRow}>
 								<ActionButton
-									title="Reset"
-									onPress={handleReset}
-									disabled={!hasChanges}
-									opacity={hasChanges ? 1 : COLORS.DISABLED_OPACITY}
+									title={isNew ? "Cancel" : "Reset"}
+									onPress={isNew ? handleCancel : handleReset}
+									disabled={!isNew && !hasChanges}
+									opacity={
+										isNew ? 1 : hasChanges ? 1 : COLORS.DISABLED_OPACITY
+									}
 								/>
 
 								<ActionButton

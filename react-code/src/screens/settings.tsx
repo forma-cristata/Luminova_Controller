@@ -57,6 +57,7 @@ export default function Settings({ navigation }: any) {
 			setting: newSetting,
 			isNew: true,
 			originalName: newSetting.name,
+			newSettingCarouselIndex: settingsData.length,
 		});
 	};
 

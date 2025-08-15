@@ -349,6 +349,8 @@ react-code/
 │   └── services/                 # API and service layers (PascalCase)
 │       ├── ApiService.ts        # Hardware API communication
 │       ├── SettingsService.ts   # Settings data management
+│       ├── IpConfigService.ts   # IP address persistence
+│       ├── FirstTimeUserService.ts # Onboarding state management
 │       └── ...
 ├── utils/                        # Utility functions (camelCase)
 │   ├── settingUtils.ts          # Setting ID generation and utilities
@@ -381,12 +383,17 @@ Welcome → Settings → ChooseModification → [ColorEditor | FlashingPatternEd
 ```
 
 #### `src/screens/Welcome.tsx`
-- **Purpose**: Entry point with LED on/off toggle
+- **Purpose**: Entry point with LED on/off toggle and first-time user onboarding
 - **Features**: 
   - Animated text display
   - LED status fetching and control
   - Navigation to Settings
+  - **First-Time User Tutorial**: Multi-page welcome tutorial for new users
 - **API Integration**: Uses `ApiService` for status and LED control
+- **First-Time Experience**: 
+  - Automatically detects first-time users via `FirstTimeUserService`
+  - Shows 5-page tutorial covering IP setup, LED toggle, Info button, and getting started
+  - Tutorial state persisted using AsyncStorage
 
 #### `src/screens/Settings.tsx`
 - **Purpose**: Main settings management screen
@@ -421,6 +428,18 @@ Welcome → Settings → ChooseModification → [ColorEditor | FlashingPatternEd
   - **Name editing for both new and existing settings**
 - **Patterns**: Supports 12 distinct animation patterns (0-11)
 - **Identification**: Uses index-based setting identification for consistency
+
+#### `src/screens/Info.tsx`
+- **Purpose**: Help and information screen with app usage instructions
+- **Features**:
+  - Comprehensive usage instructions organized in sections
+  - Feedback/support contact functionality via SMS
+  - **Debug Mode**: Hidden developer feature for tutorial reset
+- **Debug Functionality**:
+  - **Activation**: Tap the feedback area 5 times to reveal debug options
+  - **Tutorial Reset**: Allows resetting first-time user tutorial state
+  - **Developer Tool**: Useful for testing onboarding flow
+- **Content**: Detailed step-by-step instructions for all app features
 
 ## Recent Optimizations & Component Consolidation
 
@@ -515,6 +534,20 @@ Welcome → Settings → ChooseModification → [ColorEditor | FlashingPatternEd
 #### `src/components/HueSliderBackground.tsx`
 - **Purpose**: Rainbow background for hue slider
 - **Implementation**: Gradient background component
+
+#### `src/components/ui/WelcomeTutorial.tsx`
+- **Purpose**: Multi-page onboarding tutorial modal for first-time users
+- **Features**:
+  - **5-Page Tutorial Flow**: Welcome → IP Setup → LED Toggle → Info Button → Getting Started
+  - **Interactive Navigation**: Previous/Next buttons with progress dots
+  - **Skip Functionality**: Allow users to bypass tutorial
+  - **Visual Indicators**: Icons and contextual highlights for each page
+  - **Responsive Design**: Adapts to screen sizes using SharedStyles patterns
+- **Integration**: 
+  - Triggered automatically on Welcome screen for new users
+  - Uses `FirstTimeUserService` for state persistence
+  - Modal overlay with semi-transparent background
+- **Styling**: Consistent with app theme using COLORS, FONTS, and COMMON_STYLES
 
 #### `src/components/InfoButton.tsx`
 - **Purpose**: Reusable info button across all screens
@@ -624,6 +657,35 @@ Welcome → Settings → ChooseModification → [ColorEditor | FlashingPatternEd
   - **Service Integration**: Automatically updates ApiService base URL
 - **Default Value**: `0.0.0.0` defined in `src/configurations/constants.ts`
 - **Implementation**: Called during app startup in `App.tsx` to ensure correct IP is used for all API communication
+
+### 🎯 First-Time User Experience
+
+#### `src/services/FirstTimeUserService.ts`
+- **Purpose**: Manage first-time user onboarding state
+- **Methods**:
+  - `isFirstTimeUser()` - Check if user has completed tutorial
+  - `markTutorialCompleted()` - Mark tutorial as completed
+  - `resetFirstTimeUser()` - Reset tutorial state (for testing/debug)
+- **Features**:
+  - **Persistence**: Tutorial state saved to device's AsyncStorage
+  - **Error Handling**: Defaults to showing tutorial if storage error occurs
+  - **Debug Support**: Allows resetting tutorial state for testing
+
+#### `src/components/ui/WelcomeTutorial.tsx`
+- **Purpose**: Multi-page welcome tutorial modal for first-time users
+- **Features**:
+  - **5-Page Tutorial**: Covers IP setup, LED toggle, Info button, and getting started
+  - **Interactive Navigation**: Previous/Next buttons with progress indicators
+  - **Skip Option**: Users can skip tutorial if desired
+  - **Contextual Highlights**: Visual indicators pointing to relevant UI elements
+  - **Responsive Design**: Adapts to different screen sizes using SharedStyles
+- **Pages**:
+  1. Welcome introduction
+  2. IP address setup explanation
+  3. LED toggle status indicators
+  4. Info button usage
+  5. Getting started without device connection
+- **Integration**: Automatically triggered on Welcome screen for new users
 
 ### 🔑 Key Management & Component Stability
 

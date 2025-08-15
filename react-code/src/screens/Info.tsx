@@ -20,6 +20,7 @@ import React from "react";
 
 export default function Info() {
 	const [_textColor, setTextColor] = useState("#ffffff");
+
 	useEffect(() => {
 		const animationColors = [
 			"#ff0000",
@@ -101,11 +102,10 @@ export default function Info() {
 					style: "cancel",
 				},
 				{
-					text: "Send Feedback",
+					text: "Send",
 					onPress: sendFeedback,
 				},
 			],
-			{ cancelable: true },
 		);
 	};
 
@@ -159,6 +159,7 @@ export default function Info() {
 			data: [
 				"Default settings can be modified but not deleted.",
 				"Using black can create distinct setting variations.",
+				"If you need a refresher, tap 'Hello' 5 times to see the tutorial again.",
 			],
 		},
 	];

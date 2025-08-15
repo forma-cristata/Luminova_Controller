@@ -7,13 +7,16 @@ import {
 	Keyboard,
 	View,
 	ScrollView,
+	TouchableOpacity,
 } from "react-native";
 
 import AnimatedTitle from "@/src/components/ui/AnimatedTitle";
 import Button from "@/src/components/ui/buttons/Button";
 import InfoButton from "@/src/components/ui/buttons/InfoButton";
+import WelcomeTutorial from "@/src/components/ui/WelcomeTutorial";
 import { COLORS, FONTS } from "@/src/styles/SharedStyles";
 import { useConfiguration } from "@/src/context/ConfigurationContext";
+import { FirstTimeUserService } from "@/src/services/FirstTimeUserService";
 import React from "react";
 import IpAddressInput from "@/src/components/welcome/IpAddressInput";
 import LedToggle from "@/src/components/welcome/LedToggle";
@@ -24,12 +27,29 @@ export default function Welcome({ navigation }: any) {
 	const [displayText, setDisplayText] = useState("");
 	const fullText = "Hello";
 	const [isEnabled, setIsEnabled] = useState(false);
+	const [showTutorial, setShowTutorial] = useState(false);
+	const [debugTapCount, setDebugTapCount] = useState(0);
 
 	const scrollViewRef = useRef<ScrollView>(null);
 
 	useEffect(() => {
 		setLastEdited("0");
 	}, [setLastEdited]);
+
+	// Check for first-time user on component mount
+	useEffect(() => {
+		const checkFirstTimeUser = async () => {
+			const isFirstTime = await FirstTimeUserService.isFirstTimeUser();
+			if (isFirstTime) {
+				// Small delay to let the screen render first
+				setTimeout(() => {
+					setShowTutorial(true);
+				}, 1000);
+			}
+		};
+
+		checkFirstTimeUser();
+	}, []);
 
 	useEffect(() => {
 		if (displayText.length < fullText.length) {
@@ -68,6 +88,20 @@ export default function Welcome({ navigation }: any) {
 		setIsShelfConnected(newIsConnected);
 	};
 
+	const handleTutorialComplete = () => {
+		setShowTutorial(false);
+	};
+
+	const handleDebugTap = () => {
+		const newCount = debugTapCount + 1;
+		setDebugTapCount(newCount);
+
+		if (newCount >= 5) {
+			setDebugTapCount(0);
+			setShowTutorial(true);
+		}
+	};
+
 	return (
 		<TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
 			<SafeAreaView style={styles.container}>
@@ -87,9 +121,13 @@ export default function Welcome({ navigation }: any) {
 					style={styles.scrollView}
 					scrollEnabled={false}
 				>
-					<View style={styles.titleContainer}>
+					<TouchableOpacity
+						style={styles.titleContainer}
+						onPress={handleDebugTap}
+						activeOpacity={1}
+					>
 						<AnimatedTitle text={displayText} fontSize={130} marginBottom="10%" />
-					</View>
+					</TouchableOpacity>
 					<Button
 						title="Create ⟩"
 						onPress={createButtonPressed}
@@ -99,6 +137,12 @@ export default function Welcome({ navigation }: any) {
 					<IpAddressInput onIpSaved={handleIpSaved} />
 					<View style={{ height: 250 }} />
 				</ScrollView>
+
+				{/* Welcome Tutorial Modal */}
+				<WelcomeTutorial
+					visible={showTutorial}
+					onComplete={handleTutorialComplete}
+				/>
 			</SafeAreaView>
 		</TouchableWithoutFeedback>
 	);

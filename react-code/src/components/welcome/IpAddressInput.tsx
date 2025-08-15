@@ -89,11 +89,13 @@ export default function IpAddressInput({ onIpSaved }: IpAddressInputProps) {
         isIpChanged && validateIp(debouncedIpAddress) && !isSavingIp;
 
     const getSaveButtonText = () => {
-        if (isSavingIp) return "Saving...";
-        if (!isOctet1Valid || !isOctet2Valid || !isOctet3Valid || !isOctet4Valid)
-            return "Invalid IP";
-        if (!isIpChanged && validateIp(debouncedIpAddress)) return "Saved";
-        return "Save IP";
+        return isSavingIp
+            ? "Saving..."
+            : (!isOctet1Valid || !isOctet2Valid || !isOctet3Valid || !isOctet4Valid)
+                ? "Invalid IP"
+                : (!isIpChanged && validateIp(debouncedIpAddress))
+                    ? "Saved"
+                    : "Save IP";
     };
 
     const getSaveButtonStyle = () => {
@@ -101,6 +103,13 @@ export default function IpAddressInput({ onIpSaved }: IpAddressInputProps) {
             return styles.saveButtonInvalid;
         if (canSaveIp) return styles.saveButton;
         return styles.saveButtonDisabled;
+    };
+
+    const getSaveButtonTextStyle = () => {
+        if (!isOctet1Valid || !isOctet2Valid || !isOctet3Valid || !isOctet4Valid)
+            return styles.saveButtonInvalidText;
+        if (canSaveIp) return styles.saveButtonText;
+        return styles.saveButtonDisabledText;
     };
 
     const handleOctetChange = (
@@ -233,6 +242,7 @@ export default function IpAddressInput({ onIpSaved }: IpAddressInputProps) {
                 onPress={handleSaveIp}
                 variant="secondary"
                 style={getSaveButtonStyle()}
+                textStyle={getSaveButtonTextStyle()}
                 disabled={!canSaveIp}
             />
         </>
@@ -275,15 +285,25 @@ const styles = StyleSheet.create({
     },
     saveButton: {
         marginBottom: 20,
+        borderWidth: 0,
+    },
+    saveButtonText: {
+        color: COLORS.WHITE,
     },
     saveButtonDisabled: {
         marginBottom: 20,
         opacity: 0.5,
+        borderWidth: 0,
+    },
+    saveButtonDisabledText: {
+        color: COLORS.WHITE,
     },
     saveButtonInvalid: {
         marginBottom: 20,
         opacity: 0.5,
-        borderColor: COLORS.ERROR,
-        borderWidth: 1,
+        borderWidth: 0,
+    },
+    saveButtonInvalidText: {
+        color: COLORS.ERROR,
     },
 });

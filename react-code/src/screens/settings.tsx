@@ -395,6 +395,7 @@ const styles = StyleSheet.create({
 	},
 	focusedItem: {
 		height: height / 2.5,
+		width: width * 0.9,
 		borderStyle: "solid",
 		borderWidth: 2,
 		borderColor: "white",

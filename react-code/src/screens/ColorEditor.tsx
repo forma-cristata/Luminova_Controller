@@ -13,6 +13,7 @@ import {
 	TextInput,
 	TouchableOpacity,
 	View,
+	TouchableWithoutFeedback,
 } from "react-native";
 import {
 	GestureHandlerRootView,
@@ -28,6 +29,7 @@ import ActionButton from "@/src/components/ui/buttons/ActionButton";
 import BackButton from "@/src/components/ui/buttons/BackButton";
 import ColorButton from "@/src/components/ui/buttons/ColorButton";
 import ColorDots from "@/src/components/color-picker/ColorDots";
+import DismissKeyboardView from "@/src/components/ui/DismissKeyboardView";
 import HueSliderBackground from "@/src/components/color-picker/HueSliderBackground";
 import InfoButton from "@/src/components/ui/buttons/InfoButton";
 import RandomizeButton from "@/src/components/ui/buttons/RandomizeButton";
@@ -453,213 +455,215 @@ export default function ColorEditor({ navigation, route }: any) {
 	};
 
 	return (
-		<GestureHandlerRootView style={{ flex: 1 }}>
-			<PanGestureHandler onGestureEvent={panGestureEvent}>
-				<Animated.View style={{ flex: 1 }}>
-					<SafeAreaView style={COMMON_STYLES.container}>
-						<InfoButton />
-						<BackButton beforePress={previewMode ? unPreviewAPI : undefined} />
-						{renderTitle()}
-						<ColorDots
-							colors={colors}
-							onDotSelect={handleDotSelect}
-							selectedDot={selectedDot}
-							layout="two-rows"
-							key={colors.join(",")}
-						/>
-						<View
-							style={[
-								styles.hexContainer,
-								{ opacity: selectedDot !== null ? 1 : 0.5 },
-							]}
-						>
-							<Text style={COMMON_STYLES.sliderText}>Hex: #</Text>
-							<TextInput
-								style={[styles.hexInput]}
-								value={hexInput.toUpperCase()}
-								onChangeText={(text) => {
-									const hex = text.slice(0, 6).replace(/[^0-9A-Fa-f]/g, "");
-									handleHexInput(hex);
-								}}
-								placeholder="FFFFFF"
-								placeholderTextColor={COLORS.PLACEHOLDER}
-								editable={selectedDot !== null}
-								onBlur={() => {
-									Keyboard.dismiss();
-								}}
-								autoCapitalize="characters"
-								keyboardAppearance="dark"
-								keyboardType="default"
+		<TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+			<GestureHandlerRootView style={{ flex: 1 }}>
+				<PanGestureHandler onGestureEvent={panGestureEvent}>
+					<Animated.View style={{ flex: 1 }}>
+						<SafeAreaView style={COMMON_STYLES.container}>
+							<InfoButton />
+							<BackButton beforePress={previewMode ? unPreviewAPI : undefined} />
+							{renderTitle()}
+							<ColorDots
+								colors={colors}
+								onDotSelect={handleDotSelect}
+								selectedDot={selectedDot}
+								layout="two-rows"
+								key={colors.join(",")}
 							/>
-							<View style={styles.colorButtons}>
-								<ColorButton
-									color="white"
-									disabled={selectedDot === null}
-									onPress={() => {
-										if (selectedDot !== null) {
-											handleHexInput("FFFFFF");
-										}
+							<View
+								style={[
+									styles.hexContainer,
+									{ opacity: selectedDot !== null ? 1 : 0.5 },
+								]}
+							>
+								<Text style={COMMON_STYLES.sliderText}>Hex: #</Text>
+								<TextInput
+									style={[styles.hexInput]}
+									value={hexInput.toUpperCase()}
+									onChangeText={(text) => {
+										const hex = text.slice(0, 6).replace(/[^0-9A-Fa-f]/g, "");
+										handleHexInput(hex);
 									}}
-									scale={scale}
-								/>
-								<ColorButton
-									color="black"
-									disabled={selectedDot === null}
-									onPress={() => {
-										if (selectedDot !== null) {
-											handleHexInput("000000");
-										}
+									placeholder="FFFFFF"
+									placeholderTextColor={COLORS.PLACEHOLDER}
+									editable={selectedDot !== null}
+									onBlur={() => {
+										Keyboard.dismiss();
 									}}
-									scale={scale}
+									autoCapitalize="characters"
+									keyboardAppearance="dark"
+									keyboardType="default"
 								/>
+								<View style={styles.colorButtons}>
+									<ColorButton
+										color="white"
+										disabled={selectedDot === null}
+										onPress={() => {
+											if (selectedDot !== null) {
+												handleHexInput("FFFFFF");
+											}
+										}}
+										scale={scale}
+									/>
+									<ColorButton
+										color="black"
+										disabled={selectedDot === null}
+										onPress={() => {
+											if (selectedDot !== null) {
+												handleHexInput("000000");
+											}
+										}}
+										scale={scale}
+									/>
+								</View>
 							</View>
-						</View>
-						<View
-							style={[
-								COMMON_STYLES.sliderContainer,
-								{ opacity: selectedDot !== null ? 1 : 0.5 },
-							]}
-						>
-							<View style={styles.sliderRow}>
-								<Text style={COMMON_STYLES.sliderText}>
-									Hue: {Math.round(hue)}°
-								</Text>
-								<View style={styles.sliderWrapper}>
-									<HueSliderBackground />
+							<View
+								style={[
+									COMMON_STYLES.sliderContainer,
+									{ opacity: selectedDot !== null ? 1 : 0.5 },
+								]}
+							>
+								<View style={styles.sliderRow}>
+									<Text style={COMMON_STYLES.sliderText}>
+										Hue: {Math.round(hue)}°
+									</Text>
+									<View style={styles.sliderWrapper}>
+										<HueSliderBackground />
+										<Slider
+											style={[
+												styles.slider,
+												{ opacity: selectedDot !== null ? 1 : 0.5 },
+											]}
+											minimumValue={0}
+											maximumValue={360}
+											value={debouncedHue}
+											disabled={selectedDot === null}
+											onValueChange={(value) => {
+												if (selectedDot !== null) {
+													try {
+														Keyboard.dismiss();
+													} catch {
+														console.log("no keyboard to dismiss");
+													}
+													setHue(value);
+													updateColor(value, saturation, brightness);
+												}
+											}}
+											onSlidingComplete={(value) => {
+												if (selectedDot !== null) {
+													handleSliderComplete(value, saturation, brightness);
+												}
+											}}
+											minimumTrackTintColor="#ff0000"
+											maximumTrackTintColor={COLORS.WHITE}
+											thumbTintColor={COLORS.WHITE}
+										/>
+									</View>
+								</View>
+								<View style={styles.sliderRow}>
+									<Text style={COMMON_STYLES.sliderText}>
+										Saturation: {Math.round(saturation)}%
+									</Text>
 									<Slider
 										style={[
 											styles.slider,
 											{ opacity: selectedDot !== null ? 1 : 0.5 },
 										]}
 										minimumValue={0}
-										maximumValue={360}
-										value={debouncedHue}
+										maximumValue={100}
 										disabled={selectedDot === null}
+										value={debouncedSaturation}
 										onValueChange={(value) => {
 											if (selectedDot !== null) {
-												try {
-													Keyboard.dismiss();
-												} catch {
-													console.log("no keyboard to dismiss");
-												}
-												setHue(value);
-												updateColor(value, saturation, brightness);
+												setSaturation(value);
+												updateColor(hue, value, brightness);
 											}
 										}}
 										onSlidingComplete={(value) => {
 											if (selectedDot !== null) {
-												handleSliderComplete(value, saturation, brightness);
+												handleSliderComplete(hue, value, brightness);
 											}
 										}}
-										minimumTrackTintColor="#ff0000"
-										maximumTrackTintColor={COLORS.WHITE}
+										minimumTrackTintColor={COLORS.WHITE}
+										maximumTrackTintColor="#333333"
+										thumbTintColor={COLORS.WHITE}
+									/>
+								</View>
+								<View style={styles.sliderRow}>
+									<Text style={COMMON_STYLES.sliderText}>
+										Brightness: {Math.round(brightness)}%
+									</Text>
+									<Slider
+										style={[
+											styles.slider,
+											{ opacity: selectedDot !== null ? 1 : 0.5 },
+										]}
+										minimumValue={0}
+										maximumValue={100}
+										disabled={selectedDot === null}
+										value={debouncedBrightness}
+										onValueChange={(value) => {
+											if (selectedDot !== null) {
+												setBrightness(value);
+												updateColor(hue, saturation, value);
+											}
+										}}
+										onSlidingComplete={(value) => {
+											if (selectedDot !== null) {
+												handleSliderComplete(hue, saturation, value);
+											}
+										}}
+										minimumTrackTintColor={COLORS.WHITE}
+										maximumTrackTintColor="#333333"
 										thumbTintColor={COLORS.WHITE}
 									/>
 								</View>
 							</View>
-							<View style={styles.sliderRow}>
-								<Text style={COMMON_STYLES.sliderText}>
-									Saturation: {Math.round(saturation)}%
-								</Text>
-								<Slider
-									style={[
-										styles.slider,
-										{ opacity: selectedDot !== null ? 1 : 0.5 },
-									]}
-									minimumValue={0}
-									maximumValue={100}
-									disabled={selectedDot === null}
-									value={debouncedSaturation}
-									onValueChange={(value) => {
-										if (selectedDot !== null) {
-											setSaturation(value);
-											updateColor(hue, value, brightness);
+							<View style={COMMON_STYLES.buttonContainer}>
+								<View style={COMMON_STYLES.buttonRow}>
+									<ActionButton
+										title={isNew ? "Cancel" : "Reset"}
+										onPress={isNew ? handleCancel : handleReset}
+										disabled={!isNew && !hasChanges}
+										opacity={
+											isNew ? 1 : hasChanges ? 1 : COLORS.DISABLED_OPACITY
 										}
-									}}
-									onSlidingComplete={(value) => {
-										if (selectedDot !== null) {
-											handleSliderComplete(hue, value, brightness);
-										}
-									}}
-									minimumTrackTintColor={COLORS.WHITE}
-									maximumTrackTintColor="#333333"
-									thumbTintColor={COLORS.WHITE}
-								/>
-							</View>
-							<View style={styles.sliderRow}>
-								<Text style={COMMON_STYLES.sliderText}>
-									Brightness: {Math.round(brightness)}%
-								</Text>
-								<Slider
-									style={[
-										styles.slider,
-										{ opacity: selectedDot !== null ? 1 : 0.5 },
-									]}
-									minimumValue={0}
-									maximumValue={100}
-									disabled={selectedDot === null}
-									value={debouncedBrightness}
-									onValueChange={(value) => {
-										if (selectedDot !== null) {
-											setBrightness(value);
-											updateColor(hue, saturation, value);
-										}
-									}}
-									onSlidingComplete={(value) => {
-										if (selectedDot !== null) {
-											handleSliderComplete(hue, saturation, value);
-										}
-									}}
-									minimumTrackTintColor={COLORS.WHITE}
-									maximumTrackTintColor="#333333"
-									thumbTintColor={COLORS.WHITE}
-								/>
-							</View>
-						</View>
-						<View style={COMMON_STYLES.buttonContainer}>
-							<View style={COMMON_STYLES.buttonRow}>
-								<ActionButton
-									title={isNew ? "Cancel" : "Reset"}
-									onPress={isNew ? handleCancel : handleReset}
-									disabled={!isNew && !hasChanges}
-									opacity={
-										isNew ? 1 : hasChanges ? 1 : COLORS.DISABLED_OPACITY
-									}
-								/>
+									/>
 
-								<ActionButton
-									title="Save"
-									onPress={handleSave}
-									disabled={!hasChanges || !!nameError}
-									opacity={
-										hasChanges
-											? !nameError
-												? 1
+									<ActionButton
+										title="Save"
+										onPress={handleSave}
+										disabled={!hasChanges || !!nameError}
+										opacity={
+											hasChanges
+												? !nameError
+													? 1
+													: COLORS.DISABLED_OPACITY
 												: COLORS.DISABLED_OPACITY
-											: COLORS.DISABLED_OPACITY
-									}
-								/>
+										}
+									/>
 
-								<ActionButton
-									title={
-										previewMode
-											? hasChanges
-												? "Update"
+									<ActionButton
+										title={
+											previewMode
+												? hasChanges
+													? "Update"
+													: "Preview"
 												: "Preview"
-											: "Preview"
-									}
-									onPress={() => {
-										previewAPI();
-										setPreviewMode(true);
-									}}
-									variant={!hasChanges && previewMode ? "disabled" : "primary"}
-								/>
+										}
+										onPress={() => {
+											previewAPI();
+											setPreviewMode(true);
+										}}
+										variant={!hasChanges && previewMode ? "disabled" : "primary"}
+									/>
+								</View>
 							</View>
-						</View>
-					</SafeAreaView>
-				</Animated.View>
-			</PanGestureHandler>
-		</GestureHandlerRootView>
+						</SafeAreaView>
+					</Animated.View>
+				</PanGestureHandler>
+			</GestureHandlerRootView>
+		</TouchableWithoutFeedback>
 	);
 }
 

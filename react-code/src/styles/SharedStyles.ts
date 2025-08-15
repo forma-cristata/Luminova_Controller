@@ -66,6 +66,18 @@ export const COMMON_STYLES = StyleSheet.create({
 		width: "30%",
 	},
 
+	secondaryButton: {
+		backgroundColor: COLORS.BLACK,
+		borderRadius: 10,
+		paddingVertical: 8 * scale,
+		paddingHorizontal: 15 * scale,
+		alignItems: "center",
+		borderStyle: "solid",
+		borderWidth: 1,
+		borderColor: COLORS.WHITE,
+		width: "45%",
+	},
+
 	navButton: {
 		position: "absolute",
 		top: 60,

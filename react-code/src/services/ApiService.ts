@@ -1,5 +1,5 @@
 import { IP } from "@/src/configurations/constants";
-import type { Setting } from "@/src/interface/SettingInterface";
+import type { Setting } from "@/src/types/SettingInterface";
 
 interface ApiConfig {
 	colors?: string[];
@@ -13,6 +13,10 @@ const API_TIMEOUT = 5000; // 5 seconds
 
 export class ApiService {
 	private static baseUrl = `http://${IP}/api`;
+
+	static setBaseUrl(ip: string) {
+		ApiService.baseUrl = `http://${ip}/api`;
+	}
 
 	private static async request(
 		endpoint: string,
@@ -34,8 +38,7 @@ export class ApiService {
 				try {
 					const errorBody = await response.json();
 					throw new Error(
-						`HTTP error! status: ${response.status}, message: ${
-							errorBody.message || "Unknown error"
+						`HTTP error! status: ${response.status}, message: ${errorBody.message || "Unknown error"
 						}`,
 					);
 				} catch (e) {

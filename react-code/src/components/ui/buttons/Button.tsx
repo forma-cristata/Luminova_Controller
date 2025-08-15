@@ -14,7 +14,7 @@ export interface BaseButtonProps {
 	style?: ViewStyle;
 	textStyle?: TextStyle;
 	opacity?: number;
-	variant?: "default" | "wide" | "welcome";
+	variant?: "default" | "wide" | "welcome" | "secondary";
 }
 
 /**
@@ -38,6 +38,8 @@ const Button = React.memo(
 					return COMMON_STYLES.wideButton;
 				case "welcome":
 					return COMMON_STYLES.welcomeButton;
+				case "secondary":
+					return COMMON_STYLES.secondaryButton;
 				default:
 					return COMMON_STYLES.styleAButton;
 			}

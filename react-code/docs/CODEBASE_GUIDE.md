@@ -112,6 +112,7 @@ import type { Setting } from '@/src/interface/SettingInterface';
 - **Memoization**: Use React.memo() for performance-critical components
 - **Error Handling**: Implement proper error boundaries and fallbacks
 - **Conditional Rendering**: Always use ternary operators (`? :`) instead of logical AND (`&&`) for JSX conditional rendering
+- **Keyboard Management**: All screens with `TextInput` components should be wrapped in a `TouchableWithoutFeedback` component to dismiss the keyboard when tapping outside the input.
 
 #### **4. State Management**
 - **Local State**: Use useState for component-specific state
@@ -124,6 +125,33 @@ import type { Setting } from '@/src/interface/SettingInterface';
 - **Remove**: Unused state variables, functions, imports, and components
 - **Clean**: Old useEffect hooks, event listeners, and temporary debugging code
 - **Validate**: Use TypeScript errors and linting to identify deprecated patterns
+
+### ⌨️ **Keyboard Handling**
+
+To ensure a consistent user experience, all screens containing `TextInput` components must implement a mechanism to dismiss the keyboard when the user taps outside of the input field.
+
+**✅ Correct Pattern:**
+```typescript
+import { TouchableWithoutFeedback, Keyboard } from 'react-native';
+
+// Wrap the entire screen's content in TouchableWithoutFeedback
+export default function ScreenWithInput() {
+  return (
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+      <SafeAreaView>
+        {/* ... other components ... */}
+        <TextInput />
+        {/* ... other components ... */}
+      </SafeAreaView>
+    </TouchableWithoutFeedback>
+  );
+}
+```
+
+**Why this is important:**
+- **Prevents UI Obstruction**: Ensures the keyboard doesn't permanently cover other interactive elements.
+- **Consistent Behavior**: Provides a predictable way for users to dismiss the keyboard across all input screens.
+- **Improved Usability**: A simple tap anywhere is an intuitive gesture for dismissing the keyboard.
 
 ### 🎨 **Conditional Rendering Standards**
 

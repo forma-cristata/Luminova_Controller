@@ -12,12 +12,14 @@ import {
 	TextInput,
 	TouchableOpacity,
 	View,
+	TouchableWithoutFeedback,
 } from "react-native";
 
 import ActionButton from "@/src/components/ui/buttons/ActionButton";
 import AnimatedDots from "@/src/components/animations/AnimatedDots";
 import BackButton from "@/src/components/ui/buttons/BackButton";
 import BPMMeasurer from "@/src/components/audio/BPMMeasurer";
+import DismissKeyboardView from "@/src/components/ui/DismissKeyboardView";
 import InfoButton from "@/src/components/ui/buttons/InfoButton";
 import MetronomeButton from "@/src/components/ui/buttons/MetronomeButton";
 import Picker from "@/src/components/color-picker/Picker";
@@ -199,135 +201,135 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 	};
 
 	return (
-		<SafeAreaView style={COMMON_STYLES.container}>
-			<InfoButton />
-			<BackButton beforePress={previewMode ? unPreviewAPI : undefined} />
-			<View style={styles.titleContainer}>
-				<RandomizeButton
-					onPress={() => {
-						// Random BPM between 40 and 180
-						const randomBPM = Math.floor(Math.random() * (180 - 40) + 40);
-						setBPM(randomBPM);
-						setDelayTime(calculateDelayTime(randomBPM));
+		<TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+			<SafeAreaView style={COMMON_STYLES.container}>
+				<InfoButton />
+				<BackButton beforePress={previewMode ? unPreviewAPI : undefined} />
+				<View style={styles.titleContainer}>
+					<RandomizeButton
+						onPress={() => {
+							// Random BPM between 40 and 180
+							const randomBPM = Math.floor(Math.random() * (180 - 40) + 40);
+							setBPM(randomBPM);
+							setDelayTime(calculateDelayTime(randomBPM));
 
-						// Random pattern from valid animation patterns (excluding STILL)
-						const randomPattern =
-							ANIMATION_PATTERNS[
-							Math.floor(Math.random() * ANIMATION_PATTERNS.length)
-							];
-						setFlashingPattern(randomPattern);
-					}}
-				/>
-				<View style={styles.nameInputContainer}>
-					<Text style={COMMON_STYLES.sliderText}>Setting Name:</Text>
-					<TextInput
-						style={[
-							styles.nameInput,
-							nameError ? { color: COLORS.ERROR } : null,
-						]}
-						value={settingName}
-						onChangeText={handleNameChange}
-						placeholder="Enter setting name"
-						placeholderTextColor={COLORS.PLACEHOLDER}
-						maxLength={20}
-						onBlur={() => {
-							Keyboard.dismiss();
+							// Random pattern from valid animation patterns (excluding STILL)
+							const randomPattern =
+								ANIMATION_PATTERNS[
+								Math.floor(Math.random() * ANIMATION_PATTERNS.length)
+								];
+							setFlashingPattern(randomPattern);
 						}}
-						autoCapitalize="words"
-						keyboardAppearance="dark"
+					/>
+					<View style={styles.nameInputContainer}>
+						<Text style={COMMON_STYLES.sliderText}>Setting Name:</Text>
+						<TextInput
+							style={[
+								styles.nameInput,
+								nameError ? { color: COLORS.ERROR } : null,
+							]}
+							value={settingName}
+							onChangeText={handleNameChange}
+							placeholder="Enter setting name"
+							placeholderTextColor={COLORS.PLACEHOLDER}
+							maxLength={20}
+							onBlur={() => {
+								Keyboard.dismiss();
+							}}
+							autoCapitalize="words"
+							keyboardAppearance="dark"
+						/>
+					</View>
+					<MetronomeButton
+						onPress={() => {
+							setShowBPMMeasurer(true);
+						}}
 					/>
 				</View>
-				<MetronomeButton
-					onPress={() => {
-						setShowBPMMeasurer(true);
-					}}
-				/>
-			</View>
-			<View style={styles.dotPadding}>{modeDots()}</View>
-			<View style={styles.fpContainer}>
-				<Picker
-					navigation={navigation}
-					setting={setting}
-					selectedPattern={debouncedFlashingPattern}
-					setSelectedPattern={setFlashingPattern}
-				/>
-			</View>
-			<View style={styles.sliderPadding}>
-				<View style={COMMON_STYLES.sliderContainer}>
-					<View style={styles.sliderRow}>
-						<Text style={COMMON_STYLES.sliderText}>
-							Speed: {BPM.toFixed(0)} bpm
-						</Text>
-						<Slider
-							style={styles.slider}
-							minimumValue={40}
-							maximumValue={180}
-							value={BPM}
-							onValueChange={(value) => {
-								setBPM(value);
-								throttledSetDelayTime(value);
+				<View style={styles.dotPadding}>{modeDots()}</View>
+				<View style={styles.fpContainer}>
+					<Picker
+						navigation={navigation}
+						setting={setting}
+						selectedPattern={debouncedFlashingPattern}
+						setSelectedPattern={setFlashingPattern}
+					/>
+				</View>
+				<View style={styles.sliderPadding}>
+					<View style={COMMON_STYLES.sliderContainer}>
+						<View style={styles.sliderRow}>
+							<Text style={COMMON_STYLES.sliderText}>
+								Speed: {BPM.toFixed(0)} bpm
+							</Text>
+							<Slider
+								style={styles.slider}
+								minimumValue={40}
+								maximumValue={180}
+								value={BPM}
+								onValueChange={(value) => {
+									setBPM(value);
+									throttledSetDelayTime(value);
+								}}
+								minimumTrackTintColor="#ff0000"
+								maximumTrackTintColor={COLORS.WHITE}
+								thumbTintColor={COLORS.WHITE}
+							/>
+						</View>
+					</View>
+				</View>
+				<View style={COMMON_STYLES.buttonContainer}>
+					<View style={COMMON_STYLES.buttonRow}>
+						<ActionButton
+							title="Reset"
+							onPress={() => {
+								setDelayTime(initialDelayTime);
+								setBPM(parseFloat(calculateBPM(initialDelayTime)));
+								setFlashingPattern(initialFlashingPattern);
+								setSettingName(setting.name); // Reset name
+								setNameError(null); // Clear name error
+								unPreviewAPI();
 							}}
-							minimumTrackTintColor="#ff0000"
-							maximumTrackTintColor={COLORS.WHITE}
-							thumbTintColor={COLORS.WHITE}
+							disabled={!hasChanges}
+							opacity={hasChanges ? 1 : COLORS.DISABLED_OPACITY}
+						/>
+
+						<ActionButton
+							title="Save"
+							onPress={handleSave}
+							disabled={!hasChanges || !!nameError}
+							opacity={
+								hasChanges
+									? !nameError
+										? 1
+										: COLORS.DISABLED_OPACITY
+									: COLORS.DISABLED_OPACITY
+							}
+						/>
+
+						<ActionButton
+							title={
+								previewMode ? (hasChanges ? "Update" : "Preview") : "Preview"
+							}
+							onPress={() => {
+								previewAPI();
+								setPreviewMode(true);
+							}}
+							variant={!hasChanges && previewMode ? "disabled" : "primary"}
 						/>
 					</View>
 				</View>
-			</View>
-			<View style={COMMON_STYLES.buttonContainer}>
-				<View style={COMMON_STYLES.buttonRow}>
-					<ActionButton
-						title="Reset"
-						onPress={() => {
-							setDelayTime(initialDelayTime);
-							setBPM(parseFloat(calculateBPM(initialDelayTime)));
-							setFlashingPattern(initialFlashingPattern);
-							setSettingName(setting.name); // Reset name
-							setNameError(null); // Clear name error
-							unPreviewAPI();
-						}}
-						disabled={!hasChanges}
-						opacity={hasChanges ? 1 : COLORS.DISABLED_OPACITY}
-					/>
-
-					<ActionButton
-						title="Save"
-						onPress={handleSave}
-						disabled={!hasChanges || !!nameError}
-						opacity={
-							hasChanges
-								? !nameError
-									? 1
-									: COLORS.DISABLED_OPACITY
-								: COLORS.DISABLED_OPACITY
-						}
-					/>
-
-					<ActionButton
-						title={
-							previewMode ? (hasChanges ? "Update" : "Preview") : "Preview"
-						}
-						onPress={() => {
-							previewAPI();
-							setPreviewMode(true);
-						}}
-						variant={!hasChanges && previewMode ? "disabled" : "primary"}
-					/>
-				</View>
-			</View>
-			<BPMMeasurer
-				isVisible={showBPMMeasurer}
-				onClose={() => setShowBPMMeasurer(false)}
-				onBPMDetected={(bpm) => {
-					setBPM(bpm);
-					setDelayTime(calculateDelayTime(bpm));
-				}}
-			/>
-		</SafeAreaView>
+				<BPMMeasurer
+					isVisible={showBPMMeasurer}
+					onClose={() => setShowBPMMeasurer(false)}
+					onBPMDetected={(bpm) => {
+						setBPM(bpm);
+						setDelayTime(calculateDelayTime(bpm));
+					}}
+				/>
+			</SafeAreaView>
+		</TouchableWithoutFeedback>
 	);
-}
-
-const { width, height } = Dimensions.get("window");
+} const { width, height } = Dimensions.get("window");
 const scale = Math.min(width, height) / 375;
 
 const styles = StyleSheet.create({

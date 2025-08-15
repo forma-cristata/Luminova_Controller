@@ -457,7 +457,6 @@ const styles = StyleSheet.create({
 		flex: 1,
 		justifyContent: "center",
 		alignItems: "center",
-		marginTop: 20,
 	},
 	carousel: {
 		flex: 1,
@@ -466,12 +465,14 @@ const styles = StyleSheet.create({
 		alignItems: "flex-end",
 	},
 	focusedItem: {
-		height: height / 2.3,
+		height: height / 2.2,
 		width: width,
 		borderStyle: "solid",
 		borderWidth: 2,
 		borderBottomColor: "white",
 		borderTopColor: "white",
+		borderLeftColor: "white",
+		borderRightColor: "white",
 		justifyContent: "center",
 		alignItems: "center",
 	},

@@ -11,7 +11,6 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { COLORS, FONTS, COMMON_STYLES, DIMENSIONS } from "@/src/styles/SharedStyles";
-import Button from "@/src/components/ui/buttons/Button";
 import { FirstTimeUserService } from "@/src/services/FirstTimeUserService";
 
 interface WelcomeTutorialProps {
@@ -158,23 +157,28 @@ export default function WelcomeTutorial({ visible, onComplete }: WelcomeTutorial
                                     ]}
                                     disabled={isFirstPage}
                                 >
-                                    <Text style={[
-                                        styles.navButtonText,
-                                        isFirstPage && styles.navButtonTextDisabled
-                                    ]}>
-                                        Previous
-                                    </Text>
+                                    <Ionicons
+                                        name="chevron-back-circle-outline"
+                                        size={32}
+                                        color={isFirstPage ? "rgba(255,255,255,0.3)" : "white"}
+                                    />
                                 </TouchableOpacity>
 
-                                <Button
-                                    title={isLastPage ? "Get Started!" : "Next"}
+                                <TouchableOpacity
                                     onPress={handleNext}
-                                    variant="secondary"
-                                    textStyle={styles.nextButtonText}
-                                />
-                            </View>
-
-                            {/* Progress Dots */}
+                                    style={styles.navButton}
+                                >
+                                    {isLastPage ? (
+                                        <Text style={styles.nextButtonText}>Get Started!</Text>
+                                    ) : (
+                                        <Ionicons
+                                            name="chevron-forward-circle-outline"
+                                            size={32}
+                                            color="white"
+                                        />
+                                    )}
+                                </TouchableOpacity>
+                            </View>                            {/* Progress Dots */}
                             <View style={styles.dotsContainer}>
                                 {tutorialPages.map((_, index) => (
                                     <View
@@ -303,26 +307,17 @@ const styles = StyleSheet.create({
     },
     navButton: {
         padding: 12,
-        borderRadius: 8,
-        borderWidth: 1,
-        borderColor: COLORS.WHITE,
-        opacity: 0.8,
-        minWidth: 80,
+        borderRadius: 50,
         alignItems: "center",
+        justifyContent: "center",
+        minWidth: 44,
+        minHeight: 44,
     },
     navButtonDisabled: {
         opacity: 0.3,
-        borderColor: COLORS.WHITE,
-    },
-    navButtonText: {
-        color: COLORS.WHITE,
-        fontFamily: FONTS.CLEAR,
-        fontSize: 16 * DIMENSIONS.SCALE,
-    },
-    navButtonTextDisabled: {
-        opacity: 0.5,
     },
     nextButtonText: {
+        color: COLORS.WHITE,
         fontSize: 18 * DIMENSIONS.SCALE,
         fontFamily: FONTS.CLEAR,
     },

@@ -117,6 +117,17 @@ export default function IpAddressInput({ onIpSaved }: IpAddressInputProps) {
         }
     };
 
+    const handleOctetBlur = (
+        chars: string[],
+        setter: React.Dispatch<React.SetStateAction<string[]>>
+    ) => {
+        // Trim leading zeros when focus is lost
+        if (chars.length > 1 && chars[0] === "0") {
+            const trimmed = chars.join("").replace(/^0+/, "") || "0";
+            setter(trimmed.split(""));
+        }
+    };
+
     const handleSaveIp = async () => {
         if (!canSaveIp) {
             return;
@@ -152,6 +163,7 @@ export default function IpAddressInput({ onIpSaved }: IpAddressInputProps) {
                     style={[styles.ipOctet, !isOctet1Valid ? styles.ipInputError : null]}
                     value={ipOctet1}
                     onChangeText={(text) => handleOctetChange(text, setOctet1Chars, octet2Ref)}
+                    onBlur={() => handleOctetBlur(octet1Chars, setOctet1Chars)}
                     placeholder="192"
                     placeholderTextColor="#888"
                     keyboardType="numeric"
@@ -167,6 +179,7 @@ export default function IpAddressInput({ onIpSaved }: IpAddressInputProps) {
                     style={[styles.ipOctet, !isOctet2Valid ? styles.ipInputError : null]}
                     value={ipOctet2}
                     onChangeText={(text) => handleOctetChange(text, setOctet2Chars, octet3Ref)}
+                    onBlur={() => handleOctetBlur(octet2Chars, setOctet2Chars)}
                     placeholder="168"
                     placeholderTextColor="#888"
                     keyboardType="numeric"
@@ -182,6 +195,7 @@ export default function IpAddressInput({ onIpSaved }: IpAddressInputProps) {
                     style={[styles.ipOctet, !isOctet3Valid ? styles.ipInputError : null]}
                     value={ipOctet3}
                     onChangeText={(text) => handleOctetChange(text, setOctet3Chars, octet4Ref)}
+                    onBlur={() => handleOctetBlur(octet3Chars, setOctet3Chars)}
                     placeholder="1"
                     placeholderTextColor="#888"
                     keyboardType="numeric"
@@ -197,6 +211,7 @@ export default function IpAddressInput({ onIpSaved }: IpAddressInputProps) {
                     style={[styles.ipOctet, !isOctet4Valid ? styles.ipInputError : null]}
                     value={ipOctet4}
                     onChangeText={(text) => handleOctetChange(text, setOctet4Chars, undefined)}
+                    onBlur={() => handleOctetBlur(octet4Chars, setOctet4Chars)}
                     placeholder="100"
                     placeholderTextColor="#888"
                     keyboardType="numeric"

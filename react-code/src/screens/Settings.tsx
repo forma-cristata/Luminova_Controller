@@ -7,6 +7,7 @@ import {
 	StyleSheet,
 	Text,
 	TouchableOpacity,
+
 	View,
 } from "react-native";
 import { useSharedValue } from "react-native-reanimated";

@@ -9,10 +9,12 @@ import {
     SafeAreaView,
     ScrollView,
     Image,
+    Animated,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { COLORS, FONTS, COMMON_STYLES, DIMENSIONS } from "@/src/styles/SharedStyles";
 import { FirstTimeUserService } from "@/src/services/FirstTimeUserService";
+import LedToggle from "@/src/components/welcome/LedToggle";
 
 interface WelcomeTutorialProps {
     visible: boolean;
@@ -34,29 +36,40 @@ const tutorialPages: TutorialPage[] = [
     },
     {
         title: "IP Address Setup",
-        content: "The IP input field below correlates to LED device. For best results, assign your device a static IP, then enter that IP here.",
-        icon: "wifi",
+        content: "The IP input field on the home screen correlates to LED device. For best results, assign your device a static IP, then enter that IP here.",
     },
     {
-        title: "LED Toggle",
-        content: "The toggle switch shows your device status:\n• Green Moon: Device available and off\n• Red Moon: Device not found at the IP given\n• White Sun: Device is connected and on",
-        icon: "bulb",
+        title: "Power",
+        content: "The toggle switch shows your device's status. Tap the toggle below to learn the different states of the toggler and their meanings:",
     },
     {
-        title: "Info Button",
-        content: "Tap the info button in the top-right corner anytime to learn about the app structure, read detailed instructions, and discover all available features.",
-        icon: "information-circle",
+        title: "More Information",
+        content: "Tap the info button in the top-right corner anytime to learn about the app structure, read detailed instructions, and discover all available features. If you wish to return to this menu, tap `Hello` on the home screen five times.",
     },
     {
         title: "Get Started Creating",
         content: "You don't need a connected device to start editing settings! Jump into 'Create' to explore animations, colors, and patterns. Your settings will be saved and ready when you connect your device and emulated here in the meantime.",
-        icon: "create",
     },
 ];
 
 export default function WelcomeTutorial({ visible, onComplete }: WelcomeTutorialProps) {
     const [currentPage, setCurrentPage] = useState(0);
     const [isAnimating, setIsAnimating] = useState(false);
+
+    // Demo toggle state for the tutorial
+    const [demoIsShelfConnected, setDemoIsShelfConnected] = useState(true);
+    const [demoIsEnabled, setDemoIsEnabled] = useState(false);
+
+    // Demo toggle state descriptions
+    const getToggleStateDescription = () => {
+        if (!demoIsShelfConnected) {
+            return "Device not found at the IP given";
+        }
+        if (demoIsEnabled) {
+            return "Device is connected and on";
+        }
+        return "Device available and off";
+    };
 
     // Reset to first page whenever modal opens
     useEffect(() => {
@@ -95,6 +108,22 @@ export default function WelcomeTutorial({ visible, onComplete }: WelcomeTutorial
     const handleSkip = async () => {
         await FirstTimeUserService.markTutorialCompleted();
         onComplete();
+    };
+
+    const handleDemoToggle = () => {
+        // Cycle through the three states: connected+off -> connected+on -> disconnected -> back to connected+off
+        if (demoIsShelfConnected && !demoIsEnabled) {
+            // Green Moon -> White Sun
+            setDemoIsEnabled(true);
+        } else if (demoIsShelfConnected && demoIsEnabled) {
+            // White Sun -> Red Moon
+            setDemoIsShelfConnected(false);
+            setDemoIsEnabled(false);
+        } else {
+            // Red Moon -> Green Moon
+            setDemoIsShelfConnected(true);
+            setDemoIsEnabled(false);
+        }
     };
 
     const currentTutorial = tutorialPages[currentPage];
@@ -143,6 +172,41 @@ export default function WelcomeTutorial({ visible, onComplete }: WelcomeTutorial
 
                                 {/* Content */}
                                 <Text style={styles.content}>{currentTutorial.content}</Text>
+
+                                {/* Demo Toggle - Only show on LED Toggle page (page 2, index 1) */}
+                                {currentPage === 2 ? (
+                                    <View style={styles.demoToggleContainer}>
+                                        {/* First Row - Connected and Enabled Toggle */}
+                                        <View style={styles.toggleRow}>
+                                            <LedToggle
+                                                isShelfConnected={demoIsShelfConnected}
+                                                setIsShelfConnected={setDemoIsShelfConnected}
+                                                isEnabled={demoIsEnabled}
+                                                setIsEnabled={setDemoIsEnabled}
+                                                disableAnimation={true}
+                                                containerStyle={styles.toggleInlineContainer}
+                                            />
+                                            <Text style={styles.toggleRowText}>
+                                                {getToggleStateDescription()}
+                                            </Text>
+                                        </View>
+
+                                        {/* Second Row - Disconnected Toggle */}
+                                        <View style={styles.toggleRow}>
+                                            <LedToggle
+                                                isShelfConnected={false}
+                                                setIsShelfConnected={() => { }} // No-op for demo
+                                                isEnabled={false}
+                                                setIsEnabled={() => { }} // No-op for demo
+                                                disableAnimation={true}
+                                                containerStyle={styles.toggleInlineContainer}
+                                            />
+                                            <Text style={styles.toggleRowText}>
+                                                Device not found at the given IP
+                                            </Text>
+                                        </View>
+                                    </View>
+                                ) : null}
 
                             </View>
                         </View>
@@ -375,5 +439,29 @@ const styles = StyleSheet.create({
     activeDot: {
         opacity: 1,
         transform: [{ scale: 1.2 }],
+    },
+    demoToggleContainer: {
+        alignItems: "center",
+        width: "100%",
+    },
+    toggleRow: {
+        flexDirection: "row",
+        alignItems: "center",
+        width: "100%",
+        paddingHorizontal: 20,
+        marginBottom: 6,
+    },
+    toggleInlineContainer: {
+        position: "relative",
+        marginRight: 15,
+    },
+    toggleRowText: {
+        color: COLORS.WHITE,
+        fontFamily: FONTS.CLEAR,
+        fontSize: 16 * DIMENSIONS.SCALE,
+        textAlign: "left",
+        lineHeight: 20 * DIMENSIONS.SCALE,
+        flex: 1,
+        paddingLeft: 10,
     },
 });

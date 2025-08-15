@@ -17,6 +17,8 @@ interface LedToggleProps {
     setIsShelfConnected: (isConnected: boolean) => void;
     isEnabled: boolean;
     setIsEnabled: (isEnabled: boolean) => void;
+    disableAnimation?: boolean; // For tutorial demos
+    containerStyle?: object; // Custom container styling for different contexts
 }
 
 export default function LedToggle({
@@ -24,13 +26,15 @@ export default function LedToggle({
     setIsShelfConnected,
     isEnabled,
     setIsEnabled,
+    disableAnimation = false,
+    containerStyle,
 }: LedToggleProps) {
     const { currentConfiguration, setCurrentConfiguration } = useConfiguration();
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(!disableAnimation); // Skip loading for tutorial demos
     const [pendingToggle, setPendingToggle] = useState(false);
     const debouncedPendingToggle = useDebounce(pendingToggle, 300);
 
-    const toggleOpacity = useRef(new Animated.Value(0.3)).current;
+    const toggleOpacity = useRef(new Animated.Value(disableAnimation ? 1 : 0.3)).current;
     const thumbPosition = useRef(new Animated.Value(0)).current;
 
     useEffect(() => {
@@ -47,26 +51,33 @@ export default function LedToggle({
             }
         };
 
-        fetchInitialStatus();
-    }, [setIsEnabled, setIsShelfConnected]);
+        // Only fetch status for real toggles, not tutorial demos
+        if (!disableAnimation) {
+            fetchInitialStatus();
+        }
+    }, [setIsEnabled, setIsShelfConnected, disableAnimation]);
 
     useEffect(() => {
-        Animated.timing(toggleOpacity, {
-            toValue: isLoading ? 0.3 : 1,
-            duration: 500,
-            useNativeDriver: true,
-        }).start();
-    }, [isLoading, toggleOpacity]);
+        // Skip loading animations for tutorial demos
+        if (!disableAnimation) {
+            Animated.timing(toggleOpacity, {
+                toValue: isLoading ? 0.3 : 1,
+                duration: 500,
+                useNativeDriver: true,
+            }).start();
+        }
+    }, [isLoading, toggleOpacity, disableAnimation]);
 
     useEffect(() => {
-        if (!isLoading) {
+        // Skip connection status animations for tutorial demos  
+        if (!disableAnimation && !isLoading) {
             Animated.timing(toggleOpacity, {
                 toValue: isShelfConnected ? 1 : 0.7,
                 duration: 300,
                 useNativeDriver: true,
             }).start();
         }
-    }, [isShelfConnected, isLoading, toggleOpacity]);
+    }, [isShelfConnected, isLoading, toggleOpacity, disableAnimation]);
 
     useEffect(() => {
         Animated.timing(thumbPosition, {
@@ -82,6 +93,13 @@ export default function LedToggle({
 
     const toggleSwitch = async () => {
         if (isLoading) {
+            return;
+        }
+
+        // For tutorial demos, just toggle the state without loading/API calls
+        if (disableAnimation) {
+            const newState = !isEnabled;
+            setIsEnabled(newState);
             return;
         }
 
@@ -131,7 +149,11 @@ export default function LedToggle({
     };
 
     return (
-        <Animated.View style={[COMMON_STYLES.navButton, { left: 20, opacity: toggleOpacity }]}>
+        <Animated.View style={[
+            containerStyle ? {} : COMMON_STYLES.navButton,
+            containerStyle ? containerStyle : { left: 20 },
+            { opacity: toggleOpacity }
+        ]}>
             <View style={styles.toggleContainer}>
                 <TouchableOpacity
                     style={[

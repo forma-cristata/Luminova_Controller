@@ -5,7 +5,7 @@ import {
 	type ViewStyle,
 	type TextStyle,
 } from "react-native";
-import { COLORS, COMMON_STYLES } from "../SharedStyles";
+import { COLORS, COMMON_STYLES } from "@/src/styles/SharedStyles";
 
 export interface BaseButtonProps {
 	title: string;

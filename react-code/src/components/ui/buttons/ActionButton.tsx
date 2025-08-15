@@ -1,7 +1,7 @@
 import React from "react";
 import { ViewStyle, TextStyle } from "react-native";
-import Button, { type BaseButtonProps } from "./Button";
-import { COLORS } from "../SharedStyles";
+import Button, { type BaseButtonProps } from "@/src/components/ui/buttons/Button";
+import { COLORS } from "@/src/styles/SharedStyles";
 
 export type ActionButtonVariant = "primary" | "disabled" | "preview";
 
@@ -24,7 +24,7 @@ const ActionButton = React.memo(
 		opacity,
 	}: ActionButtonProps) => {
 		// Convert action variant to base button styling
-		const getButtonVariant = () => {
+		const getButtonVariant = (): "default" | "wide" | "welcome" => {
 			return "default"; // Action buttons use the default (styleAButton) variant
 		};
 

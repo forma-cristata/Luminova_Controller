@@ -14,13 +14,13 @@ import Carousel, {
 	type ICarouselInstance,
 } from "react-native-reanimated-carousel";
 
-import BackButton from "@/src/components/buttons/BackButton";
-import CreateButton from "@/src/components/buttons/CreateButton";
-import InfoButton from "@/src/components/buttons/InfoButton";
-import SettingBlock from "@/src/components/SettingBlock";
-import { FONTS } from "@/src/components/SharedStyles";
+import BackButton from "@/src/components/ui/buttons/BackButton";
+import CreateButton from "@/src/components/ui/CreateButton";
+import InfoButton from "@/src/components/ui/buttons/InfoButton";
+import SettingBlock from "@/src/components/settings/SettingBlock";
+import { FONTS } from "@/src/styles/SharedStyles";
 import { useConfiguration } from "@/src/context/ConfigurationContext";
-import type { Setting } from "@/src/interface/SettingInterface";
+import type { Setting } from "@/src/types/SettingInterface";
 import { SettingsService } from "@/src/services/SettingsService";
 import { getStableSettingId } from "@/src/utils/settingUtils";
 

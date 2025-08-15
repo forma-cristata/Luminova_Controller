@@ -14,19 +14,19 @@ import {
 	View,
 } from "react-native";
 
-import ActionButton from "@/src/components/buttons/ActionButton";
-import AnimatedDots from "@/src/components/AnimatedDots";
-import BackButton from "@/src/components/buttons/BackButton";
-import BPMMeasurer from "@/src/components/BPMMeasurer";
-import InfoButton from "@/src/components/buttons/InfoButton";
-import MetronomeButton from "@/src/components/buttons/MetronomeButton";
-import Picker from "@/src/components/Picker";
-import RandomizeButton from "@/src/components/buttons/RandomizeButton";
-import { COLORS, COMMON_STYLES, FONTS } from "@/src/components/SharedStyles";
+import ActionButton from "@/src/components/ui/buttons/ActionButton";
+import AnimatedDots from "@/src/components/animations/AnimatedDots";
+import BackButton from "@/src/components/ui/buttons/BackButton";
+import BPMMeasurer from "@/src/components/audio/BPMMeasurer";
+import InfoButton from "@/src/components/ui/buttons/InfoButton";
+import MetronomeButton from "@/src/components/ui/buttons/MetronomeButton";
+import Picker from "@/src/components/color-picker/Picker";
+import RandomizeButton from "@/src/components/ui/buttons/RandomizeButton";
+import { COLORS, COMMON_STYLES, FONTS } from "@/src/styles/SharedStyles";
 import { ANIMATION_PATTERNS } from "@/src/configurations/patterns";
 import { useConfiguration } from "@/src/context/ConfigurationContext";
 import { useDebounce } from "@/src/hooks/useDebounce";
-import type { Setting } from "@/src/interface/SettingInterface";
+import type { Setting } from "@/src/types/SettingInterface";
 import { ApiService } from "@/src/services/ApiService";
 import { SettingsService } from "@/src/services/SettingsService";
 
@@ -213,7 +213,7 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 						// Random pattern from valid animation patterns (excluding STILL)
 						const randomPattern =
 							ANIMATION_PATTERNS[
-								Math.floor(Math.random() * ANIMATION_PATTERNS.length)
+							Math.floor(Math.random() * ANIMATION_PATTERNS.length)
 							];
 						setFlashingPattern(randomPattern);
 					}}

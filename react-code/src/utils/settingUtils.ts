@@ -1,4 +1,4 @@
-import type { Setting } from "@/src/interface/SettingInterface";
+import type { Setting } from "@/src/types/SettingInterface";
 
 /**
  * Generate a stable ID for a setting based on its content.
@@ -11,10 +11,10 @@ export const getStableSettingId = (setting: Setting): string => {
 	if (setting.id) {
 		return setting.id;
 	}
-	
+
 	// Create deterministic ID based on setting content using a simple hash approach
 	const content = `${setting.name}-${setting.colors.join(',')}-${setting.delayTime}-${setting.flashingPattern}`;
-	
+
 	// Simple string hash for consistent ID generation
 	let hash = 0;
 	for (let i = 0; i < content.length; i++) {
@@ -22,7 +22,7 @@ export const getStableSettingId = (setting: Setting): string => {
 		hash = ((hash << 5) - hash) + char;
 		hash = hash & hash; // Convert to 32-bit integer
 	}
-	
+
 	return `setting-${Math.abs(hash)}`;
 };
 

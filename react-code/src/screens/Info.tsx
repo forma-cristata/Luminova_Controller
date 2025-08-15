@@ -13,9 +13,9 @@ import {
 	View,
 } from "react-native";
 
-import AnimatedTitle from "@/src/components/AnimatedTitle";
-import BackButton from "@/src/components/buttons/BackButton";
-import { FONTS } from "@/src/components/SharedStyles";
+import AnimatedTitle from "@/src/components/ui/AnimatedTitle";
+import BackButton from "@/src/components/ui/buttons/BackButton";
+import { FONTS } from "@/src/styles/SharedStyles";
 import React from "react";
 
 export default function Info() {

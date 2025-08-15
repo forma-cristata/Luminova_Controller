@@ -1,6 +1,6 @@
 import React from "react";
 import { Text, TouchableOpacity } from "react-native";
-import { COMMON_STYLES } from "../SharedStyles";
+import { COMMON_STYLES } from "@/src/styles/SharedStyles";
 
 interface RandomizeButtonProps {
 	onPress: () => void;

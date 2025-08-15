@@ -1,6 +1,6 @@
 import * as FileSystem from "expo-file-system";
 import { Alert } from "react-native";
-import type { Setting } from "@/src/interface/SettingInterface";
+import type { Setting } from "@/src/types/SettingInterface";
 import { DEFAULT_SETTINGS } from "@/src/configurations/defaults";
 
 const FILE_URI = `${FileSystem.documentDirectory}settings.json`;

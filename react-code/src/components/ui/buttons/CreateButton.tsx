@@ -5,7 +5,7 @@ import {
 	type ViewStyle,
 	type TextStyle,
 } from "react-native";
-import { COLORS, FONTS } from "../SharedStyles";
+import { COLORS, FONTS } from "@/src/styles/SharedStyles";
 
 interface CreateButtonProps {
 	onPress: () => void;

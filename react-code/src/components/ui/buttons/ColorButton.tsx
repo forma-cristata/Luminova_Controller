@@ -5,7 +5,7 @@ import {
 	type ViewStyle,
 	type TextStyle,
 } from "react-native";
-import { COLORS } from "../SharedStyles";
+import { COLORS } from "@/src/styles/SharedStyles";
 
 interface ColorButtonProps {
 	color: "white" | "black";

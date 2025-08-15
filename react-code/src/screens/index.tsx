@@ -6,7 +6,7 @@ import ColorEditor from "./ColorEditor";
 import { ConfigurationProvider } from "@/src/context/ConfigurationContext";
 import FlashingPatternEditor from "./FlashingPatternEditor";
 import Info from "./Info";
-import type { Setting } from "@/src/interface/SettingInterface";
+import type { Setting } from "@/src/types/SettingInterface";
 import Settings from "./Settings";
 import Welcome from "./Welcome";
 import React from "react";

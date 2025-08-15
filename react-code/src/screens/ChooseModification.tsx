@@ -7,10 +7,10 @@ import {
 	View,
 } from "react-native";
 
-import AnimatedDots from "@/src/components/AnimatedDots";
-import BackButton from "@/src/components/buttons/BackButton";
-import ColorDots from "@/src/components/ColorDots";
-import InfoButton from "@/src/components/buttons/InfoButton";
+import AnimatedDots from "@/src/components/animations/AnimatedDots";
+import BackButton from "@/src/components/ui/buttons/BackButton";
+import ColorDots from "@/src/components/color-picker/ColorDots";
+import InfoButton from "@/src/components/ui/buttons/InfoButton";
 import React from "react";
 
 export default function ChooseModification({ navigation, route }: any) {

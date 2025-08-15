@@ -7,11 +7,11 @@ import {
 	TouchableOpacity,
 } from "react-native";
 
-import AnimatedTitle from "@/src/components/AnimatedTitle";
-import Button from "@/src/components/buttons/Button";
-import InfoButton from "@/src/components/buttons/InfoButton";
-import { COLORS, FONTS } from "@/src/components/SharedStyles";
-import type { Setting } from "@/src/interface/SettingInterface";
+import AnimatedTitle from "@/src/components/ui/AnimatedTitle";
+import Button from "@/src/components/ui/buttons/Button";
+import InfoButton from "@/src/components/ui/buttons/InfoButton";
+import { COLORS, FONTS } from "@/src/styles/SharedStyles";
+import type { Setting } from "@/src/types/SettingInterface";
 import { ApiService } from "@/src/services/ApiService";
 import { useConfiguration } from "@/src/context/ConfigurationContext";
 import React from "react";

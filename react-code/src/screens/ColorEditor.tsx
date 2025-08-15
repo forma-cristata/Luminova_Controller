@@ -24,15 +24,15 @@ import Animated, {
 	useSharedValue,
 } from "react-native-reanimated";
 
-import ActionButton from "@/src/components/buttons/ActionButton";
-import BackButton from "@/src/components/buttons/BackButton";
-import ColorButton from "@/src/components/buttons/ColorButton";
-import ColorDots from "@/src/components/ColorDots";
-import HueSliderBackground from "@/src/components/HueSliderBackground";
-import InfoButton from "@/src/components/buttons/InfoButton";
-import RandomizeButton from "@/src/components/buttons/RandomizeButton";
-import { COLORS, COMMON_STYLES, FONTS } from "@/src/components/SharedStyles";
-import type { Setting } from "@/src/interface/SettingInterface";
+import ActionButton from "@/src/components/ui/buttons/ActionButton";
+import BackButton from "@/src/components/ui/buttons/BackButton";
+import ColorButton from "@/src/components/ui/buttons/ColorButton";
+import ColorDots from "@/src/components/color-picker/ColorDots";
+import HueSliderBackground from "@/src/components/color-picker/HueSliderBackground";
+import InfoButton from "@/src/components/ui/buttons/InfoButton";
+import RandomizeButton from "@/src/components/ui/buttons/RandomizeButton";
+import { COLORS, COMMON_STYLES, FONTS } from "@/src/styles/SharedStyles";
+import type { Setting } from "@/src/types/SettingInterface";
 import React from "react";
 
 export default function ColorEditor({ navigation, route }: any) {
@@ -86,10 +86,10 @@ export default function ColorEditor({ navigation, route }: any) {
 		const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
 		return result
 			? {
-					r: parseInt(result[1], 16),
-					g: parseInt(result[2], 16),
-					b: parseInt(result[3], 16),
-				}
+				r: parseInt(result[1], 16),
+				g: parseInt(result[2], 16),
+				b: parseInt(result[3], 16),
+			}
 			: null;
 	};
 
@@ -330,7 +330,7 @@ export default function ColorEditor({ navigation, route }: any) {
 			startY.value = event.absoluteY;
 			startX.value = event.absoluteX;
 		},
-		onActive: () => {},
+		onActive: () => { },
 		onEnd: (event) => {
 			const initY = startY.value;
 			const initX = startX.value;

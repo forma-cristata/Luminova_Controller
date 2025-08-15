@@ -6,8 +6,8 @@ import {
 	TouchableOpacity,
 	View,
 } from "react-native";
-import { FLASHING_PATTERNS } from "../configurations/patterns";
-import { COLORS, FONTS, DIMENSIONS } from "./SharedStyles";
+import { FLASHING_PATTERNS } from "@/src/configurations/patterns";
+import { COLORS, FONTS, DIMENSIONS } from "@/src/styles/SharedStyles";
 
 const { SCALE: scale } = DIMENSIONS;
 

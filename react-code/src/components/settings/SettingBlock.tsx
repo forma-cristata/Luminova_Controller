@@ -1,11 +1,11 @@
 import React from "react";
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
-import AnimatedDots from "@/src/components/AnimatedDots";
-import ColorDots from "@/src/components/ColorDots";
-import EditButton from "@/src/components/buttons/EditButton";
-import FlashButton from "@/src/components/buttons/FlashButton";
-import type { Setting } from "../interface/SettingInterface";
-import { COLORS, COMMON_STYLES, FONTS } from "./SharedStyles";
+import AnimatedDots from "@/src/components/animations/AnimatedDots";
+import ColorDots from "@/src/components/color-picker/ColorDots";
+import EditButton from "@/src/components/ui/buttons/EditButton";
+import FlashButton from "@/src/components/ui/buttons/FlashButton";
+import type { Setting } from "@/src/types/SettingInterface";
+import { COLORS, COMMON_STYLES, FONTS } from "@/src/styles/SharedStyles";
 import { useConfiguration } from "@/src/context/ConfigurationContext";
 import { getStableSettingId } from "@/src/utils/settingUtils";
 

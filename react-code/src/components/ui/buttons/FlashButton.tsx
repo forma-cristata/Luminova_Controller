@@ -1,8 +1,8 @@
 import React from "react";
-import Button, { type BaseButtonProps } from "./Button";
-import { COLORS, FONTS } from "../SharedStyles";
+import Button, { type BaseButtonProps } from "@/src/components/ui/buttons/Button";
+import { COLORS, FONTS } from "@/src/styles/SharedStyles";
 import { useConfiguration } from "@/src/context/ConfigurationContext";
-import type { Setting } from "@/src/interface/SettingInterface";
+import type { Setting } from "@/src/types/SettingInterface";
 import { ApiService } from "@/src/services/ApiService";
 
 interface FlashButtonProps extends Omit<BaseButtonProps, "title" | "onPress"> {

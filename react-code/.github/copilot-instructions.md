@@ -29,7 +29,9 @@
 - **Memoization**: Use React.memo() for performance-critical components
 - **Error Handling**: Implement proper error boundaries and fallbacks
 - **Conditional Rendering**: Always use ternary operators (`? :`) instead of logical AND (`&&`) for JSX conditional rendering
+- **NO LOGICAL OPERATORS IN JSX**: Never use logical AND (`&&`) or OR (`||`) anywhere in JSX, including component props
 - **Key Management**: **NEVER use array indices for React keys** - always use `getStableSettingId()` utility
+- **Debouncing**: **ALWAYS use `useDebounce` hook** for input throttling instead of manual delays or state management
 
 #### **4. State Management**
 - **Local State**: Use useState for component-specific state

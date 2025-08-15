@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import {
 	SafeAreaView,
 	StyleSheet,
@@ -9,6 +9,7 @@ import {
 	Alert,
 	TouchableWithoutFeedback,
 	Keyboard,
+	Animated,
 } from "react-native";
 
 import AnimatedTitle from "@/src/components/ui/AnimatedTitle";
@@ -20,6 +21,7 @@ import { ApiService } from "@/src/services/ApiService";
 import { useConfiguration } from "@/src/context/ConfigurationContext";
 import React from "react";
 import { IpConfigService } from "../services/IpConfigService";
+import { useDebounce } from "@/src/hooks/useDebounce";
 
 export default function Welcome({ navigation }: any) {
 	const { currentConfiguration, setCurrentConfiguration, setLastEdited, setIsShelfConnected } =
@@ -59,6 +61,11 @@ export default function Welcome({ navigation }: any) {
 
 	const [isEnabled, setIsEnabled] = useState(false);
 	const [isLoading, setIsLoading] = useState(true);
+	const [pendingToggle, setPendingToggle] = useState(false);
+	const debouncedPendingToggle = useDebounce(pendingToggle, 300);
+
+	// Animation for toggle switch fade-in
+	const toggleOpacity = useRef(new Animated.Value(0.3)).current;
 
 	useEffect(() => {
 		const fetchInitialStatus = async () => {
@@ -76,6 +83,15 @@ export default function Welcome({ navigation }: any) {
 
 		fetchInitialStatus();
 	}, [setIsShelfConnected]);
+
+	// Animate toggle switch when it becomes available
+	useEffect(() => {
+		Animated.timing(toggleOpacity, {
+			toValue: isLoading ? 0.3 : 1,
+			duration: 500,
+			useNativeDriver: true,
+		}).start();
+	}, [isLoading, toggleOpacity]);
 
 	const validateIp = (ip: string) => {
 		const ipRegex =
@@ -101,25 +117,25 @@ export default function Welcome({ navigation }: any) {
 			const data = await ApiService.getStatus();
 			setIsEnabled(data.shelfOn);
 			setIsShelfConnected(true);
-
-			// Add delay to show loading state and make detection apparent
-			await new Promise(resolve => setTimeout(resolve, 1000));
 		} catch (error) {
 			console.error("Error fetching status after IP change:", error);
 			setIsEnabled(false); // Assume off if status check fails
 			setIsShelfConnected(false);
-
-			// Add delay even on error to show detection process
-			await new Promise(resolve => setTimeout(resolve, 1000));
 		} finally {
 			setIsLoading(false);
 		}
 	};
 
 	const toggleSwitch = async () => {
+		// Prevent rapid toggling using debouncing
+		if (isLoading) {
+			return;
+		}
+
+		setPendingToggle(true);
 		const newState = !isEnabled;
 		setIsEnabled(newState);
-		setIsLoading(true); // Show loading state immediately
+		setIsLoading(true);
 
 		if (!currentConfiguration) {
 			const startConfig: Setting = {
@@ -168,17 +184,12 @@ export default function Welcome({ navigation }: any) {
 			await ApiService.toggleLed(endpoint);
 			console.log(`LED toggled ${endpoint}`);
 			setIsShelfConnected(true);
-
-			// Add delay to show loading state and make detection apparent
-			await new Promise(resolve => setTimeout(resolve, 1000));
 		} catch (error) {
 			console.error("Error toggling LED:", error);
 			setIsShelfConnected(false);
-
-			// Add delay even on error to show detection process
-			await new Promise(resolve => setTimeout(resolve, 1000));
 		} finally {
 			setIsLoading(false);
+			setPendingToggle(false);
 		}
 	};
 
@@ -209,15 +220,17 @@ export default function Welcome({ navigation }: any) {
 					variant="welcome"
 					textStyle={styles.buttonText}
 				/>
-				<Switch
-					onValueChange={toggleSwitch}
-					value={isEnabled}
-					trackColor={{ false: "#665e73", true: "#ffffff" }}
-					thumbColor={isEnabled ? "#665e73" : "#f4f3f4"}
-					ios_backgroundColor="#3e3e3e"
-					style={styles.switch}
-					disabled={isLoading}
-				/>
+				<Animated.View style={{ opacity: toggleOpacity }}>
+					<Switch
+						onValueChange={toggleSwitch}
+						value={isEnabled}
+						trackColor={{ false: "#665e73", true: "#ffffff" }}
+						thumbColor={isEnabled ? "#665e73" : "#f4f3f4"}
+						ios_backgroundColor="#3e3e3e"
+						style={styles.switch}
+						disabled={isLoading ? true : debouncedPendingToggle ? true : false}
+					/>
+				</Animated.View>
 			</SafeAreaView>
 		</TouchableWithoutFeedback>
 	);

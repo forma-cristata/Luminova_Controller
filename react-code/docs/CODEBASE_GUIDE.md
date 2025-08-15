@@ -193,6 +193,25 @@ The codebase follows a strict standard of using ternary operators (`? :`) instea
 - **Consistency**: Uniform pattern across all conditional rendering
 - **Readability**: Clearer intent for both true and false conditions
 
+#### **🚨 CRITICAL: No Logical Operators in Component Props**
+Not only should you avoid logical operators in JSX rendering, but also in component props:
+
+```typescript
+// ❌ WRONG: Logical operators in props
+<Button disabled={isLoading || isPending} />
+<View style={[baseStyle, error && errorStyle]} />
+
+// ✅ CORRECT: Ternary operators in props  
+<Button disabled={isLoading ? true : isPending ? true : false} />
+<View style={[baseStyle, error ? errorStyle : null]} />
+```
+
+**Why this matters:**
+- **Consistent pattern**: Same rule everywhere reduces cognitive load
+- **Type safety**: Better TypeScript checking and IntelliSense
+- **Debugging**: Easier to trace which condition is causing issues
+- **Maintainability**: Explicit logic is easier to modify later
+
 ### 🔧 **Implementation Standards**
 
 #### **Before Making Changes:**
@@ -259,6 +278,8 @@ The codebase follows a strict standard of using ternary operators (`? :`) instea
    - Use `ConfigurationContext` for global state and shelf connectivity
    - Implement proper TypeScript typing
    - **Hardware Integration**: Use `isShelfConnected` from ConfigurationContext to disable Flash and Preview buttons when shelf is not detectable
+   - **Debouncing**: Use `useDebounce` hook for input throttling instead of manual delays or state management
+   - **NO LOGICAL OPERATORS IN JSX**: Always use ternary operators (`? :`) instead of logical AND (`&&`) or OR (`||`) in JSX rendering
 
 5. **Export and Integration**
    - Export as default from component file
@@ -800,7 +821,46 @@ When debugging React key issues, just use `getStableSettingId(setting)` and move
 - **Usage**: Shared across all screens for state consistency
 - **Hardware Integration**: Automatically disables Flash and Preview buttons when shelf is not detectable
 
-### 📊 Data Models
+### � React Hooks
+
+#### `src/hooks/useDebounce.ts`
+- **Purpose**: Debounces rapidly changing values to prevent excessive operations
+- **Usage**: **ALWAYS use for input throttling** instead of manual delays or complex state management
+- **Parameters**:
+  - `value: T` - The value to debounce
+  - `delay: number` - Debounce delay in milliseconds
+- **Returns**: Debounced value that updates only after the delay period
+- **Critical Rule**: Use this hook instead of creating manual throttling with `setTimeout` or state variables
+
+#### **Debounce Implementation Example**
+```typescript
+import { useDebounce } from "@/src/hooks/useDebounce";
+
+// For user input throttling
+const [input, setInput] = useState("");
+const debouncedInput = useDebounce(input, 300);
+
+// For preventing rapid button taps  
+const [pendingAction, setPendingAction] = useState(false);
+const debouncedPendingAction = useDebounce(pendingAction, 200);
+
+// Use in component logic
+const handleAction = () => {
+  if (debouncedPendingAction) return; // Prevent rapid execution
+  setPendingAction(true);
+  // ... perform action
+  setPendingAction(false);
+};
+```
+
+#### **Benefits of useDebounce**
+- ✅ **Prevents API thrashing** from rapid user interactions
+- ✅ **Improves performance** by reducing unnecessary operations
+- ✅ **Consistent behavior** across all debounced interactions
+- ✅ **Simple implementation** - no complex state management needed
+- ✅ **Reusable pattern** - standardized across the codebase
+
+### �📊 Data Models
 
 #### `src/interface/SettingInterface.ts`
 - **Purpose**: TypeScript interface for lighting configurations

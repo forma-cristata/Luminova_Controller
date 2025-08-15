@@ -16,10 +16,9 @@ import Carousel, {
 } from "react-native-reanimated-carousel";
 
 import BackButton from "@/src/components/ui/buttons/BackButton";
-import CreateButton from "@/src/components/ui/CreateButton";
+import CreateButton from "@/src/components/ui/buttons/CreateButton";
 import InfoButton from "@/src/components/ui/buttons/InfoButton";
 import SettingBlock from "@/src/components/settings/SettingBlock";
-import { FONTS } from "@/src/styles/SharedStyles";
 import { useConfiguration } from "@/src/context/ConfigurationContext";
 import type { Setting } from "@/src/types/SettingInterface";
 import { SettingsService } from "@/src/services/SettingsService";

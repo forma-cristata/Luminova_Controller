@@ -35,7 +35,7 @@ export default function IpAddressInput({ onIpSaved }: IpAddressInputProps) {
     const getOctetValue = (chars: string[]) => {
         let returnOctet = "0";
         returnOctet =
-            chars[3] !== undefined
+            chars[3] !== undefined && chars[0] === "0"
                 ? chars.join("").slice(1, 4)
                 : chars[0]
                     ? chars.join("")
@@ -196,7 +196,7 @@ export default function IpAddressInput({ onIpSaved }: IpAddressInputProps) {
                     ref={octet4Ref}
                     style={[styles.ipOctet, !isOctet4Valid ? styles.ipInputError : null]}
                     value={ipOctet4}
-                    onChangeText={(text) => handleOctetChange(text, setOctet4Chars)}
+                    onChangeText={(text) => handleOctetChange(text, setOctet4Chars, undefined)}
                     placeholder="100"
                     placeholderTextColor="#888"
                     keyboardType="numeric"

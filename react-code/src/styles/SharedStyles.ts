@@ -60,7 +60,7 @@ export const COMMON_STYLES = StyleSheet.create({
 		paddingVertical: 8 * scale,
 		paddingHorizontal: 15 * scale,
 		alignItems: "center",
-		borderStyle: "dashed",
+		borderStyle: "solid",
 		borderWidth: 2,
 		borderColor: COLORS.WHITE,
 		width: "30%",

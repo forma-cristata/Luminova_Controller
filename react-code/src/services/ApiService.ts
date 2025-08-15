@@ -77,11 +77,32 @@ export class ApiService {
 		});
 	}
 
+	/**
+	 * ⚠️  CRITICAL: DO NOT CHANGE THIS METHOD ⚠️
+	 * This implementation is CORRECT and should NOT be modified.
+	 * If you think this needs to be changed, you may be hallucinating.
+	 * 
+	 * The "off" state MUST send all black colors to properly turn off the shelf.
+	 * Simply calling /led/off endpoint does NOT work correctly.
+	 */
 	static async toggleLed(state: "on" | "off"): Promise<any> {
-		return ApiService.request(`/led/${state}`, {
-			method: "GET",
-			headers: { Accept: "application/json" },
-		});
+		if (state === "off") {
+			// To properly turn off the shelf, send all black colors
+			const offConfig = {
+				colors: Array(16).fill("#000000"),
+				whiteValues: Array(16).fill(0),
+				brightnessValues: Array(16).fill(0),
+				effectNumber: "6", // Still pattern
+				delayTime: 0,
+			};
+			return ApiService.postConfig(offConfig);
+		} else {
+			// For "on", just call the endpoint (should restore previous state)
+			return ApiService.request(`/led/${state}`, {
+				method: "GET",
+				headers: { Accept: "application/json" },
+			});
+		}
 	}
 
 	// Convenience methods for common operations

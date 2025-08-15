@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import {
 	ActivityIndicator,
-	Dimensions,
 	Modal,
 	StyleSheet,
 	Text,
@@ -9,10 +8,9 @@ import {
 	View,
 } from "react-native";
 import * as Audio from "expo-audio";
-import { COLORS, COMMON_STYLES, FONTS } from "./SharedStyles";
+import { COLORS, COMMON_STYLES, FONTS, DIMENSIONS } from "./SharedStyles";
 
-const { width, height } = Dimensions.get("window");
-const scale = Math.min(width, height) / 375;
+const { SCALE: scale, SCREEN_WIDTH: width } = DIMENSIONS;
 
 interface BPMMeasurerProps {
 	isVisible: boolean;

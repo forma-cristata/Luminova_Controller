@@ -26,7 +26,7 @@ const areEqual = (prevProps: SettingItemProps, nextProps: SettingItemProps) => {
 		prevProps.isAnimated === nextProps.isAnimated &&
 		prevProps.index === nextProps.index &&
 		JSON.stringify(prevProps.setting?.colors) ===
-			JSON.stringify(nextProps.setting?.colors)
+		JSON.stringify(nextProps.setting?.colors)
 	);
 };
 
@@ -61,15 +61,15 @@ const SettingBlock = ({
 		const MAX_CHARACTERS = 20; // Slightly longer than "Toter Schmetterling" (18 chars)
 		const BASE_FONT_SIZE = 70;
 		const MIN_FONT_SIZE = 45;
-		
+
 		// Ensure title is a valid string
 		const safeTitle = String(title || "");
-		
+
 		// Truncate if longer than character limit
-		const displayTitle = safeTitle.length > MAX_CHARACTERS 
+		const displayTitle = safeTitle.length > MAX_CHARACTERS
 			? safeTitle.substring(0, MAX_CHARACTERS).trim()
 			: safeTitle;
-		
+
 		// Calculate dynamic font size based on length
 		let fontSize = BASE_FONT_SIZE;
 		if (displayTitle.length > 12) {
@@ -77,7 +77,7 @@ const SettingBlock = ({
 			const reductionFactor = (displayTitle.length - 12) * 2.5;
 			fontSize = Math.max(MIN_FONT_SIZE, BASE_FONT_SIZE - reductionFactor);
 		}
-		
+
 		return {
 			text: displayTitle.toLowerCase(),
 			fontSize: fontSize
@@ -99,9 +99,9 @@ const SettingBlock = ({
 				setting={setting}
 			/>
 		) : (
-			<ColorDots 
+			<ColorDots
 				key={`static-${stableId}`}
-				colors={setting.colors} 
+				colors={setting.colors}
 			/>
 		);
 	}, [
@@ -124,7 +124,7 @@ const SettingBlock = ({
 				>
 					<View style={styles.headerContainer}>
 						<Text
-							style={[styles.whiteText, { fontSize: titleFontSize }]}
+							style={[COMMON_STYLES.whiteText, { fontSize: titleFontSize }]}
 							numberOfLines={1}
 							adjustsFontSizeToFit={true}
 							minimumFontScale={0.7}
@@ -135,7 +135,7 @@ const SettingBlock = ({
 
 					<View style={styles.dotsContainer}>{dotsRendered}</View>
 					<View style={styles.tapToEditContainer}>
-						<Text style={styles.tapToEditText}>tap to edit</Text>
+						<Text style={COMMON_STYLES.hintText}>tap to edit</Text>
 					</View>
 				</TouchableOpacity>
 			) : null}
@@ -157,19 +157,6 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		alignItems: "center",
 	},
-	whiteText: {
-		color: COLORS.WHITE,
-		fontFamily: FONTS.SIGNATURE,
-		textAlign: "center",
-		flexWrap: "nowrap",
-		// fontSize will be set dynamically via inline style
-	},
-	whiteTextSmaller: {
-		color: COLORS.WHITE,
-		fontSize: 60,
-		fontFamily: FONTS.SIGNATURE,
-		paddingHorizontal: 20,
-	},
 	headerContainer: {
 		width: "100%",
 		alignItems: "center",
@@ -187,12 +174,6 @@ const styles = StyleSheet.create({
 		marginTop: 30,
 		alignItems: "center",
 		justifyContent: "center",
-	},
-	tapToEditText: {
-		color: COLORS.WHITE,
-		fontSize: 20,
-		fontFamily: FONTS.CLEAR,
-		opacity: 0.7,
 	},
 	flashButtonCompact: {
 		...COMMON_STYLES.wideButton,

@@ -4,11 +4,8 @@ import {
 	TouchableOpacity,
 	type ViewStyle,
 	type TextStyle,
-	Dimensions,
 } from "react-native";
 import { COLORS, FONTS } from "../SharedStyles";
-
-const { height } = Dimensions.get("window");
 
 interface CreateButtonProps {
 	onPress: () => void;

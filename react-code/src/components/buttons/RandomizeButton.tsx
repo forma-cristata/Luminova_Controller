@@ -1,40 +1,20 @@
 import React from "react";
-import { Dimensions, StyleSheet, Text, TouchableOpacity } from "react-native";
-import { COLORS } from "../SharedStyles";
+import { Text, TouchableOpacity } from "react-native";
+import { COMMON_STYLES } from "../SharedStyles";
 
 interface RandomizeButtonProps {
 	onPress: () => void;
-	scale?: number;
 }
 
-const RandomizeButton = ({
-	onPress,
-	scale = Math.min(width, height) / 375,
-}: RandomizeButtonProps) => {
+const RandomizeButton = ({ onPress }: RandomizeButtonProps) => {
 	return (
-		<TouchableOpacity style={styles(scale).shuffleButton} onPress={onPress}>
-			<Text style={styles(scale).shuffleIcon}>⟳</Text>
+		<TouchableOpacity
+			style={[COMMON_STYLES.utilityButton, { marginRight: 20 }]}
+			onPress={onPress}
+		>
+			<Text style={COMMON_STYLES.utilityButtonIcon}>⟳</Text>
 		</TouchableOpacity>
 	);
 };
-
-const { width, height } = Dimensions.get("window");
-
-const styles = (scale: number) =>
-	StyleSheet.create({
-		shuffleButton: {
-			justifyContent: "center",
-			alignItems: "center",
-			marginRight: 20 * scale,
-			width: 60 * scale,
-			height: 60 * scale,
-		},
-		shuffleIcon: {
-			color: COLORS.WHITE,
-			fontSize: 35 * scale,
-			fontWeight: "ultralight",
-			textAlign: "center",
-		},
-	});
 
 export default RandomizeButton;

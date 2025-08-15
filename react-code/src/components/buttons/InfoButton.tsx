@@ -4,6 +4,7 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StyleSheet, TouchableOpacity } from "react-native";
 import type { RootStackParamList } from "../../screens/index";
 import React from "react";
+import { COMMON_STYLES } from "../SharedStyles";
 
 export default function InfoButton() {
 	const navigation =
@@ -14,17 +15,11 @@ export default function InfoButton() {
 	};
 
 	return (
-		<TouchableOpacity style={styles.infoButton} onPress={handlePress}>
+		<TouchableOpacity
+			style={[COMMON_STYLES.navButton, { right: 20 }]}
+			onPress={handlePress}
+		>
 			<Ionicons name="information-circle-outline" size={32} color="white" />
 		</TouchableOpacity>
 	);
 }
-
-const styles = StyleSheet.create({
-	infoButton: {
-		position: "absolute",
-		top: 60,
-		right: 20,
-		zIndex: 10,
-	},
-});

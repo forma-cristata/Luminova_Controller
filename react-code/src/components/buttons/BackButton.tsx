@@ -2,6 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import { StyleSheet, TouchableOpacity } from "react-native";
+import { COMMON_STYLES } from "../SharedStyles";
 
 interface BackButtonProps {
 	beforePress?: () => void | Promise<void>;
@@ -33,17 +34,11 @@ export default function BackButton({
 	};
 
 	return (
-		<TouchableOpacity style={styles.backButton} onPress={handlePress}>
+		<TouchableOpacity
+			style={[COMMON_STYLES.navButton, { left: 20 }, style]}
+			onPress={handlePress}
+		>
 			<Ionicons name="chevron-back-circle-outline" size={32} color="white" />
 		</TouchableOpacity>
 	);
 }
-
-const styles = StyleSheet.create({
-	backButton: {
-		position: "absolute",
-		top: 60,
-		left: 20,
-		zIndex: 10,
-	},
-});

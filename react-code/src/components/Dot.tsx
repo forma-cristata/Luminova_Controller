@@ -1,5 +1,5 @@
 import React from "react";
-import { SafeAreaView } from "react-native";
+import { View } from "react-native";
 
 interface DotProps {
 	color: string;
@@ -8,7 +8,7 @@ interface DotProps {
 
 export default function Dot({ color }: DotProps) {
 	return (
-		<SafeAreaView
+		<View
 			style={{
 				width: 35,
 				height: 35,

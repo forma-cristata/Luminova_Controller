@@ -44,6 +44,14 @@ export const COMMON_STYLES = StyleSheet.create({
 		color: COLORS.WHITE,
 		fontFamily: FONTS.SIGNATURE,
 		textAlign: "center",
+		flexWrap: "nowrap",
+	},
+
+	hintText: {
+		color: COLORS.WHITE,
+		fontSize: 20,
+		fontFamily: FONTS.CLEAR,
+		opacity: 0.7,
 	},
 
 	styleAButton: {
@@ -58,17 +66,24 @@ export const COMMON_STYLES = StyleSheet.create({
 		width: "30%",
 	},
 
-	styleADisabledButton: {
-		backgroundColor: COLORS.BLACK,
-		borderRadius: 10,
-		paddingVertical: 8 * scale,
-		paddingHorizontal: 15 * scale,
+	navButton: {
+		position: "absolute",
+		top: 60,
+		zIndex: 10,
+	},
+
+	utilityButton: {
+		justifyContent: "center",
 		alignItems: "center",
-		borderStyle: "dashed",
-		borderWidth: 2,
-		borderColor: COLORS.WHITE,
-		width: "30%",
-		opacity: COLORS.DISABLED_OPACITY,
+		width: 60 * scale,
+		height: 60 * scale,
+	},
+
+	utilityButtonIcon: {
+		color: COLORS.WHITE,
+		fontSize: 35 * scale,
+		fontWeight: "ultralight",
+		textAlign: "center",
 	},
 
 	buttonText: {

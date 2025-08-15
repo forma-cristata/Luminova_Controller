@@ -229,8 +229,8 @@ export default function Settings({ navigation }: any) {
 	};
 	// Memoize the focused setting block to prevent unnecessary re-renders
 	const focusedSettingBlock = React.useMemo(() => {
-		return currentIndex < settingsData.length 
-			? settingsData[currentIndex] 
+		return currentIndex < settingsData.length
+			? settingsData[currentIndex]
 				? (
 					<SettingBlock
 						key={`focused-${getStableSettingId(settingsData[currentIndex])}`}
@@ -241,7 +241,7 @@ export default function Settings({ navigation }: any) {
 						setting={settingsData[currentIndex]}
 						index={currentIndex}
 					/>
-				) 
+				)
 				: null
 			: null;
 	}, [navigation, settingsData, currentIndex]);
@@ -323,9 +323,9 @@ export default function Settings({ navigation }: any) {
 						</React.Fragment>
 					) : null}
 					{currentIndex >= settingsData.length ? (
-						<CreateButton 
-							key="create-new-setting" 
-							onPress={createNewSetting} 
+						<CreateButton
+							key="create-new-setting"
+							onPress={createNewSetting}
 						/>
 					) : null}
 				</View>

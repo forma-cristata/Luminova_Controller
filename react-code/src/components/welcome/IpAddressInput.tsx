@@ -158,6 +158,7 @@ export default function IpAddressInput({ onIpSaved }: IpAddressInputProps) {
                     textAlign="center"
                     returnKeyType="next"
                     clearButtonMode="while-editing"
+                    blurOnSubmit={false}
                     onSubmitEditing={() => octet2Ref.current?.focus()}
                 />
                 <Text style={styles.ipDot}>.</Text>
@@ -172,6 +173,7 @@ export default function IpAddressInput({ onIpSaved }: IpAddressInputProps) {
                     textAlign="center"
                     returnKeyType="next"
                     clearButtonMode="while-editing"
+                    blurOnSubmit={false}
                     onSubmitEditing={() => octet3Ref.current?.focus()}
                 />
                 <Text style={styles.ipDot}>.</Text>
@@ -186,6 +188,7 @@ export default function IpAddressInput({ onIpSaved }: IpAddressInputProps) {
                     textAlign="center"
                     returnKeyType="next"
                     clearButtonMode="while-editing"
+                    blurOnSubmit={false}
                     onSubmitEditing={() => octet4Ref.current?.focus()}
                 />
                 <Text style={styles.ipDot}>.</Text>

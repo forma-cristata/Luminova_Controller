@@ -45,7 +45,7 @@ export default function Settings({ navigation }: any) {
 
 	// Memoize carousel data to prevent unnecessary re-renders
 	const carouselData = React.useMemo(
-		() => [...settingsData, "new"] as (Setting | "new")[],
+		() => [...(settingsData || []), "new"] as (Setting | "new")[],
 		[settingsData],
 	);
 
@@ -70,8 +70,9 @@ export default function Settings({ navigation }: any) {
 	}));
 
 	const createNewSetting = () => {
+		const settingsLength = settingsData?.length || 0;
 		const newSetting: Setting = {
-			name: `Setting ${settingsData.length + 1}`,
+			name: `Setting ${settingsLength + 1}`,
 			colors: Array(16).fill("#FFFFFF"),
 			whiteValues: Array(16).fill(0),
 			brightnessValues: Array(16).fill(255),
@@ -83,7 +84,7 @@ export default function Settings({ navigation }: any) {
 			setting: newSetting,
 			isNew: true,
 			originalName: newSetting.name,
-			newSettingCarouselIndex: settingsData.length,
+			newSettingCarouselIndex: settingsLength,
 		});
 	};
 
@@ -100,9 +101,14 @@ export default function Settings({ navigation }: any) {
 						const lastEditedIndex = lastEdited ? parseInt(lastEdited) : 0;
 						setCurrentIndex(lastEditedIndex);
 						setIsInitialRender(true);
+					} else {
+						// Ensure settingsData is never undefined - set to empty array
+						setSettingsData([]);
 					}
 				} catch (error) {
 					console.error("Error initializing data:", error);
+					// Ensure settingsData is never undefined - set to empty array on error
+					setSettingsData([]);
 				}
 			};
 
@@ -117,7 +123,7 @@ export default function Settings({ navigation }: any) {
 		// Don't interfere if we're in the middle of a deletion
 		if (isDeletingRef.current) return;
 
-		if (settingsData.length > 0 && ref.current) {
+		if ((settingsData?.length || 0) > 0 && ref.current) {
 			// Set carousel ready after a short delay to ensure component is mounted
 			setTimeout(() => {
 				const targetIndex = lastEdited ? parseInt(lastEdited) : 0;
@@ -131,7 +137,7 @@ export default function Settings({ navigation }: any) {
 				}, 100);
 			}, 50);
 		}
-	}, [settingsData.length, lastEdited]);
+	}, [settingsData?.length, lastEdited]);
 
 	const handleProgressChange = React.useCallback(
 		(offset: number, absoluteProgress: number) => {
@@ -256,8 +262,9 @@ export default function Settings({ navigation }: any) {
 	};
 	// Memoize the focused setting block to prevent unnecessary re-renders
 	const focusedSettingBlock = React.useMemo(() => {
-		return currentIndex < settingsData.length
-			? settingsData[currentIndex]
+		const settingsLength = settingsData?.length || 0;
+		return currentIndex < settingsLength
+			? settingsData?.[currentIndex]
 				? (
 					<SettingBlock
 						key={`focused-${getStableSettingId(settingsData[currentIndex])}`}
@@ -310,10 +317,10 @@ export default function Settings({ navigation }: any) {
 			<View style={styles.notBackButton}>
 				<View style={[styles.focusedItem, { position: "relative" }]}>
 					{currentIndex < 0 ? <View key="negative-index" /> : null}
-					{currentIndex < settingsData.length ? (
-						<React.Fragment key={`setting-controls-${currentIndex < settingsData.length ? getStableSettingId(settingsData[currentIndex]) : 'no-setting'}`}>
+					{currentIndex < (settingsData?.length || 0) ? (
+						<React.Fragment key={`setting-controls-${currentIndex < (settingsData?.length || 0) ? getStableSettingId(settingsData?.[currentIndex]) : 'no-setting'}`}>
 							<TouchableOpacity
-								key={`duplicate-${currentIndex < settingsData.length ? getStableSettingId(settingsData[currentIndex]) : 'no-setting'}`}
+								key={`duplicate-${currentIndex < (settingsData?.length || 0) ? getStableSettingId(settingsData?.[currentIndex]) : 'no-setting'}`}
 								style={{
 									position: "absolute",
 									top: 10,
@@ -327,7 +334,7 @@ export default function Settings({ navigation }: any) {
 								<MaterialIcons name="content-copy" size={24} color="white" />
 							</TouchableOpacity>
 							<TouchableOpacity
-								key={`delete-${currentIndex < settingsData.length ? getStableSettingId(settingsData[currentIndex]) : 'no-setting'}`}
+								key={`delete-${currentIndex < (settingsData?.length || 0) ? getStableSettingId(settingsData?.[currentIndex]) : 'no-setting'}`}
 								style={{
 									position: "absolute",
 									top: 10,
@@ -349,7 +356,7 @@ export default function Settings({ navigation }: any) {
 							{focusedSettingBlock}
 						</React.Fragment>
 					) : null}
-					{currentIndex >= settingsData.length ? (
+					{currentIndex >= (settingsData?.length || 0) ? (
 						<CreateButton
 							key="create-new-setting"
 							onPress={createNewSetting}
@@ -385,8 +392,7 @@ export default function Settings({ navigation }: any) {
 							]}
 							onPress={() => {
 								if (ref.current && carouselData.length > 1) {
-									const targetIndex = currentIndex === 0 ? carouselData.length - 1 : currentIndex - 1;
-									ref.current.scrollTo({ index: targetIndex, animated: true });
+									ref.current.prev({ animated: true });
 								}
 							}}
 							activeOpacity={0.5}
@@ -405,8 +411,7 @@ export default function Settings({ navigation }: any) {
 							]}
 							onPress={() => {
 								if (ref.current && carouselData.length > 1) {
-									const targetIndex = currentIndex === carouselData.length - 1 ? 0 : currentIndex + 1;
-									ref.current.scrollTo({ index: targetIndex, animated: true });
+									ref.current.next({ animated: true });
 								}
 							}}
 							activeOpacity={0.5}

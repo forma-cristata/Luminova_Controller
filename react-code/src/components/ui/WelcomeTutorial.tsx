@@ -29,32 +29,28 @@ interface TutorialPage {
 const tutorialPages: TutorialPage[] = [
     {
         title: "Welcome to Luminova",
-        content: "Let's get you started with your LED controller! This quick tutorial will help you understand how to connect and control your device.",
+        content: "Let's get you started with your LED controller! This quick tutorial will help you understand how to connect and control your LEDs.",
         icon: "sparkles",
     },
     {
         title: "IP Address Setup",
-        content: "The IP input field below is for device detection. Your Luminova device will connect to any available spot on your router. For best results, set your device to a static IP address in your router settings, then enter that IP here.",
+        content: "The IP input field below correlates to LED device. For best results, assign your device a static IP, then enter that IP here.",
         icon: "wifi",
-        highlight: "ip",
     },
     {
-        title: "LED Toggle Explained",
-        content: "The toggle switch shows your device status:\n\n• Green/On: Device connected and LEDs active\n• Red/Off: Device connected but LEDs off\n• Gray: Device not connected or offline",
+        title: "LED Toggle",
+        content: "The toggle switch shows your device status:\n\n• Green Moon: Device available and off\n• Red Moon: Device not found at the IP given\n• White Sun: Device is connected and on",
         icon: "bulb",
-        highlight: "toggle",
     },
     {
         title: "Info Button",
-        content: "Tap the info button (ℹ) in the top-left corner anytime to learn about the app structure, read detailed instructions, and discover all available features.",
+        content: "Tap the info button in the top-right corner anytime to learn about the app structure, read detailed instructions, and discover all available features.",
         icon: "information-circle",
-        highlight: "info",
     },
     {
         title: "Get Started Creating",
-        content: "You don't need a connected device to start editing settings! Jump into 'Create' to explore animations, colors, and patterns. Your settings will be saved and ready when you connect your device.",
+        content: "You don't need a connected device to start editing settings! Jump into 'Create' to explore animations, colors, and patterns. Your settings will be saved and ready when you connect your device and emulated here in the meantime.",
         icon: "create",
-        highlight: "create",
     },
 ];
 
@@ -141,20 +137,6 @@ export default function WelcomeTutorial({ visible, onComplete }: WelcomeTutorial
                                 {/* Content */}
                                 <Text style={styles.content}>{currentTutorial.content}</Text>
 
-                                {/* Highlight indicator */}
-                                {currentTutorial.highlight ? (
-                                    <View style={styles.highlightContainer}>
-                                        <Text style={styles.highlightText}>
-                                            Look for the {currentTutorial.highlight} below
-                                        </Text>
-                                        <Ionicons
-                                            name="arrow-down"
-                                            size={24}
-                                            color={COLORS.WHITE}
-                                            style={styles.arrowIcon}
-                                        />
-                                    </View>
-                                ) : null}
                             </View>
                         </ScrollView>
 

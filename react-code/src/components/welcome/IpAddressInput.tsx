@@ -149,20 +149,37 @@ export default function IpAddressInput({ onIpSaved }: IpAddressInputProps) {
 
         setIsSavingIp(true);
         try {
+            // Save IP address to storage (this is fast)
             await IpConfigService.saveIpAddress(finalIpAddress);
             setSavedIpAddress(finalIpAddress);
             Keyboard.dismiss();
-            try {
-                const data = await ApiService.getStatus();
-                onIpSaved(data.shelfOn, true);
-            } catch (error) {
-                console.error("Error fetching status after IP change:", error);
-                onIpSaved(false, false);
-            }
+
+            // Update UI immediately to show IP is saved
+            setIsSavingIp(false);
+
+            // Test connection in background with shorter timeout
+            const connectionTest = async () => {
+                try {
+                    // Create a promise that resolves faster than the default 5s timeout
+                    const timeoutPromise = new Promise((_, reject) =>
+                        setTimeout(() => reject(new Error('Connection timeout')), 2000)
+                    );
+
+                    const statusPromise = ApiService.getStatus();
+                    const data = await Promise.race([statusPromise, timeoutPromise]) as { shelfOn: boolean };
+                    onIpSaved(data.shelfOn, true);
+                } catch (error) {
+                    console.error("Error testing connection after IP change:", error);
+                    onIpSaved(false, false);
+                }
+            };
+
+            // Run connection test in background without blocking UI
+            connectionTest();
+
         } catch (error) {
             console.error("Error saving IP address:", error);
             Alert.alert("Error", "Failed to save IP address. Please try again.");
-        } finally {
             setIsSavingIp(false);
         }
     };

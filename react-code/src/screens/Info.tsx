@@ -166,19 +166,24 @@ export default function Info() {
 	return (
 		<SafeAreaView style={styles.container}>
 			<BackButton />
-			<TouchableOpacity
-				style={styles.feedbackButton}
-				onPress={showFeedbackAlert}
-			>
-				<Ionicons name="chatbubble-outline" size={24} color="white" />
-				<Text style={styles.feedbackText}>Feedback</Text>
-			</TouchableOpacity>{" "}
 			<AnimatedTitle
 				text="How to Use This App"
 				fontSize={50}
 				marginBottom={15}
 				marginTop={50}
 			/>
+			<View style={styles.feedbackContainer}>
+				<Text style={styles.supportText}>
+					We love you please support us and criticize our app!!
+				</Text>
+				<TouchableOpacity
+					style={styles.feedbackButton}
+					onPress={showFeedbackAlert}
+				>
+					<Ionicons name="chatbubble-outline" size={24} color="white" />
+					<Text style={styles.feedbackText}>Feedback</Text>
+				</TouchableOpacity>
+			</View>
 			<SectionList
 				sections={sections}
 				style={styles.scrollView}
@@ -196,7 +201,7 @@ export default function Info() {
 					</View>
 				)}
 				renderItem={({ item }) => <BulletPoint text={item} />}
-				keyExtractor={(item, index) => index.toString() + item.toString()}
+				keyExtractor={(item) => item}
 				SectionSeparatorComponent={() => (
 					<View style={styles.sectionSeparator} />
 				)}
@@ -285,10 +290,6 @@ const styles = StyleSheet.create({
 		flex: 1,
 	},
 	feedbackButton: {
-		position: "absolute",
-		top: 60,
-		right: 20,
-		zIndex: 10,
 		flexDirection: "row",
 		alignItems: "center",
 		padding: 8,
@@ -298,6 +299,17 @@ const styles = StyleSheet.create({
 		fontFamily: FONTS.CLEAR,
 		fontSize: 16,
 		marginLeft: 5,
+	},
+	feedbackContainer: {
+		alignItems: "center",
+		marginBottom: 20,
+	},
+	supportText: {
+		color: "white",
+		fontFamily: FONTS.CLEAR,
+		fontSize: 18,
+		textAlign: "center",
+		marginBottom: 10,
 	},
 	spacer: {
 		height: 10,

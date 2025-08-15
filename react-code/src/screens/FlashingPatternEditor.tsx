@@ -314,7 +314,7 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 						variant={!hasChanges && previewMode ? "disabled" : "primary"}
 					/>
 				</View>
-			</View>{" "}
+			</View>
 			<BPMMeasurer
 				isVisible={showBPMMeasurer}
 				onClose={() => setShowBPMMeasurer(false)}

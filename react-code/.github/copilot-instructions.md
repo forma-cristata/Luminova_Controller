@@ -7,6 +7,7 @@
 - Your terminal default path is C:/Users/frisk/Documents/T6_25/Capstone/Luminova_Controller/react-code>
     - You do not need to navigate to this path to suggest commands.
 - IF I TELL YOU SOMETHING IS BROKEN, YOU MUST FIX IT. THE SOLUTION IS NEVER EVER EVER TO DELETE IT.
+- **PROMPT FOR REBUILD**: If you make changes to native code (`android`/`ios` directories) or build configurations (`eas.json`, `app.json`, `*.config.js`), you must prompt me to rebuild the app.
 
 ### 🔍 **Codebase Scanning Authority**
 - **ALWAYS SCAN**: You have full permission to scan and analyze the entire codebase

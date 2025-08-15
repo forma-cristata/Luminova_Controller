@@ -583,6 +583,23 @@ Welcome → Settings → ChooseModification → [ColorEditor | FlashingPatternEd
   - `toggleLed()` - Control LED power
 - **Benefits**: Consistent error handling, type safety, centralized logging
 
+### 🌐 IP Address Management
+
+#### `src/services/IpConfigService.ts`
+- **Purpose**: Persistent IP address management for hardware communication
+- **Methods**:
+  - `initializeIp()` - Load saved IP on app startup and configure ApiService
+  - `saveIpAddress(ip)` - Save IP to device storage and update ApiService
+  - `loadIpAddress()` - Load IP from storage with fallback to default
+  - `getCurrentIp()` - Get currently saved IP without updating ApiService
+- **Features**:
+  - **Persistence**: IP address is saved to device's AsyncStorage
+  - **Automatic Initialization**: IP is loaded and configured when app starts
+  - **Fallback Handling**: Uses default IP (`0.0.0.0`) if none saved
+  - **Service Integration**: Automatically updates ApiService base URL
+- **Default Value**: `0.0.0.0` defined in `src/configurations/constants.ts`
+- **Implementation**: Called during app startup in `App.tsx` to ensure correct IP is used for all API communication
+
 ### 🔑 Key Management & Component Stability
 
 #### `src/utils/settingUtils.ts`

@@ -1,5 +1,5 @@
 export { IP, ANIMATION_COLORS, BASE_ANIMATION_COLORS };
-const IP: string = "10.0.0.9";
+const IP: string = "0.0.0.0";
 
 const BASE_ANIMATION_COLORS = [
 	"#ff0000",

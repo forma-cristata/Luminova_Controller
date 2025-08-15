@@ -5,6 +5,17 @@ import { IP } from "../configurations/constants";
 const IP_ADDRESS_KEY = "luminova-ip-address";
 
 export class IpConfigService {
+    static async initializeIp(): Promise<void> {
+        try {
+            const ip = await AsyncStorage.getItem(IP_ADDRESS_KEY);
+            const effectiveIp = ip || IP;
+            ApiService.setBaseUrl(effectiveIp);
+        } catch (error) {
+            console.error("Failed to initialize IP address, using default.", error);
+            ApiService.setBaseUrl(IP); // Fallback to default
+        }
+    }
+
     static async saveIpAddress(ip: string): Promise<void> {
         try {
             await AsyncStorage.setItem(IP_ADDRESS_KEY, ip);

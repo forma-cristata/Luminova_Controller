@@ -1,5 +1,5 @@
 import React from "react";
-import { ViewStyle } from "react-native";
+import type { ViewStyle } from "react-native";
 import Button, { type BaseButtonProps } from "@/src/components/ui/buttons/Button";
 import { COLORS, FONTS } from "@/src/styles/SharedStyles";
 import { useConfiguration } from "@/src/context/ConfigurationContext";

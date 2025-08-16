@@ -64,23 +64,38 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 
 	// Name editing state (now used for both new and existing settings)
 	const [settingName, setSettingName] = useState(setting.name);
+	const debouncedSettingName = useDebounce(settingName, 300);
 	const [nameError, setNameError] = useState<string | null>(null);
 	const [hasChanges, setHasChanges] = useState(isNew);
 
-	const handleNameChange = async (text: string) => {
+	const handleNameChange = (text: string) => {
 		setSettingName(text);
 		setHasChanges(true);
-
-		// Check for duplicate names
-		const settings = await SettingsService.loadSettings();
-		const nameExists = settings?.some(
-			(s: Setting, index: number) =>
-				s.name.toLowerCase() === text.toLowerCase() &&
-				s.name !== setting.name &&
-				(!isNew || index !== settingIndex), // Exclude current setting for existing settings
-		);
-		setNameError(nameExists ? "Name already exists." : null);
 	};
+
+	// Debounced name validation
+	React.useEffect(() => {
+		const validateName = async () => {
+			if (debouncedSettingName === setting.name) {
+				setNameError(null);
+				return;
+			}
+
+			// Check for duplicate names
+			const settings = await SettingsService.loadSettings();
+			const nameExists = settings?.some(
+				(s: Setting, index: number) =>
+					s.name.toLowerCase() === debouncedSettingName.toLowerCase() &&
+					s.name !== setting.name &&
+					(!isNew || index !== settingIndex), // Exclude current setting for existing settings
+			);
+			setNameError(nameExists ? "Name already exists." : null);
+		};
+
+		if (debouncedSettingName.trim()) {
+			validateName();
+		}
+	}, [debouncedSettingName, setting.name, isNew, settingIndex]);
 
 	const calculateBPM = (delayTime: number): string => {
 		return (60000 / (64 * delayTime)).toFixed(0);

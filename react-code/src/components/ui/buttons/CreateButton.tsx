@@ -1,5 +1,5 @@
 import React from "react";
-import { type ViewStyle, type TextStyle } from "react-native";
+import type { ViewStyle, TextStyle } from "react-native";
 import { COLORS, FONTS } from "@/src/styles/SharedStyles";
 import Button, { type BaseButtonProps } from "./Button";
 

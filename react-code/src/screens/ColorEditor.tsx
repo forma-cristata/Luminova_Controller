@@ -57,6 +57,7 @@ export default function ColorEditor({ navigation, route }: any) {
 	const debouncedSaturation = useDebounce(saturation, 50);
 
 	const [hexInput, setHexInput] = useState("");
+	const debouncedHexInput = useDebounce(hexInput, 200);
 	const [colorHistory, setColorHistory] = useState<string[][]>([]);
 	const [hasChanges, setHasChanges] = useState(isNew);
 
@@ -67,22 +68,37 @@ export default function ColorEditor({ navigation, route }: any) {
 
 	// Name editing state (now used for both new and existing settings)
 	const [settingName, setSettingName] = useState(setting.name);
+	const debouncedSettingName = useDebounce(settingName, 300);
 	const [nameError, setNameError] = useState<string | null>(null);
 
-	const handleNameChange = async (text: string) => {
+	const handleNameChange = (text: string) => {
 		setSettingName(text);
 		setHasChanges(true);
-
-		// Check for duplicate names
-		const settings = await SettingsService.loadSettings();
-		const nameExists = settings?.some(
-			(s: Setting, index: number) =>
-				s.name.toLowerCase() === text.toLowerCase() &&
-				s.name !== originalName &&
-				(!isNew || index !== settingIndex), // Exclude current setting for existing settings
-		);
-		setNameError(nameExists ? "Name already exists." : null);
 	};
+
+	// Debounced name validation
+	React.useEffect(() => {
+		const validateName = async () => {
+			if (debouncedSettingName === setting.name) {
+				setNameError(null);
+				return;
+			}
+
+			// Check for duplicate names
+			const settings = await SettingsService.loadSettings();
+			const nameExists = settings?.some(
+				(s: Setting, index: number) =>
+					s.name.toLowerCase() === debouncedSettingName.toLowerCase() &&
+					s.name !== originalName &&
+					(!isNew || index !== settingIndex), // Exclude current setting for existing settings
+			);
+			setNameError(nameExists ? "Name already exists." : null);
+		};
+
+		if (debouncedSettingName.trim()) {
+			validateName();
+		}
+	}, [debouncedSettingName, setting.name, originalName, isNew, settingIndex]);
 
 	const hexToRgb = (hex: string) => {
 		const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
@@ -202,17 +218,18 @@ export default function ColorEditor({ navigation, route }: any) {
 	};
 
 	const handleHexInput = (text: string) => {
-		const hexRegex = /^#?([A-Fa-f0-9]{6})$/;
-		const hexValue = text.startsWith("#") ? text : `#${text}`;
 		setHexInput(text);
+	};
 
-		if (hexRegex.test(hexValue) && selectedDot !== null) {
-			setColorHistory([...colorHistory, [...colors]]);
+	const applyHexColor = (hexValue: string) => {
+		if (selectedDot !== null) {
+			const finalHex = hexValue.startsWith("#") ? hexValue : `#${hexValue}`;
+			setColorHistory(prev => [...prev, [...colors]]);
 			const newColors = [...colors];
-			newColors[selectedDot] = hexValue;
+			newColors[selectedDot] = finalHex;
 			setColors(newColors);
 			setHasChanges(true);
-			const rgb = hexToRgb(hexValue);
+			const rgb = hexToRgb(finalHex);
 			if (rgb) {
 				const hsv = rgbToHsv(rgb.r, rgb.g, rgb.b);
 				setHue(hsv.h);
@@ -221,6 +238,16 @@ export default function ColorEditor({ navigation, route }: any) {
 			}
 		}
 	};
+
+	// Process debounced hex input for typed input
+	React.useEffect(() => {
+		const hexRegex = /^#?([A-Fa-f0-9]{6})$/;
+		const hexValue = debouncedHexInput.startsWith("#") ? debouncedHexInput : `#${debouncedHexInput}`;
+
+		if (hexRegex.test(hexValue) && selectedDot !== null && debouncedHexInput.length === 6) {
+			applyHexColor(hexValue);
+		}
+	}, [debouncedHexInput, selectedDot]);
 
 	const handleCancel = () => {
 		unPreviewAPI();
@@ -504,7 +531,8 @@ export default function ColorEditor({ navigation, route }: any) {
 										disabled={selectedDot === null}
 										onPress={() => {
 											if (selectedDot !== null) {
-												handleHexInput("FFFFFF");
+												setHexInput("FFFFFF");
+												applyHexColor("#FFFFFF");
 											}
 										}}
 										scale={scale}
@@ -514,7 +542,8 @@ export default function ColorEditor({ navigation, route }: any) {
 										disabled={selectedDot === null}
 										onPress={() => {
 											if (selectedDot !== null) {
-												handleHexInput("000000");
+												setHexInput("000000");
+												applyHexColor("#000000");
 											}
 										}}
 										scale={scale}

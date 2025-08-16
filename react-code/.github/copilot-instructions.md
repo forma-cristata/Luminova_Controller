@@ -178,6 +178,7 @@ If you run out of tool attempts, continue automatically iterating. Don't require
 - Update documentation after changes
 - Validate implementations
 - Consider component relationships
+- **COMMIT AND PUSH**: After completing any task, run `git commit -am "<INSERT COMMIT MESSAGE>"; git push` to save changes
 
 #### **Never Do:**
 - Ask permission to scan files

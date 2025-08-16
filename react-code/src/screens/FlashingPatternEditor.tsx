@@ -7,6 +7,7 @@ import {
 	Dimensions,
 	Keyboard,
 	SafeAreaView,
+	ScrollView,
 	StyleSheet,
 	Text,
 	TextInput,
@@ -23,7 +24,7 @@ import MetronomeButton from "@/src/components/ui/buttons/MetronomeButton";
 import Picker, { type PickerRef } from "@/src/components/color-picker/Picker";
 import RandomizeButton from "@/src/components/ui/buttons/RandomizeButton";
 import { COLORS, COMMON_STYLES, FONTS } from "@/src/styles/SharedStyles";
-import { ANIMATION_PATTERNS } from "@/src/configurations/patterns";
+import { ANIMATION_PATTERNS, PATTERN_BPM_RANGES } from "@/src/configurations/patterns";
 import { useConfiguration } from "@/src/context/ConfigurationContext";
 import { useDebounce } from "@/src/hooks/useDebounce";
 import type { Setting } from "@/src/types/SettingInterface";
@@ -80,6 +81,7 @@ export default function FlashingPatternEditor({
 	const [previewMode, setPreviewMode] = useState(false);
 	const [showBPMMeasurer, setShowBPMMeasurer] = useState(false);
 	const pickerRef = React.useRef<PickerRef>(null);
+	const scrollViewRef = React.useRef<ScrollView>(null);
 
 	// Name editing state (now used for both new and existing settings)
 	const [settingName, setSettingName] = useState(setting.name);
@@ -124,6 +126,12 @@ export default function FlashingPatternEditor({
 		return Math.round(60000 / (64 * bpm));
 	};
 
+	// Get BPM range for current pattern
+	const getBpmRange = () => {
+		const range = PATTERN_BPM_RANGES[flashingPattern as keyof typeof PATTERN_BPM_RANGES];
+		return range || { min: 60, max: 200, name: "General" }; // Default fallback
+	};
+
 	// Update delayTime when debounced BPM changes
 	useEffect(() => {
 		if (debouncedBPM > 0) {
@@ -160,15 +168,16 @@ export default function FlashingPatternEditor({
 		if (debouncedBpmInput.trim() === "") return;
 
 		const inputValue = parseFloat(debouncedBpmInput);
+		const bpmRange = getBpmRange();
 		if (!Number.isNaN(inputValue)) {
-			// Clamp the value between 40 and 180
-			const clampedValue = Math.max(40, Math.min(180, inputValue));
+			// Clamp the value within the pattern's BPM range
+			const clampedValue = Math.max(bpmRange.min, Math.min(bpmRange.max, inputValue));
 			if (clampedValue !== BPM) {
 				setBPM(clampedValue);
 				setHasChanges(true);
 			}
 		}
-	}, [debouncedBpmInput, BPM]);
+	}, [debouncedBpmInput, BPM, flashingPattern]);
 
 	// Update text input when BPM slider changes
 	useEffect(() => {
@@ -177,6 +186,46 @@ export default function FlashingPatternEditor({
 			setBpmInput(BPM.toFixed(0));
 		}
 	}, [BPM, bpmInput]);
+
+	// Adjust BPM when pattern changes if current BPM is outside new pattern's range
+	useEffect(() => {
+		if (BPM > 0) {
+			const bpmRange = getBpmRange();
+			if (BPM < bpmRange.min || BPM > bpmRange.max) {
+				// Clamp BPM to new pattern's range
+				const clampedBPM = Math.max(bpmRange.min, Math.min(bpmRange.max, BPM));
+				setBPM(clampedBPM);
+				setBpmInput(clampedBPM.toFixed(0));
+				setHasChanges(true);
+			}
+		}
+	}, [flashingPattern, BPM]);
+
+	// Auto-scroll with keyboard show/hide for BPM input visibility
+	React.useEffect(() => {
+		const keyboardDidShowListener = Keyboard.addListener(
+			"keyboardDidShow",
+			() => {
+				// Scroll to show the BPM input area
+				setTimeout(() => {
+					scrollViewRef.current?.scrollToEnd({ animated: true });
+				}, 100);
+			},
+		);
+
+		const keyboardDidHideListener = Keyboard.addListener(
+			"keyboardDidHide",
+			() => {
+				// Scroll back to top when keyboard hides
+				scrollViewRef.current?.scrollTo({ y: 0, animated: true });
+			},
+		);
+
+		return () => {
+			keyboardDidShowListener?.remove();
+			keyboardDidHideListener?.remove();
+		};
+	}, []);
 
 	// Memoized animated dots that only updates when debounced values change
 	const modeDots = React.useMemo(() => {
@@ -307,20 +356,30 @@ export default function FlashingPatternEditor({
 			<SafeAreaView style={COMMON_STYLES.container}>
 				<InfoButton />
 				<BackButton beforePress={previewMode ? unPreviewAPI : undefined} />
+				<ScrollView
+					ref={scrollViewRef}
+					style={styles.scrollView}
+					contentContainerStyle={styles.scrollContent}
+					keyboardShouldPersistTaps="handled"
+					showsVerticalScrollIndicator={false}
+				>
 				<View style={styles.titleContainer}>
 					<RandomizeButton
 						onPress={() => {
-							// Random BPM between 40 and 180
-							const randomBPM = Math.floor(Math.random() * (180 - 40) + 40);
-							setBPM(randomBPM);
-							setBpmInput(randomBPM.toString());
-
 							// Random pattern from valid animation patterns (excluding STILL)
 							const randomPattern =
 								ANIMATION_PATTERNS[
 								Math.floor(Math.random() * ANIMATION_PATTERNS.length)
 								];
 							setFlashingPattern(randomPattern);
+							
+							// Get BPM range for the newly selected pattern
+							const patternRange = PATTERN_BPM_RANGES[randomPattern as keyof typeof PATTERN_BPM_RANGES] || { min: 60, max: 200 };
+							// Random BPM within the pattern's range
+							const randomBPM = Math.floor(Math.random() * (patternRange.max - patternRange.min) + patternRange.min);
+							setBPM(randomBPM);
+							setBpmInput(randomBPM.toString());
+
 							setHasChanges(true);
 						}}
 					/>
@@ -376,12 +435,13 @@ export default function FlashingPatternEditor({
 									placeholder="BPM"
 									placeholderTextColor={COLORS.PLACEHOLDER}
 									keyboardType="numeric"
-									maxLength={3}
+									maxLength={4}
 									onBlur={() => {
 										// Ensure the input is properly formatted when user finishes editing
 										const inputValue = parseFloat(bpmInput);
+										const bpmRange = getBpmRange();
 										if (!Number.isNaN(inputValue)) {
-											const clampedValue = Math.max(40, Math.min(180, inputValue));
+											const clampedValue = Math.max(bpmRange.min, Math.min(bpmRange.max, inputValue));
 											setBpmInput(clampedValue.toFixed(0));
 											if (clampedValue !== BPM) {
 												setBPM(clampedValue);
@@ -398,8 +458,8 @@ export default function FlashingPatternEditor({
 							</View>
 							<Slider
 								style={styles.slider}
-								minimumValue={40}
-								maximumValue={180}
+								minimumValue={getBpmRange().min}
+								maximumValue={getBpmRange().max}
 								value={BPM}
 								onValueChange={(value) => {
 									setBPM(value);
@@ -409,6 +469,9 @@ export default function FlashingPatternEditor({
 								maximumTrackTintColor={COLORS.WHITE}
 								thumbTintColor={COLORS.WHITE}
 							/>
+							<Text style={styles.bpmRangeText}>
+								{getBpmRange().name}: {getBpmRange().min}-{getBpmRange().max} BPM
+							</Text>
 						</View>
 					</View>
 				</View>
@@ -450,6 +513,7 @@ export default function FlashingPatternEditor({
 						/>
 					</View>
 				</View>
+				</ScrollView>
 				<BPMMeasurer
 					isVisible={showBPMMeasurer}
 					onClose={() => setShowBPMMeasurer(false)}
@@ -466,6 +530,13 @@ const { width, height } = Dimensions.get("window");
 const scale = Math.min(width, height) / 375;
 
 const styles = StyleSheet.create({
+	scrollView: {
+		flex: 1,
+	},
+	scrollContent: {
+		flexGrow: 1,
+		paddingBottom: 20,
+	},
 	titleContainer: {
 		flexDirection: "row",
 		alignItems: "center",
@@ -544,5 +615,13 @@ const styles = StyleSheet.create({
 		marginHorizontal: 10 * scale,
 		minWidth: 60 * scale,
 		letterSpacing: 2,
+	},
+	bpmRangeText: {
+		color: COLORS.WHITE,
+		fontSize: 14 * scale,
+		fontFamily: FONTS.CLEAR,
+		textAlign: "center",
+		marginTop: 5 * scale,
+		opacity: 0.7,
 	},
 });

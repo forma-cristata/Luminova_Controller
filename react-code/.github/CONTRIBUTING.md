@@ -201,6 +201,7 @@ export default function ScreenWithInput() {
 3. **Update documentation** to reflect changes
 4. **Test component integration** patterns
 5. **Verify no broken imports** or dependencies
+6. **Check git status** - Run `git status` after staging to verify changes are correct
 
 ## Development Environment
 
@@ -346,8 +347,9 @@ The project includes automated quality checks that run on every push:
 1. Run `npm run format-lint` locally to fix issues
 2. Ensure TypeScript compiles: `npx tsc --noEmit`
 3. Test key functionality after changes
-4. Commit with descriptive messages
-5. Push - CI pipeline will validate code quality
+4. **Check git status**: Run `git status` after staging to verify changes
+5. Commit with descriptive messages
+6. Push - CI pipeline will validate code quality
 
 ## Native Code Changes
 

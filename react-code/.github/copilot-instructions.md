@@ -96,6 +96,7 @@
 - Update documentation to reflect changes
 - Test component integration patterns
 - Verify no broken imports or dependencies
+- **Check git status** after staging to verify changes are correct
 
 ### 📋 **Codebase Context Summary**
 
@@ -178,6 +179,7 @@ If you run out of tool attempts, continue automatically iterating. Don't require
 - Update documentation after changes
 - Validate implementations
 - Consider component relationships
+- **Check git status** after staging changes to verify correctness
 - **COMMIT AND PUSH**: After completing any task, run `git commit -am "<INSERT COMMIT MESSAGE>"; git push` to save changes
 
 #### **Never Do:**

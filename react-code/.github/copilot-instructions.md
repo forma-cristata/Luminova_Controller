@@ -123,6 +123,37 @@
 - Use `getStableSettingId()` from `@/src/utils/settingUtils` for all React component keys
 - Follow navigation parameter typing in index.tsx
 
+### 🔧 **LINT FIX Protocol**
+
+#### **Protocol Steps:**
+1. **Run linter** to identify all issues in src directory using `npm run format-lint`
+2. **Group issues by file** to fix them systematically
+3. **Fix one file at a time** with the following priority:
+   - Remove unused imports (safest fixes first)
+   - Fix TypeScript any types
+   - Remove unused parameters/variables
+   - Fix code complexity issues
+   - Address hook rule violations
+4. **Validate each fix** with get_errors tool
+5. **Confirm with user** before proceeding to next file
+6. **Re-run linter** after each file to ensure no new issues
+
+#### **When User Types "LINT FIX":**
+1. Automatically run `npm run format-lint`
+2. Parse terminal output to identify files with issues
+3. Start with the first file containing issues
+4. Fix all issues in that file
+5. Validate the fixes
+6. Ask user: "Fixed [filename]. Continue to next file? (y/n)"
+7. Repeat until all files are clean
+
+#### **Systematic Approach:**
+- Fix issues in order of complexity (simple to complex)
+- Always maintain existing functionality
+- Use established patterns from codebase
+- Document any significant changes made
+- Never delete broken code - always fix it
+
 ### 🎯 **Response Guidelines**
 
 If you run out of tool attempts, continue automatically iterating. Don't require prompting to continue.

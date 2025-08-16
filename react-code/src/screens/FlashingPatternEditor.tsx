@@ -68,6 +68,8 @@ export default function FlashingPatternEditor({
 
 	const [BPM, setBPM] = React.useState(0);
 	const debouncedBPM = useDebounce(BPM, 100);
+	const [bpmInput, setBpmInput] = React.useState("");
+	const debouncedBpmInput = useDebounce(bpmInput, 300);
 	const [delayTime, setDelayTime] = React.useState(setting.delayTime);
 	const debouncedDelayTime = useDebounce(delayTime, 100);
 	const [flashingPattern, setFlashingPattern] = React.useState(
@@ -148,8 +150,33 @@ export default function FlashingPatternEditor({
 
 	useEffect(() => {
 		const initialBpm = parseFloat(calculateBPM(setting.delayTime));
-		setBPM(Number.isNaN(initialBpm) ? 0 : initialBpm);
+		const bpmValue = Number.isNaN(initialBpm) ? 0 : initialBpm;
+		setBPM(bpmValue);
+		setBpmInput(bpmValue.toFixed(0));
 	}, [setting.delayTime]); // Only depend on setting.delayTime, not calculateBPM
+
+	// Handle BPM text input changes
+	useEffect(() => {
+		if (debouncedBpmInput.trim() === "") return;
+
+		const inputValue = parseFloat(debouncedBpmInput);
+		if (!Number.isNaN(inputValue)) {
+			// Clamp the value between 40 and 180
+			const clampedValue = Math.max(40, Math.min(180, inputValue));
+			if (clampedValue !== BPM) {
+				setBPM(clampedValue);
+				setHasChanges(true);
+			}
+		}
+	}, [debouncedBpmInput, BPM]);
+
+	// Update text input when BPM slider changes
+	useEffect(() => {
+		const currentInputValue = parseFloat(bpmInput);
+		if (Number.isNaN(currentInputValue) || Math.abs(currentInputValue - BPM) > 0.5) {
+			setBpmInput(BPM.toFixed(0));
+		}
+	}, [BPM, bpmInput]);
 
 	// Memoized animated dots that only updates when debounced values change
 	const modeDots = React.useMemo(() => {
@@ -185,7 +212,9 @@ export default function FlashingPatternEditor({
 	const handleReset = () => {
 		unPreviewAPI();
 		setDelayTime(initialDelayTime);
-		setBPM(parseFloat(calculateBPM(initialDelayTime)));
+		const resetBpm = parseFloat(calculateBPM(initialDelayTime));
+		setBPM(resetBpm);
+		setBpmInput(resetBpm.toFixed(0));
 		setFlashingPattern(initialFlashingPattern);
 		setSettingName(setting.name); // Reset name
 		setNameError(null); // Clear name error
@@ -284,6 +313,7 @@ export default function FlashingPatternEditor({
 							// Random BPM between 40 and 180
 							const randomBPM = Math.floor(Math.random() * (180 - 40) + 40);
 							setBPM(randomBPM);
+							setBpmInput(randomBPM.toString());
 
 							// Random pattern from valid animation patterns (excluding STILL)
 							const randomPattern =
@@ -331,9 +361,41 @@ export default function FlashingPatternEditor({
 				<View style={styles.sliderPadding}>
 					<View style={COMMON_STYLES.sliderContainer}>
 						<View style={styles.sliderRow}>
-							<Text style={COMMON_STYLES.sliderText}>
-								Speed: {BPM.toFixed(0)} bpm
-							</Text>
+							<View style={styles.bpmRow}>
+								<Text style={[COMMON_STYLES.sliderText, styles.bpmLabel]}>
+									Speed:
+								</Text>
+								<TextInput
+									style={styles.bpmInput}
+									value={bpmInput}
+									onChangeText={(text) => {
+										// Allow only numbers and decimal point
+										const numericText = text.replace(/[^0-9.]/g, '');
+										setBpmInput(numericText);
+									}}
+									placeholder="BPM"
+									placeholderTextColor={COLORS.PLACEHOLDER}
+									keyboardType="numeric"
+									maxLength={3}
+									onBlur={() => {
+										// Ensure the input is properly formatted when user finishes editing
+										const inputValue = parseFloat(bpmInput);
+										if (!Number.isNaN(inputValue)) {
+											const clampedValue = Math.max(40, Math.min(180, inputValue));
+											setBpmInput(clampedValue.toFixed(0));
+											if (clampedValue !== BPM) {
+												setBPM(clampedValue);
+												setHasChanges(true);
+											}
+										} else if (bpmInput.trim() === "") {
+											setBpmInput(BPM.toFixed(0));
+										}
+										Keyboard.dismiss();
+									}}
+									keyboardAppearance="dark"
+								/>
+								<Text style={COMMON_STYLES.sliderText}>bpm</Text>
+							</View>
 							<Slider
 								style={styles.slider}
 								minimumValue={40}
@@ -460,5 +522,27 @@ const styles = StyleSheet.create({
 		textAlign: "center",
 		minWidth: width * 0.6,
 		padding: 10,
+	},
+	bpmRow: {
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "flex-start",
+		marginBottom: 10 * scale,
+	},
+	bpmLabel: {
+		marginRight: 10 * scale,
+	},
+	bpmInput: {
+		color: COLORS.WHITE,
+		fontSize: 22 * scale,
+		fontFamily: FONTS.CLEAR,
+		textAlign: "center",
+		borderBottomWidth: 1,
+		borderBottomColor: COLORS.WHITE,
+		paddingHorizontal: 10 * scale,
+		paddingVertical: 5 * scale,
+		marginHorizontal: 10 * scale,
+		minWidth: 60 * scale,
+		letterSpacing: 2,
 	},
 });

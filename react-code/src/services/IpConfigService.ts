@@ -37,7 +37,7 @@ export async function loadIpAddress(): Promise<string> {
 	}
 }
 
-export async function getCurrentIp(): Promise<string> {
+export async function getIpAddress(): Promise<string> {
 	try {
 		const ip = await AsyncStorage.getItem(IP_ADDRESS_KEY);
 		return ip || IP;

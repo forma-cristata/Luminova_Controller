@@ -29,11 +29,23 @@ export const COMMON_STYLES = StyleSheet.create({
 		backgroundColor: COLORS.BLACK,
 		alignItems: "center",
 	},
+	header: {
+		alignItems: "center",
+		justifyContent: "center",
+		marginTop: 20,
+		marginBottom: 20,
+	},
+	logo: {
+		width: 100,
+		height: 100,
+		resizeMode: "contain",
+	},
 
 	backButton: {
 		height: height / 20,
 		width: "100%",
 	},
+
 
 	backButtonText: {
 		color: COLORS.WHITE,

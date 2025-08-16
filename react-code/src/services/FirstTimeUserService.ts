@@ -2,7 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const FIRST_TIME_USER_KEY = "luminova-first-time-user";
 
-export async function isFirstTimeUser(): Promise<boolean> {
+export async function checkFirstTimeUser(): Promise<boolean> {
 	try {
 		const hasSeenTutorial = await AsyncStorage.getItem(FIRST_TIME_USER_KEY);
 		return hasSeenTutorial === null;
@@ -30,7 +30,7 @@ export async function resetFirstTimeUser(): Promise<void> {
 
 // For backward compatibility, export as a class as well
 export const FirstTimeUserService = {
-	isFirstTimeUser,
+	checkFirstTimeUser,
 	markTutorialCompleted,
 	resetFirstTimeUser,
 };

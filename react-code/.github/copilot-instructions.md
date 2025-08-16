@@ -137,7 +137,7 @@
 ### 🔧 **LINT FIX Protocol**
 
 #### **Protocol Steps:**
-1. **Run linter** to identify all issues in src directory using `npx @biomejs/biome lint src/screens/<fileName>.<fileExtension>` one at a time until there are no errors when you run `npm run format-lint`
+1. **Run linter** to identify all issues in src directory using `npx @biomejs/biome lint src/screens/<fileName>.<fileExtension>` one at a time until there are no errors when you run `npm run format-lint-org`
 2. **Group issues by file** to fix them systematically
 3. **Fix one file at a time** with the following priority:
    - Remove unused imports (safest fixes first)

@@ -66,8 +66,7 @@
             "./assets/fonts/Clearlight-lJlq.ttf"
           ]
         }
-      ],
-      "expo-web-browser"
+      ]
     ],
     "extra": {
       "eas": {

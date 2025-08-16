@@ -19,9 +19,9 @@ import Animated, {
 	withTiming,
 } from "react-native-reanimated";
 
-import BackButton from "@/src/components/ui/buttons/BackButton";
-import CreateButton from "@/src/components/ui/buttons/CreateButton";
-import InfoButton from "@/src/components/ui/buttons/InfoButton";
+import BackButton from "@/src/components/buttons/BackButton";
+import CreateButton from "@/src/components/buttons/CreateButton";
+import InfoButton from "@/src/components/buttons/InfoButton";
 import SettingBlock from "@/src/components/settings/SettingBlock";
 import { useConfiguration } from "@/src/context/ConfigurationContext";
 import type { Setting } from "@/src/types/SettingInterface";

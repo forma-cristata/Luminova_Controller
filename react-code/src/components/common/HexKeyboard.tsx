@@ -7,7 +7,7 @@ import {
 	TouchableOpacity,
 	StyleSheet,
 } from "react-native";
-import Button from "@/src/components/ui/buttons/Button";
+import Button from "@/src/components/buttons/Button";
 import { COLORS, FONTS, COMMON_STYLES } from "@/src/styles/SharedStyles";
 
 const { width, height } = Dimensions.get("window");

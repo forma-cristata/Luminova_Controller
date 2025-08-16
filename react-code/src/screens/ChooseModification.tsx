@@ -2,9 +2,9 @@ import React from "react";
 import { SafeAreaView, StyleSheet, View } from "react-native";
 
 import AnimatedDots from "@/src/components/animations/AnimatedDots";
-import BackButton from "@/src/components/ui/buttons/BackButton";
-import Button from "@/src/components/ui/buttons/Button";
-import InfoButton from "@/src/components/ui/buttons/InfoButton";
+import BackButton from "@/src/components/buttons/BackButton";
+import Button from "@/src/components/buttons/Button";
+import InfoButton from "@/src/components/buttons/InfoButton";
 import { COLORS } from "@/src/styles/SharedStyles";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "@/src/screens/index";

@@ -9,10 +9,10 @@ import {
 	TouchableOpacity,
 } from "react-native";
 
-import AnimatedTitle from "@/src/components/ui/AnimatedTitle";
-import Button from "@/src/components/ui/buttons/Button";
-import InfoButton from "@/src/components/ui/buttons/InfoButton";
-import WelcomeTutorial from "@/src/components/ui/WelcomeTutorial";
+import AnimatedTitle from "@/src/components/common/AnimatedTitle";
+import Button from "@/src/components/buttons/Button";
+import InfoButton from "@/src/components/buttons/InfoButton";
+import WelcomeTutorial from "@/src/components/common/WelcomeTutorial";
 import { COLORS, FONTS } from "@/src/styles/SharedStyles";
 import { useConfiguration } from "@/src/context/ConfigurationContext";
 import { FirstTimeUserService } from "@/src/services/FirstTimeUserService";

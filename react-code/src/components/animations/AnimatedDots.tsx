@@ -5,7 +5,7 @@ import { View } from "react-native";
 
 import { SafeAreaView, StyleSheet } from "react-native";
 
-import Dot from "@/src/components/ui/Dot";
+import Dot from "@/src/components/common/Dot";
 
 import type { Setting } from "@/src/types/SettingInterface";
 import { getStableSettingId } from "@/src/utils/settingUtils";

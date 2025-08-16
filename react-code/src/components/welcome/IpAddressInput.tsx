@@ -11,7 +11,7 @@ import {
 import { getStatus } from "@/src/services/ApiService";
 import { getCurrentIp, saveIpAddress } from "@/src/services/IpConfigService";
 import { useDebounce } from "@/src/hooks/useDebounce";
-import Button from "@/src/components/ui/buttons/Button";
+import Button from "@/src/components/buttons/Button";
 import { COLORS, FONTS, DIMENSIONS } from "@/src/styles/SharedStyles";
 
 interface IpAddressInputProps {

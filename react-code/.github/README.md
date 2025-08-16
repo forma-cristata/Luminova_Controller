@@ -12,15 +12,6 @@ React Native LED controller app for managing custom lighting patterns through RE
 **Stack:** React Native + TypeScript, Expo SDK 53, React Navigation, Reanimated
 **Flow:** Welcome → Settings → Editor screens
 
-## Quick Start
-```bash
-npm install && npm start
-```
-
-## Scripts
-- `npm run android|ios` - Device deployment
-- `npm run format-lint` - Code quality
-
 ## Documentation
 - **[CONTRIBUTING.md](./CONTRIBUTING.md)** - Development standards  
 - **[CODEBASE_GUIDE.md](../docs/CODEBASE_GUIDE.md)** - Technical details

@@ -39,6 +39,18 @@ export default function BPMMeasurer({
 	const recorder = Audio.useAudioRecorder(Audio.RecordingPresets.HIGH_QUALITY);
 	const recorderState = Audio.useAudioRecorderState(recorder, 100); // Update every 100ms
 
+	// Add timeout for permission request
+	useEffect(() => {
+		if (status === "requesting") {
+			const timeout = setTimeout(() => {
+				setError("Permission request timed out. Please check your device settings.");
+				setStatus("error");
+			}, 10000); // 10 second timeout
+
+			return () => clearTimeout(timeout);
+		}
+	}, [status]);
+
 	// BPM calculation functions
 	const calculateBPM = useCallback((times: number[]): number => {
 		if (times.length < 2) return 0;
@@ -102,28 +114,44 @@ export default function BPMMeasurer({
 
 		const manageRecording = async () => {
 			if (!isVisible) {
-				// When not visible, the cleanup function will handle stopping the recorder.
-				// We just need to reset the component's state.
+				// When not visible, reset to idle
 				setStatus("idle");
+				setError(null);
+				setBeatTimes([]);
+				setDetectedBPM(null);
 				return;
 			}
 
-			// Start the recording process only if the component is idle.
+			// Only start if we're idle and visible
 			if (status === "idle") {
 				setStatus("requesting");
+				setError(null);
+
 				try {
-					const permission = await Audio.requestRecordingPermissionsAsync();
+					// Check existing permissions first
+					const currentPermissions = await Audio.getRecordingPermissionsAsync();
+					let permission = currentPermissions;
+
+					// Only request if we don't already have permission
+					if (!permission.granted) {
+						permission = await Audio.requestRecordingPermissionsAsync();
+					}
+
 					if (isCancelled) return;
 
 					if (!permission.granted) {
-						throw new Error("Microphone permission denied");
+						throw new Error("Microphone permission is required for BPM detection");
 					}
 
+					// Set audio mode
 					await Audio.setAudioModeAsync({
 						allowsRecording: true,
 						playsInSilentMode: true,
 					});
 
+					if (isCancelled) return;
+
+					// Prepare recorder
 					await recorder.prepareToRecordAsync({
 						isMeteringEnabled: true,
 						android: {
@@ -136,7 +164,11 @@ export default function BPMMeasurer({
 						},
 					});
 
+					if (isCancelled) return;
+
+					// Start recording
 					await recorder.record();
+
 					if (isCancelled) return;
 
 					setStatus("recording");
@@ -146,9 +178,8 @@ export default function BPMMeasurer({
 				} catch (err) {
 					if (isCancelled) return;
 					console.error("Failed to start recording:", err);
-					setError(
-						err instanceof Error ? err.message : "Failed to start recording",
-					);
+					const errorMessage = err instanceof Error ? err.message : "Failed to start recording";
+					setError(errorMessage);
 					setStatus("error");
 				}
 			}
@@ -158,17 +189,16 @@ export default function BPMMeasurer({
 
 		return () => {
 			isCancelled = true;
-			// This cleanup function is the single source of truth for stopping the recorder.
-			// It runs when the component unmounts or when `isVisible` changes.
+			// Cleanup function to stop recording
 			const cleanup = async () => {
-				const currentStatus = await recorder.getStatus();
-				if (currentStatus.isRecording) {
-					try {
+				try {
+					const currentStatus = await recorder.getStatus();
+					if (currentStatus.isRecording) {
 						await recorder.stop();
 						await Audio.setAudioModeAsync({ allowsRecording: false });
-					} catch (e) {
-						console.error("Cleanup failed to stop recorder:", e);
 					}
+				} catch (e) {
+					console.error("Cleanup failed to stop recorder:", e);
 				}
 			};
 			cleanup();
@@ -180,6 +210,13 @@ export default function BPMMeasurer({
 			onBPMDetected(detectedBPM);
 		}
 		onClose();
+	};
+
+	const handleRetry = () => {
+		setStatus("idle");
+		setError(null);
+		setBeatTimes([]);
+		setDetectedBPM(null);
 	};
 
 	const renderContent = () => {
@@ -224,9 +261,14 @@ export default function BPMMeasurer({
 					<>
 						<Text style={styles.title}>Error</Text>
 						<Text style={styles.errorText}>{error}</Text>
-						<TouchableOpacity style={styles.button} onPress={onClose}>
-							<Text style={styles.buttonText}>Close</Text>
-						</TouchableOpacity>
+						<View style={styles.buttonContainer}>
+							<TouchableOpacity style={styles.button} onPress={handleRetry}>
+								<Text style={styles.buttonText}>Retry</Text>
+							</TouchableOpacity>
+							<TouchableOpacity style={[styles.button, styles.closeButton]} onPress={onClose}>
+								<Text style={styles.buttonText}>Close</Text>
+							</TouchableOpacity>
+						</View>
 					</>
 				);
 			default:
@@ -324,6 +366,14 @@ const styles = StyleSheet.create({
 		...COMMON_STYLES.styleAButton,
 		paddingVertical: 12 * scale,
 		paddingHorizontal: 30 * scale,
+	},
+	buttonContainer: {
+		flexDirection: "row",
+		gap: 10 * scale,
+		marginTop: 10 * scale,
+	},
+	closeButton: {
+		backgroundColor: COLORS.BORDER,
 	},
 	buttonText: {
 		...COMMON_STYLES.buttonText,

@@ -15,14 +15,14 @@ import {
 	TouchableWithoutFeedback,
 } from "react-native";
 
-import ActionButton from "@/src/components/ui/buttons/ActionButton";
+import ActionButton from "@/src/components/buttons/ActionButton";
 import AnimatedDots from "@/src/components/animations/AnimatedDots";
-import BackButton from "@/src/components/ui/buttons/BackButton";
+import BackButton from "@/src/components/buttons/BackButton";
 import BPMMeasurer from "@/src/components/audio/BPMMeasurer";
-import InfoButton from "@/src/components/ui/buttons/InfoButton";
-import MetronomeButton from "@/src/components/ui/buttons/MetronomeButton";
+import InfoButton from "@/src/components/buttons/InfoButton";
+import MetronomeButton from "@/src/components/buttons/MetronomeButton";
 import Picker, { type PickerRef } from "@/src/components/color-picker/Picker";
-import RandomizeButton from "@/src/components/ui/buttons/RandomizeButton";
+import RandomizeButton from "@/src/components/buttons/RandomizeButton";
 import { COLORS, COMMON_STYLES, FONTS } from "@/src/styles/SharedStyles";
 import { ANIMATION_PATTERNS } from "@/src/configurations/patterns";
 import { useConfiguration } from "@/src/context/ConfigurationContext";
@@ -142,11 +142,23 @@ export default function FlashingPatternEditor({
 	useEffect(() => {
 		if (flashingPattern !== initialFlashingPattern) {
 			setHasChanges(true);
-		} else if (flashingPattern === initialFlashingPattern && delayTime === initialDelayTime && settingName === setting.name) {
+		} else if (
+			flashingPattern === initialFlashingPattern &&
+			delayTime === initialDelayTime &&
+			settingName === setting.name
+		) {
 			// Reset hasChanges when all values are back to initial state
 			setHasChanges(isNew);
 		}
-	}, [flashingPattern, initialFlashingPattern, delayTime, initialDelayTime, settingName, setting.name, isNew]);
+	}, [
+		flashingPattern,
+		initialFlashingPattern,
+		delayTime,
+		initialDelayTime,
+		settingName,
+		setting.name,
+		isNew,
+	]);
 
 	useEffect(() => {
 		const initialBpm = parseFloat(calculateBPM(setting.delayTime));
@@ -175,7 +187,10 @@ export default function FlashingPatternEditor({
 	useEffect(() => {
 		const currentInputValue = parseFloat(bpmInput);
 		// Only update if the input is significantly different or invalid
-		if (Number.isNaN(currentInputValue) || Math.abs(currentInputValue - BPM) > 1) {
+		if (
+			Number.isNaN(currentInputValue) ||
+			Math.abs(currentInputValue - BPM) > 1
+		) {
 			setBpmInput(BPM.toFixed(0));
 		}
 	}, [BPM, bpmInput]);
@@ -412,7 +427,7 @@ export default function FlashingPatternEditor({
 										value={bpmInput}
 										onChangeText={(text) => {
 											// Allow only numbers and decimal point
-											const numericText = text.replace(/[^0-9.]/g, '');
+											const numericText = text.replace(/[^0-9.]/g, "");
 											setBpmInput(numericText);
 										}}
 										placeholder="BPM"
@@ -424,7 +439,10 @@ export default function FlashingPatternEditor({
 											// Ensure the input is properly formatted when user finishes editing
 											const inputValue = parseFloat(bpmInput);
 											if (!Number.isNaN(inputValue)) {
-												const clampedValue = Math.max(60, Math.min(200, inputValue));
+												const clampedValue = Math.max(
+													60,
+													Math.min(200, inputValue),
+												);
 												setBpmInput(clampedValue.toFixed(0));
 												if (clampedValue !== BPM) {
 													setBPM(clampedValue);
@@ -454,9 +472,7 @@ export default function FlashingPatternEditor({
 									maximumTrackTintColor={COLORS.WHITE}
 									thumbTintColor={COLORS.WHITE}
 								/>
-								<Text style={styles.bpmRangeText}>
-									60-200 BPM
-								</Text>
+								<Text style={styles.bpmRangeText}>60-200 BPM</Text>
 							</View>
 						</View>
 					</View>
@@ -494,7 +510,9 @@ export default function FlashingPatternEditor({
 								}}
 								disabled={!isShelfConnected}
 								variant={!hasChanges && previewMode ? "disabled" : "primary"}
-								opacity={!isShelfConnected ? COLORS.DISABLED_OPACITY : undefined}
+								opacity={
+									!isShelfConnected ? COLORS.DISABLED_OPACITY : undefined
+								}
 							/>
 						</View>
 					</View>

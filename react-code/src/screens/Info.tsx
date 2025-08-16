@@ -13,8 +13,8 @@ import {
 	View,
 } from "react-native";
 
-import AnimatedTitle from "@/src/components/ui/AnimatedTitle";
-import BackButton from "@/src/components/ui/buttons/BackButton";
+import AnimatedTitle from "@/src/components/common/AnimatedTitle";
+import BackButton from "@/src/components/buttons/BackButton";
 import { FONTS } from "@/src/styles/SharedStyles";
 import { FirstTimeUserService } from "@/src/services/FirstTimeUserService";
 import React from "react";
@@ -70,23 +70,22 @@ export default function Info() {
 		if (newCount >= 5) {
 			// Reset the count and show debug options
 			setDebugTapCount(0);
-			Alert.alert(
-				"Debug Mode",
-				"Reset tutorial for new users?",
-				[
-					{
-						text: "Cancel",
-						style: "cancel",
+			Alert.alert("Debug Mode", "Reset tutorial for new users?", [
+				{
+					text: "Cancel",
+					style: "cancel",
+				},
+				{
+					text: "Reset Tutorial",
+					onPress: async () => {
+						await FirstTimeUserService.resetFirstTimeUser();
+						Alert.alert(
+							"Success",
+							"Tutorial state has been reset. The welcome tutorial will show again on the next app visit to the Welcome screen.",
+						);
 					},
-					{
-						text: "Reset Tutorial",
-						onPress: async () => {
-							await FirstTimeUserService.resetFirstTimeUser();
-							Alert.alert("Success", "Tutorial state has been reset. The welcome tutorial will show again on the next app visit to the Welcome screen.");
-						},
-					},
-				],
-			);
+				},
+			]);
 		}
 	};
 
@@ -151,7 +150,6 @@ export default function Info() {
 				"Edit the setting name using the text input at the top of this page.",
 			],
 		},
-
 	];
 
 	return (

@@ -3,6 +3,9 @@
 ## Core Permissions and Protocols
 ### 🔍 **General Keep-in-minds**
 - Never summarize your changes if it is redundant. I follow along as you change things. If you must summarize, keep it 100 characters or less. 
+- If a directory becomes empty due to changes, delete it.
+- If a code file becomes redundant, delete it.
+- If a code file is not used, delete it.
 - If I suggest something is redundant and you agree, remove the redundancy.
 - NEVER RUN THIS COMMAND EVER: "npx @biomejs/biome lint --write --unsafe"
 - Importing react should look like import React from "react"; tHE LINTER IS OFTEN WRONG ABOUT THIS. IF YOU COULD STOP THE LINTER FROM COMPLAINING ABOUT IT THAT WOULD BE GREAT. THE LINTER IS ALSO WRONG ABOUT IMPORTING REACT AS A TYPE IT IS NOT A TYPE. IT SHOULD ALWAYYYYYSSSSS BE IMPORT REACT FROM "REACT";.
@@ -23,11 +26,11 @@
 - **CONVERSATION HISTORY**: Always review previous conversation history for context and patterns
 
 ### 📚 **Context Requirements**
-- **MANDATORY REFERENCE**: Always consider the `docs/CODEBASE_GUIDE.md` as primary context
 - **HOW TO USE THE UI**: Exists here: services/Info.tsx ... the text in the jsx explains how a user uses the app
 - **APPLICATION OVERVIEW**: Treat the Luminova Controller architecture as foundational knowledge
 - **COMPONENT RELATIONSHIPS**: Understand the interconnections between all components before making changes
 - **PATTERN CONSISTENCY**: Maintain established patterns (SharedStyles, ApiService, etc.)
+- **PROJECT GUIDELINES**: Always scan README.md and CONTRIBUTING.md when making changes to understand project context and contribution standards
 
 #### **3. Component Standards**
 - **Props Interface**: Always define TypeScript interfaces for props
@@ -55,7 +58,7 @@
 ### 🔄 **Documentation Maintenance Protocol**
 
 #### **After Every Change:**
-1. **Update CODEBASE_GUIDE.md** if changes affect:
+1. **Update documentation** if changes affect:
    - Component structure or behavior
    - Codebase file structure in any way
    - Navigation flow
@@ -84,6 +87,7 @@
 - Check for existing patterns in SharedStyles.ts and ApiService.ts
 - Review similar implementations in the codebase
 - Consider impact on navigation flow and state management
+- **Scan README.md and CONTRIBUTING.md** for project context and contribution standards
 - NOTE THAT YOUR MASTER NEVER EVER WANTS TO USE EXPO-AV AS IT IS DEPRECATED BY SDK 53.
 
 #### **During Implementation:**
@@ -262,7 +266,7 @@ This error is caused by TWO issues that must BOTH be fixed:
 2. Check SharedStyles for relevant patterns
 3. Use ApiService if API communication needed
 4. Follow established navigation patterns
-5. Update CODEBASE_GUIDE.md with new functionality
+5. Update relevant documentation with new functionality
 
 #### **Fixing Bugs:**
 1. Scan related components for context
@@ -280,7 +284,7 @@ This error is caused by TWO issues that must BOTH be fixed:
 
 ### 📖 **Documentation Update Triggers**
 
-Update `CODEBASE_GUIDE.md` when:
+Update relevant documentation when:
 - New components are created
 - Navigation routes are modified
 - API endpoints or service methods change

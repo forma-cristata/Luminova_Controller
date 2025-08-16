@@ -206,10 +206,14 @@ export default function FlashingPatternEditor({
 		const keyboardDidShowListener = Keyboard.addListener(
 			"keyboardDidShow",
 			() => {
-				// Scroll to show the BPM input area
+				// Scroll to show the BPM input area with more aggressive scrolling
 				setTimeout(() => {
 					scrollViewRef.current?.scrollToEnd({ animated: true });
 				}, 100);
+				// Also try a second scroll attempt in case the first one wasn't enough
+				setTimeout(() => {
+					scrollViewRef.current?.scrollTo({ y: 1000, animated: true });
+				}, 50);
 			},
 		);
 
@@ -217,7 +221,9 @@ export default function FlashingPatternEditor({
 			"keyboardDidHide",
 			() => {
 				// Scroll back to top when keyboard hides
-				scrollViewRef.current?.scrollTo({ y: 0, animated: true });
+				setTimeout(() => {
+					scrollViewRef.current?.scrollTo({ y: 0, animated: true });
+				}, 40);
 			},
 		);
 
@@ -363,156 +369,158 @@ export default function FlashingPatternEditor({
 					keyboardShouldPersistTaps="handled"
 					showsVerticalScrollIndicator={false}
 				>
-				<View style={styles.titleContainer}>
-					<RandomizeButton
-						onPress={() => {
-							// Random pattern from valid animation patterns (excluding STILL)
-							const randomPattern =
-								ANIMATION_PATTERNS[
-								Math.floor(Math.random() * ANIMATION_PATTERNS.length)
-								];
-							setFlashingPattern(randomPattern);
-							
-							// Get BPM range for the newly selected pattern
-							const patternRange = PATTERN_BPM_RANGES[randomPattern as keyof typeof PATTERN_BPM_RANGES] || { min: 60, max: 200 };
-							// Random BPM within the pattern's range
-							const randomBPM = Math.floor(Math.random() * (patternRange.max - patternRange.min) + patternRange.min);
-							setBPM(randomBPM);
-							setBpmInput(randomBPM.toString());
+					<View style={styles.titleContainer}>
+						<RandomizeButton
+							onPress={() => {
+								// Random pattern from valid animation patterns (excluding STILL)
+								const randomPattern =
+									ANIMATION_PATTERNS[
+									Math.floor(Math.random() * ANIMATION_PATTERNS.length)
+									];
+								setFlashingPattern(randomPattern);
 
-							setHasChanges(true);
-						}}
-					/>
-					<View style={styles.nameInputContainer}>
-						<Text style={COMMON_STYLES.sliderText}>Setting Name:</Text>
-						<TextInput
-							style={[
-								styles.nameInput,
-								nameError ? { color: COLORS.ERROR } : null,
-							]}
-							value={settingName}
-							onChangeText={handleNameChange}
-							placeholder="Enter setting name"
-							placeholderTextColor={COLORS.PLACEHOLDER}
-							maxLength={20}
-							onBlur={() => {
-								Keyboard.dismiss();
+								// Get BPM range for the newly selected pattern
+								const patternRange = PATTERN_BPM_RANGES[randomPattern as keyof typeof PATTERN_BPM_RANGES] || { min: 60, max: 200 };
+								// Random BPM within the pattern's range
+								const randomBPM = Math.floor(Math.random() * (patternRange.max - patternRange.min) + patternRange.min);
+								setBPM(randomBPM);
+								setBpmInput(randomBPM.toString());
+
+								setHasChanges(true);
 							}}
-							autoCapitalize="words"
-							keyboardAppearance="dark"
+						/>
+						<View style={styles.nameInputContainer}>
+							<Text style={COMMON_STYLES.sliderText}>Setting Name:</Text>
+							<TextInput
+								style={[
+									styles.nameInput,
+									nameError ? { color: COLORS.ERROR } : null,
+								]}
+								value={settingName}
+								onChangeText={handleNameChange}
+								placeholder="Enter setting name"
+								placeholderTextColor={COLORS.PLACEHOLDER}
+								maxLength={20}
+								onBlur={() => {
+									Keyboard.dismiss();
+								}}
+								autoCapitalize="words"
+								keyboardAppearance="dark"
+							/>
+						</View>
+						<MetronomeButton
+							onPress={() => {
+								setShowBPMMeasurer(true);
+							}}
 						/>
 					</View>
-					<MetronomeButton
-						onPress={() => {
-							setShowBPMMeasurer(true);
-						}}
-					/>
-				</View>
-				<View style={styles.dotPadding}>{modeDots}</View>
-				<View style={styles.fpContainer}>
-					<Picker
-						ref={pickerRef}
-						setting={setting}
-						selectedPattern={debouncedFlashingPattern}
-						setSelectedPattern={setFlashingPattern}
-					/>
-				</View>
-				<View style={styles.sliderPadding}>
-					<View style={COMMON_STYLES.sliderContainer}>
-						<View style={styles.sliderRow}>
-							<View style={styles.bpmRow}>
-								<Text style={[COMMON_STYLES.sliderText, styles.bpmLabel]}>
-									Speed:
-								</Text>
-								<TextInput
-									style={styles.bpmInput}
-									value={bpmInput}
-									onChangeText={(text) => {
-										// Allow only numbers and decimal point
-										const numericText = text.replace(/[^0-9.]/g, '');
-										setBpmInput(numericText);
-									}}
-									placeholder="BPM"
-									placeholderTextColor={COLORS.PLACEHOLDER}
-									keyboardType="numeric"
-									maxLength={4}
-									onBlur={() => {
-										// Ensure the input is properly formatted when user finishes editing
-										const inputValue = parseFloat(bpmInput);
-										const bpmRange = getBpmRange();
-										if (!Number.isNaN(inputValue)) {
-											const clampedValue = Math.max(bpmRange.min, Math.min(bpmRange.max, inputValue));
-											setBpmInput(clampedValue.toFixed(0));
-											if (clampedValue !== BPM) {
-												setBPM(clampedValue);
-												setHasChanges(true);
+					<View style={styles.dotPadding}>{modeDots}</View>
+					<View style={styles.fpContainer}>
+						<Picker
+							ref={pickerRef}
+							setting={setting}
+							selectedPattern={debouncedFlashingPattern}
+							setSelectedPattern={setFlashingPattern}
+						/>
+					</View>
+					<View style={styles.sliderPadding}>
+						<View style={COMMON_STYLES.sliderContainer}>
+							<View style={styles.sliderRow}>
+								<View style={styles.bpmRow}>
+									<Text style={[COMMON_STYLES.sliderText, styles.bpmLabel]}>
+										Speed:
+									</Text>
+									<TextInput
+										style={styles.bpmInput}
+										value={bpmInput}
+										onChangeText={(text) => {
+											// Allow only numbers and decimal point
+											const numericText = text.replace(/[^0-9.]/g, '');
+											setBpmInput(numericText);
+										}}
+										placeholder="BPM"
+										placeholderTextColor={COLORS.PLACEHOLDER}
+										keyboardType="numeric"
+										maxLength={4}
+										onBlur={() => {
+											// Ensure the input is properly formatted when user finishes editing
+											const inputValue = parseFloat(bpmInput);
+											const bpmRange = getBpmRange();
+											if (!Number.isNaN(inputValue)) {
+												const clampedValue = Math.max(bpmRange.min, Math.min(bpmRange.max, inputValue));
+												setBpmInput(clampedValue.toFixed(0));
+												if (clampedValue !== BPM) {
+													setBPM(clampedValue);
+													setHasChanges(true);
+												}
+											} else if (bpmInput.trim() === "") {
+												setBpmInput(BPM.toFixed(0));
 											}
-										} else if (bpmInput.trim() === "") {
-											setBpmInput(BPM.toFixed(0));
-										}
-										Keyboard.dismiss();
+											Keyboard.dismiss();
+										}}
+										keyboardAppearance="dark"
+									/>
+									<Text style={COMMON_STYLES.sliderText}>bpm</Text>
+								</View>
+								<Slider
+									style={styles.slider}
+									minimumValue={getBpmRange().min}
+									maximumValue={getBpmRange().max}
+									value={BPM}
+									onValueChange={(value) => {
+										setBPM(value);
+										setHasChanges(true);
 									}}
-									keyboardAppearance="dark"
+									minimumTrackTintColor="#ff0000"
+									maximumTrackTintColor={COLORS.WHITE}
+									thumbTintColor={COLORS.WHITE}
 								/>
-								<Text style={COMMON_STYLES.sliderText}>bpm</Text>
+								<Text style={styles.bpmRangeText}>
+									{getBpmRange().name}: {getBpmRange().min}-{getBpmRange().max} BPM
+								</Text>
 							</View>
-							<Slider
-								style={styles.slider}
-								minimumValue={getBpmRange().min}
-								maximumValue={getBpmRange().max}
-								value={BPM}
-								onValueChange={(value) => {
-									setBPM(value);
-									setHasChanges(true);
-								}}
-								minimumTrackTintColor="#ff0000"
-								maximumTrackTintColor={COLORS.WHITE}
-								thumbTintColor={COLORS.WHITE}
-							/>
-							<Text style={styles.bpmRangeText}>
-								{getBpmRange().name}: {getBpmRange().min}-{getBpmRange().max} BPM
-							</Text>
 						</View>
 					</View>
-				</View>
-				<View style={COMMON_STYLES.buttonContainer}>
-					<View style={COMMON_STYLES.buttonRow}>
-						<ActionButton
-							title={isNew ? "Cancel" : "Reset"}
-							onPress={isNew ? handleCancel : handleReset}
-							disabled={!isNew && !hasChanges}
-							opacity={isNew ? 1 : hasChanges ? 1 : COLORS.DISABLED_OPACITY}
-						/>
+					<View style={COMMON_STYLES.buttonContainer}>
+						<View style={COMMON_STYLES.buttonRow}>
+							<ActionButton
+								title={isNew ? "Cancel" : "Reset"}
+								onPress={isNew ? handleCancel : handleReset}
+								disabled={!isNew && !hasChanges}
+								opacity={isNew ? 1 : hasChanges ? 1 : COLORS.DISABLED_OPACITY}
+							/>
 
-						<ActionButton
-							title="Save"
-							onPress={handleSave}
-							disabled={!hasChanges || !!nameError}
-							opacity={
-								hasChanges
-									? !nameError
-										? 1
+							<ActionButton
+								title="Save"
+								onPress={handleSave}
+								disabled={!hasChanges || !!nameError}
+								opacity={
+									hasChanges
+										? !nameError
+											? 1
+											: COLORS.DISABLED_OPACITY
 										: COLORS.DISABLED_OPACITY
-									: COLORS.DISABLED_OPACITY
-							}
-						/>
-
-						<ActionButton
-							title={
-								previewMode ? (hasChanges ? "Update" : "Preview") : "Preview"
-							}
-							onPress={() => {
-								if (isShelfConnected) {
-									previewAPI();
-									setPreviewMode(true);
 								}
-							}}
-							disabled={!isShelfConnected}
-							variant={!hasChanges && previewMode ? "disabled" : "primary"}
-							opacity={!isShelfConnected ? COLORS.DISABLED_OPACITY : undefined}
-						/>
+							/>
+
+							<ActionButton
+								title={
+									previewMode ? (hasChanges ? "Update" : "Preview") : "Preview"
+								}
+								onPress={() => {
+									if (isShelfConnected) {
+										previewAPI();
+										setPreviewMode(true);
+									}
+								}}
+								disabled={!isShelfConnected}
+								variant={!hasChanges && previewMode ? "disabled" : "primary"}
+								opacity={!isShelfConnected ? COLORS.DISABLED_OPACITY : undefined}
+							/>
+						</View>
 					</View>
-				</View>
+					{/* Extra space to ensure BPM input is visible when keyboard appears */}
+					<View style={styles.keyboardSpacer} />
 				</ScrollView>
 				<BPMMeasurer
 					isVisible={showBPMMeasurer}
@@ -535,7 +543,10 @@ const styles = StyleSheet.create({
 	},
 	scrollContent: {
 		flexGrow: 1,
-		paddingBottom: 20,
+		paddingBottom: 200, // Extra space to ensure scrolling works with keyboard
+	},
+	keyboardSpacer: {
+		height: 50, // Additional space for keyboard visibility
 	},
 	titleContainer: {
 		flexDirection: "row",

@@ -1,52 +1,75 @@
-# Luminova Controller - Codebase Guide
+# Technical Implementation Guide
 
-## Overview
+> For contribution guidelines, see [CONTRIBUTING.md](../.github/CONTRIBUTING.md)
+> For project overview, see [README.md](../.github/README.md)
 
-The Luminova Controller is a React Native application that controls LED lighting patterns through a REST API. The app allows users to create, edit, and manage custom lighting configurations with various animation patterns and color schemes.
+## Component Patterns
 
-## Architecture
+### React Key Management
+**CRITICAL:** Use `getStableSettingId()` from `@/src/utils/settingUtils` for all Setting-related keys:
+```typescript
+{settings.map(setting => (
+  <SettingBlock key={getStableSettingId(setting)} setting={setting} />
+))}
+```
 
-### Core Technologies
-- **React Native** with TypeScript
-- **Expo** for development and deployment
-- **React Navigation** for screen navigation
-- **React Native Reanimated** for animations
-- **Expo File System** for data persistence
+### Conditional Rendering
+**ALWAYS** use ternary operators instead of logical AND:
+```typescript
+// ✅ CORRECT
+{isVisible ? <Component /> : null}
 
-## Development Standards & Best Practices
+// ❌ WRONG - causes "Text strings must be rendered within <Text>" errors
+{isVisible && <Component />}
+```
 
-### 📁 **File Naming Convention**
+## Core Services
 
-The project follows a consistent naming pattern across all file types:
+### ConfigurationContext.tsx
+Global state management for settings and app configuration.
 
-#### **Components & Screens** - `PascalCase`
-- React components use PascalCase for both file names and component names
-- Examples: `SettingBlock.tsx`, `ColorEditor.tsx`, `AnimatedDots.tsx`
-- Screen components follow the same pattern: `Settings.tsx`, `Welcome.tsx`
+### ApiService.ts
+Centralized hardware API communication with error handling.
 
-#### **Services & Utilities** - `PascalCase`
-- Service classes use PascalCase for consistency with components
-- Examples: `ApiService.ts`, `SettingsService.ts`
+### SettingsService.ts
+FileSystem persistence for settings data.
 
-#### **Interfaces & Types** - `PascalCase`
-- TypeScript interfaces and type definitions use PascalCase
-- Examples: `SettingInterface.ts`
-- Interface names should be descriptive: `Setting` interface in `SettingInterface.ts`
+## Component Reference
 
-#### **Hooks** - `camelCase`
-- Custom React hooks use camelCase starting with "use"
-- Examples: `useDebounce.ts`
-- Hook function names match file names: `useDebounce()` function
+### Animation Components
+- **AnimatedDots.tsx** - Real-time animation preview with 12 patterns
+- **ColorDots.tsx** - LED grid display (static/interactive modes)
 
-#### **Configuration & Constants** - `camelCase`
-- Configuration files and constants use camelCase
-- Examples: `constants.ts`, `patterns.ts`, `defaults.ts`
-- Export names use SCREAMING_SNAKE_CASE for constants: `FLASHING_PATTERNS`, `API_ENDPOINTS`
+### UI Components  
+- **SettingBlock.tsx** - Setting display with full/compact layouts
+- **Button Components** - Unified button architecture in `components/buttons/`
+- **HexKeyboard.tsx** - Custom hex input modal
+- **WelcomeTutorial.tsx** - First-time user onboarding
 
-#### **Context** - `PascalCase`
-- React Context files use PascalCase
-- Examples: `ConfigurationContext.tsx`
-- Context names should end with "Context": `ConfigurationContext`
+### Utilities
+- **useDebounce.ts** - Input throttling hook
+- **settingUtils.ts** - Stable key generation
+
+## Data Flow
+
+**Persistence:** FileSystem → Context → Components → API → Hardware
+**Navigation:** Welcome → Settings → ChooseModification → [ColorEditor | FlashingPatternEditor]
+
+## Key Debugging Rules
+
+1. **Never use array indices for React keys** - always use `getStableSettingId()`
+2. **No logical AND (`&&`) in JSX** - use ternary operators
+3. **Always use `useDebounce`** for input throttling
+4. **No DOM IDs in React Native** - remove all `id` props
+5. **Use SharedStyles constants** for all styling
+
+## Animation Patterns (0-11)
+- Stuck in a Blender, Smolder, The Piano Man, Feel the Funk, Decay, Cortez, Still, The Underground, Berghain Bitte, Lapis Lazuli, Medusa, State of Trance
+
+## API Endpoints
+- `POST /api/config` - Send configuration
+- `GET /api/status` - LED status  
+- `GET /api/led/on|off` - LED control
 
 ### 🧩 **Component Creation Guidelines**
 

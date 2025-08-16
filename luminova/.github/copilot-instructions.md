@@ -13,7 +13,7 @@
 - You often place your code fixes inside import statements. Stop doing that.
 - SLIDERS NEED THROTTLED FOR ANDROID
 - THIS CODEBASE USES EXPO-AUDIO, DO NOT SUGGEST USING EXPO-AV AS IT IS DEPRECATED BY SDK 53.
-- Your terminal default path is C:/Users/frisk/Documents/T6_25/Capstone/Luminova_Controller/react-code>
+- Your terminal default path is C:/Users/frisk/Documents/T6_25/Capstone/Luminova_Controller/luminova>
     - You do not need to navigate to this path to suggest commands.
 - **LINTER COMMAND**: Use `npm run format-lint` to run the linter and formatter
 - IF I TELL YOU SOMETHING IS BROKEN, YOU MUST FIX IT. THE SOLUTION IS NEVER EVER EVER TO DELETE IT.

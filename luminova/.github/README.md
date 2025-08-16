@@ -19,7 +19,7 @@ React Native LED controller app for managing custom lighting patterns through RE
 - **[docs/src/SRC.md](./docs/src/SRC.md)** - Source code architecture overview
 
 ```
-react-code/
+luminova/
 ├── src/                          # Main application code
 │   ├── components/               # Reusable UI components
 │   │   ├── animations/          # Animation-specific components

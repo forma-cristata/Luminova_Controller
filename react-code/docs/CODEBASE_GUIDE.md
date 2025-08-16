@@ -557,6 +557,21 @@ Welcome → Settings → ChooseModification → [ColorEditor | FlashingPatternEd
   - Modal overlay with semi-transparent background
 - **Styling**: Consistent with app theme using COLORS, FONTS, and COMMON_STYLES
 
+#### `src/components/ui/HexKeyboard.tsx`
+- **Purpose**: Custom modal keyboard for hexadecimal color input
+- **Features**:
+  - **Modal Interface**: Slide-up modal with semi-transparent overlay
+  - **Hex Keys Grid**: 4x4 grid with all hexadecimal digits (0-9, A-F)
+  - **Live Preview**: Real-time display of current hex value with placeholders
+  - **Action Buttons**: Backspace, Clear, and Done actions
+  - **Touch Dismissal**: Tap outside modal to close
+- **Integration**:
+  - Used in ColorEditor screen for hex input
+  - Replaces default TextInput keyboard for better hex entry experience
+  - Follows established Button component patterns for consistency
+- **Props**: `visible`, `onClose`, `onKeyPress`, `onBackspace`, `onClear`, `currentValue`
+- **Styling**: Uses SharedStyles Button components and COMMON_STYLES patterns
+
 #### `src/components/InfoButton.tsx`
 - **Purpose**: Reusable info button across all screens
 - **Design**: Consistent positioning and styling

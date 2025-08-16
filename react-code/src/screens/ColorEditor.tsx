@@ -30,6 +30,7 @@ import BackButton from "@/src/components/ui/buttons/BackButton";
 import ColorButton from "@/src/components/ui/buttons/ColorButton";
 import ColorDots from "@/src/components/color-picker/ColorDots";
 import DismissKeyboardView from "@/src/components/ui/DismissKeyboardView";
+import HexKeyboard from "@/src/components/ui/HexKeyboard";
 import HueSliderBackground from "@/src/components/color-picker/HueSliderBackground";
 import InfoButton from "@/src/components/ui/buttons/InfoButton";
 import RandomizeButton from "@/src/components/ui/buttons/RandomizeButton";
@@ -60,6 +61,7 @@ export default function ColorEditor({ navigation, route }: any) {
 	const debouncedHexInput = useDebounce(hexInput, 200);
 	const [colorHistory, setColorHistory] = useState<string[][]>([]);
 	const [hasChanges, setHasChanges] = useState(isNew);
+	const [hexKeyboardVisible, setHexKeyboardVisible] = useState(false);
 
 	const startY = useSharedValue(0);
 	const startX = useSharedValue(0);
@@ -219,6 +221,37 @@ export default function ColorEditor({ navigation, route }: any) {
 
 	const handleHexInput = (text: string) => {
 		setHexInput(text);
+	};
+
+	const handleHexKeyPress = (key: string) => {
+		if (hexInput.length < 6) {
+			const newHex = hexInput + key;
+			setHexInput(newHex);
+			if (newHex.length === 6) {
+				applyHexColor(`#${newHex}`);
+			}
+		}
+	};
+
+	const handleHexBackspace = () => {
+		if (hexInput.length > 0) {
+			const newHex = hexInput.slice(0, -1);
+			setHexInput(newHex);
+			if (newHex.length === 6) {
+				applyHexColor(`#${newHex}`);
+			}
+		}
+	};
+
+	const handleHexClear = () => {
+		setHexInput("");
+	};
+
+	const openHexKeyboard = () => {
+		if (selectedDot !== null) {
+			Keyboard.dismiss();
+			setHexKeyboardVisible(true);
+		}
 	};
 
 	const applyHexColor = (hexValue: string) => {
@@ -508,23 +541,19 @@ export default function ColorEditor({ navigation, route }: any) {
 								]}
 							>
 								<Text style={COMMON_STYLES.sliderText}>Hex: #</Text>
-								<TextInput
-									style={[styles.hexInput]}
-									value={hexInput.toUpperCase()}
-									onChangeText={(text) => {
-										const hex = text.slice(0, 6).replace(/[^0-9A-Fa-f]/g, "");
-										handleHexInput(hex);
-									}}
-									placeholder="FFFFFF"
-									placeholderTextColor={COLORS.PLACEHOLDER}
-									editable={selectedDot !== null}
-									onBlur={() => {
-										Keyboard.dismiss();
-									}}
-									autoCapitalize="characters"
-									keyboardAppearance="dark"
-									keyboardType="default"
-								/>
+								<TouchableOpacity
+									style={[styles.hexInput, styles.hexInputTouchable]}
+									onPress={openHexKeyboard}
+									disabled={selectedDot === null}
+									activeOpacity={0.7}
+								>
+									<Text style={[
+										styles.hexInputText,
+										{ color: hexInput ? COLORS.WHITE : COLORS.PLACEHOLDER }
+									]}>
+										{hexInput.toUpperCase() || "FFFFFF"}
+									</Text>
+								</TouchableOpacity>
 								<View style={styles.colorButtons}>
 									<ColorButton
 										color="white"
@@ -699,6 +728,14 @@ export default function ColorEditor({ navigation, route }: any) {
 						</SafeAreaView>
 					</Animated.View>
 				</PanGestureHandler>
+				<HexKeyboard
+					visible={hexKeyboardVisible}
+					onClose={() => setHexKeyboardVisible(false)}
+					onKeyPress={handleHexKeyPress}
+					onBackspace={handleHexBackspace}
+					onClear={handleHexClear}
+					currentValue={hexInput}
+				/>
 			</GestureHandlerRootView>
 		</TouchableWithoutFeedback>
 	);
@@ -743,6 +780,22 @@ const styles = StyleSheet.create({
 		paddingVertical: 4,
 		paddingHorizontal: 8,
 		minWidth: width * 0.3,
+	},
+	hexInputTouchable: {
+		borderWidth: 1,
+		borderColor: COLORS.BORDER,
+		backgroundColor: "rgba(255, 255, 255, 0.1)",
+		borderRadius: 8 * scale,
+		justifyContent: "center",
+		alignItems: "center",
+		minHeight: 40 * scale,
+	},
+	hexInputText: {
+		color: COLORS.WHITE,
+		fontSize: 22 * scale,
+		fontFamily: FONTS.CLEAR,
+		textTransform: "uppercase",
+		letterSpacing: 3,
 	},
 	titleContainer: {
 		flexDirection: "row",

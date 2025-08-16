@@ -29,7 +29,6 @@ import ActionButton from "@/src/components/ui/buttons/ActionButton";
 import BackButton from "@/src/components/ui/buttons/BackButton";
 import ColorButton from "@/src/components/ui/buttons/ColorButton";
 import ColorDots from "@/src/components/color-picker/ColorDots";
-import DismissKeyboardView from "@/src/components/ui/DismissKeyboardView";
 import HexKeyboard from "@/src/components/ui/HexKeyboard";
 import HueSliderBackground from "@/src/components/color-picker/HueSliderBackground";
 import InfoButton from "@/src/components/ui/buttons/InfoButton";
@@ -217,10 +216,6 @@ export default function ColorEditor({ navigation, route }: any) {
 			setBrightness(hsv.v);
 			setSaturation(hsv.s);
 		}
-	};
-
-	const handleHexInput = (text: string) => {
-		setHexInput(text);
 	};
 
 	const handleHexKeyPress = (key: string) => {
@@ -542,7 +537,7 @@ export default function ColorEditor({ navigation, route }: any) {
 							>
 								<Text style={COMMON_STYLES.sliderText}>Hex: #</Text>
 								<TouchableOpacity
-									style={[styles.hexInput, styles.hexInputTouchable]}
+									style={[styles.hexInput]}
 									onPress={openHexKeyboard}
 									disabled={selectedDot === null}
 									activeOpacity={0.7}
@@ -774,28 +769,24 @@ const styles = StyleSheet.create({
 		fontSize: 22 * scale,
 		fontFamily: FONTS.CLEAR,
 		textTransform: "uppercase",
-		letterSpacing: 3,
+		letterSpacing: 2,
 		borderBottomWidth: 1,
 		borderBottomColor: COLORS.WHITE,
 		paddingVertical: 4,
 		paddingHorizontal: 8,
-		minWidth: width * 0.3,
-	},
-	hexInputTouchable: {
-		borderWidth: 1,
-		borderColor: COLORS.BORDER,
-		backgroundColor: "rgba(255, 255, 255, 0.1)",
-		borderRadius: 8 * scale,
+		width: 120 * scale,
+		textAlign: "center",
+		backgroundColor: "transparent",
 		justifyContent: "center",
 		alignItems: "center",
-		minHeight: 40 * scale,
 	},
 	hexInputText: {
 		color: COLORS.WHITE,
 		fontSize: 22 * scale,
 		fontFamily: FONTS.CLEAR,
 		textTransform: "uppercase",
-		letterSpacing: 3,
+		letterSpacing: 2,
+		textAlign: "center",
 	},
 	titleContainer: {
 		flexDirection: "row",

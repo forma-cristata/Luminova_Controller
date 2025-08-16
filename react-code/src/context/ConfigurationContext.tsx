@@ -1,3 +1,4 @@
+import React from "react";
 import type { Setting } from "@/src/types/SettingInterface";
 import {
 	createContext,

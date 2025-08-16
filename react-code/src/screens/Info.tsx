@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
 	Alert,
 	Linking,
@@ -20,55 +20,7 @@ import { FirstTimeUserService } from "@/src/services/FirstTimeUserService";
 import React from "react";
 
 export default function Info() {
-	const [_textColor, setTextColor] = useState("#ffffff");
 	const [debugTapCount, setDebugTapCount] = useState(0);
-
-	useEffect(() => {
-		const animationColors = [
-			"#ff0000",
-			"#000000",
-			"#ff4400",
-			"#000000",
-			"#ff6a00",
-			"#000000",
-			"#ff9100",
-			"#000000",
-			"#ffee00",
-			"#000000",
-			"#00ff1e",
-			"#000000",
-			"#00ff44",
-			"#000000",
-			"#00ff95",
-			"#000000",
-			"#00ffff",
-			"#000000",
-			"#0088ff",
-			"#000000",
-			"#0000ff",
-			"#000000",
-			"#8800ff",
-			"#000000",
-			"#d300ff",
-			"#000000",
-			"#ff00BB",
-			"#000000",
-			"#ff0088",
-			"#000000",
-			"#ff0031",
-			"#000000",
-		];
-		let colorIndex = 0;
-
-		const colorInterval = setInterval(() => {
-			setTextColor(animationColors[colorIndex]);
-			colorIndex = (colorIndex + 1) % animationColors.length;
-		}, 10);
-
-		return () => {
-			clearInterval(colorInterval);
-		};
-	}, []);
 
 	const sendFeedback = () => {
 		const phoneNumber = "720-665-3101";
@@ -184,8 +136,8 @@ export default function Info() {
 				"Randomize colors using the button to the left of the setting's name.",
 				"Sort colors by hue using the sort button to the right of the setting's name.",
 				"Edit the setting name using the text input at the top of the page.",
-				"Return to original values using 'Reset'.",
-				"Save changes permanently using 'Save'.",
+				"Return to original values using 'Reset' (available in both editors).",
+				"Save changes permanently using 'Save' (available in both editors).",
 				"Preview changes temporarily using 'Preview'. This will send the customized setting to your device without saving. The original setting will be restored when you back out or save.",
 				"Tap outside text inputs to dismiss the keyboard on any screen.",
 			],
@@ -197,8 +149,6 @@ export default function Info() {
 				"Adjust speed using the BPM slider to match music tempo.",
 				"Use the metronome button to measure live audio BPM. This component requires four clear beats to register and uses volume changes to detect beats, so it works best with music that has distinct percussion. Unfortunately, it cannot measure music playing from the same device running the app, but this feature will be implemented in the future as soon as I figure it out 😉. A word of advice says to slap your thigh four or five times if you want something very specific.",
 				"Edit the setting name using the text input at the top of this page.",
-				"Return to original values using 'Reset'.",
-				"Save changes permanently using 'Save'.",
 			],
 		},
 
@@ -270,14 +220,6 @@ const styles = StyleSheet.create({
 		backgroundColor: "#000000",
 		padding: 20,
 	},
-	title: {
-		color: "white",
-		fontFamily: "Thesignature",
-		fontSize: 50,
-		textAlign: "center",
-		marginBottom: 15,
-		marginTop: 50,
-	},
 	scrollView: {
 		flex: 1,
 		width: "100%",
@@ -285,10 +227,6 @@ const styles = StyleSheet.create({
 	},
 	scrollContent: {
 		paddingBottom: 40,
-	},
-	section: {
-		marginBottom: 20,
-		paddingHorizontal: 15,
 	},
 	sectionHeaderWrapper: {
 		position: "relative",
@@ -361,8 +299,5 @@ const styles = StyleSheet.create({
 		fontSize: 18,
 		textAlign: "center",
 		marginBottom: 10,
-	},
-	spacer: {
-		height: 10,
 	},
 });

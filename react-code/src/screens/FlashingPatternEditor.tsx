@@ -22,7 +22,7 @@ import BPMMeasurer from "@/src/components/audio/BPMMeasurer";
 import DismissKeyboardView from "@/src/components/ui/DismissKeyboardView";
 import InfoButton from "@/src/components/ui/buttons/InfoButton";
 import MetronomeButton from "@/src/components/ui/buttons/MetronomeButton";
-import Picker from "@/src/components/color-picker/Picker";
+import Picker, { type PickerRef } from "@/src/components/color-picker/Picker";
 import RandomizeButton from "@/src/components/ui/buttons/RandomizeButton";
 import { COLORS, COMMON_STYLES, FONTS } from "@/src/styles/SharedStyles";
 import { ANIMATION_PATTERNS } from "@/src/configurations/patterns";
@@ -50,9 +50,9 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 	const [initialFlashingPattern] = React.useState(setting.flashingPattern);
 
 	const [BPM, setBPM] = React.useState(0);
-	const debouncedBPM = useDebounce(BPM, 200);
+	const debouncedBPM = useDebounce(BPM, 100);
 	const [delayTime, setDelayTime] = React.useState(setting.delayTime);
-	const debouncedDelayTime = useDebounce(delayTime, 200);
+	const debouncedDelayTime = useDebounce(delayTime, 100);
 	const [flashingPattern, setFlashingPattern] = React.useState(
 		setting.flashingPattern,
 	);
@@ -60,6 +60,7 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 
 	const [previewMode, setPreviewMode] = useState(false);
 	const [showBPMMeasurer, setShowBPMMeasurer] = useState(false);
+	const pickerRef = React.useRef<PickerRef>(null);
 
 	// Name editing state (now used for both new and existing settings)
 	const [settingName, setSettingName] = useState(setting.name);
@@ -89,41 +90,42 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 		return Math.round(60000 / (64 * bpm));
 	};
 
-	// Throttle expensive operations but keep slider responsive
-	const throttledSetDelayTime = React.useCallback(
-		React.useMemo(() => {
-			let timeoutId: ReturnType<typeof setTimeout> | null = null;
-			return (bpm: number) => {
-				if (timeoutId) {
-					clearTimeout(timeoutId);
-				}
-				timeoutId = setTimeout(() => {
-					const newDelayTime = calculateDelayTime(bpm);
-					setDelayTime(newDelayTime);
-				}, 50);
-			};
-		}, []),
-		[],
-	);
+	// Update delayTime when debounced BPM changes
+	useEffect(() => {
+		if (debouncedBPM > 0) {
+			const newDelayTime = calculateDelayTime(debouncedBPM);
+			setDelayTime(newDelayTime);
+			setHasChanges(true);
+		}
+	}, [debouncedBPM]);
+
+	// Track flashing pattern changes
+	useEffect(() => {
+		if (flashingPattern !== initialFlashingPattern) {
+			setHasChanges(true);
+		}
+	}, [flashingPattern, initialFlashingPattern]);
 
 	useEffect(() => {
 		const initialBpm = parseFloat(calculateBPM(setting.delayTime));
 		setBPM(Number.isNaN(initialBpm) ? 0 : initialBpm);
 	}, [setting.delayTime]); // Only depend on setting.delayTime, not calculateBPM
-	const modeDots = () => {
+
+	// Memoized animated dots that only updates when debounced values change
+	const modeDots = React.useMemo(() => {
 		const newSetting = {
 			...setting,
-			delayTime: debouncedDelayTime, // Use throttled/debounced value for consistency
-			flashingPattern: flashingPattern,
+			delayTime: debouncedDelayTime, // Use debounced value
+			flashingPattern: debouncedFlashingPattern, // Use debounced value
 		};
 		return (
 			<AnimatedDots
-				key={`${debouncedDelayTime}-${flashingPattern}`}
+				key={`${debouncedDelayTime}-${debouncedFlashingPattern}`}
 				navigation={navigation}
 				setting={newSetting}
 			/>
 		);
-	};
+	}, [debouncedDelayTime, debouncedFlashingPattern, setting.colors, navigation]);
 
 	const handleCancel = () => {
 		unPreviewAPI();
@@ -142,23 +144,33 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 			setFlashingPattern(initialFlashingPattern);
 			setSettingName(setting.name); // Reset name
 			setNameError(null); // Clear name error
+			setHasChanges(false); // Reset the changes flag
+
+			// Refocus the picker to the reset pattern
+			setTimeout(() => {
+				pickerRef.current?.refocus();
+			}, 200); // Small delay to ensure state has updated
 		}
 	};
 
 	const handleSave = async () => {
-		setting.delayTime = Math.round(delayTime);
-		setting.flashingPattern = flashingPattern;
-		setting.name = settingName; // Update name for both new and existing settings
+		// Create a new setting object to avoid mutating the original
+		const updatedSetting = {
+			...setting,
+			delayTime: Math.round(delayTime),
+			flashingPattern: flashingPattern,
+			name: settingName,
+		};
 
 		if (isNew) {
 			const settings = await SettingsService.loadSettings();
-			const updatedSettings = [...settings, setting];
+			const updatedSettings = [...settings, updatedSetting];
 			await SettingsService.saveSettings(updatedSettings);
 
 			const newIndex = updatedSettings.length - 1;
 			setLastEdited(newIndex.toString());
 
-			navigation.navigate("Settings", { setting });
+			navigation.navigate("Settings", { setting: updatedSetting });
 		} else {
 			const updatedSetting = {
 				...setting,
@@ -219,7 +231,6 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 							// Random BPM between 40 and 180
 							const randomBPM = Math.floor(Math.random() * (180 - 40) + 40);
 							setBPM(randomBPM);
-							setDelayTime(calculateDelayTime(randomBPM));
 
 							// Random pattern from valid animation patterns (excluding STILL)
 							const randomPattern =
@@ -227,6 +238,7 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 								Math.floor(Math.random() * ANIMATION_PATTERNS.length)
 								];
 							setFlashingPattern(randomPattern);
+							setHasChanges(true);
 						}}
 					/>
 					<View style={styles.nameInputContainer}>
@@ -254,9 +266,10 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 						}}
 					/>
 				</View>
-				<View style={styles.dotPadding}>{modeDots()}</View>
+				<View style={styles.dotPadding}>{modeDots}</View>
 				<View style={styles.fpContainer}>
 					<Picker
+						ref={pickerRef}
 						navigation={navigation}
 						setting={setting}
 						selectedPattern={debouncedFlashingPattern}
@@ -276,7 +289,7 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 								value={BPM}
 								onValueChange={(value) => {
 									setBPM(value);
-									throttledSetDelayTime(value);
+									setHasChanges(true);
 								}}
 								minimumTrackTintColor="#ff0000"
 								maximumTrackTintColor={COLORS.WHITE}
@@ -330,7 +343,7 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 					onClose={() => setShowBPMMeasurer(false)}
 					onBPMDetected={(bpm) => {
 						setBPM(bpm);
-						setDelayTime(calculateDelayTime(bpm));
+						setHasChanges(true);
 					}}
 				/>
 			</SafeAreaView>

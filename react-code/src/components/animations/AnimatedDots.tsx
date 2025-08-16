@@ -20,7 +20,7 @@ const LIGHT_COUNT = 16;
 
 const black = "#000000";
 
-export default function AnimatedDots({ setting, layout = "linear" }: AnimatedDotsProps) {
+const AnimatedDots = React.memo(function AnimatedDots({ setting, layout = "linear" }: AnimatedDotsProps) {
 	const COLOR_COUNT = setting.colors.length;
 
 	const animationRef = useRef<boolean>(false);
@@ -850,7 +850,17 @@ export default function AnimatedDots({ setting, layout = "linear" }: AnimatedDot
 			)}
 		</SafeAreaView>
 	);
-}
+}, (prevProps, nextProps) => {
+	// Only re-render if essential animation properties change
+	return (
+		prevProps.setting.delayTime === nextProps.setting.delayTime &&
+		prevProps.setting.flashingPattern === nextProps.setting.flashingPattern &&
+		JSON.stringify(prevProps.setting.colors) === JSON.stringify(nextProps.setting.colors) &&
+		prevProps.layout === nextProps.layout
+	);
+});
+
+export default AnimatedDots;
 
 const styles = StyleSheet.create({
 	background: {

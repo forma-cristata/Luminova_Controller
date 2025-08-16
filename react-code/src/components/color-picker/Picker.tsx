@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState, useImperativeHandle, forwardRef } from "react";
 import {
 	ScrollView,
 	StyleSheet,
@@ -11,15 +11,51 @@ import { COLORS, FONTS, DIMENSIONS } from "@/src/styles/SharedStyles";
 
 const { SCALE: scale } = DIMENSIONS;
 
-export default function Picker({
+export interface PickerRef {
+	refocus: () => void;
+}
+
+interface PickerProps {
+	setting: any;
+	selectedPattern: string;
+	setSelectedPattern: (pattern: string) => void;
+	navigation?: any;
+}
+
+const Picker = forwardRef<PickerRef, PickerProps>(({
 	setting,
 	selectedPattern,
 	setSelectedPattern,
-}: any) {
+}, ref) => {
 	const scrollViewRef = useRef<ScrollView>(null);
+	const [isInitialLoad, setIsInitialLoad] = useState(true);
+
+	const scrollToSelectedPattern = () => {
+		if (scrollViewRef.current) {
+			const selectedIndex = FLASHING_PATTERNS.findIndex(
+				(p) => p.id === selectedPattern,
+			);
+			if (selectedIndex !== -1) {
+				const itemHeight = 12 * 2 * scale + 25 * scale + 2;
+				setTimeout(() => {
+					scrollViewRef.current?.scrollTo({
+						y: selectedIndex * itemHeight - 0.5 * itemHeight,
+						animated: true,
+					});
+				}, 100);
+			}
+		}
+	};
+
+	useImperativeHandle(ref, () => ({
+		refocus: () => {
+			scrollToSelectedPattern();
+		},
+	}));
 
 	useEffect(() => {
-		if (scrollViewRef.current) {
+		// Only auto-scroll on initial load, not on subsequent pattern changes
+		if (scrollViewRef.current && isInitialLoad) {
 			const selectedIndex = FLASHING_PATTERNS.findIndex(
 				(p) => p.id === selectedPattern,
 			);
@@ -30,14 +66,17 @@ export default function Picker({
 						y: selectedIndex * itemHeight - 0.5 * itemHeight,
 						animated: false,
 					});
+					setIsInitialLoad(false); // Mark initial load as complete
 				}, 100);
+			} else {
+				setIsInitialLoad(false); // Mark initial load as complete even if no pattern found
 			}
 		}
-	}, [selectedPattern]);
+	}, [selectedPattern, isInitialLoad]);
 
 	const handlePatternSelect = (patternId: string) => {
 		setSelectedPattern(patternId);
-		setting.flashingPattern = patternId;
+		// Remove direct mutation - let parent component handle the setting update
 	};
 
 	return (
@@ -71,7 +110,10 @@ export default function Picker({
 			</View>
 		</View>
 	);
-}
+});
+
+Picker.displayName = 'Picker';
+
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
@@ -113,3 +155,5 @@ const styles = StyleSheet.create({
 		color: COLORS.WHITE,
 	},
 });
+
+export default Picker;

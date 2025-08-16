@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef } from "react";
+import React from "react";
+import { useState, useEffect, useRef } from "react";
 import {
     View,
     TouchableOpacity,
@@ -89,7 +90,7 @@ export default function LedToggle({
 
     useEffect(() => {
         thumbPosition.setValue(isEnabled ? 2 : 28);
-    }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    }, [isEnabled, thumbPosition.setValue]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const toggleSwitch = async () => {
         if (isLoading) {

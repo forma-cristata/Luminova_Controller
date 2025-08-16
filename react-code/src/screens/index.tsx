@@ -14,9 +14,9 @@ import React from "react";
 export type RootStackParamList = {
 	Welcome: undefined;
 	Settings: undefined;
-	ChooseModification: { setting: Setting };
-	ColorEditor: { setting: Setting; isNew?: boolean; originalName?: string };
-	FlashingPatternEditor: { setting: Setting; isNew?: boolean };
+	ChooseModification: { setting: Setting; settingIndex?: number };
+	ColorEditor: { setting: Setting; isNew?: boolean; originalName?: string; settingIndex?: number };
+	FlashingPatternEditor: { setting: Setting; isNew?: boolean; settingIndex?: number };
 	Info: undefined;
 };
 

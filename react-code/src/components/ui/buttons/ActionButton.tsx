@@ -1,5 +1,4 @@
 import React from "react";
-import { ViewStyle, TextStyle } from "react-native";
 import Button, { type BaseButtonProps } from "@/src/components/ui/buttons/Button";
 import { COLORS } from "@/src/styles/SharedStyles";
 

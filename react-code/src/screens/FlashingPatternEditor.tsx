@@ -10,7 +10,6 @@ import {
 	StyleSheet,
 	Text,
 	TextInput,
-	TouchableOpacity,
 	View,
 	TouchableWithoutFeedback,
 } from "react-native";
@@ -19,7 +18,6 @@ import ActionButton from "@/src/components/ui/buttons/ActionButton";
 import AnimatedDots from "@/src/components/animations/AnimatedDots";
 import BackButton from "@/src/components/ui/buttons/BackButton";
 import BPMMeasurer from "@/src/components/audio/BPMMeasurer";
-import DismissKeyboardView from "@/src/components/ui/DismissKeyboardView";
 import InfoButton from "@/src/components/ui/buttons/InfoButton";
 import MetronomeButton from "@/src/components/ui/buttons/MetronomeButton";
 import Picker, { type PickerRef } from "@/src/components/color-picker/Picker";
@@ -95,7 +93,7 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 		if (debouncedSettingName.trim()) {
 			validateName();
 		}
-	}, [debouncedSettingName, setting.name, isNew, settingIndex]);
+	}, [debouncedSettingName, setting.name, isNew, settingIndex, setNameError]);
 
 	const calculateBPM = (delayTime: number): string => {
 		return (60000 / (64 * delayTime)).toFixed(0);
@@ -140,7 +138,7 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 				setting={newSetting}
 			/>
 		);
-	}, [debouncedDelayTime, debouncedFlashingPattern, setting.colors, navigation]);
+	}, [debouncedDelayTime, debouncedFlashingPattern, setting.colors, navigation, setting]);
 
 	const handleCancel = () => {
 		unPreviewAPI();
@@ -193,7 +191,7 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 				delayTime: Math.round(delayTime),
 				flashingPattern: flashingPattern,
 			};
-			const updatedSettings = await SettingsService.updateSetting(
+			const _updatedSettings = await SettingsService.updateSetting(
 				settingIndex,
 				updatedSetting,
 			);

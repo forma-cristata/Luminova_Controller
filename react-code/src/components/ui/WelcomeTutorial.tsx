@@ -5,11 +5,8 @@ import {
     Text,
     StyleSheet,
     TouchableOpacity,
-    Dimensions,
     SafeAreaView,
-    ScrollView,
     Image,
-    Animated,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { COLORS, FONTS, COMMON_STYLES, DIMENSIONS } from "@/src/styles/SharedStyles";
@@ -110,7 +107,7 @@ export default function WelcomeTutorial({ visible, onComplete }: WelcomeTutorial
         onComplete();
     };
 
-    const handleDemoToggle = () => {
+    const _handleDemoToggle = () => {
         // Cycle through the three states: connected+off -> connected+on -> disconnected -> back to connected+off
         if (demoIsShelfConnected && !demoIsEnabled) {
             // Green Moon -> White Sun
@@ -231,9 +228,9 @@ export default function WelcomeTutorial({ visible, onComplete }: WelcomeTutorial
 
                                 {/* Progress Dots - centered */}
                                 <View style={styles.dotsContainer}>
-                                    {tutorialPages.map((_, index) => (
+                                    {tutorialPages.map((page, index) => (
                                         <View
-                                            key={index}
+                                            key={`tutorial-dot-${page.title}-${index}`}
                                             style={[
                                                 styles.dot,
                                                 index === currentPage && styles.activeDot

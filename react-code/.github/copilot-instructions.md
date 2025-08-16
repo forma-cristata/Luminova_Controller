@@ -2,6 +2,10 @@
 
 ## Core Permissions and Protocols
 ### 🔍 **General Keep-in-minds**
+- NEVER RUN THIS COMMAND EVER: "npx @biomejs/biome lint --write --unsafe"
+- Importing react should look like import React from "react"; tHE LINTER IS OFTEN WRONG ABOUT THIS. IF YOU COULD STOP THE LINTER FROM COMPLAINING ABOUT IT THAT WOULD BE GREAT.
+- tHEREFORE STOP DOING THIS, JUST LEAVE THE IMPORT IF NEEDED IGNORE THE LINTER: There is JSX, so React is needed. The linter might be incorrectly flagging this. Let me try removing it to confirm:..... I need to add React back:
+- You often place your code fixes inside import statements. Stop doing that.
 - SLIDERS NEED THROTTLED FOR ANDROID
 - THIS CODEBASE USES EXPO-AUDIO, DO NOT SUGGEST USING EXPO-AV AS IT IS DEPRECATED BY SDK 53.
 - Your terminal default path is C:/Users/frisk/Documents/T6_25/Capstone/Luminova_Controller/react-code>

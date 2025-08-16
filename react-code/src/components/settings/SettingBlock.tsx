@@ -2,17 +2,17 @@ import React from "react";
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import AnimatedDots from "@/src/components/animations/AnimatedDots";
 import ColorDots from "@/src/components/color-picker/ColorDots";
-import EditButton from "@/src/components/ui/buttons/EditButton";
 import FlashButton from "@/src/components/ui/buttons/FlashButton";
 import type { Setting } from "@/src/types/SettingInterface";
-import { COLORS, COMMON_STYLES, FONTS } from "@/src/styles/SharedStyles";
+import { COMMON_STYLES } from "@/src/styles/SharedStyles";
 import { useConfiguration } from "@/src/context/ConfigurationContext";
 import { getStableSettingId } from "@/src/utils/settingUtils";
+import type { ViewStyle } from "react-native";
 
 interface SettingItemProps {
-	navigation: any;
+	navigation: any; // TODO: Type this properly with navigation prop types
 	setting: Setting;
-	style: any;
+	style: ViewStyle;
 	layout: "full" | "compact";
 	isAnimated: boolean;
 	index?: number;
@@ -40,13 +40,39 @@ const SettingBlock = ({
 }: SettingItemProps) => {
 	const { setLastEdited } = useConfiguration();
 
+	// Generate stable ID for the setting using utility function (even for null settings)
+	const stableId = setting ? getStableSettingId(setting) : 'null-setting';
+
+	// Memoize the dots rendering to prevent unnecessary re-renders
+	const dotsRendered = React.useMemo(() => {
+		// Additional safety check to ensure setting has required properties
+		if (!setting || !setting.colors) {
+			return null;
+		}
+
+		return isAnimated ? (
+			<AnimatedDots
+				key={`animated-${stableId}`}
+				navigation={navigation}
+				setting={setting}
+			/>
+		) : (
+			<ColorDots
+				key={`static-${stableId}`}
+				colors={setting.colors}
+			/>
+		);
+	}, [
+		isAnimated,
+		stableId,
+		setting,
+		navigation,
+	]);
+
 	// Early return if setting is null, undefined, or missing required properties
 	if (!setting || !setting.name || !setting.colors) {
 		return null;
 	}
-
-	// Generate stable ID for the setting using utility function
-	const stableId = getStableSettingId(setting);
 
 	const handleEdit = () => {
 		setLastEdited(index?.toString() ?? null);
@@ -85,34 +111,6 @@ const SettingBlock = ({
 	};
 
 	const { text: displayTitle, fontSize: titleFontSize } = processTitle(setting.name);
-	// Memoize the dots rendering to prevent unnecessary re-renders
-	const dotsRendered = React.useMemo(() => {
-		// Additional safety check to ensure setting has required properties
-		if (!setting || !setting.colors) {
-			return null;
-		}
-
-		return isAnimated ? (
-			<AnimatedDots
-				key={`animated-${stableId}`}
-				navigation={navigation}
-				setting={setting}
-			/>
-		) : (
-			<ColorDots
-				key={`static-${stableId}`}
-				colors={setting.colors}
-			/>
-		);
-	}, [
-		isAnimated,
-		stableId,
-		setting?.name,
-		setting?.colors,
-		setting?.delayTime,
-		setting?.flashingPattern,
-		navigation,
-	]);
 
 	return (
 		<>

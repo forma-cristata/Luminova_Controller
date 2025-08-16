@@ -1,4 +1,4 @@
-import type React from "react";
+import React from "react";
 import { useState, useEffect, useRef } from "react";
 import {
     View,
@@ -7,8 +7,6 @@ import {
     StyleSheet,
     Keyboard,
     Alert,
-    Platform,
-    Dimensions,
 } from "react-native";
 import { ApiService } from "@/src/services/ApiService";
 import { IpConfigService } from "@/src/services/IpConfigService";
@@ -267,7 +265,6 @@ export default function IpAddressInput({ onIpSaved }: IpAddressInputProps) {
     );
 }
 
-const { width, height } = Dimensions.get("window");
 const scale = DIMENSIONS.SCALE;
 
 const styles = StyleSheet.create({

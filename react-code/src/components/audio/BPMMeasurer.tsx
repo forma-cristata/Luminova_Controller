@@ -168,7 +168,7 @@ export default function BPMMeasurer({
 			};
 			cleanup();
 		};
-	}, [isVisible, recorder]);
+	}, [isVisible, recorder, status]);
 
 	const handleManualStop = () => {
 		if (detectedBPM) {

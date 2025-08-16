@@ -10,7 +10,7 @@ interface FlashButtonProps extends Omit<BaseButtonProps, "title" | "onPress"> {
 	setting: Setting;
 	onPress?: () => void;
 	onSuccess?: (setting: Setting) => void;
-	onError?: (error: any) => void;
+	onError?: (error: Error) => void;
 }
 
 const FlashButton = React.memo(
@@ -53,7 +53,8 @@ const FlashButton = React.memo(
 
 				// Call error callback if provided
 				if (onError) {
-					onError(error);
+					const errorToPass = error instanceof Error ? error : new Error(String(error));
+					onError(errorToPass);
 				}
 			}
 		};

@@ -1,4 +1,4 @@
-import type React from "react";
+import React from "react";
 import {
     Keyboard,
     TouchableWithoutFeedback,
@@ -11,10 +11,9 @@ interface DismissKeyboardViewProps extends ViewProps {
 
 const DismissKeyboardView: React.FC<DismissKeyboardViewProps> = ({
     children,
-    ...props
 }) => (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-        <>{children}</>
+        {children}
     </TouchableWithoutFeedback>
 );
 

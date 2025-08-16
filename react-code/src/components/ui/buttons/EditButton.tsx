@@ -5,7 +5,7 @@ import { useConfiguration } from "@/src/context/ConfigurationContext";
 import type { Setting } from "@/src/types/SettingInterface";
 
 interface EditButtonProps extends Omit<BaseButtonProps, "title" | "onPress"> {
-	navigation: any;
+	navigation: any; // TODO: Type this properly with navigation prop types
 	setting: Setting;
 	settingIndex?: number;
 	onPress?: () => void;

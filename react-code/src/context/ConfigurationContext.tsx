@@ -1,5 +1,5 @@
 import type { Setting } from "@/src/types/SettingInterface";
-import React, {
+import {
 	createContext,
 	type ReactNode,
 	useContext,

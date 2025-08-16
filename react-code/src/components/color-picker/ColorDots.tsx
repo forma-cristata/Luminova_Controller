@@ -23,11 +23,6 @@ const ColorDots = React.memo(
 			spacing = -7,
 		} = props;
 
-		// Early return with safety check
-		if (!colors || !Array.isArray(colors) || colors.length === 0) {
-			return null;
-		}
-
 		// Generate stable ID for the colors array using hash-based approach
 		const getStableColorsId = (colors: string[]): string => {
 			const content = colors.join(',');
@@ -40,8 +35,7 @@ const ColorDots = React.memo(
 			return `colors-${Math.abs(hash)}`;
 		};
 
-		const colorsId = getStableColorsId(colors);
-
+		const colorsId = getStableColorsId(colors || []);
 		const isInteractive = !!onDotSelect;
 
 		// Memoize scales to prevent unnecessary re-renders
@@ -52,6 +46,11 @@ const ColorDots = React.memo(
 			}
 			return scaleArray;
 		}, [selectedDot, isInteractive]);
+
+		// Early return with safety check
+		if (!colors || !Array.isArray(colors) || colors.length === 0) {
+			return null;
+		}
 
 		const handleDotPress = (index: number) => {
 			if (onDotSelect) {
@@ -90,12 +89,12 @@ const ColorDots = React.memo(
 				...(isInteractive
 					? isBlack
 						? {
-								shadowColor: getFirstNonBlackColor(),
-								shadowOffset: { width: 0, height: 0 },
-								shadowOpacity: 0.6,
-								shadowRadius: 5,
-								elevation: 5,
-							}
+							shadowColor: getFirstNonBlackColor(),
+							shadowOffset: { width: 0, height: 0 },
+							shadowOpacity: 0.6,
+							shadowRadius: 5,
+							elevation: 5,
+						}
 						: {}
 					: {}),
 			};

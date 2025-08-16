@@ -41,7 +41,7 @@ export class ApiService {
 						`HTTP error! status: ${response.status}, message: ${errorBody.message || "Unknown error"
 						}`,
 					);
-				} catch (e) {
+				} catch (_e) {
 					throw new Error(`HTTP error! status: ${response.status}`);
 				}
 			}

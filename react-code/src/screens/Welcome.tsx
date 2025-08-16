@@ -2,7 +2,6 @@ import { useEffect, useState, useRef } from "react";
 import {
 	SafeAreaView,
 	StyleSheet,
-	Text,
 	TouchableWithoutFeedback,
 	Keyboard,
 	View,
@@ -17,9 +16,9 @@ import WelcomeTutorial from "@/src/components/ui/WelcomeTutorial";
 import { COLORS, FONTS } from "@/src/styles/SharedStyles";
 import { useConfiguration } from "@/src/context/ConfigurationContext";
 import { FirstTimeUserService } from "@/src/services/FirstTimeUserService";
-import React from "react";
 import IpAddressInput from "@/src/components/welcome/IpAddressInput";
 import LedToggle from "@/src/components/welcome/LedToggle";
+import React from "react";
 
 export default function Welcome({ navigation }: any) {
 	const { setLastEdited, isShelfConnected, setIsShelfConnected } =

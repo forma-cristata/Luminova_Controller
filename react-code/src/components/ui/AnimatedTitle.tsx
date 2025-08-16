@@ -1,7 +1,6 @@
-import { useEffect, useState } from "react";
-import { type DimensionValue, StyleSheet, Text } from "react-native";
-import { FONTS, COMMON_STYLES } from "@/src/styles/SharedStyles";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { type DimensionValue, Text } from "react-native";
+import { COMMON_STYLES } from "@/src/styles/SharedStyles";
 import { ANIMATION_COLORS } from "@/src/configurations/constants";
 
 interface AnimatedTitleProps {

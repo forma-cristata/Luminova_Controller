@@ -1,14 +1,14 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import React from "react";
-import { StyleSheet, TouchableOpacity } from "react-native";
+import { TouchableOpacity, type ViewStyle } from "react-native";
 import { COMMON_STYLES } from "@/src/styles/SharedStyles";
 
 interface BackButtonProps {
 	beforePress?: () => void | Promise<void>;
 	afterPress?: () => void;
 	onPress?: () => void;
-	style?: any;
+	style?: ViewStyle;
 }
 
 export default function BackButton({

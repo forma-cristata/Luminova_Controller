@@ -122,7 +122,7 @@ const AnimatedDots = React.memo(function AnimatedDots({ setting, layout = "linea
 
 	// Updated animation helper that checks both refs
 
-	const isActive = () => animationRef.current && isComponentActive;
+	const _isActive = () => animationRef.current && isComponentActive;
 
 	// Animation patterns with proper cleanup
 
@@ -812,7 +812,7 @@ const AnimatedDots = React.memo(function AnimatedDots({ setting, layout = "linea
 
 			clearAllTimeouts();
 		};
-	}, [setting]);
+	}, [setting, blenderAnimation, christmasAnimation, clearAllTimeouts, comfortSongAnimation, funkyAnimation, initializeColors, moldAnimation, progressiveAnimation, setAllLeds, stillAnimation, strobeChangeAnimation, technoAnimation, traceManyAnimation, traceOneAnimation, tranceAnimation]);
 
 	return (
 		<SafeAreaView style={styles.background}>

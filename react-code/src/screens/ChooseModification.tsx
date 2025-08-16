@@ -1,3 +1,4 @@
+import React from "react";
 import {
 	SafeAreaView,
 	StyleSheet,
@@ -8,12 +9,15 @@ import AnimatedDots from "@/src/components/animations/AnimatedDots";
 import BackButton from "@/src/components/ui/buttons/BackButton";
 import Button from "@/src/components/ui/buttons/Button";
 import InfoButton from "@/src/components/ui/buttons/InfoButton";
-import React from "react";
-import { COLORS, DIMENSIONS } from "@/src/styles/SharedStyles";
+import { COLORS } from "@/src/styles/SharedStyles";
+import type { NativeStackScreenProps } from "@react-navigation/native-stack";
+import type { RootStackParamList } from "@/src/screens/index";
 
-export default function ChooseModification({ navigation, route }: any) {
-	const setting = route.params!.setting;
-	const settingIndex = route.params!.settingIndex;
+type Props = NativeStackScreenProps<RootStackParamList, 'ChooseModification'>;
+
+export default function ChooseModification({ navigation, route }: Props) {
+	const setting = route.params?.setting;
+	const settingIndex = route.params?.settingIndex;
 
 	return (
 		<SafeAreaView style={styles.container}>

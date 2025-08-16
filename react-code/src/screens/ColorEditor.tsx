@@ -275,7 +275,7 @@ export default function ColorEditor({ navigation, route }: any) {
 		if (hexRegex.test(hexValue) && selectedDot !== null && debouncedHexInput.length === 6) {
 			applyHexColor(hexValue);
 		}
-	}, [debouncedHexInput, selectedDot]);
+	}, [debouncedHexInput, selectedDot, applyHexColor]);
 
 	const handleCancel = () => {
 		unPreviewAPI();
@@ -326,7 +326,7 @@ export default function ColorEditor({ navigation, route }: any) {
 				name: settingName,
 				colors: [...colors],
 			};
-			const updatedSettings = await SettingsService.updateSetting(
+			const _updatedSettings = await SettingsService.updateSetting(
 				settingIndex,
 				updatedSetting,
 			);

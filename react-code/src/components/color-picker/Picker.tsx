@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import { FLASHING_PATTERNS } from "@/src/configurations/patterns";
 import { COLORS, FONTS, DIMENSIONS } from "@/src/styles/SharedStyles";
+import type { Setting } from "@/src/types/SettingInterface";
 
 const { SCALE: scale } = DIMENSIONS;
 
@@ -16,14 +17,14 @@ export interface PickerRef {
 }
 
 interface PickerProps {
-	setting: any;
+	setting: Setting; // TODO: Currently unused but might be needed for future enhancements
 	selectedPattern: string;
 	setSelectedPattern: (pattern: string) => void;
-	navigation?: any;
+	navigation?: any; // TODO: Type this properly with navigation prop types
 }
 
 const Picker = forwardRef<PickerRef, PickerProps>(({
-	setting,
+	setting: _setting, // Prefix with underscore to indicate intentionally unused
 	selectedPattern,
 	setSelectedPattern,
 }, ref) => {

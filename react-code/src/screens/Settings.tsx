@@ -5,7 +5,6 @@ import {
 	Dimensions,
 	SafeAreaView,
 	StyleSheet,
-	Text,
 	TouchableOpacity,
 
 	View,

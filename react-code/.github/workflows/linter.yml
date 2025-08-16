@@ -4,7 +4,7 @@ on:
   push:
     paths:
       - 'src/**'
-      - 'docs/**'
+      - '.github/docs/**'
       - '*.ts'
       - '*.tsx'
       - '*.js'
@@ -28,4 +28,4 @@ jobs:
       run: npm ci
 
     - name: Run Biome linter (errors only)
-      run: npx @biomejs/biome lint src/ docs/
+      run: npx @biomejs/biome lint src/ .github/docs/

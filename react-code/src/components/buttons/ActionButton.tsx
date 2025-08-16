@@ -1,7 +1,5 @@
 import React from "react";
-import Button, {
-	type BaseButtonProps,
-} from "@/src/components/buttons/Button";
+import Button, { type BaseButtonProps } from "@/src/components/buttons/Button";
 import { COLORS } from "@/src/styles/SharedStyles";
 
 export type ActionButtonVariant = "primary" | "disabled" | "preview";

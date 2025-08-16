@@ -43,7 +43,9 @@ export default function BPMMeasurer({
 	useEffect(() => {
 		if (status === "requesting") {
 			const timeout = setTimeout(() => {
-				setError("Permission request timed out. Please check your device settings.");
+				setError(
+					"Permission request timed out. Please check your device settings.",
+				);
 				setStatus("error");
 			}, 10000); // 10 second timeout
 
@@ -140,7 +142,9 @@ export default function BPMMeasurer({
 					if (isCancelled) return;
 
 					if (!permission.granted) {
-						throw new Error("Microphone permission is required for BPM detection");
+						throw new Error(
+							"Microphone permission is required for BPM detection",
+						);
 					}
 
 					// Set audio mode
@@ -178,7 +182,8 @@ export default function BPMMeasurer({
 				} catch (err) {
 					if (isCancelled) return;
 					console.error("Failed to start recording:", err);
-					const errorMessage = err instanceof Error ? err.message : "Failed to start recording";
+					const errorMessage =
+						err instanceof Error ? err.message : "Failed to start recording";
 					setError(errorMessage);
 					setStatus("error");
 				}
@@ -265,7 +270,10 @@ export default function BPMMeasurer({
 							<TouchableOpacity style={styles.button} onPress={handleRetry}>
 								<Text style={styles.buttonText}>Retry</Text>
 							</TouchableOpacity>
-							<TouchableOpacity style={[styles.button, styles.closeButton]} onPress={onClose}>
+							<TouchableOpacity
+								style={[styles.button, styles.closeButton]}
+								onPress={onClose}
+							>
 								<Text style={styles.buttonText}>Close</Text>
 							</TouchableOpacity>
 						</View>

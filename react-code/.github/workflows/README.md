@@ -8,7 +8,7 @@ This directory contains automated CI/CD pipelines for the Luminova Controller pr
 **Triggers:** Push to any branch when source files change
 **Purpose:** Lightweight linting validation
 
-- Runs Biome linter on `src/` and `docs/` directories
+- Runs Biome linter on `src/` and `.github/docs/` directories
 - Identifies code quality issues without auto-fixing
 - Fast feedback for development workflow
 

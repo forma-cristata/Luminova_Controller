@@ -14,9 +14,9 @@ React Native LED controller app for managing custom lighting patterns through RE
 
 ## Documentation
 - **[CONTRIBUTING.md](./CONTRIBUTING.md)** - Development standards and guidelines
-- **[docs/README.md](../docs/README.md)** - Comprehensive documentation structure
-- **[docs/ROOT.md](../docs/ROOT.md)** - Root configuration files reference
-- **[docs/src/SRC_OVERVIEW.md](../docs/src/SRC_OVERVIEW.md)** - Source code architecture overview
+- **[docs/README.md](./docs/README.md)** - Comprehensive documentation structure
+- **[docs/ROOT.md](./docs/ROOT.md)** - Root configuration files reference
+- **[docs/src/SRC.md](./docs/src/SRC.md)** - Source code architecture overview
 
 ```
 react-code/
@@ -59,11 +59,11 @@ react-code/
 │   ├── fonts/                   # Custom fonts
 │   └── images/                  # App icons and images
 ├── android/                      # Android build configuration
-├── docs/                         # Documentation
-└── .github/                      # GitHub configuration
-    ├── workflows/               # CI/CD pipelines
-    ├── README.md               # This file
-    └── CONTRIBUTING.md         # Contribution guidelines
+├── .github/                      # GitHub configuration
+│   ├── workflows/               # CI/CD pipelines
+│   ├── docs/                    # Documentation
+│   ├── README.md               # This file
+│   └── CONTRIBUTING.md         # Contribution guidelines
 ```
 
 ## Main Application Screens

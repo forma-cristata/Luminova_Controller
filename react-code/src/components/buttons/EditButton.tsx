@@ -1,7 +1,5 @@
 import React from "react";
-import Button, {
-	type BaseButtonProps,
-} from "@/src/components/buttons/Button";
+import Button, { type BaseButtonProps } from "@/src/components/buttons/Button";
 import { COLORS, FONTS } from "@/src/styles/SharedStyles";
 import { useConfiguration } from "@/src/context/ConfigurationContext";
 import type { Setting } from "@/src/types/SettingInterface";

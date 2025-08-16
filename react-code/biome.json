@@ -10,8 +10,8 @@
 		"includes": [
 			"src/*",
 			"src/**/*",
-			"docs/*",
-			"docs/**/*",
+			".github/docs/*",
+			".github/docs/**/*",
 			".github/*",
 			".github/**/*",
 			"*/*"

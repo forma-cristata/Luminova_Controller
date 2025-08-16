@@ -369,7 +369,7 @@ export default function FlashingPatternEditor({
 								// Random pattern from valid animation patterns (excluding STILL)
 								const randomPattern =
 									ANIMATION_PATTERNS[
-									Math.floor(Math.random() * ANIMATION_PATTERNS.length)
+										Math.floor(Math.random() * ANIMATION_PATTERNS.length)
 									];
 								setFlashingPattern(randomPattern);
 

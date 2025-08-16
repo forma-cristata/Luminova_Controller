@@ -1,9 +1,9 @@
 import Slider from "@react-native-community/slider";
-import { ApiService } from "@/src/services/ApiService";
+import { previewSetting, restoreConfiguration } from "@/src/services/ApiService";
 import { useConfiguration } from "@/src/context/ConfigurationContext";
 import { useDebounce } from "@/src/hooks/useDebounce";
-import { SettingsService } from "@/src/services/SettingsService";
-import { useState } from "react";
+import { loadSettings, saveSettings, updateSetting } from "@/src/services/SettingsService";
+import { useState, useCallback } from "react";
 import {
 	Dimensions,
 	Keyboard,
@@ -36,8 +36,12 @@ import RandomizeButton from "@/src/components/ui/buttons/RandomizeButton";
 import { COLORS, COMMON_STYLES, FONTS } from "@/src/styles/SharedStyles";
 import type { Setting } from "@/src/types/SettingInterface";
 import React from "react";
+import type { NativeStackScreenProps } from "@react-navigation/native-stack";
+import type { RootStackParamList } from "@/src/screens/index";
 
-export default function ColorEditor({ navigation, route }: any) {
+type ColorEditorProps = NativeStackScreenProps<RootStackParamList, 'ColorEditor'>;
+
+export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 	const { currentConfiguration, setLastEdited, isShelfConnected, setIsShelfConnected } = useConfiguration();
 
 	const setting = route.params?.setting;
@@ -86,7 +90,7 @@ export default function ColorEditor({ navigation, route }: any) {
 			}
 
 			// Check for duplicate names
-			const settings = await SettingsService.loadSettings();
+			const settings = await loadSettings();
 			const nameExists = settings?.some(
 				(s: Setting, index: number) =>
 					s.name.toLowerCase() === debouncedSettingName.toLowerCase() &&
@@ -101,7 +105,7 @@ export default function ColorEditor({ navigation, route }: any) {
 		}
 	}, [debouncedSettingName, setting.name, originalName, isNew, settingIndex]);
 
-	const hexToRgb = (hex: string) => {
+	const hexToRgb = useCallback((hex: string) => {
 		const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
 		return result
 			? {
@@ -110,9 +114,9 @@ export default function ColorEditor({ navigation, route }: any) {
 				b: parseInt(result[3], 16),
 			}
 			: null;
-	};
+	}, []);
 
-	const rgbToHsv = (r: number, g: number, b: number) => {
+	const rgbToHsv = useCallback((r: number, g: number, b: number) => {
 		r /= 255;
 		g /= 255;
 		b /= 255;
@@ -134,14 +138,14 @@ export default function ColorEditor({ navigation, route }: any) {
 		const v = Math.round(max * 100);
 
 		return { h, s, v };
-	};
+	}, []);
 
 	const hsvToHex = (h: number, s: number, v: number) => {
 		h = h / 360;
 		s = s / 100;
 		v = v / 100;
 
-		let r, g, b;
+		let r: number = 0, g: number = 0, b: number = 0;
 		const i = Math.floor(h * 6);
 		const f = h * 6 - i;
 		const p = v * (1 - s);
@@ -182,10 +186,10 @@ export default function ColorEditor({ navigation, route }: any) {
 		}
 
 		const toHex = (n: number) =>
-			Math.round(n! * 255)
+			Math.round(n * 255)
 				.toString(16)
 				.padStart(2, "0");
-		return `#${toHex(r!)}${toHex(g!)}${toHex(b!)}`;
+		return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
 	};
 
 	const updateColor = (h: number, s: number, v: number) => {
@@ -249,7 +253,7 @@ export default function ColorEditor({ navigation, route }: any) {
 		}
 	};
 
-	const applyHexColor = (hexValue: string) => {
+	const applyHexColor = useCallback((hexValue: string) => {
 		if (selectedDot !== null) {
 			const finalHex = hexValue.startsWith("#") ? hexValue : `#${hexValue}`;
 			setColorHistory(prev => [...prev, [...colors]]);
@@ -265,7 +269,7 @@ export default function ColorEditor({ navigation, route }: any) {
 				setSaturation(hsv.s);
 			}
 		}
-	};
+	}, [selectedDot, colors, hexToRgb, rgbToHsv]);
 
 	// Process debounced hex input for typed input
 	React.useEffect(() => {
@@ -326,16 +330,21 @@ export default function ColorEditor({ navigation, route }: any) {
 				name: settingName,
 				colors: [...colors],
 			};
-			const _updatedSettings = await SettingsService.updateSetting(
-				settingIndex,
-				updatedSetting,
-			);
 
-			const currentIndex = settingIndex; // Use the existing index
-			setLastEdited(currentIndex.toString());
+			if (settingIndex !== undefined) {
+				const _updatedSettings = await updateSetting(
+					settingIndex,
+					updatedSetting,
+				);
 
-			// Navigate directly to Settings
-			navigation.navigate("Settings");
+				const currentIndex = settingIndex; // Use the existing index
+				if (currentIndex !== undefined) {
+					setLastEdited(currentIndex.toString());
+				}
+
+				// Navigate directly to Settings
+				navigation.navigate("Settings");
+			}
 		}
 	};
 
@@ -433,7 +442,7 @@ export default function ColorEditor({ navigation, route }: any) {
 
 	const previewAPI = async () => {
 		try {
-			await ApiService.previewSetting({
+			await previewSetting({
 				colors: colors,
 				flashingPattern: setting.flashingPattern,
 				delayTime: setting.delayTime,
@@ -450,7 +459,7 @@ export default function ColorEditor({ navigation, route }: any) {
 		setPreviewMode(false);
 		if (currentConfiguration) {
 			try {
-				await ApiService.restoreConfiguration(currentConfiguration);
+				await restoreConfiguration(currentConfiguration);
 				console.log("Configuration restored");
 				setIsShelfConnected(true);
 			} catch (error) {

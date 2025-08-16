@@ -7,7 +7,7 @@ import {
     StyleSheet,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { ApiService } from "@/src/services/ApiService";
+import { getStatus, toggleLed } from "@/src/services/ApiService";
 import { useConfiguration } from "@/src/context/ConfigurationContext";
 import { useDebounce } from "@/src/hooks/useDebounce";
 import { COMMON_STYLES } from "@/src/styles/SharedStyles";
@@ -41,7 +41,7 @@ export default function LedToggle({
     useEffect(() => {
         const fetchInitialStatus = async () => {
             try {
-                const data = await ApiService.getStatus();
+                const data = await getStatus();
                 setIsEnabled(data.shelfOn);
                 setIsShelfConnected(true);
             } catch (error) {
@@ -139,7 +139,7 @@ export default function LedToggle({
             if (newState) {
                 // When turning on, send the current configuration
                 if (currentConfiguration) {
-                    await ApiService.toggleLed("on", {
+                    await toggleLed("on", {
                         colors: currentConfiguration.colors,
                         whiteValues: currentConfiguration.whiteValues,
                         brightnessValues: currentConfiguration.brightnessValues,
@@ -148,10 +148,10 @@ export default function LedToggle({
                     });
                 } else {
                     // Use default homeostasis configuration
-                    await ApiService.toggleLed("on");
+                    await toggleLed("on");
                 }
             } else {
-                await ApiService.toggleLed("off");
+                await toggleLed("off");
             }
             console.log(`LED toggled ${newState ? "on" : "off"}`);
             setIsShelfConnected(true);

@@ -130,7 +130,7 @@
 ### 🔧 **LINT FIX Protocol**
 
 #### **Protocol Steps:**
-1. **Run linter** to identify all issues in src directory using `npm run format-lint`
+1. **Run linter** to identify all issues in src directory using `npx @biomejs/biome lint src/screens/<fileName>.<fileExtension>` one at a time until there are no errors when you run `npm run format-lint`
 2. **Group issues by file** to fix them systematically
 3. **Fix one file at a time** with the following priority:
    - Remove unused imports (safest fixes first)
@@ -157,6 +157,16 @@
 - Use established patterns from codebase
 - Document any significant changes made
 - Never delete broken code - always fix it
+
+#### **useCallback Wrapper Fix Protocol (Successfully Applied to AnimatedDots Aug 2025):**
+1. **Create temporary instructions file** for complex multi-function fixes
+2. **Wrap each animation function individually** in useCallback hooks
+3. **Fix dependency arrays systematically** - add missing deps, remove unnecessary ones
+4. **Test after each major group** of fixes with `npm run format-lint`
+5. **Order of operations**: Function wrapping first, then dependency array fixes
+6. **Common patterns**: Animation functions need COLOR_COUNT, avoid setHasChanges in deps
+7. **Utility functions** like `random()` also need useCallback wrapping
+8. **Clean up**: Remove temp files and update docs when complete
 
 ### 🎯 **Response Guidelines**
 

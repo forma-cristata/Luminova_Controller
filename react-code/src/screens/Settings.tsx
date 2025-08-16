@@ -26,13 +26,17 @@ import InfoButton from "@/src/components/ui/buttons/InfoButton";
 import SettingBlock from "@/src/components/settings/SettingBlock";
 import { useConfiguration } from "@/src/context/ConfigurationContext";
 import type { Setting } from "@/src/types/SettingInterface";
-import { SettingsService } from "@/src/services/SettingsService";
+import { loadSettings, saveSettings } from "@/src/services/SettingsService";
 import { getStableSettingId } from "@/src/utils/settingUtils";
+import type { NativeStackScreenProps } from "@react-navigation/native-stack";
+import type { RootStackParamList } from "@/src/screens/index";
+
+type SettingsProps = NativeStackScreenProps<RootStackParamList, 'Settings'>;
 
 const width = Dimensions.get("window").width;
 const height = Dimensions.get("window").height;
 
-export default function Settings({ navigation }: any) {
+export default function Settings({ navigation }: SettingsProps) {
 	const { lastEdited, setLastEdited } = useConfiguration();
 
 	const [settingsData, setSettingsData] = React.useState<Setting[]>([]);
@@ -92,7 +96,7 @@ export default function Settings({ navigation }: any) {
 		const unsubscribe = navigation.addListener("focus", () => {
 			const initializeData = async () => {
 				try {
-					const loadedData = await SettingsService.loadSettings();
+					const loadedData = await loadSettings();
 					if (loadedData && loadedData.length > 0) {
 						const deepCopy = JSON.parse(JSON.stringify(loadedData));
 						setSettingsData(deepCopy);
@@ -184,13 +188,13 @@ export default function Settings({ navigation }: any) {
 							// Set deletion flag to prevent other effects from interfering
 							isDeletingRef.current = true;
 
-							const currentSettings = await SettingsService.loadSettings();
+							const currentSettings = await loadSettings();
 
 							const updatedSettings = currentSettings.filter(
-								(_, i) => i !== currentIndex,
+								(_: Setting, i: number) => i !== currentIndex,
 							);
 
-							await SettingsService.saveSettings(updatedSettings);
+							await saveSettings(updatedSettings);
 
 							// Calculate target index before updating state
 							let targetIndex = currentIndex - 1;
@@ -202,8 +206,8 @@ export default function Settings({ navigation }: any) {
 							// Update lastEdited based on deletion position
 							if (lastEdited === currentIndex.toString()) {
 								setLastEdited(targetIndex.toString());
-							} else if (parseInt(lastEdited!) > currentIndex) {
-								setLastEdited((parseInt(lastEdited!) - 1).toString());
+							} else if (lastEdited && parseInt(lastEdited) > currentIndex) {
+								setLastEdited((parseInt(lastEdited) - 1).toString());
 							}
 
 							// Single, coordinated state update
@@ -243,15 +247,15 @@ export default function Settings({ navigation }: any) {
 			name: newName,
 		};
 
-		const currentSettings = await SettingsService.loadSettings();
+		const currentSettings = await loadSettings();
 		const updatedSettings = [...currentSettings, newSetting];
-		await SettingsService.saveSettings(updatedSettings);
+		await saveSettings(updatedSettings);
 
 		const newIndex = updatedSettings.length - 1;
 		setLastEdited(newIndex.toString());
 
 		// Reload data to reflect the new setting
-		const loadedData = await SettingsService.loadSettings();
+		const loadedData = await loadSettings();
 		setSettingsData(loadedData);
 
 		// Navigate to the new duplicated setting

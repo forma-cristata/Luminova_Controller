@@ -4,7 +4,7 @@ import Button, { type BaseButtonProps } from "@/src/components/ui/buttons/Button
 import { COLORS, FONTS } from "@/src/styles/SharedStyles";
 import { useConfiguration } from "@/src/context/ConfigurationContext";
 import type { Setting } from "@/src/types/SettingInterface";
-import { ApiService } from "@/src/services/ApiService";
+import { flashSetting } from "@/src/services/ApiService";
 
 interface FlashButtonProps extends Omit<BaseButtonProps, "title" | "onPress"> {
 	setting: Setting;
@@ -38,7 +38,7 @@ const FlashButton = React.memo(
 			}
 
 			try {
-				await ApiService.flashSetting(setting);
+				await flashSetting(setting);
 				setCurrentConfiguration(setting);
 				setIsShelfConnected(true);
 				console.log(`Current Configuration: ${setting.name}`);

@@ -27,8 +27,12 @@ import { ANIMATION_PATTERNS } from "@/src/configurations/patterns";
 import { useConfiguration } from "@/src/context/ConfigurationContext";
 import { useDebounce } from "@/src/hooks/useDebounce";
 import type { Setting } from "@/src/types/SettingInterface";
-import { ApiService } from "@/src/services/ApiService";
-import { SettingsService } from "@/src/services/SettingsService";
+import { postConfig, restoreConfiguration } from "@/src/services/ApiService";
+import { loadSettings, saveSettings, updateSetting } from "@/src/services/SettingsService";
+import type { NativeStackScreenProps } from "@react-navigation/native-stack";
+import type { RootStackParamList } from "@/src/screens/index";
+
+type FlashingPatternEditorProps = NativeStackScreenProps<RootStackParamList, 'FlashingPatternEditor'>;
 
 /**
  * This page should edit:
@@ -37,7 +41,7 @@ import { SettingsService } from "@/src/services/SettingsService";
  *      The delayTime - this should be a ratio of the value the user chooses.
  *          The user should choose the 'speed'
  *          The greater the speed, the shorter the delay time.*/
-export default function FlashingPatternEditor({ route, navigation }: any) {
+export default function FlashingPatternEditor({ route, navigation }: FlashingPatternEditorProps) {
 	const { currentConfiguration, setLastEdited, isShelfConnected, setIsShelfConnected } = useConfiguration();
 
 	const setting = route.params?.setting;
@@ -80,7 +84,7 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 			}
 
 			// Check for duplicate names
-			const settings = await SettingsService.loadSettings();
+			const settings = await loadSettings();
 			const nameExists = settings?.some(
 				(s: Setting, index: number) =>
 					s.name.toLowerCase() === debouncedSettingName.toLowerCase() &&
@@ -176,9 +180,9 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 		};
 
 		if (isNew) {
-			const settings = await SettingsService.loadSettings();
+			const settings = await loadSettings();
 			const updatedSettings = [...settings, updatedSetting];
-			await SettingsService.saveSettings(updatedSettings);
+			await saveSettings(updatedSettings);
 
 			const newIndex = updatedSettings.length - 1;
 			setLastEdited(newIndex.toString());
@@ -191,20 +195,25 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 				delayTime: Math.round(delayTime),
 				flashingPattern: flashingPattern,
 			};
-			const _updatedSettings = await SettingsService.updateSetting(
-				settingIndex,
-				updatedSetting,
-			);
 
-			const currentIndex = settingIndex; // Use the existing index
-			setLastEdited(currentIndex.toString());
-			navigation.navigate("Settings", { setting });
+			if (settingIndex !== undefined) {
+				const _updatedSettings = await updateSetting(
+					settingIndex,
+					updatedSetting,
+				);
+
+				const currentIndex = settingIndex; // Use the existing index
+				if (currentIndex !== undefined) {
+					setLastEdited(currentIndex.toString());
+				}
+				navigation.navigate("Settings", { setting });
+			}
 		}
 	};
 
 	const previewAPI = async () => {
 		try {
-			await ApiService.postConfig({
+			await postConfig({
 				colors: setting.colors,
 				whiteValues: setting.whiteValues,
 				brightnessValues: setting.brightnessValues,
@@ -223,7 +232,7 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 		setPreviewMode(false);
 		if (currentConfiguration) {
 			try {
-				await ApiService.restoreConfiguration(currentConfiguration);
+				await restoreConfiguration(currentConfiguration);
 				console.log("Configuration restored");
 				setIsShelfConnected(true);
 			} catch (error) {
@@ -283,7 +292,6 @@ export default function FlashingPatternEditor({ route, navigation }: any) {
 				<View style={styles.fpContainer}>
 					<Picker
 						ref={pickerRef}
-						navigation={navigation}
 						setting={setting}
 						selectedPattern={debouncedFlashingPattern}
 						setSelectedPattern={setFlashingPattern}

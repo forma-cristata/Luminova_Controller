@@ -3,7 +3,6 @@ import { View } from "react-native";
 
 interface DotProps {
 	color: string;
-	id: string;
 }
 
 export default function Dot({ color }: DotProps) {

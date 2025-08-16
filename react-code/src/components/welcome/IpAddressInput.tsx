@@ -8,7 +8,7 @@ import {
     Keyboard,
     Alert,
 } from "react-native";
-import { ApiService } from "@/src/services/ApiService";
+import { getStatus } from "@/src/services/ApiService";
 import { getCurrentIp, saveIpAddress } from "@/src/services/IpConfigService";
 import { useDebounce } from "@/src/hooks/useDebounce";
 import Button from "@/src/components/ui/buttons/Button";
@@ -164,7 +164,7 @@ export default function IpAddressInput({ onIpSaved }: IpAddressInputProps) {
                         setTimeout(() => reject(new Error('Connection timeout')), 2000)
                     );
 
-                    const statusPromise = ApiService.getStatus();
+                    const statusPromise = getStatus();
                     const data = await Promise.race([statusPromise, timeoutPromise]) as { shelfOn: boolean };
                     onIpSaved(data.shelfOn, true);
                 } catch (error) {

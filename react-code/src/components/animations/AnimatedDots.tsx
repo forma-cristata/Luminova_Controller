@@ -1,6 +1,6 @@
 import { useFocusEffect } from "@react-navigation/native";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { View } from "react-native";
 
 import { SafeAreaView, StyleSheet } from "react-native";
@@ -13,7 +13,7 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "@/src/screens/index";
 
 interface AnimatedDotsProps {
-	navigation: NativeStackNavigationProp<RootStackParamList>;
+	navigation?: NativeStackNavigationProp<RootStackParamList>;
 	setting: Setting;
 	layout?: "ring" | "linear";
 }
@@ -51,7 +51,7 @@ const AnimatedDots = React.memo(function AnimatedDots({ setting, layout = "linea
 
 	// Helper function to initialize colors based on current setting
 
-	const initializeColors = () => {
+	const initializeColors = useCallback(() => {
 		if (setting.flashingPattern === "6") {
 			const initialColors = new Array(LIGHT_COUNT).fill(black);
 
@@ -66,19 +66,19 @@ const AnimatedDots = React.memo(function AnimatedDots({ setting, layout = "linea
 		}
 
 		return new Array(LIGHT_COUNT).fill(black);
-	};
+	}, [setting.flashingPattern, setting.colors]);
 
 	// Clear all timeouts helper
 
-	const clearAllTimeouts = () => {
+	const clearAllTimeouts = useCallback(() => {
 		timeoutRefs.current.forEach((timeout) => clearTimeout(timeout));
 
 		timeoutRefs.current = [];
-	};
+	}, []);
 
 	// Helper function to create a managed timeout
 
-	const createTimeout = (
+	const createTimeout = useCallback((
 		callback: () => void,
 
 		delay: number,
@@ -92,11 +92,11 @@ const AnimatedDots = React.memo(function AnimatedDots({ setting, layout = "linea
 
 			timeoutRefs.current.push(timeout);
 		});
-	};
+	}, []);
 
 	// Helper function to update a specific LED color
 
-	const setLedColor = (index: number, color: string) => {
+	const setLedColor = useCallback((index: number, color: string) => {
 		if (!animationRef.current || !isComponentActive) return;
 
 		setDotColors((prev) => {
@@ -106,21 +106,21 @@ const AnimatedDots = React.memo(function AnimatedDots({ setting, layout = "linea
 
 			return newColors;
 		});
-	};
+	}, [isComponentActive]);
 
 	// Helper function to set all LEDs to a specific color
 
-	const setAllLeds = (color: string) => {
+	const setAllLeds = useCallback((color: string) => {
 		if (!animationRef.current || !isComponentActive) return;
 
 		setDotColors(new Array(LIGHT_COUNT).fill(color));
-	};
+	}, [isComponentActive]);
 
 	// Random number generator
 
-	const random = (min: number, max: number) => {
+	const random = useCallback((min: number, max: number) => {
 		return Math.floor(Math.random() * (max - min)) + min;
-	};
+	}, []);
 
 	// Updated animation helper that checks both refs
 
@@ -128,7 +128,7 @@ const AnimatedDots = React.memo(function AnimatedDots({ setting, layout = "linea
 
 	// Animation patterns with proper cleanup
 
-	const blenderAnimation = async (isActive: () => boolean) => {
+	const blenderAnimation = useCallback(async (isActive: () => boolean) => {
 		const currentTime = Date.now();
 
 		const colorOffset = Math.floor(currentTime / 100) % COLOR_COUNT;
@@ -144,9 +144,9 @@ const AnimatedDots = React.memo(function AnimatedDots({ setting, layout = "linea
 
 			setLedColor(i, setting.colors[colorIndex]);
 		}
-	};
+	}, [setting.delayTime, setting.colors, setLedColor, createTimeout, COLOR_COUNT]);
 
-	const christmasAnimation = async (isActive: () => boolean) => {
+	const christmasAnimation = useCallback(async (isActive: () => boolean) => {
 		for (let xy = 0; xy < COLOR_COUNT; xy++) {
 			if (!isActive()) return;
 
@@ -210,9 +210,9 @@ const AnimatedDots = React.memo(function AnimatedDots({ setting, layout = "linea
 				await createTimeout(() => { }, setting.delayTime * 3);
 			}
 		}
-	};
+	}, [setting.delayTime, setting.colors, setLedColor, createTimeout, COLOR_COUNT]);
 
-	const comfortSongAnimation = async (isActive: () => boolean) => {
+	const comfortSongAnimation = useCallback(async (isActive: () => boolean) => {
 		const patternIndices = [1, 2, 3, 2, 4, 3, 2, 1, 0, 1, 2, 1, 3, 2, 1, 0];
 
 		const pattern2Indices = [7, 8, 9, 8, 10, 9, 8, 7, 6, 7, 8, 7, 9, 8, 7, 6];
@@ -260,9 +260,9 @@ const AnimatedDots = React.memo(function AnimatedDots({ setting, layout = "linea
 				setLedColor(index3, black);
 			}
 		}
-	};
+	}, [setting.delayTime, setting.colors, setAllLeds, setLedColor, createTimeout, COLOR_COUNT]);
 
-	const funkyAnimation = async (isActive: () => boolean) => {
+	const funkyAnimation = useCallback(async (isActive: () => boolean) => {
 		const strobeCount1 = 12;
 
 		const strobeCount2 = 12;
@@ -326,9 +326,9 @@ const AnimatedDots = React.memo(function AnimatedDots({ setting, layout = "linea
 				}
 			}
 		}
-	};
+	}, [setting.delayTime, setting.colors, setLedColor, createTimeout, random, COLOR_COUNT]);
 
-	const stillAnimation = async () => {
+	const stillAnimation = useCallback(async () => {
 		// Static colors - set once and don't animate
 
 		const newColors = new Array(LIGHT_COUNT).fill(black);
@@ -341,9 +341,9 @@ const AnimatedDots = React.memo(function AnimatedDots({ setting, layout = "linea
 		}
 
 		setDotColors(newColors);
-	};
+	}, [setting.colors]);
 
-	const moldAnimation = async (isActive: () => boolean) => {
+	const moldAnimation = useCallback(async (isActive: () => boolean) => {
 		const strobeCount1 = 2;
 
 		const strobeCount2 = 2;
@@ -471,9 +471,9 @@ const AnimatedDots = React.memo(function AnimatedDots({ setting, layout = "linea
 				}
 			}
 		}
-	};
+	}, [setting.delayTime, setting.colors, setAllLeds, setLedColor, createTimeout, COLOR_COUNT]);
 
-	const progressiveAnimation = async (isActive: () => boolean) => {
+	const progressiveAnimation = useCallback(async (isActive: () => boolean) => {
 		for (let j = 0; j < COLOR_COUNT; j++) {
 			for (let i = 0; i < LIGHT_COUNT; i++) {
 				if (!isActive()) return;
@@ -501,9 +501,9 @@ const AnimatedDots = React.memo(function AnimatedDots({ setting, layout = "linea
 				await createTimeout(() => { }, setting.delayTime * 2);
 			}
 		}
-	};
+	}, [setting.delayTime, setting.colors, setLedColor, createTimeout, COLOR_COUNT]);
 
-	const strobeChangeAnimation = async (isActive: () => boolean) => {
+	const strobeChangeAnimation = useCallback(async (isActive: () => boolean) => {
 		for (let i = 0; i < COLOR_COUNT; i++) {
 			for (let j = 0; j < LIGHT_COUNT / 2; j++) {
 				if (!isActive()) return;
@@ -527,9 +527,9 @@ const AnimatedDots = React.memo(function AnimatedDots({ setting, layout = "linea
 
 			await createTimeout(() => { }, setting.delayTime * 2);
 		}
-	};
+	}, [setting.delayTime, setting.colors, setLedColor, createTimeout, COLOR_COUNT]);
 
-	const technoAnimation = async (isActive: () => boolean) => {
+	const technoAnimation = useCallback(async (isActive: () => boolean) => {
 		setAllLeds(black);
 
 		for (let i = 0; i < COLOR_COUNT; i++) {
@@ -599,9 +599,9 @@ const AnimatedDots = React.memo(function AnimatedDots({ setting, layout = "linea
 				}
 			}
 		}
-	};
+	}, [setting.delayTime, setting.colors, setAllLeds, setLedColor, createTimeout, COLOR_COUNT]);
 
-	const traceManyAnimation = async (isActive: () => boolean) => {
+	const traceManyAnimation = useCallback(async (isActive: () => boolean) => {
 		for (let i = 0; i < LIGHT_COUNT; i++) {
 			setLedColor(i, setting.colors[0]);
 		}
@@ -629,9 +629,9 @@ const AnimatedDots = React.memo(function AnimatedDots({ setting, layout = "linea
 				await createTimeout(() => { }, setting.delayTime * 2);
 			}
 		}
-	};
+	}, [setting.delayTime, setting.colors, setLedColor, createTimeout, COLOR_COUNT]);
 
-	const traceOneAnimation = async (isActive: () => boolean) => {
+	const traceOneAnimation = useCallback(async (isActive: () => boolean) => {
 		for (let kc = 0; kc < LIGHT_COUNT; kc++) {
 			for (let i = 0; i < LIGHT_COUNT; i++) {
 				setLedColor(i, setting.colors[kc]);
@@ -651,9 +651,9 @@ const AnimatedDots = React.memo(function AnimatedDots({ setting, layout = "linea
 				}
 			}
 		}
-	};
+	}, [setting.delayTime, setting.colors, setLedColor, createTimeout, COLOR_COUNT]);
 
-	const tranceAnimation = async (isActive: () => boolean) => {
+	const tranceAnimation = useCallback(async (isActive: () => boolean) => {
 		const sc1 = 2;
 
 		const sc2 = 2;
@@ -701,7 +701,7 @@ const AnimatedDots = React.memo(function AnimatedDots({ setting, layout = "linea
 				}
 			}
 		}
-	};
+	}, [setting.delayTime, setting.colors, setLedColor, createTimeout, COLOR_COUNT]);
 
 	useEffect(() => {
 		// Reset animation state and clear any existing timeouts
@@ -834,7 +834,7 @@ const AnimatedDots = React.memo(function AnimatedDots({ setting, layout = "linea
 							};
 							return (
 								<View key={stableKey} style={ringStyle}>
-									<Dot color={color || black} id={`dot_${index + 1}`} />
+									<Dot color={color || black} />
 								</View>
 							);
 						})
@@ -845,7 +845,7 @@ const AnimatedDots = React.memo(function AnimatedDots({ setting, layout = "linea
 					{dotColors
 						? dotColors.map((color, index) => {
 							const stableKey = `${getStableSettingId(setting)}-dot-${index}`;
-							return <Dot key={stableKey} color={color || black} id={`dot_${index + 1}`} />;
+							return <Dot key={stableKey} color={color || black} />;
 						})
 						: null}
 				</View>

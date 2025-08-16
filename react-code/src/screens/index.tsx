@@ -13,10 +13,10 @@ import React from "react";
 
 export type RootStackParamList = {
 	Welcome: undefined;
-	Settings: undefined;
+	Settings: { setting?: Setting } | undefined;
 	ChooseModification: { setting: Setting; settingIndex?: number };
-	ColorEditor: { setting: Setting; isNew?: boolean; originalName?: string; settingIndex?: number };
-	FlashingPatternEditor: { setting: Setting; isNew?: boolean; settingIndex?: number };
+	ColorEditor: { setting: Setting; isNew?: boolean; originalName?: string; settingIndex?: number; newSettingCarouselIndex?: number };
+	FlashingPatternEditor: { setting: Setting; isNew?: boolean; settingIndex?: number; newSettingCarouselIndex?: number };
 	Info: undefined;
 };
 

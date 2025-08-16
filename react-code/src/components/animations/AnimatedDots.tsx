@@ -12,15 +12,15 @@ import { getStableSettingId } from "@/src/utils/settingUtils";
 
 interface AnimatedDotsProps {
 	navigation: any;
-
 	setting: Setting;
+	layout?: "ring" | "linear";
 }
 
 const LIGHT_COUNT = 16;
 
 const black = "#000000";
 
-export default function AnimatedDots({ setting }: AnimatedDotsProps) {
+export default function AnimatedDots({ setting, layout = "linear" }: AnimatedDotsProps) {
 	const COLOR_COUNT = setting.colors.length;
 
 	const animationRef = useRef<boolean>(false);
@@ -816,18 +816,57 @@ export default function AnimatedDots({ setting }: AnimatedDotsProps) {
 
 	return (
 		<SafeAreaView style={styles.background}>
-			{dotColors
-				? dotColors.map((color, index) => {
-					const stableKey = `${getStableSettingId(setting)}-dot-${index}`;
-					return <Dot key={stableKey} color={color || black} id={`dot_${index + 1}`} />;
-				})
-				: null}
+			{layout === "ring" ? (
+				<View style={styles.ringContainer}>
+					{dotColors
+						? dotColors.map((color, index) => {
+							const stableKey = `${getStableSettingId(setting)}-dot-${index}`;
+							const angle = (index * 360) / LIGHT_COUNT; // Calculate angle for each dot
+							const ringStyle = {
+								position: "absolute" as const,
+								transform: [
+									{ rotate: `${angle}deg` },
+									{ translateX: 50 }, // Radius of the ring
+									{ rotate: `-${angle}deg` }, // Counter-rotate to keep dots upright
+								],
+							};
+							return (
+								<View key={stableKey} style={ringStyle}>
+									<Dot color={color || black} id={`dot_${index + 1}`} />
+								</View>
+							);
+						})
+						: null}
+				</View>
+			) : (
+				<View style={styles.linearContainer}>
+					{dotColors
+						? dotColors.map((color, index) => {
+							const stableKey = `${getStableSettingId(setting)}-dot-${index}`;
+							return <Dot key={stableKey} color={color || black} id={`dot_${index + 1}`} />;
+						})
+						: null}
+				</View>
+			)}
 		</SafeAreaView>
 	);
 }
 
 const styles = StyleSheet.create({
 	background: {
+		justifyContent: "center",
+		alignItems: "center",
+	},
+	ringContainer: {
+		width: 120,
+		height: 120,
+		justifyContent: "center",
+		alignItems: "center",
+		position: "relative",
+	},
+	linearContainer: {
 		flexDirection: "row",
+		justifyContent: "center",
+		alignItems: "center",
 	},
 });

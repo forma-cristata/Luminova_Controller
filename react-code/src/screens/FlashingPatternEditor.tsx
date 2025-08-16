@@ -126,17 +126,25 @@ export default function FlashingPatternEditor({
 	useEffect(() => {
 		if (debouncedBPM > 0) {
 			const newDelayTime = calculateDelayTime(debouncedBPM);
-			setDelayTime(newDelayTime);
-			setHasChanges(true);
+			// Only set hasChanges if the new delay time is different from initial
+			if (Math.round(newDelayTime) !== initialDelayTime) {
+				setDelayTime(newDelayTime);
+				setHasChanges(true);
+			} else {
+				setDelayTime(newDelayTime);
+			}
 		}
-	}, [debouncedBPM]);
+	}, [debouncedBPM, initialDelayTime]);
 
 	// Track flashing pattern changes
 	useEffect(() => {
 		if (flashingPattern !== initialFlashingPattern) {
 			setHasChanges(true);
+		} else if (flashingPattern === initialFlashingPattern && delayTime === initialDelayTime && settingName === setting.name) {
+			// Reset hasChanges when all values are back to initial state
+			setHasChanges(isNew);
 		}
-	}, [flashingPattern, initialFlashingPattern]);
+	}, [flashingPattern, initialFlashingPattern, delayTime, initialDelayTime, settingName, setting.name, isNew]);
 
 	useEffect(() => {
 		const initialBpm = parseFloat(calculateBPM(setting.delayTime));
@@ -176,19 +184,21 @@ export default function FlashingPatternEditor({
 
 	const handleReset = () => {
 		unPreviewAPI();
-		if (hasChanges) {
-			setDelayTime(initialDelayTime);
-			setBPM(parseFloat(calculateBPM(initialDelayTime)));
-			setFlashingPattern(initialFlashingPattern);
-			setSettingName(setting.name); // Reset name
-			setNameError(null); // Clear name error
-			setHasChanges(false); // Reset the changes flag
+		setDelayTime(initialDelayTime);
+		setBPM(parseFloat(calculateBPM(initialDelayTime)));
+		setFlashingPattern(initialFlashingPattern);
+		setSettingName(setting.name); // Reset name
+		setNameError(null); // Clear name error
 
-			// Refocus the picker to the reset pattern
-			setTimeout(() => {
-				pickerRef.current?.refocus();
-			}, 200); // Small delay to ensure state has updated
-		}
+		// Use setTimeout to ensure all state updates complete before setting hasChanges to false
+		setTimeout(() => {
+			setHasChanges(false); // Reset the changes flag
+		}, 0);
+
+		// Refocus the picker to the reset pattern
+		setTimeout(() => {
+			pickerRef.current?.refocus();
+		}, 200); // Small delay to ensure state has updated
 	};
 
 	const handleSave = async () => {

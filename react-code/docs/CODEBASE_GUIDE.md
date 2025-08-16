@@ -931,6 +931,72 @@ This error is caused by TWO main issues that must BOTH be fixed:
 **🎯 The Ultimate Rule:** 
 When debugging React key issues, just use `getStableSettingId(setting)` and move on. Don't be clever.
 
+#### **🔧 Reset Button State Management Fix (August 2025)**
+
+**The Problem:** In FlashingPatternEditor, when users hit "Reset", the save button remained enabled instead of becoming disabled and transparent.
+
+**Root Cause:** useEffect hooks were re-triggering `setHasChanges(true)` immediately after reset due to:
+1. **Flashing pattern useEffect** detecting changes during state reset
+2. **BPM useEffect** triggering delayTime calculation during reset
+3. **Conditional reset logic** only executing when `hasChanges` was true
+
+**🎯 THE SOLUTION:**
+
+**Fixed useEffect Logic:**
+```tsx
+// Track flashing pattern changes with proper reset detection
+useEffect(() => {
+  if (flashingPattern !== initialFlashingPattern) {
+    setHasChanges(true);
+  } else if (flashingPattern === initialFlashingPattern && delayTime === initialDelayTime && settingName === setting.name) {
+    // Reset hasChanges when all values are back to initial state
+    setHasChanges(isNew);
+  }
+}, [flashingPattern, initialFlashingPattern, delayTime, initialDelayTime, settingName, setting.name, isNew]);
+
+// BPM useEffect with initial value check
+useEffect(() => {
+  if (debouncedBPM > 0) {
+    const newDelayTime = calculateDelayTime(debouncedBPM);
+    // Only set hasChanges if the new delay time is different from initial
+    if (Math.round(newDelayTime) !== initialDelayTime) {
+      setDelayTime(newDelayTime);
+      setHasChanges(true);
+    } else {
+      setDelayTime(newDelayTime);
+    }
+  }
+}, [debouncedBPM, initialDelayTime]);
+```
+
+**Fixed Reset Function:**
+```tsx
+const handleReset = () => {
+  unPreviewAPI();
+  setDelayTime(initialDelayTime);
+  setBPM(parseFloat(calculateBPM(initialDelayTime)));
+  setFlashingPattern(initialFlashingPattern);
+  setSettingName(setting.name);
+  setNameError(null);
+
+  // Use setTimeout to ensure all state updates complete before setting hasChanges to false
+  setTimeout(() => {
+    setHasChanges(false);
+  }, 0);
+
+  // Refocus the picker
+  setTimeout(() => {
+    pickerRef.current?.refocus();
+  }, 200);
+};
+```
+
+**🔥 KEY LESSONS:**
+1. **Watch for useEffect interference** - Effects can re-trigger state changes during reset
+2. **Use setTimeout(0)** to ensure state updates complete before final reset
+3. **Remove conditional logic from reset** - Always execute the full reset sequence
+4. **Compare with initial values** in useEffects to prevent false positives
+
 ### 🔄 State Management
 
 #### `src/context/ConfigurationContext.tsx`

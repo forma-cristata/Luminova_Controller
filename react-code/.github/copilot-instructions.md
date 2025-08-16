@@ -3,7 +3,7 @@
 ## Core Permissions and Protocols
 ### 🔍 **General Keep-in-minds**
 - NEVER RUN THIS COMMAND EVER: "npx @biomejs/biome lint --write --unsafe"
-- Importing react should look like import React from "react"; tHE LINTER IS OFTEN WRONG ABOUT THIS. IF YOU COULD STOP THE LINTER FROM COMPLAINING ABOUT IT THAT WOULD BE GREAT.
+- Importing react should look like import React from "react"; tHE LINTER IS OFTEN WRONG ABOUT THIS. IF YOU COULD STOP THE LINTER FROM COMPLAINING ABOUT IT THAT WOULD BE GREAT. THE LINTER IS ALSO WRONG ABOUT IMPORTING REACT AS A TYPE IT IS NOT A TYPE. IT SHOULD ALWAYYYYYSSSSS BE IMPORT REACT FROM "REACT";.
 - tHEREFORE STOP DOING THIS, JUST LEAVE THE IMPORT IF NEEDED IGNORE THE LINTER: There is JSX, so React is needed. The linter might be incorrectly flagging this. Let me try removing it to confirm:..... I need to add React back:
 - You often place your code fixes inside import statements. Stop doing that.
 - SLIDERS NEED THROTTLED FOR ANDROID

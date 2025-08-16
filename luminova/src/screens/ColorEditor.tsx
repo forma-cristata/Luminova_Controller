@@ -67,13 +67,8 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 	const [colors, setColors] = useState([...setting.colors]);
 	const [selectedDot, setSelectedDot] = useState<number | null>(null);
 	const [hue, setHue] = useState(0);
-	const debouncedHue = useDebounce(hue, 50);
-
 	const [brightness, setBrightness] = useState(100);
-	const debouncedBrightness = useDebounce(brightness, 50);
-
 	const [saturation, setSaturation] = useState(0);
-	const debouncedSaturation = useDebounce(saturation, 50);
 
 	const [hexInput, setHexInput] = useState("");
 	const debouncedHexInput = useDebounce(hexInput, 200);
@@ -303,9 +298,28 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 			selectedDot !== null &&
 			debouncedHexInput.length === 6
 		) {
-			applyHexColor(hexValue);
+			const finalHex = hexValue.startsWith("#") ? hexValue : `#${hexValue}`;
+			
+			setColors((prevColors) => {
+				// Save to history before updating
+				setColorHistory((prevHistory) => [...prevHistory, [...prevColors]]);
+				
+				const newColors = [...prevColors];
+				newColors[selectedDot] = finalHex;
+				return newColors;
+			});
+			
+			setHasChanges(true);
+			
+			const rgb = hexToRgb(finalHex);
+			if (rgb) {
+				const hsv = rgbToHsv(rgb.r, rgb.g, rgb.b);
+				setHue(hsv.h);
+				setBrightness(hsv.v);
+				setSaturation(hsv.s);
+			}
 		}
-	}, [debouncedHexInput, selectedDot, applyHexColor]);
+	}, [debouncedHexInput, selectedDot, hexToRgb, rgbToHsv]);
 
 	const handleCancel = () => {
 		unPreviewAPI();
@@ -632,7 +646,7 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 											]}
 											minimumValue={0}
 											maximumValue={360}
-											value={debouncedHue}
+											value={hue}
 											disabled={selectedDot === null}
 											onValueChange={(value) => {
 												if (selectedDot !== null) {
@@ -668,7 +682,7 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 										minimumValue={0}
 										maximumValue={100}
 										disabled={selectedDot === null}
-										value={debouncedSaturation}
+										value={saturation}
 										onValueChange={(value) => {
 											if (selectedDot !== null) {
 												setSaturation(value);
@@ -697,7 +711,7 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 										minimumValue={0}
 										maximumValue={100}
 										disabled={selectedDot === null}
-										value={debouncedBrightness}
+										value={brightness}
 										onValueChange={(value) => {
 											if (selectedDot !== null) {
 												setBrightness(value);

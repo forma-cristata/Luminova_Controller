@@ -120,6 +120,43 @@ import type { Setting } from '@/src/interface/SettingInterface';
 - **Side Effects**: Use useEffect with proper cleanup
 - **Performance**: Use useCallback/useMemo for expensive operations
 
+### 🚀 **Development Workflow & CI Pipeline**
+
+#### **Available Scripts**
+- `npm run format-lint` - Run Biome linter and formatter with fixes
+- `npm run format` - Format code with Biome
+- `npx @biomejs/biome lint src/` - Check for linting errors without fixes
+- `npm start` - Start Expo development server
+- `npm run android` - Run on Android device/emulator
+- `npm run ios` - Run on iOS device/simulator
+
+#### **GitHub Actions CI Pipeline**
+The project includes automated quality checks that run on every push:
+
+**Linter Pipeline (`/.github/workflows/linter.yml`)**
+- Triggers on push to any branch when source code changes
+- Runs `npx @biomejs/biome lint src/ docs/` to identify errors
+- Fails build if linting errors are found
+- Does not auto-fix issues - requires manual fixes
+
+**Comprehensive CI Pipeline (`/.github/workflows/ci.yml`)**
+- Runs TypeScript type checking with `npx tsc --noEmit`
+- Performs Biome linting checks
+- Validates code formatting
+- Optional dependency analysis
+
+**Simple Lint Check (`/.github/workflows/lint-check.yml`)**
+- Basic linting and formatting validation
+- Includes TypeScript error checking
+- Lightweight alternative for quick feedback
+
+#### **Pre-Push Checklist**
+1. Run `npm run format-lint` locally to fix issues
+2. Ensure TypeScript compiles: `npx tsc --noEmit`
+3. Test key functionality after changes
+4. Commit with descriptive messages
+5. Push - CI pipeline will validate code quality
+
 ### 🧹 **Code Cleanup Protocol**
 - **MANDATORY**: Always remove deprecated code when implementing fixes or new features
 - **Remove**: Unused state variables, functions, imports, and components

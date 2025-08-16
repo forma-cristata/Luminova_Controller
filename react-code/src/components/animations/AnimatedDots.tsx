@@ -9,9 +9,11 @@ import Dot from "@/src/components/ui/Dot";
 
 import type { Setting } from "@/src/types/SettingInterface";
 import { getStableSettingId } from "@/src/utils/settingUtils";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import type { RootStackParamList } from "@/src/screens/index";
 
 interface AnimatedDotsProps {
-	navigation: any;
+	navigation: NativeStackNavigationProp<RootStackParamList>;
 	setting: Setting;
 	layout?: "ring" | "linear";
 }

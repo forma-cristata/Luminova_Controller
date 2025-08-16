@@ -20,7 +20,6 @@ interface PickerProps {
 	setting: Setting; // TODO: Currently unused but might be needed for future enhancements
 	selectedPattern: string;
 	setSelectedPattern: (pattern: string) => void;
-	navigation?: any; // TODO: Type this properly with navigation prop types
 }
 
 const Picker = forwardRef<PickerRef, PickerProps>(({

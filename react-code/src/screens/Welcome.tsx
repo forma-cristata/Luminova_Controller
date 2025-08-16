@@ -19,8 +19,14 @@ import { FirstTimeUserService } from "@/src/services/FirstTimeUserService";
 import IpAddressInput from "@/src/components/welcome/IpAddressInput";
 import LedToggle from "@/src/components/welcome/LedToggle";
 import React from "react";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import type { RootStackParamList } from "./index";
 
-export default function Welcome({ navigation }: any) {
+interface WelcomeProps {
+	navigation: NativeStackNavigationProp<RootStackParamList>;
+}
+
+export default function Welcome({ navigation }: WelcomeProps) {
 	const { setLastEdited, isShelfConnected, setIsShelfConnected } =
 		useConfiguration();
 	const [displayText, setDisplayText] = useState("");

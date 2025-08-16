@@ -8,9 +8,11 @@ import { COMMON_STYLES } from "@/src/styles/SharedStyles";
 import { useConfiguration } from "@/src/context/ConfigurationContext";
 import { getStableSettingId } from "@/src/utils/settingUtils";
 import type { ViewStyle } from "react-native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import type { RootStackParamList } from "@/src/screens/index";
 
 interface SettingItemProps {
-	navigation: any; // TODO: Type this properly with navigation prop types
+	navigation: NativeStackNavigationProp<RootStackParamList>;
 	setting: Setting;
 	style: ViewStyle;
 	layout: "full" | "compact";

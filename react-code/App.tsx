@@ -2,7 +2,7 @@ import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useState } from "react";
 import React from "react";
-import { IpConfigService } from "./src/services/IpConfigService";
+import { loadIpAddress } from "./src/services/IpConfigService";
 
 import Index from "./src/screens/index";
 
@@ -53,7 +53,7 @@ export default function App() {
 		async function prepareApp() {
 			try {
 				// Load the IP address at startup
-				await IpConfigService.loadIpAddress();
+				await loadIpAddress();
 			} catch (e) {
 				console.warn("Failed to load IP on startup", e);
 			} finally {

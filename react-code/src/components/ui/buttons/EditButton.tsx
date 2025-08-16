@@ -3,9 +3,11 @@ import Button, { type BaseButtonProps } from "@/src/components/ui/buttons/Button
 import { COLORS, FONTS } from "@/src/styles/SharedStyles";
 import { useConfiguration } from "@/src/context/ConfigurationContext";
 import type { Setting } from "@/src/types/SettingInterface";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import type { RootStackParamList } from "@/src/screens/index";
 
 interface EditButtonProps extends Omit<BaseButtonProps, "title" | "onPress"> {
-	navigation: any; // TODO: Type this properly with navigation prop types
+	navigation: NativeStackNavigationProp<RootStackParamList>;
 	setting: Setting;
 	settingIndex?: number;
 	onPress?: () => void;

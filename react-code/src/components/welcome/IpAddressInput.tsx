@@ -9,7 +9,7 @@ import {
     Alert,
 } from "react-native";
 import { ApiService } from "@/src/services/ApiService";
-import { IpConfigService } from "@/src/services/IpConfigService";
+import { getCurrentIp, saveIpAddress } from "@/src/services/IpConfigService";
 import { useDebounce } from "@/src/hooks/useDebounce";
 import Button from "@/src/components/ui/buttons/Button";
 import { COLORS, FONTS, DIMENSIONS } from "@/src/styles/SharedStyles";
@@ -66,7 +66,7 @@ export default function IpAddressInput({ onIpSaved }: IpAddressInputProps) {
 
     useEffect(() => {
         const loadIp = async () => {
-            const ip = await IpConfigService.getCurrentIp();
+            const ip = await getCurrentIp();
             const parts = ip.split(".");
             setOctet1Chars((parts[0] || "0").split(""));
             setOctet2Chars((parts[1] || "0").split(""));
@@ -149,7 +149,7 @@ export default function IpAddressInput({ onIpSaved }: IpAddressInputProps) {
         setIsSavingIp(true);
         try {
             // Save IP address to storage (this is fast)
-            await IpConfigService.saveIpAddress(finalIpAddress);
+            await saveIpAddress(finalIpAddress);
             setSavedIpAddress(finalIpAddress);
             Keyboard.dismiss();
 

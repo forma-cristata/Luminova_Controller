@@ -1,7 +1,6 @@
 import React from "react";
 import { View } from "react-native";
 
-// Test comment to trigger CI pipeline validation
 interface DotProps {
 	color: string;
 }

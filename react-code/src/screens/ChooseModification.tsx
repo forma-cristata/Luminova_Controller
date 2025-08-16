@@ -1,9 +1,5 @@
 import React from "react";
-import {
-	SafeAreaView,
-	StyleSheet,
-	View,
-} from "react-native";
+import { SafeAreaView, StyleSheet, View } from "react-native";
 
 import AnimatedDots from "@/src/components/animations/AnimatedDots";
 import BackButton from "@/src/components/ui/buttons/BackButton";
@@ -13,7 +9,7 @@ import { COLORS } from "@/src/styles/SharedStyles";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "@/src/screens/index";
 
-type Props = NativeStackScreenProps<RootStackParamList, 'ChooseModification'>;
+type Props = NativeStackScreenProps<RootStackParamList, "ChooseModification">;
 
 export default function ChooseModification({ navigation, route }: Props) {
 	const setting = route.params?.setting;
@@ -37,7 +33,11 @@ export default function ChooseModification({ navigation, route }: Props) {
 				/>
 
 				<View style={styles.animationContainer}>
-					<AnimatedDots navigation={navigation} setting={setting} layout="ring" />
+					<AnimatedDots
+						navigation={navigation}
+						setting={setting}
+						layout="ring"
+					/>
 				</View>
 
 				<Button

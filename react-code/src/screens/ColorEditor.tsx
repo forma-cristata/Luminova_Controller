@@ -1,8 +1,15 @@
 import Slider from "@react-native-community/slider";
-import { previewSetting, restoreConfiguration } from "@/src/services/ApiService";
+import {
+	previewSetting,
+	restoreConfiguration,
+} from "@/src/services/ApiService";
 import { useConfiguration } from "@/src/context/ConfigurationContext";
 import { useDebounce } from "@/src/hooks/useDebounce";
-import { loadSettings, saveSettings, updateSetting } from "@/src/services/SettingsService";
+import {
+	loadSettings,
+	saveSettings,
+	updateSetting,
+} from "@/src/services/SettingsService";
 import { useState, useCallback } from "react";
 import {
 	Dimensions,
@@ -39,10 +46,18 @@ import React from "react";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "@/src/screens/index";
 
-type ColorEditorProps = NativeStackScreenProps<RootStackParamList, 'ColorEditor'>;
+type ColorEditorProps = NativeStackScreenProps<
+	RootStackParamList,
+	"ColorEditor"
+>;
 
 export default function ColorEditor({ navigation, route }: ColorEditorProps) {
-	const { currentConfiguration, setLastEdited, isShelfConnected, setIsShelfConnected } = useConfiguration();
+	const {
+		currentConfiguration,
+		setLastEdited,
+		isShelfConnected,
+		setIsShelfConnected,
+	} = useConfiguration();
 
 	const setting = route.params?.setting;
 	const isNew = route.params?.isNew || false;
@@ -109,10 +124,10 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 		const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
 		return result
 			? {
-				r: parseInt(result[1], 16),
-				g: parseInt(result[2], 16),
-				b: parseInt(result[3], 16),
-			}
+					r: parseInt(result[1], 16),
+					g: parseInt(result[2], 16),
+					b: parseInt(result[3], 16),
+				}
 			: null;
 	}, []);
 
@@ -145,7 +160,9 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 		s = s / 100;
 		v = v / 100;
 
-		let r: number = 0, g: number = 0, b: number = 0;
+		let r: number = 0,
+			g: number = 0,
+			b: number = 0;
 		const i = Math.floor(h * 6);
 		const f = h * 6 - i;
 		const p = v * (1 - s);
@@ -253,30 +270,39 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 		}
 	};
 
-	const applyHexColor = useCallback((hexValue: string) => {
-		if (selectedDot !== null) {
-			const finalHex = hexValue.startsWith("#") ? hexValue : `#${hexValue}`;
-			setColorHistory(prev => [...prev, [...colors]]);
-			const newColors = [...colors];
-			newColors[selectedDot] = finalHex;
-			setColors(newColors);
-			setHasChanges(true);
-			const rgb = hexToRgb(finalHex);
-			if (rgb) {
-				const hsv = rgbToHsv(rgb.r, rgb.g, rgb.b);
-				setHue(hsv.h);
-				setBrightness(hsv.v);
-				setSaturation(hsv.s);
+	const applyHexColor = useCallback(
+		(hexValue: string) => {
+			if (selectedDot !== null) {
+				const finalHex = hexValue.startsWith("#") ? hexValue : `#${hexValue}`;
+				setColorHistory((prev) => [...prev, [...colors]]);
+				const newColors = [...colors];
+				newColors[selectedDot] = finalHex;
+				setColors(newColors);
+				setHasChanges(true);
+				const rgb = hexToRgb(finalHex);
+				if (rgb) {
+					const hsv = rgbToHsv(rgb.r, rgb.g, rgb.b);
+					setHue(hsv.h);
+					setBrightness(hsv.v);
+					setSaturation(hsv.s);
+				}
 			}
-		}
-	}, [selectedDot, colors, hexToRgb, rgbToHsv]);
+		},
+		[selectedDot, colors, hexToRgb, rgbToHsv],
+	);
 
 	// Process debounced hex input for typed input
 	React.useEffect(() => {
 		const hexRegex = /^#?([A-Fa-f0-9]{6})$/;
-		const hexValue = debouncedHexInput.startsWith("#") ? debouncedHexInput : `#${debouncedHexInput}`;
+		const hexValue = debouncedHexInput.startsWith("#")
+			? debouncedHexInput
+			: `#${debouncedHexInput}`;
 
-		if (hexRegex.test(hexValue) && selectedDot !== null && debouncedHexInput.length === 6) {
+		if (
+			hexRegex.test(hexValue) &&
+			selectedDot !== null &&
+			debouncedHexInput.length === 6
+		) {
 			applyHexColor(hexValue);
 		}
 	}, [debouncedHexInput, selectedDot, applyHexColor]);
@@ -405,7 +431,7 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 			startY.value = event.absoluteY;
 			startX.value = event.absoluteX;
 		},
-		onActive: () => { },
+		onActive: () => {},
 		onEnd: (event) => {
 			const initY = startY.value;
 			const initX = startX.value;
@@ -529,7 +555,9 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 					<Animated.View style={{ flex: 1 }}>
 						<SafeAreaView style={COMMON_STYLES.container}>
 							<InfoButton />
-							<BackButton beforePress={previewMode ? unPreviewAPI : undefined} />
+							<BackButton
+								beforePress={previewMode ? unPreviewAPI : undefined}
+							/>
 							{renderTitle()}
 							<ColorDots
 								colors={colors}
@@ -551,10 +579,12 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 									disabled={selectedDot === null}
 									activeOpacity={0.7}
 								>
-									<Text style={[
-										styles.hexInputText,
-										{ color: hexInput ? COLORS.WHITE : COLORS.PLACEHOLDER }
-									]}>
+									<Text
+										style={[
+											styles.hexInputText,
+											{ color: hexInput ? COLORS.WHITE : COLORS.PLACEHOLDER },
+										]}
+									>
 										{hexInput.toUpperCase() || "FFFFFF"}
 									</Text>
 								</TouchableOpacity>
@@ -724,8 +754,12 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 											}
 										}}
 										disabled={!isShelfConnected}
-										variant={!hasChanges && previewMode ? "disabled" : "primary"}
-										opacity={!isShelfConnected ? COLORS.DISABLED_OPACITY : undefined}
+										variant={
+											!hasChanges && previewMode ? "disabled" : "primary"
+										}
+										opacity={
+											!isShelfConnected ? COLORS.DISABLED_OPACITY : undefined
+										}
 									/>
 								</View>
 							</View>

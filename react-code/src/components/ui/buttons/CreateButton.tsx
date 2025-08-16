@@ -13,7 +13,13 @@ interface CreateButtonProps extends Omit<BaseButtonProps, "title"> {
  * Built on top of the base Button component for consistency.
  */
 const CreateButton = React.memo(
-	({ onPress, style, textStyle, symbol = "+", ...buttonProps }: CreateButtonProps) => {
+	({
+		onPress,
+		style,
+		textStyle,
+		symbol = "+",
+		...buttonProps
+	}: CreateButtonProps) => {
 		const createButtonStyle: ViewStyle = {
 			width: 365,
 			height: "100%",

@@ -8,7 +8,12 @@ import {
 	View,
 } from "react-native";
 import * as Audio from "expo-audio";
-import { COLORS, COMMON_STYLES, FONTS, DIMENSIONS } from "@/src/styles/SharedStyles";
+import {
+	COLORS,
+	COMMON_STYLES,
+	FONTS,
+	DIMENSIONS,
+} from "@/src/styles/SharedStyles";
 
 const { SCALE: scale, SCREEN_WIDTH: width } = DIMENSIONS;
 

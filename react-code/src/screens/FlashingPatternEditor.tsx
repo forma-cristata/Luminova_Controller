@@ -28,11 +28,18 @@ import { useConfiguration } from "@/src/context/ConfigurationContext";
 import { useDebounce } from "@/src/hooks/useDebounce";
 import type { Setting } from "@/src/types/SettingInterface";
 import { postConfig, restoreConfiguration } from "@/src/services/ApiService";
-import { loadSettings, saveSettings, updateSetting } from "@/src/services/SettingsService";
+import {
+	loadSettings,
+	saveSettings,
+	updateSetting,
+} from "@/src/services/SettingsService";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "@/src/screens/index";
 
-type FlashingPatternEditorProps = NativeStackScreenProps<RootStackParamList, 'FlashingPatternEditor'>;
+type FlashingPatternEditorProps = NativeStackScreenProps<
+	RootStackParamList,
+	"FlashingPatternEditor"
+>;
 
 /**
  * This page should edit:
@@ -41,8 +48,16 @@ type FlashingPatternEditorProps = NativeStackScreenProps<RootStackParamList, 'Fl
  *      The delayTime - this should be a ratio of the value the user chooses.
  *          The user should choose the 'speed'
  *          The greater the speed, the shorter the delay time.*/
-export default function FlashingPatternEditor({ route, navigation }: FlashingPatternEditorProps) {
-	const { currentConfiguration, setLastEdited, isShelfConnected, setIsShelfConnected } = useConfiguration();
+export default function FlashingPatternEditor({
+	route,
+	navigation,
+}: FlashingPatternEditorProps) {
+	const {
+		currentConfiguration,
+		setLastEdited,
+		isShelfConnected,
+		setIsShelfConnected,
+	} = useConfiguration();
 
 	const setting = route.params?.setting;
 	const isNew = route.params?.isNew || false;
@@ -142,7 +157,13 @@ export default function FlashingPatternEditor({ route, navigation }: FlashingPat
 				setting={newSetting}
 			/>
 		);
-	}, [debouncedDelayTime, debouncedFlashingPattern, setting.colors, navigation, setting]);
+	}, [
+		debouncedDelayTime,
+		debouncedFlashingPattern,
+		setting.colors,
+		navigation,
+		setting,
+	]);
 
 	const handleCancel = () => {
 		unPreviewAPI();
@@ -257,7 +278,7 @@ export default function FlashingPatternEditor({ route, navigation }: FlashingPat
 							// Random pattern from valid animation patterns (excluding STILL)
 							const randomPattern =
 								ANIMATION_PATTERNS[
-								Math.floor(Math.random() * ANIMATION_PATTERNS.length)
+									Math.floor(Math.random() * ANIMATION_PATTERNS.length)
 								];
 							setFlashingPattern(randomPattern);
 							setHasChanges(true);
@@ -325,9 +346,7 @@ export default function FlashingPatternEditor({ route, navigation }: FlashingPat
 							title={isNew ? "Cancel" : "Reset"}
 							onPress={isNew ? handleCancel : handleReset}
 							disabled={!isNew && !hasChanges}
-							opacity={
-								isNew ? 1 : hasChanges ? 1 : COLORS.DISABLED_OPACITY
-							}
+							opacity={isNew ? 1 : hasChanges ? 1 : COLORS.DISABLED_OPACITY}
 						/>
 
 						<ActionButton
@@ -370,7 +389,8 @@ export default function FlashingPatternEditor({ route, navigation }: FlashingPat
 			</SafeAreaView>
 		</TouchableWithoutFeedback>
 	);
-} const { width, height } = Dimensions.get("window");
+}
+const { width, height } = Dimensions.get("window");
 const scale = Math.min(width, height) / 375;
 
 const styles = StyleSheet.create({

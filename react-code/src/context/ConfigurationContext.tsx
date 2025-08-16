@@ -1,11 +1,6 @@
 import React from "react";
 import type { Setting } from "@/src/types/SettingInterface";
-import {
-	createContext,
-	type ReactNode,
-	useContext,
-	useState,
-} from "react";
+import { createContext, type ReactNode, useContext, useState } from "react";
 
 interface ConfigurationContextType {
 	currentConfiguration: Setting | null;

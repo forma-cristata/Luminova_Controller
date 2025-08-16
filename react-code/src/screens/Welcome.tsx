@@ -74,13 +74,19 @@ export default function Welcome({ navigation }: WelcomeProps) {
 
 	// Auto-scroll with keyboard show/hide
 	useEffect(() => {
-		const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
-			scrollViewRef.current?.scrollToEnd({ animated: true });
-		});
+		const keyboardDidShowListener = Keyboard.addListener(
+			"keyboardDidShow",
+			() => {
+				scrollViewRef.current?.scrollToEnd({ animated: true });
+			},
+		);
 
-		const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
-			scrollViewRef.current?.scrollTo({ y: 0, animated: true });
-		});
+		const keyboardDidHideListener = Keyboard.addListener(
+			"keyboardDidHide",
+			() => {
+				scrollViewRef.current?.scrollTo({ y: 0, animated: true });
+			},
+		);
 
 		return () => {
 			keyboardDidShowListener?.remove();
@@ -131,7 +137,11 @@ export default function Welcome({ navigation }: WelcomeProps) {
 						onPress={handleDebugTap}
 						activeOpacity={1}
 					>
-						<AnimatedTitle text={displayText} fontSize={130} marginBottom="10%" />
+						<AnimatedTitle
+							text={displayText}
+							fontSize={130}
+							marginBottom="10%"
+						/>
 					</TouchableOpacity>
 					<Button
 						title="Create ⟩"

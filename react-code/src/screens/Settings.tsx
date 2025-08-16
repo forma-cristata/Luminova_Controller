@@ -6,7 +6,6 @@ import {
 	SafeAreaView,
 	StyleSheet,
 	TouchableOpacity,
-
 	View,
 } from "react-native";
 import { useSharedValue } from "react-native-reanimated";
@@ -31,7 +30,7 @@ import { getStableSettingId } from "@/src/utils/settingUtils";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "@/src/screens/index";
 
-type SettingsProps = NativeStackScreenProps<RootStackParamList, 'Settings'>;
+type SettingsProps = NativeStackScreenProps<RootStackParamList, "Settings">;
 
 const width = Dimensions.get("window").width;
 const height = Dimensions.get("window").height;
@@ -61,7 +60,7 @@ export default function Settings({ navigation }: SettingsProps) {
 			pulseOpacity.value = withRepeat(
 				withTiming(0.4, { duration: 1500 }),
 				-1,
-				true
+				true,
 			);
 		} else {
 			pulseOpacity.value = withTiming(0.3, { duration: 300 });
@@ -266,21 +265,19 @@ export default function Settings({ navigation }: SettingsProps) {
 	// Memoize the focused setting block to prevent unnecessary re-renders
 	const focusedSettingBlock = React.useMemo(() => {
 		const settingsLength = settingsData?.length || 0;
-		return currentIndex < settingsLength
-			? settingsData?.[currentIndex]
-				? (
-					<SettingBlock
-						key={`focused-${getStableSettingId(settingsData[currentIndex])}`}
-						navigation={navigation}
-						layout="full"
-						isAnimated={false}
-						style={styles.nothing}
-						setting={settingsData[currentIndex]}
-						index={currentIndex}
-					/>
-				)
-				: null
-			: null;
+		return currentIndex < settingsLength ? (
+			settingsData?.[currentIndex] ? (
+				<SettingBlock
+					key={`focused-${getStableSettingId(settingsData[currentIndex])}`}
+					navigation={navigation}
+					layout="full"
+					isAnimated={false}
+					style={styles.nothing}
+					setting={settingsData[currentIndex]}
+					index={currentIndex}
+				/>
+			) : null
+		) : null;
 	}, [navigation, settingsData, currentIndex]);
 	// Memoize the render item function to prevent recreation on every render
 	const renderItem = React.useCallback(
@@ -321,9 +318,11 @@ export default function Settings({ navigation }: SettingsProps) {
 				<View style={[styles.focusedItem, { position: "relative" }]}>
 					{currentIndex < 0 ? <View key="negative-index" /> : null}
 					{currentIndex < (settingsData?.length || 0) ? (
-						<React.Fragment key={`setting-controls-${currentIndex < (settingsData?.length || 0) ? getStableSettingId(settingsData?.[currentIndex]) : 'no-setting'}`}>
+						<React.Fragment
+							key={`setting-controls-${currentIndex < (settingsData?.length || 0) ? getStableSettingId(settingsData?.[currentIndex]) : "no-setting"}`}
+						>
 							<TouchableOpacity
-								key={`duplicate-${currentIndex < (settingsData?.length || 0) ? getStableSettingId(settingsData?.[currentIndex]) : 'no-setting'}`}
+								key={`duplicate-${currentIndex < (settingsData?.length || 0) ? getStableSettingId(settingsData?.[currentIndex]) : "no-setting"}`}
 								style={{
 									position: "absolute",
 									top: 10,
@@ -337,7 +336,7 @@ export default function Settings({ navigation }: SettingsProps) {
 								<MaterialIcons name="content-copy" size={24} color="white" />
 							</TouchableOpacity>
 							<TouchableOpacity
-								key={`delete-${currentIndex < (settingsData?.length || 0) ? getStableSettingId(settingsData?.[currentIndex]) : 'no-setting'}`}
+								key={`delete-${currentIndex < (settingsData?.length || 0) ? getStableSettingId(settingsData?.[currentIndex]) : "no-setting"}`}
 								style={{
 									position: "absolute",
 									top: 10,
@@ -360,15 +359,10 @@ export default function Settings({ navigation }: SettingsProps) {
 						</React.Fragment>
 					) : null}
 					{currentIndex >= (settingsData?.length || 0) ? (
-						<CreateButton
-							key="create-new-setting"
-							onPress={createNewSetting}
-						/>
+						<CreateButton key="create-new-setting" onPress={createNewSetting} />
 					) : null}
 				</View>
 				<View style={styles.carCont}>
-
-
 					<Carousel
 						ref={ref}
 						data={carouselData}
@@ -389,10 +383,7 @@ export default function Settings({ navigation }: SettingsProps) {
 					{/* Left scroll indicator */}
 					<Animated.View style={[animatedIndicatorStyle]}>
 						<TouchableOpacity
-							style={[
-								styles.scrollIndicator,
-								styles.scrollIndicatorLeft
-							]}
+							style={[styles.scrollIndicator, styles.scrollIndicatorLeft]}
 							onPress={() => {
 								if (ref.current && carouselData.length > 1) {
 									ref.current.prev({ animated: true });
@@ -408,10 +399,7 @@ export default function Settings({ navigation }: SettingsProps) {
 					{/* Right scroll indicator */}
 					<Animated.View style={[animatedIndicatorStyle]}>
 						<TouchableOpacity
-							style={[
-								styles.scrollIndicator,
-								styles.scrollIndicatorRight
-							]}
+							style={[styles.scrollIndicator, styles.scrollIndicatorRight]}
 							onPress={() => {
 								if (ref.current && carouselData.length > 1) {
 									ref.current.next({ animated: true });

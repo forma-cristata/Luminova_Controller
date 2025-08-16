@@ -1,4 +1,10 @@
-import React, { useEffect, useRef, useState, useImperativeHandle, forwardRef } from "react";
+import React, {
+	useEffect,
+	useRef,
+	useState,
+	useImperativeHandle,
+	forwardRef,
+} from "react";
 import {
 	ScrollView,
 	StyleSheet,
@@ -22,97 +28,102 @@ interface PickerProps {
 	setSelectedPattern: (pattern: string) => void;
 }
 
-const Picker = forwardRef<PickerRef, PickerProps>(({
-	setting: _setting, // Prefix with underscore to indicate intentionally unused
-	selectedPattern,
-	setSelectedPattern,
-}, ref) => {
-	const scrollViewRef = useRef<ScrollView>(null);
-	const [isInitialLoad, setIsInitialLoad] = useState(true);
-
-	const scrollToSelectedPattern = () => {
-		if (scrollViewRef.current) {
-			const selectedIndex = FLASHING_PATTERNS.findIndex(
-				(p) => p.id === selectedPattern,
-			);
-			if (selectedIndex !== -1) {
-				const itemHeight = 12 * 2 * scale + 25 * scale + 2;
-				setTimeout(() => {
-					scrollViewRef.current?.scrollTo({
-						y: selectedIndex * itemHeight - 0.5 * itemHeight,
-						animated: true,
-					});
-				}, 100);
-			}
-		}
-	};
-
-	useImperativeHandle(ref, () => ({
-		refocus: () => {
-			scrollToSelectedPattern();
+const Picker = forwardRef<PickerRef, PickerProps>(
+	(
+		{
+			setting: _setting, // Prefix with underscore to indicate intentionally unused
+			selectedPattern,
+			setSelectedPattern,
 		},
-	}));
+		ref,
+	) => {
+		const scrollViewRef = useRef<ScrollView>(null);
+		const [isInitialLoad, setIsInitialLoad] = useState(true);
 
-	useEffect(() => {
-		// Only auto-scroll on initial load, not on subsequent pattern changes
-		if (scrollViewRef.current && isInitialLoad) {
-			const selectedIndex = FLASHING_PATTERNS.findIndex(
-				(p) => p.id === selectedPattern,
-			);
-			if (selectedIndex !== -1) {
-				const itemHeight = 12 * 2 * scale + 25 * scale + 2;
-				setTimeout(() => {
-					scrollViewRef.current?.scrollTo({
-						y: selectedIndex * itemHeight - 0.5 * itemHeight,
-						animated: false,
-					});
-					setIsInitialLoad(false); // Mark initial load as complete
-				}, 100);
-			} else {
-				setIsInitialLoad(false); // Mark initial load as complete even if no pattern found
+		const scrollToSelectedPattern = () => {
+			if (scrollViewRef.current) {
+				const selectedIndex = FLASHING_PATTERNS.findIndex(
+					(p) => p.id === selectedPattern,
+				);
+				if (selectedIndex !== -1) {
+					const itemHeight = 12 * 2 * scale + 25 * scale + 2;
+					setTimeout(() => {
+						scrollViewRef.current?.scrollTo({
+							y: selectedIndex * itemHeight - 0.5 * itemHeight,
+							animated: true,
+						});
+					}, 100);
+				}
 			}
-		}
-	}, [selectedPattern, isInitialLoad]);
+		};
 
-	const handlePatternSelect = (patternId: string) => {
-		setSelectedPattern(patternId);
-		// Remove direct mutation - let parent component handle the setting update
-	};
+		useImperativeHandle(ref, () => ({
+			refocus: () => {
+				scrollToSelectedPattern();
+			},
+		}));
 
-	return (
-		<View style={styles.container}>
-			<View style={styles.pickerContainer}>
-				<ScrollView
-					ref={scrollViewRef}
-					showsVerticalScrollIndicator={false}
-					contentContainerStyle={styles.scrollContent}
-				>
-					{FLASHING_PATTERNS.map((pattern) => (
-						<TouchableOpacity
-							key={pattern.id}
-							style={[
-								styles.patternOption,
-								selectedPattern === pattern.id && styles.selectedOption,
-							]}
-							onPress={() => handlePatternSelect(pattern.id)}
-						>
-							<Text
+		useEffect(() => {
+			// Only auto-scroll on initial load, not on subsequent pattern changes
+			if (scrollViewRef.current && isInitialLoad) {
+				const selectedIndex = FLASHING_PATTERNS.findIndex(
+					(p) => p.id === selectedPattern,
+				);
+				if (selectedIndex !== -1) {
+					const itemHeight = 12 * 2 * scale + 25 * scale + 2;
+					setTimeout(() => {
+						scrollViewRef.current?.scrollTo({
+							y: selectedIndex * itemHeight - 0.5 * itemHeight,
+							animated: false,
+						});
+						setIsInitialLoad(false); // Mark initial load as complete
+					}, 100);
+				} else {
+					setIsInitialLoad(false); // Mark initial load as complete even if no pattern found
+				}
+			}
+		}, [selectedPattern, isInitialLoad]);
+
+		const handlePatternSelect = (patternId: string) => {
+			setSelectedPattern(patternId);
+			// Remove direct mutation - let parent component handle the setting update
+		};
+
+		return (
+			<View style={styles.container}>
+				<View style={styles.pickerContainer}>
+					<ScrollView
+						ref={scrollViewRef}
+						showsVerticalScrollIndicator={false}
+						contentContainerStyle={styles.scrollContent}
+					>
+						{FLASHING_PATTERNS.map((pattern) => (
+							<TouchableOpacity
+								key={pattern.id}
 								style={[
-									styles.patternText,
-									selectedPattern === pattern.id && styles.selectedText,
+									styles.patternOption,
+									selectedPattern === pattern.id && styles.selectedOption,
 								]}
+								onPress={() => handlePatternSelect(pattern.id)}
 							>
-								{pattern.name}
-							</Text>
-						</TouchableOpacity>
-					))}
-				</ScrollView>
+								<Text
+									style={[
+										styles.patternText,
+										selectedPattern === pattern.id && styles.selectedText,
+									]}
+								>
+									{pattern.name}
+								</Text>
+							</TouchableOpacity>
+						))}
+					</ScrollView>
+				</View>
 			</View>
-		</View>
-	);
-});
+		);
+	},
+);
 
-Picker.displayName = 'Picker';
+Picker.displayName = "Picker";
 
 const styles = StyleSheet.create({
 	container: {

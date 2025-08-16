@@ -1,6 +1,8 @@
 import React from "react";
 import type { ViewStyle } from "react-native";
-import Button, { type BaseButtonProps } from "@/src/components/ui/buttons/Button";
+import Button, {
+	type BaseButtonProps,
+} from "@/src/components/ui/buttons/Button";
 import { COLORS, FONTS } from "@/src/styles/SharedStyles";
 import { useConfiguration } from "@/src/context/ConfigurationContext";
 import type { Setting } from "@/src/types/SettingInterface";
@@ -23,7 +25,8 @@ const FlashButton = React.memo(
 		onError,
 		textStyle,
 	}: FlashButtonProps) => {
-		const { setCurrentConfiguration, isShelfConnected, setIsShelfConnected } = useConfiguration();
+		const { setCurrentConfiguration, isShelfConnected, setIsShelfConnected } =
+			useConfiguration();
 
 		const handleFlash = async () => {
 			// Don't proceed if shelf is not connected
@@ -53,7 +56,8 @@ const FlashButton = React.memo(
 
 				// Call error callback if provided
 				if (onError) {
-					const errorToPass = error instanceof Error ? error : new Error(String(error));
+					const errorToPass =
+						error instanceof Error ? error : new Error(String(error));
 					onError(errorToPass);
 				}
 			}
@@ -72,7 +76,7 @@ const FlashButton = React.memo(
 		// Create combined style with opacity for disabled state
 		const combinedStyle: ViewStyle = {
 			...style,
-			...(isDisabled && { opacity: COLORS.DISABLED_OPACITY })
+			...(isDisabled && { opacity: COLORS.DISABLED_OPACITY }),
 		};
 
 		return (

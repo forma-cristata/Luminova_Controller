@@ -15,8 +15,19 @@ export type RootStackParamList = {
 	Welcome: undefined;
 	Settings: { setting?: Setting } | undefined;
 	ChooseModification: { setting: Setting; settingIndex?: number };
-	ColorEditor: { setting: Setting; isNew?: boolean; originalName?: string; settingIndex?: number; newSettingCarouselIndex?: number };
-	FlashingPatternEditor: { setting: Setting; isNew?: boolean; settingIndex?: number; newSettingCarouselIndex?: number };
+	ColorEditor: {
+		setting: Setting;
+		isNew?: boolean;
+		originalName?: string;
+		settingIndex?: number;
+		newSettingCarouselIndex?: number;
+	};
+	FlashingPatternEditor: {
+		setting: Setting;
+		isNew?: boolean;
+		settingIndex?: number;
+		newSettingCarouselIndex?: number;
+	};
 	Info: undefined;
 };
 

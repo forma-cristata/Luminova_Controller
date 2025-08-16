@@ -45,7 +45,8 @@ async function request(
 			try {
 				const errorBody = await response.json();
 				throw new Error(
-					`HTTP error! status: ${response.status}, message: ${errorBody.message || "Unknown error"
+					`HTTP error! status: ${response.status}, message: ${
+						errorBody.message || "Unknown error"
 					}`,
 				);
 			} catch (_e) {
@@ -89,12 +90,15 @@ export async function getStatus(): Promise<StatusResponse> {
  * ⚠️  CRITICAL: DO NOT CHANGE THIS METHOD ⚠️
  * This implementation is CORRECT and should NOT be modified.
  * If you think this needs to be changed, you may be hallucinating.
- * 
+ *
  * The "off" state MUST send all black colors to properly turn off the shelf.
  * The "on" state MUST send a proper configuration to turn on the shelf.
  * Simply calling /led/on endpoint does NOT work correctly.
  */
-export async function toggleLed(state: "on" | "off", config?: ApiConfig): Promise<ApiResponse> {
+export async function toggleLed(
+	state: "on" | "off",
+	config?: ApiConfig,
+): Promise<ApiResponse> {
 	if (state === "off") {
 		// To properly turn off the shelf, send all black colors
 		const offConfig = {
@@ -113,9 +117,22 @@ export async function toggleLed(state: "on" | "off", config?: ApiConfig): Promis
 			// Default homeostasis configuration
 			const onConfig = {
 				colors: [
-					"#ff0000", "#ff4400", "#ff6a00", "#ff9100", "#ffee00", "#00ff1e",
-					"#00ff44", "#00ff95", "#00ffff", "#0088ff", "#0000ff", "#8800ff",
-					"#ff00ff", "#ff00bb", "#ff0088", "#ff0044",
+					"#ff0000",
+					"#ff4400",
+					"#ff6a00",
+					"#ff9100",
+					"#ffee00",
+					"#00ff1e",
+					"#00ff44",
+					"#00ff95",
+					"#00ffff",
+					"#0088ff",
+					"#0000ff",
+					"#8800ff",
+					"#ff00ff",
+					"#ff00bb",
+					"#ff0088",
+					"#ff0044",
 				],
 				whiteValues: Array(16).fill(0),
 				brightnessValues: Array(16).fill(255),
@@ -128,7 +145,9 @@ export async function toggleLed(state: "on" | "off", config?: ApiConfig): Promis
 }
 
 // Convenience methods for common operations
-export async function previewSetting(setting: Partial<Setting>): Promise<ApiResponse> {
+export async function previewSetting(
+	setting: Partial<Setting>,
+): Promise<ApiResponse> {
 	return postConfig({
 		colors: setting.colors,
 		effectNumber: setting.flashingPattern,
@@ -146,7 +165,9 @@ export async function flashSetting(setting: Setting): Promise<ApiResponse> {
 	});
 }
 
-export async function restoreConfiguration(config: Partial<Setting>): Promise<ApiResponse> {
+export async function restoreConfiguration(
+	config: Partial<Setting>,
+): Promise<ApiResponse> {
 	return postConfig({
 		delayTime: config?.delayTime,
 		effectNumber: config?.flashingPattern,

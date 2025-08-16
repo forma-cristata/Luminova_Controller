@@ -28,7 +28,7 @@ const areEqual = (prevProps: SettingItemProps, nextProps: SettingItemProps) => {
 		prevProps.isAnimated === nextProps.isAnimated &&
 		prevProps.index === nextProps.index &&
 		JSON.stringify(prevProps.setting?.colors) ===
-		JSON.stringify(nextProps.setting?.colors)
+			JSON.stringify(nextProps.setting?.colors)
 	);
 };
 
@@ -43,7 +43,7 @@ const SettingBlock = ({
 	const { setLastEdited } = useConfiguration();
 
 	// Generate stable ID for the setting using utility function (even for null settings)
-	const stableId = setting ? getStableSettingId(setting) : 'null-setting';
+	const stableId = setting ? getStableSettingId(setting) : "null-setting";
 
 	// Memoize the dots rendering to prevent unnecessary re-renders
 	const dotsRendered = React.useMemo(() => {
@@ -59,17 +59,9 @@ const SettingBlock = ({
 				setting={setting}
 			/>
 		) : (
-			<ColorDots
-				key={`static-${stableId}`}
-				colors={setting.colors}
-			/>
+			<ColorDots key={`static-${stableId}`} colors={setting.colors} />
 		);
-	}, [
-		isAnimated,
-		stableId,
-		setting,
-		navigation,
-	]);
+	}, [isAnimated, stableId, setting, navigation]);
 
 	// Early return if setting is null, undefined, or missing required properties
 	if (!setting || !setting.name || !setting.colors) {
@@ -94,9 +86,10 @@ const SettingBlock = ({
 		const safeTitle = String(title || "");
 
 		// Truncate if longer than character limit
-		const displayTitle = safeTitle.length > MAX_CHARACTERS
-			? safeTitle.substring(0, MAX_CHARACTERS).trim()
-			: safeTitle;
+		const displayTitle =
+			safeTitle.length > MAX_CHARACTERS
+				? safeTitle.substring(0, MAX_CHARACTERS).trim()
+				: safeTitle;
 
 		// Calculate dynamic font size based on length
 		let fontSize = BASE_FONT_SIZE;
@@ -108,11 +101,13 @@ const SettingBlock = ({
 
 		return {
 			text: displayTitle.toLowerCase(),
-			fontSize: fontSize
+			fontSize: fontSize,
 		};
 	};
 
-	const { text: displayTitle, fontSize: titleFontSize } = processTitle(setting.name);
+	const { text: displayTitle, fontSize: titleFontSize } = processTitle(
+		setting.name,
+	);
 
 	return (
 		<>

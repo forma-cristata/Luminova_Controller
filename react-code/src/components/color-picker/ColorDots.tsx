@@ -25,11 +25,11 @@ const ColorDots = React.memo(
 
 		// Generate stable ID for the colors array using hash-based approach
 		const getStableColorsId = (colors: string[]): string => {
-			const content = colors.join(',');
+			const content = colors.join(",");
 			let hash = 0;
 			for (let i = 0; i < content.length; i++) {
 				const char = content.charCodeAt(i);
-				hash = ((hash << 5) - hash) + char;
+				hash = (hash << 5) - hash + char;
 				hash = hash & hash; // Convert to 32-bit integer
 			}
 			return `colors-${Math.abs(hash)}`;
@@ -89,12 +89,12 @@ const ColorDots = React.memo(
 				...(isInteractive
 					? isBlack
 						? {
-							shadowColor: getFirstNonBlackColor(),
-							shadowOffset: { width: 0, height: 0 },
-							shadowOpacity: 0.6,
-							shadowRadius: 5,
-							elevation: 5,
-						}
+								shadowColor: getFirstNonBlackColor(),
+								shadowOffset: { width: 0, height: 0 },
+								shadowOpacity: 0.6,
+								shadowRadius: 5,
+								elevation: 5,
+							}
 						: {}
 					: {}),
 			};
@@ -108,8 +108,8 @@ const ColorDots = React.memo(
 
 			const dotStyle = getDotStyle(index);
 			// Create stable key using colors array hash + color value + unique identifier
-			const colorValue = colors[index] || 'black';
-			const uniqueId = `${colorValue}-${colors.slice(0, index + 1).join('')}`;
+			const colorValue = colors[index] || "black";
+			const uniqueId = `${colorValue}-${colors.slice(0, index + 1).join("")}`;
 			const stableKey = `${colorsId}-${uniqueId}`;
 
 			return isInteractive ? (
@@ -134,7 +134,9 @@ const ColorDots = React.memo(
 		return (
 			<>
 				<View style={{ flexDirection: "row" }}>
-					{[...Array(Math.min(8, colors.length))].map((_, index) => renderDot(index)).filter(Boolean)}
+					{[...Array(Math.min(8, colors.length))]
+						.map((_, index) => renderDot(index))
+						.filter(Boolean)}
 				</View>
 				<View
 					style={{
@@ -142,10 +144,12 @@ const ColorDots = React.memo(
 						marginTop: 30,
 					}}
 				>
-					{[...Array(Math.min(8, Math.max(0, colors.length - 8)))].map((_, index) => {
-						const dotIndex = index + 8;
-						return renderDot(dotIndex);
-					}).filter(Boolean)}
+					{[...Array(Math.min(8, Math.max(0, colors.length - 8)))]
+						.map((_, index) => {
+							const dotIndex = index + 8;
+							return renderDot(dotIndex);
+						})
+						.filter(Boolean)}
 				</View>
 			</>
 		);

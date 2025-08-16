@@ -1,10 +1,10 @@
 # Contributing to Luminova Controller
 
 ## 🚨 Critical Rules
-- **NEVER** use logical AND (`&&`) in JSX - always use ternary (`? :`)
-- **NEVER** use array indices for React keys - use `getStableSettingId()`
-- **ALWAYS** import React: `import React from 'react';`
-- **ALWAYS** use `npm run format-lint` before commits
+- NEVER use logical conditional operators (`&&`) always use ternary (`? :`), especially in JSX
+- NEVER use array indices for React keys - use `getStableSettingId()`
+- ALWAYS import React: `import React from 'react';`
+- ALWAYS use `npm run format-lint` before commits
 
 ## File Naming
 - **Components/Screens:** PascalCase (`SettingBlock.tsx`)
@@ -15,20 +15,10 @@
 ## Component Template
 ```typescript
 import React from 'react';
-import { View } from 'react-native';
-import { COLORS, COMMON_STYLES } from '@/src/styles/SharedStyles';
-
-interface Props {
-  title: string;
-}
-
-export default function Component({ title }: Props) {
-  return <View style={COMMON_STYLES.container}></View>;
-}
-```
+import { View, Text, StyleSheet } from 'react-native';
+import { COLORS, FONTS, COMMON_STYLES } from '@/src/styles/SharedStyles';
 
 interface ComponentNameProps {
-  // Define props with proper TypeScript typing
   title: string;
   onPress?: () => void;
   disabled?: boolean;

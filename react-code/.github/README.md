@@ -13,8 +13,10 @@ React Native LED controller app for managing custom lighting patterns through RE
 **Flow:** Welcome → Settings → Editor screens
 
 ## Documentation
-- **[CONTRIBUTING.md](./CONTRIBUTING.md)** - Development standards  
-- **[CODEBASE_GUIDE.md](../docs/CODEBASE_GUIDE.md)** - Technical details
+- **[CONTRIBUTING.md](./CONTRIBUTING.md)** - Development standards and guidelines
+- **[docs/README.md](../docs/README.md)** - Comprehensive documentation structure
+- **[docs/ROOT.md](../docs/ROOT.md)** - Root configuration files reference
+- **[docs/src/SRC_OVERVIEW.md](../docs/src/SRC_OVERVIEW.md)** - Source code architecture overview
 
 ```
 react-code/
@@ -22,10 +24,11 @@ react-code/
 │   ├── components/               # Reusable UI components
 │   │   ├── animations/          # Animation-specific components
 │   │   ├── audio/               # Audio measurement components
+│   │   ├── buttons/             # Button components
 │   │   ├── color-picker/        # Color selection components
+│   │   ├── common/              # Common shared components
 │   │   ├── settings/            # Settings management components
-│   │   ├── ui/                  # General UI components
-│   │   └── buttons/             # Button components
+│   │   └── welcome/             # Welcome screen components
 │   ├── configurations/           # App configuration
 │   │   ├── constants.ts         # API endpoints and app constants
 │   │   ├── patterns.ts          # Animation pattern definitions
@@ -121,13 +124,19 @@ react-code/
 #### **Button System** (`src/components/buttons/`)
 - **Button.tsx**: Base component with consistent styling foundation
 - **ActionButton.tsx**: Reset/Save/Preview actions with variant support
-- **BackButton.tsx**, **InfoButton.tsx**: Icon-based navigation
+- **BackButton.tsx**, **InfoButton.tsx**: Icon-based navigation buttons
 - **ColorButton.tsx**: White/Black color preset buttons
+- **CreateButton.tsx**, **EditButton.tsx**: Setting management actions
+- **FlashButton.tsx**: Hardware flash/preview functionality
+- **MetronomeButton.tsx**: Audio BPM measurement trigger
+- **RandomizeButton.tsx**: Color randomization controls
 
-#### **Specialized UI** (`src/components/ui/`)
-- **WelcomeTutorial.tsx**: Multi-page onboarding modal
+#### **Common UI Components** (`src/components/common/`)
+- **AnimatedTitle.tsx**: Animated text component for screen titles
 - **HexKeyboard.tsx**: Custom modal keyboard for hex color input
+- **WelcomeTutorial.tsx**: Multi-page onboarding modal
 - **DismissKeyboardView.tsx**: Keyboard dismissal wrapper
+- **Dot.tsx**: Individual LED dot representation component
 
 ## Shared Resources
 

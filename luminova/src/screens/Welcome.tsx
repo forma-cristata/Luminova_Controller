@@ -188,8 +188,8 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		justifyContent: "space-between",
 		paddingBottom: DIMENSIONS.SCREEN_HEIGHT * 0.08,
-		paddingTop: DIMENSIONS.SCREEN_HEIGHT * 0.05,
-		minHeight: DIMENSIONS.SCREEN_HEIGHT * 0.9,
+		paddingTop: DIMENSIONS.SCREEN_HEIGHT * 0.12,
+		minHeight: DIMENSIONS.SCREEN_HEIGHT * 0.85,
 	},
 	scrollView: {
 		flex: 1,

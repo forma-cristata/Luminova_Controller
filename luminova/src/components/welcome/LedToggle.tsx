@@ -5,7 +5,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { getStatus, toggleLed } from "@/src/services/ApiService";
 import { useConfiguration } from "@/src/context/ConfigurationContext";
 import { useDebounce } from "@/src/hooks/useDebounce";
-import { COMMON_STYLES } from "@/src/styles/SharedStyles";
+import { COMMON_STYLES, DIMENSIONS } from "@/src/styles/SharedStyles";
 import type { Setting } from "@/src/types/SettingInterface";
 
 interface LedToggleProps {
@@ -78,15 +78,25 @@ export default function LedToggle({
 	}, [isShelfConnected, isLoading, toggleOpacity, disableAnimation]);
 
 	useEffect(() => {
+		const toggleWidth = Math.min(120, DIMENSIONS.SCREEN_HEIGHT * 0.072);
+		const thumbSize = Math.min(48, DIMENSIONS.SCREEN_HEIGHT * 0.029);
+		const rightPosition = 4;
+		const leftPosition = toggleWidth - thumbSize - 4;
+
 		Animated.timing(thumbPosition, {
-			toValue: isEnabled ? 2 : 28,
+			toValue: isEnabled ? rightPosition : leftPosition,
 			duration: 200,
 			useNativeDriver: true,
 		}).start();
 	}, [isEnabled, thumbPosition]);
 
 	useEffect(() => {
-		thumbPosition.setValue(isEnabled ? 2 : 28);
+		const toggleWidth = Math.min(120, DIMENSIONS.SCREEN_HEIGHT * 0.072);
+		const thumbSize = Math.min(48, DIMENSIONS.SCREEN_HEIGHT * 0.029);
+		const rightPosition = 4;
+		const leftPosition = toggleWidth - thumbSize - 4;
+
+		thumbPosition.setValue(isEnabled ? rightPosition : leftPosition);
 	}, [isEnabled, thumbPosition.setValue]); // eslint-disable-line react-hooks/exhaustive-deps
 
 	const toggleSwitch = async () => {
@@ -181,7 +191,10 @@ export default function LedToggle({
 		<Animated.View
 			style={[
 				containerStyle ? {} : COMMON_STYLES.navButton,
-				containerStyle ? containerStyle : { left: 20 },
+				containerStyle ? containerStyle : {
+					left: DIMENSIONS.SCREEN_WIDTH * 0.05,
+					top: Math.max(60, DIMENSIONS.SCREEN_HEIGHT * 0.05),
+				},
 				{ opacity: toggleOpacity },
 			]}
 		>
@@ -200,6 +213,12 @@ export default function LedToggle({
 					onPress={toggleSwitch}
 					disabled={isLoading || debouncedPendingToggle || !isShelfConnected}
 					activeOpacity={0.8}
+					hitSlop={{
+						top: DIMENSIONS.SCREEN_HEIGHT * 0.015,
+						bottom: DIMENSIONS.SCREEN_HEIGHT * 0.015,
+						left: DIMENSIONS.SCREEN_WIDTH * 0.025,
+						right: DIMENSIONS.SCREEN_WIDTH * 0.025,
+					}}
 				>
 					<View
 						style={[
@@ -208,7 +227,7 @@ export default function LedToggle({
 							{ opacity: isEnabled ? 1 : 0.3 },
 						]}
 					>
-						<Ionicons name="sunny" size={16} color="#000000" />
+						<Ionicons name="sunny" size={Math.min(28, DIMENSIONS.SCREEN_HEIGHT * 0.017)} color="#000000" />
 					</View>
 					<View
 						style={[
@@ -219,7 +238,7 @@ export default function LedToggle({
 					>
 						<Ionicons
 							name="moon"
-							size={16}
+							size={Math.min(28, DIMENSIONS.SCREEN_HEIGHT * 0.017)}
 							color={isShelfConnected ? "#00ff00" : "#ff4444"}
 						/>
 					</View>
@@ -249,9 +268,9 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 	},
 	customToggle: {
-		width: 60,
-		height: 32,
-		borderRadius: 16,
+		width: Math.min(120, DIMENSIONS.SCREEN_HEIGHT * 0.072),
+		height: Math.min(65, DIMENSIONS.SCREEN_HEIGHT * 0.039),
+		borderRadius: Math.min(32.5, DIMENSIONS.SCREEN_HEIGHT * 0.0195),
 		position: "relative",
 		justifyContent: "center",
 		borderWidth: 2,
@@ -261,19 +280,19 @@ const styles = StyleSheet.create({
 		position: "absolute",
 		alignItems: "center",
 		justifyContent: "center",
-		width: 20,
-		height: 20,
+		width: Math.min(36, DIMENSIONS.SCREEN_HEIGHT * 0.022),
+		height: Math.min(36, DIMENSIONS.SCREEN_HEIGHT * 0.022),
 	},
 	sunContainer: {
-		right: 6,
+		right: Math.min(12, DIMENSIONS.SCREEN_HEIGHT * 0.007),
 	},
 	moonContainer: {
-		left: 6,
+		left: Math.min(12, DIMENSIONS.SCREEN_HEIGHT * 0.007),
 	},
 	toggleThumb: {
-		width: 24,
-		height: 24,
-		borderRadius: 12,
+		width: Math.min(48, DIMENSIONS.SCREEN_HEIGHT * 0.029),
+		height: Math.min(48, DIMENSIONS.SCREEN_HEIGHT * 0.029),
+		borderRadius: Math.min(24, DIMENSIONS.SCREEN_HEIGHT * 0.0145),
 		position: "absolute",
 		shadowColor: "#000",
 		shadowOffset: { width: 0, height: 2 },

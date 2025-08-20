@@ -78,7 +78,16 @@ export default function Welcome({ navigation }: WelcomeProps) {
 			"keyboardDidShow",
 			() => {
 				// Scroll distance to show inputs above keyboard
-				const scrollDistance = DIMENSIONS.SCREEN_HEIGHT * 0.15; // Reduced to keep inputs visible
+				// IP inputs container starts at 70% (10% + 30% + 30%)
+				// IpAddressInput precise measurements:
+				// - ipContainer: marginBottom 10
+				// - ipOctet: paddingVertical 4*2 + fontSize 22*scale ≈ 30px
+				// - saveButton: paddingVertical 8*scale*2 + marginBottom 20 + font ≈ 50px
+				// Total: 10 + 30 + 50 = 90px ≈ 6.5% of screen height (iPhone 16 Plus: 90/2868 ≈ 3.1%)
+				// Implicit margin: (30% container - 6.5% element) / 2 = 11.75%
+				// So inputs are positioned at 70% + 11.75% = 81.75% of screen height
+				// Need to bring them to ~20% position to be above keyboard
+				const scrollDistance = DIMENSIONS.SCREEN_HEIGHT * 0.31; // Scroll 31% (61.75% / 2) to move inputs from 81.75% to 20%
 				scrollViewRef.current?.scrollTo({ y: scrollDistance, animated: true });
 			},
 		);
@@ -134,7 +143,13 @@ export default function Welcome({ navigation }: WelcomeProps) {
 					style={styles.scrollView}
 					scrollEnabled={false}
 				>
-					<View style={styles.topSection}>
+					{/* 30% - Title Section */}
+					<View style={{
+						height: DIMENSIONS.SCREEN_HEIGHT * 0.30,
+						width: "100%",
+						justifyContent: "center",
+						alignItems: "center"
+					}}>
 						<TouchableOpacity
 							style={styles.titleContainer}
 							onPress={handleDebugTap}
@@ -154,7 +169,13 @@ export default function Welcome({ navigation }: WelcomeProps) {
 						</TouchableOpacity>
 					</View>
 
-					<View style={styles.middleSection}>
+					{/* 30% - Create Button Section */}
+					<View style={{
+						height: DIMENSIONS.SCREEN_HEIGHT * 0.30,
+						width: "100%",
+						justifyContent: "center",
+						alignItems: "center"
+					}}>
 						<Button
 							title="Create ⟩"
 							onPress={createButtonPressed}
@@ -163,7 +184,13 @@ export default function Welcome({ navigation }: WelcomeProps) {
 						/>
 					</View>
 
-					<View style={styles.bottomSection}>
+					{/* 30% - IP Inputs Section */}
+					<View style={{
+						height: DIMENSIONS.SCREEN_HEIGHT * 0.30,
+						width: "100%",
+						justifyContent: "center",
+						alignItems: "center"
+					}}>
 						<IpAddressInput onIpSaved={handleIpSaved} />
 					</View>
 				</ScrollView>
@@ -188,9 +215,9 @@ const styles = StyleSheet.create({
 	scrollContent: {
 		flexGrow: 1,
 		alignItems: "center",
-		justifyContent: "space-between",
+		justifyContent: "flex-start",
 		paddingBottom: DIMENSIONS.SCREEN_HEIGHT * 0.4, // Extra padding for scroll space
-		paddingTop: DIMENSIONS.SCREEN_HEIGHT * 0.12,
+		paddingTop: DIMENSIONS.SCREEN_HEIGHT * 0.10, // 10% for toggle/info area
 		minHeight: DIMENSIONS.SCREEN_HEIGHT, // Content fits in 100% screen height
 	},
 	scrollView: {

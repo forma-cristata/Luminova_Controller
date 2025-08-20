@@ -13,7 +13,7 @@ import AnimatedTitle from "@/src/components/common/AnimatedTitle";
 import Button from "@/src/components/buttons/Button";
 import InfoButton from "@/src/components/buttons/InfoButton";
 import WelcomeTutorial from "@/src/components/common/WelcomeTutorial";
-import { COLORS, FONTS } from "@/src/styles/SharedStyles";
+import { COLORS, FONTS, DIMENSIONS } from "@/src/styles/SharedStyles";
 import { useConfiguration } from "@/src/context/ConfigurationContext";
 import { FirstTimeUserService } from "@/src/services/FirstTimeUserService";
 import IpAddressInput from "@/src/components/welcome/IpAddressInput";
@@ -132,25 +132,38 @@ export default function Welcome({ navigation }: WelcomeProps) {
 					style={styles.scrollView}
 					scrollEnabled={false}
 				>
-					<TouchableOpacity
-						style={styles.titleContainer}
-						onPress={handleDebugTap}
-						activeOpacity={1}
-					>
-						<AnimatedTitle
-							text={displayText}
-							fontSize={130}
-							marginBottom="10%"
+					<View style={styles.topSection}>
+						<TouchableOpacity
+							style={styles.titleContainer}
+							onPress={handleDebugTap}
+							activeOpacity={1}
+							hitSlop={{
+								top: DIMENSIONS.SCREEN_HEIGHT * 0.02,
+								bottom: DIMENSIONS.SCREEN_HEIGHT * 0.02,
+								left: DIMENSIONS.SCREEN_WIDTH * 0.05,
+								right: DIMENSIONS.SCREEN_WIDTH * 0.05,
+							}}
+						>
+							<AnimatedTitle
+								text={displayText}
+								fontSize={Math.min(240, DIMENSIONS.SCREEN_HEIGHT * 0.12)}
+								marginBottom={DIMENSIONS.SCREEN_HEIGHT * 0.02}
+							/>
+						</TouchableOpacity>
+					</View>
+
+					<View style={styles.middleSection}>
+						<Button
+							title="Create ⟩"
+							onPress={createButtonPressed}
+							variant="welcome"
+							textStyle={styles.buttonText}
 						/>
-					</TouchableOpacity>
-					<Button
-						title="Create ⟩"
-						onPress={createButtonPressed}
-						variant="welcome"
-						textStyle={styles.buttonText}
-					/>
-					<IpAddressInput onIpSaved={handleIpSaved} />
-					<View style={{ height: 250 }} />
+					</View>
+
+					<View style={styles.bottomSection}>
+						<IpAddressInput onIpSaved={handleIpSaved} />
+					</View>
 				</ScrollView>
 
 				{/* Welcome Tutorial Modal */}
@@ -173,9 +186,10 @@ const styles = StyleSheet.create({
 	scrollContent: {
 		flexGrow: 1,
 		alignItems: "center",
-		paddingBottom: 50,
-		paddingTop: 120,
-		minHeight: "100%",
+		justifyContent: "space-between",
+		paddingBottom: DIMENSIONS.SCREEN_HEIGHT * 0.08,
+		paddingTop: DIMENSIONS.SCREEN_HEIGHT * 0.05,
+		minHeight: DIMENSIONS.SCREEN_HEIGHT * 0.9,
 	},
 	scrollView: {
 		flex: 1,
@@ -184,11 +198,33 @@ const styles = StyleSheet.create({
 	titleContainer: {
 		alignItems: "center",
 		justifyContent: "center",
-		marginBottom: 20,
+		marginBottom: DIMENSIONS.SCREEN_HEIGHT * 0.03,
+		paddingHorizontal: DIMENSIONS.SCREEN_WIDTH * 0.05,
+		paddingVertical: DIMENSIONS.SCREEN_HEIGHT * 0.02,
+		minHeight: DIMENSIONS.SCREEN_HEIGHT * 0.15,
+	},
+	topSection: {
+		flex: 2,
+		justifyContent: "center",
+		alignItems: "center",
+		width: "100%",
+		minHeight: DIMENSIONS.SCREEN_HEIGHT * 0.25,
+	},
+	middleSection: {
+		flex: 1,
+		justifyContent: "center",
+		alignItems: "center",
+		width: "100%",
+	},
+	bottomSection: {
+		flex: 2,
+		justifyContent: "flex-start",
+		alignItems: "center",
+		width: "100%",
 	},
 	buttonText: {
 		color: COLORS.WHITE,
-		fontSize: 40,
+		fontSize: Math.min(75, DIMENSIONS.SCREEN_HEIGHT * 0.0375),
 		fontFamily: FONTS.SIGNATURE,
 	},
 });

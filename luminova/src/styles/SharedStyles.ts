@@ -146,12 +146,12 @@ export const COMMON_STYLES = StyleSheet.create({
 	welcomeButton: {
 		backgroundColor: COLORS.BLACK,
 		borderRadius: 10,
-		paddingVertical: 10,
-		paddingHorizontal: 20,
+		paddingVertical: Math.max(10, height * 0.015),
+		paddingHorizontal: Math.max(20, height * 0.025),
 		alignItems: "center",
 		borderStyle: "solid",
 		borderBottomWidth: 2,
 		borderBottomColor: COLORS.WHITE,
-		marginBottom: "25%",
+		marginBottom: height * 0.08,
 	},
 });

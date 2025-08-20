@@ -77,7 +77,9 @@ export default function Welcome({ navigation }: WelcomeProps) {
 		const keyboardDidShowListener = Keyboard.addListener(
 			"keyboardDidShow",
 			() => {
-				scrollViewRef.current?.scrollToEnd({ animated: true });
+				// Scroll distance to show inputs above keyboard
+				const scrollDistance = DIMENSIONS.SCREEN_HEIGHT * 0.15; // Reduced to keep inputs visible
+				scrollViewRef.current?.scrollTo({ y: scrollDistance, animated: true });
 			},
 		);
 
@@ -187,9 +189,9 @@ const styles = StyleSheet.create({
 		flexGrow: 1,
 		alignItems: "center",
 		justifyContent: "space-between",
-		paddingBottom: DIMENSIONS.SCREEN_HEIGHT * 0.08,
+		paddingBottom: DIMENSIONS.SCREEN_HEIGHT * 0.4, // Extra padding for scroll space
 		paddingTop: DIMENSIONS.SCREEN_HEIGHT * 0.12,
-		minHeight: DIMENSIONS.SCREEN_HEIGHT * 0.85,
+		minHeight: DIMENSIONS.SCREEN_HEIGHT, // Content fits in 100% screen height
 	},
 	scrollView: {
 		flex: 1,

@@ -387,7 +387,7 @@ export default function Settings({ navigation }: SettingsProps) {
 							activeOpacity={0.5}
 							disabled={carouselData.length <= 1}
 						>
-							<Ionicons name="chevron-back" size={32} color="white" />
+							<Ionicons name="chevron-forward" size={32} color="white" />
 						</TouchableOpacity>
 					</Animated.View>
 
@@ -403,7 +403,7 @@ export default function Settings({ navigation }: SettingsProps) {
 							activeOpacity={0.5}
 							disabled={carouselData.length <= 1}
 						>
-							<Ionicons name="chevron-forward" size={32} color="white" />
+							<Ionicons name="chevron-back" size={32} color="white" />
 						</TouchableOpacity>
 					</Animated.View>
 				</View>

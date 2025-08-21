@@ -35,6 +35,11 @@ export default function LedToggle({
 	).current;
 	const thumbPosition = useRef(new Animated.Value(0)).current;
 
+	// Deterministic sizes for header layout (avoid Math.min for predictable results)
+	const toggleWidth = DIMENSIONS.SCREEN_HEIGHT * 0.072;
+	const thumbSize = DIMENSIONS.SCREEN_HEIGHT * 0.029;
+	const iconSize = DIMENSIONS.SCREEN_HEIGHT * 0.017;
+
 	useEffect(() => {
 		const fetchInitialStatus = async () => {
 			try {
@@ -78,8 +83,8 @@ export default function LedToggle({
 	}, [isShelfConnected, isLoading, toggleOpacity, disableAnimation]);
 
 	useEffect(() => {
-		const toggleWidth = Math.min(120, DIMENSIONS.SCREEN_HEIGHT * 0.072);
-		const thumbSize = Math.min(48, DIMENSIONS.SCREEN_HEIGHT * 0.029);
+		const toggleWidth = DIMENSIONS.SCREEN_HEIGHT * 0.072;
+		const thumbSize = DIMENSIONS.SCREEN_HEIGHT * 0.029;
 		const rightPosition = 4;
 		const leftPosition = toggleWidth - thumbSize - 4;
 
@@ -91,8 +96,8 @@ export default function LedToggle({
 	}, [isEnabled, thumbPosition]);
 
 	useEffect(() => {
-		const toggleWidth = Math.min(120, DIMENSIONS.SCREEN_HEIGHT * 0.072);
-		const thumbSize = Math.min(48, DIMENSIONS.SCREEN_HEIGHT * 0.029);
+		const toggleWidth = DIMENSIONS.SCREEN_HEIGHT * 0.072;
+		const thumbSize = DIMENSIONS.SCREEN_HEIGHT * 0.029;
 		const rightPosition = 4;
 		const leftPosition = toggleWidth - thumbSize - 4;
 
@@ -188,26 +193,16 @@ export default function LedToggle({
 	};
 
 	return (
-		<Animated.View
-			style={[
-				containerStyle ? {} : COMMON_STYLES.navButton,
-				containerStyle ? containerStyle : {
-					left: DIMENSIONS.SCREEN_WIDTH * 0.05,
-					top: Math.max(60, DIMENSIONS.SCREEN_HEIGHT * 0.05),
-				},
-				{ opacity: toggleOpacity },
-			]}
-		>
+		<Animated.View style={[styles.wrapper, { opacity: toggleOpacity }, containerStyle]}>
 			<View style={styles.toggleContainer}>
 				<TouchableOpacity
 					style={[
 						styles.customToggle,
 						{
-							backgroundColor: isEnabled
-								? "#ffffff"
-								: isShelfConnected
-									? "#665e73"
-									: "#444",
+							width: toggleWidth,
+							height: DIMENSIONS.SCREEN_HEIGHT * 0.039,
+							borderRadius: DIMENSIONS.SCREEN_HEIGHT * 0.0195,
+							backgroundColor: isEnabled ? "#ffffff" : isShelfConnected ? "#665e73" : "#444",
 						},
 					]}
 					onPress={toggleSwitch}
@@ -227,7 +222,7 @@ export default function LedToggle({
 							{ opacity: isEnabled ? 1 : 0.3 },
 						]}
 					>
-						<Ionicons name="sunny" size={Math.min(28, DIMENSIONS.SCREEN_HEIGHT * 0.017)} color="#000000" />
+						<Ionicons name="sunny" size={iconSize} color="#000000" />
 					</View>
 					<View
 						style={[
@@ -236,21 +231,16 @@ export default function LedToggle({
 							{ opacity: !isEnabled ? 1 : 0.3 },
 						]}
 					>
-						<Ionicons
-							name="moon"
-							size={Math.min(28, DIMENSIONS.SCREEN_HEIGHT * 0.017)}
-							color={isShelfConnected ? "#00ff00" : "#ff4444"}
-						/>
+						<Ionicons name="moon" size={iconSize} color={isShelfConnected ? "#00ff00" : "#ff4444"} />
 					</View>
 					<Animated.View
 						style={[
 							styles.toggleThumb,
 							{
-								backgroundColor: !isShelfConnected
-									? "#666"
-									: isEnabled
-										? "#665e73"
-										: "#f4f3f4",
+								width: thumbSize,
+								height: thumbSize,
+								borderRadius: thumbSize / 2,
+								backgroundColor: !isShelfConnected ? "#666" : isEnabled ? "#665e73" : "#f4f3f4",
 								transform: [{ translateX: thumbPosition }],
 							},
 						]}
@@ -267,10 +257,11 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		justifyContent: "center",
 	},
+	wrapper: {
+		alignItems: "flex-start",
+		justifyContent: "center",
+	},
 	customToggle: {
-		width: Math.min(120, DIMENSIONS.SCREEN_HEIGHT * 0.072),
-		height: Math.min(65, DIMENSIONS.SCREEN_HEIGHT * 0.039),
-		borderRadius: Math.min(32.5, DIMENSIONS.SCREEN_HEIGHT * 0.0195),
 		position: "relative",
 		justifyContent: "center",
 		borderWidth: 2,
@@ -280,19 +271,16 @@ const styles = StyleSheet.create({
 		position: "absolute",
 		alignItems: "center",
 		justifyContent: "center",
-		width: Math.min(36, DIMENSIONS.SCREEN_HEIGHT * 0.022),
-		height: Math.min(36, DIMENSIONS.SCREEN_HEIGHT * 0.022),
+		width: DIMENSIONS.SCREEN_HEIGHT * 0.022,
+		height: DIMENSIONS.SCREEN_HEIGHT * 0.022,
 	},
 	sunContainer: {
-		right: Math.min(12, DIMENSIONS.SCREEN_HEIGHT * 0.007),
+		right: DIMENSIONS.SCREEN_HEIGHT * 0.007,
 	},
 	moonContainer: {
-		left: Math.min(12, DIMENSIONS.SCREEN_HEIGHT * 0.007),
+		left: DIMENSIONS.SCREEN_HEIGHT * 0.007,
 	},
 	toggleThumb: {
-		width: Math.min(48, DIMENSIONS.SCREEN_HEIGHT * 0.029),
-		height: Math.min(48, DIMENSIONS.SCREEN_HEIGHT * 0.029),
-		borderRadius: Math.min(24, DIMENSIONS.SCREEN_HEIGHT * 0.0145),
 		position: "absolute",
 		shadowColor: "#000",
 		shadowOffset: { width: 0, height: 2 },

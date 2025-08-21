@@ -33,12 +33,11 @@ import Animated, {
 } from "react-native-reanimated";
 
 import ActionButton from "@/src/components/buttons/ActionButton";
-import BackButton from "@/src/components/buttons/BackButton";
+import Header from "@/src/components/common/Header";
 import ColorButton from "@/src/components/buttons/ColorButton";
 import ColorDots from "@/src/components/color-picker/ColorDots";
 import HexKeyboard from "@/src/components/common/HexKeyboard";
 import HueSliderBackground from "@/src/components/color-picker/HueSliderBackground";
-import InfoButton from "@/src/components/buttons/InfoButton";
 import RandomizeButton from "@/src/components/buttons/RandomizeButton";
 import { COLORS, COMMON_STYLES, FONTS } from "@/src/styles/SharedStyles";
 import type { Setting } from "@/src/types/SettingInterface";
@@ -568,10 +567,7 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 				<PanGestureHandler onGestureEvent={panGestureEvent}>
 					<Animated.View style={{ flex: 1 }}>
 						<SafeAreaView style={COMMON_STYLES.container}>
-							<InfoButton />
-							<BackButton
-								beforePress={previewMode ? unPreviewAPI : undefined}
-							/>
+							<Header backButtonProps={{ beforePress: previewMode ? unPreviewAPI : undefined }} />
 							{renderTitle()}
 							<ColorDots
 								colors={colors}

@@ -2,9 +2,8 @@ import React from "react";
 import { SafeAreaView, StyleSheet, View } from "react-native";
 
 import AnimatedDots from "@/src/components/animations/AnimatedDots";
-import BackButton from "@/src/components/buttons/BackButton";
 import Button from "@/src/components/buttons/Button";
-import InfoButton from "@/src/components/buttons/InfoButton";
+import Header from "@/src/components/common/Header";
 import { COLORS } from "@/src/styles/SharedStyles";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "@/src/screens/index";
@@ -17,8 +16,7 @@ export default function ChooseModification({ navigation, route }: Props) {
 
 	return (
 		<SafeAreaView style={styles.container}>
-			<InfoButton />
-			<BackButton onPress={() => navigation.goBack()} />
+			<Header />
 			<View style={styles.content}>
 				<Button
 					title="Edit Colors"

@@ -19,9 +19,8 @@ import Animated, {
 	withTiming,
 } from "react-native-reanimated";
 
-import BackButton from "@/src/components/buttons/BackButton";
 import CreateButton from "@/src/components/buttons/CreateButton";
-import InfoButton from "@/src/components/buttons/InfoButton";
+import Header from "@/src/components/common/Header";
 import SettingBlock from "@/src/components/settings/SettingBlock";
 import { useConfiguration } from "@/src/context/ConfigurationContext";
 import type { Setting } from "@/src/types/SettingInterface";
@@ -308,12 +307,7 @@ export default function Settings({ navigation }: SettingsProps) {
 	);
 	return (
 		<SafeAreaView style={styles.container}>
-			<InfoButton />
-			<BackButton
-				beforePress={() => setLastEdited("0")}
-				onPress={() => navigation.popToTop()}
-				afterPress={() => setLastEdited("0")}
-			/>
+			<Header backButtonProps={{ beforePress: () => setLastEdited("0"), onPress: () => navigation.popToTop(), afterPress: () => setLastEdited("0") }} />
 			<View style={styles.notBackButton}>
 				<View style={[styles.focusedItem, { position: "relative" }]}>
 					{currentIndex < 0 ? <View key="negative-index" /> : null}

@@ -17,9 +17,8 @@ import {
 
 import ActionButton from "@/src/components/buttons/ActionButton";
 import AnimatedDots from "@/src/components/animations/AnimatedDots";
-import BackButton from "@/src/components/buttons/BackButton";
+import Header from "@/src/components/common/Header";
 import BPMMeasurer from "@/src/components/audio/BPMMeasurer";
-import InfoButton from "@/src/components/buttons/InfoButton";
 import MetronomeButton from "@/src/components/buttons/MetronomeButton";
 import Picker, { type PickerRef } from "@/src/components/color-picker/Picker";
 import RandomizeButton from "@/src/components/buttons/RandomizeButton";
@@ -354,8 +353,7 @@ export default function FlashingPatternEditor({
 	return (
 		<TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
 			<SafeAreaView style={COMMON_STYLES.container}>
-				<InfoButton />
-				<BackButton beforePress={previewMode ? unPreviewAPI : undefined} />
+				<Header backButtonProps={{ beforePress: previewMode ? unPreviewAPI : undefined }} />
 				<ScrollView
 					ref={scrollViewRef}
 					style={styles.scrollView}
@@ -369,7 +367,7 @@ export default function FlashingPatternEditor({
 								// Random pattern from valid animation patterns (excluding STILL)
 								const randomPattern =
 									ANIMATION_PATTERNS[
-										Math.floor(Math.random() * ANIMATION_PATTERNS.length)
+									Math.floor(Math.random() * ANIMATION_PATTERNS.length)
 									];
 								setFlashingPattern(randomPattern);
 

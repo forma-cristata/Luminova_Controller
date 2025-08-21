@@ -14,7 +14,7 @@ import {
 } from "react-native";
 
 import AnimatedTitle from "@/src/components/common/AnimatedTitle";
-import BackButton from "@/src/components/buttons/BackButton";
+import Header from "@/src/components/common/Header";
 import { FONTS } from "@/src/styles/SharedStyles";
 import { FirstTimeUserService } from "@/src/services/FirstTimeUserService";
 import React from "react";
@@ -154,7 +154,7 @@ export default function Info() {
 
 	return (
 		<SafeAreaView style={styles.container}>
-			<BackButton />
+			<Header />
 			<AnimatedTitle
 				text="How to Use This App"
 				fontSize={50}

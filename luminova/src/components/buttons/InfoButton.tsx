@@ -2,11 +2,15 @@ import React from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { StyleSheet, TouchableOpacity } from "react-native";
+import { StyleSheet, TouchableOpacity, type ViewStyle } from "react-native";
 import type { RootStackParamList } from "@/src/screens/index";
 import { COMMON_STYLES, DIMENSIONS } from "@/src/styles/SharedStyles";
 
-export default function InfoButton() {
+interface InfoButtonProps {
+	style?: ViewStyle;
+}
+
+export default function InfoButton({ style }: InfoButtonProps) {
 	const navigation =
 		useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
@@ -14,16 +18,19 @@ export default function InfoButton() {
 		navigation.navigate("Info");
 	};
 
+	// Use passed style or default absolute positioning
+	const buttonStyle = style ? [style, styles.glowEffect] : [
+		COMMON_STYLES.navButton,
+		{
+			right: DIMENSIONS.SCREEN_WIDTH * 0.05,
+			top: Math.max(60, DIMENSIONS.SCREEN_HEIGHT * 0.05),
+		},
+		styles.glowEffect,
+	];
+
 	return (
 		<TouchableOpacity
-			style={[
-				COMMON_STYLES.navButton,
-				{
-					right: DIMENSIONS.SCREEN_WIDTH * 0.05,
-					top: Math.max(60, DIMENSIONS.SCREEN_HEIGHT * 0.05),
-				},
-				styles.glowEffect,
-			]}
+			style={buttonStyle}
 			onPress={handlePress}
 			hitSlop={{
 				top: DIMENSIONS.SCREEN_HEIGHT * 0.015,

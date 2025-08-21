@@ -4,7 +4,7 @@ import AnimatedDots from "@/src/components/animations/AnimatedDots";
 import ColorDots from "@/src/components/color-picker/ColorDots";
 import FlashButton from "@/src/components/buttons/FlashButton";
 import type { Setting } from "@/src/types/SettingInterface";
-import { COMMON_STYLES } from "@/src/styles/SharedStyles";
+import { COMMON_STYLES, DIMENSIONS } from "@/src/styles/SharedStyles";
 import { useConfiguration } from "@/src/context/ConfigurationContext";
 import { getStableSettingId } from "@/src/utils/settingUtils";
 import type { ViewStyle } from "react-native";
@@ -28,7 +28,7 @@ const areEqual = (prevProps: SettingItemProps, nextProps: SettingItemProps) => {
 		prevProps.isAnimated === nextProps.isAnimated &&
 		prevProps.index === nextProps.index &&
 		JSON.stringify(prevProps.setting?.colors) ===
-			JSON.stringify(nextProps.setting?.colors)
+		JSON.stringify(nextProps.setting?.colors)
 	);
 };
 
@@ -137,7 +137,10 @@ const SettingBlock = ({
 
 			{layout === "compact" ? (
 				<View style={style}>
-					{dotsRendered}
+					{/* Constrain dots to 85% of screen width while keeping internal overlapping */}
+					<View style={[styles.compactDotsContainer, { width: DIMENSIONS.SCREEN_WIDTH * 0.85 }]}>
+						{dotsRendered}
+					</View>
 					<FlashButton setting={setting} style={styles.flashButtonCompact} />
 				</View>
 			) : null}
@@ -181,6 +184,13 @@ const styles = StyleSheet.create({
 		top: 10,
 		right: 10,
 		zIndex: 1,
+	},
+	compactDotsContainer: {
+		alignSelf: "center",
+		alignItems: "center",
+		justifyContent: "center",
+		// allow children to overflow slightly if they use negative margins for overlap
+		overflow: "visible",
 	},
 });
 

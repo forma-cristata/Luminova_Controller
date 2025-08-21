@@ -3,17 +3,20 @@ import { View } from "react-native";
 
 interface DotProps {
 	color: string;
+	size?: number; // diameter in px
+	overlap?: number; // fraction (0..0.5) used to compute negative horizontal margin
 }
 
-export default function Dot({ color }: DotProps) {
+export default function Dot({ color, size = 35, overlap = 0.2 }: DotProps) {
+	const margin = -Math.round(size * overlap);
 	return (
 		<View
 			style={{
-				width: 35,
-				height: 35,
-				marginHorizontal: -7,
+				width: size,
+				height: size,
+				marginHorizontal: margin,
 				backgroundColor: color,
-				borderRadius: 17.5, // Half of the width/height (35) to make a perfect circle
+				borderRadius: size / 2,
 			}}
 		/>
 	);

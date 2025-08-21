@@ -28,6 +28,7 @@ import { loadSettings, saveSettings } from "@/src/services/SettingsService";
 import { getStableSettingId } from "@/src/utils/settingUtils";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "@/src/screens/index";
+import { DIMENSIONS } from "../styles/SharedStyles";
 
 type SettingsProps = NativeStackScreenProps<RootStackParamList, "Settings">;
 
@@ -425,18 +426,15 @@ const styles = StyleSheet.create({
 	},
 	notBackButton: {
 		flex: 1,
-		justifyContent: "center",
-		alignItems: "center",
-		paddingTop: 100,
+		paddingTop: 20
 	},
 	renderItem: {
 		borderStyle: "solid",
 		borderWidth: 2,
-		width: width,
-		height: (height * 11) / 35,
 		justifyContent: "center",
 		alignItems: "center",
 		shadowColor: "#000",
+		backgroundColor: "blue",
 	},
 	carCont: {
 		flex: 1,
@@ -446,8 +444,8 @@ const styles = StyleSheet.create({
 	carousel: {
 		flex: 1,
 		width: width * 0.9,
+		minHeight: DIMENSIONS.SCREEN_HEIGHT / 3,
 		justifyContent: "center",
-		alignItems: "flex-end",
 	},
 	focusedItem: {
 		height: height / 2.2,
@@ -471,7 +469,6 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 	},
 	newSettingItem: {
-		borderColor: "black",
 		justifyContent: "center",
 		alignItems: "center",
 	},

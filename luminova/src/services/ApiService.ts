@@ -45,8 +45,7 @@ async function request(
 			try {
 				const errorBody = await response.json();
 				throw new Error(
-					`HTTP error! status: ${response.status}, message: ${
-						errorBody.message || "Unknown error"
+					`HTTP error! status: ${response.status}, message: ${errorBody.message || "Unknown error"
 					}`,
 				);
 			} catch (_e) {
@@ -65,7 +64,7 @@ async function request(
 			console.error("API Request Timed Out:", endpoint);
 			throw new Error("Request timed out. The hardware may be offline.");
 		}
-		console.error(`API Request Error (${endpoint}):`, error);
+		console.log(`API Request Error (${endpoint}):`, error);
 		throw error; // Re-throw the original error to be handled by the caller
 	}
 }

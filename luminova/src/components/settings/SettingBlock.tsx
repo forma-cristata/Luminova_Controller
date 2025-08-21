@@ -4,7 +4,7 @@ import AnimatedDots from "@/src/components/animations/AnimatedDots";
 import ColorDots from "@/src/components/color-picker/ColorDots";
 import FlashButton from "@/src/components/buttons/FlashButton";
 import type { Setting } from "@/src/types/SettingInterface";
-import { COMMON_STYLES, DIMENSIONS } from "@/src/styles/SharedStyles";
+import { COMMON_STYLES, DIMENSIONS, COLORS } from "@/src/styles/SharedStyles";
 import { useConfiguration } from "@/src/context/ConfigurationContext";
 import { getStableSettingId } from "@/src/utils/settingUtils";
 import type { ViewStyle } from "react-native";
@@ -83,7 +83,7 @@ const SettingBlock = ({
 	// Dynamic title processing with character limit and font sizing
 	const processTitle = (title: string | undefined | null) => {
 		const MAX_CHARACTERS = 20; // Slightly longer than "Toter Schmetterling" (18 chars)
-		const BASE_FONT_SIZE = 70 * DIMENSIONS.SCALE;
+		const BASE_FONT_SIZE = 60 * DIMENSIONS.SCALE;
 		const MIN_FONT_SIZE = 50 * DIMENSIONS.SCALE;
 
 		// Ensure title is a valid string
@@ -113,6 +113,14 @@ const SettingBlock = ({
 		setting.name,
 	);
 
+	// Dynamic padding based on font size to prevent clipping
+	// The Thesignature font has glyphs that bleed to the left of their bounding box
+	const dynamicHeaderStyle = {
+		paddingHorizontal: Math.max(20, titleFontSize * 0.3) * DIMENSIONS.SCALE, // Symmetric padding for the background
+		paddingVertical: Math.max(6, titleFontSize * 0.1) * DIMENSIONS.SCALE,
+		borderRadius: Math.max(6, titleFontSize * 0.08) * DIMENSIONS.SCALE,
+	};
+
 	return (
 		<>
 			{layout === "full" ? (
@@ -123,7 +131,17 @@ const SettingBlock = ({
 				>
 					<View style={styles.headerContainer}>
 						<Text
-							style={[COMMON_STYLES.whiteText, { fontSize: titleFontSize }]}
+							style={[
+								COMMON_STYLES.whiteText,
+								styles.headerText,
+								dynamicHeaderStyle,
+								{
+									fontSize: titleFontSize,
+									textAlign: 'center', // Back to center alignment
+									includeFontPadding: false, // Android-specific: remove extra font padding
+									textAlignVertical: 'center', // Android-specific: center vertically
+								}
+							]}
 							numberOfLines={1}
 							adjustsFontSizeToFit={true}
 							minimumFontScale={0.7}
@@ -158,19 +176,28 @@ const styles = StyleSheet.create({
 		height: "100%",
 		justifyContent: "center",
 		alignItems: "center",
+		overflow: "visible",
 	},
 	headerContainer: {
 		width: "100%",
 		alignItems: "center",
 		justifyContent: "center",
-		paddingHorizontal: 40 * DIMENSIONS.SCALE,
+		paddingHorizontal: 0, // Remove padding that clips the text container
 		position: "relative",
+		zIndex: 10,
+		elevation: 10,
 	},
 	dotsContainer: {
 		paddingHorizontal: 15 * DIMENSIONS.SCALE,
 		paddingVertical: 20 * DIMENSIONS.SCALE,
 		alignItems: "center",
 		justifyContent: "center",
+		zIndex: 0,
+	},
+	headerText: {
+		backgroundColor: COLORS.BLACK,
+		zIndex: 20,
+		elevation: 20,
 	},
 	tapToEditContainer: {
 		marginTop: 30 * DIMENSIONS.SCALE,

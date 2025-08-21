@@ -4,7 +4,7 @@ import AnimatedDots from "@/src/components/animations/AnimatedDots";
 import ColorDots from "@/src/components/color-picker/ColorDots";
 import FlashButton from "@/src/components/buttons/FlashButton";
 import type { Setting } from "@/src/types/SettingInterface";
-import { COMMON_STYLES } from "@/src/styles/SharedStyles";
+import { COMMON_STYLES, DIMENSIONS } from "@/src/styles/SharedStyles";
 import { useConfiguration } from "@/src/context/ConfigurationContext";
 import { getStableSettingId } from "@/src/utils/settingUtils";
 import type { ViewStyle } from "react-native";
@@ -52,16 +52,40 @@ const SettingBlock = ({
 			return null;
 		}
 
+		// Calculate responsive sizing while maintaining overlapping behavior
+		// Original: size=35, overlap=7, effective spacing between centers = 35-14 = 21px
+		// For 16 dots: total width = 21 * 15 + 35 = 350px (15 spacings + 1 dot width)
+		
+		// Target widths: 90% for focused (full), 80% for carousel (compact)
+		const targetWidth = layout === "full" 
+			? DIMENSIONS.SCREEN_WIDTH * 0.90 
+			: DIMENSIONS.SCREEN_WIDTH * 0.80;
+		
+		// Calculate scale factor to fit target width
+		const originalTotalWidth = 21 * 15 + 35; // 350px
+		const scaleFactor = targetWidth / originalTotalWidth;
+		
+		// Scale the size and overlap proportionally
+		const responsiveSize = Math.floor(35 * scaleFactor);
+		const responsiveOverlap = Math.floor(7 * scaleFactor);
+
 		return isAnimated ? (
 			<AnimatedDots
 				key={`animated-${stableId}`}
 				navigation={navigation}
 				setting={setting}
+				dotSize={responsiveSize}
+				overlap={responsiveOverlap}
 			/>
 		) : (
-			<ColorDots key={`static-${stableId}`} colors={setting.colors} />
+			<ColorDots 
+				key={`static-${stableId}`} 
+				colors={setting.colors}
+				dotSize={responsiveSize}
+				overlap={responsiveOverlap}
+			/>
 		);
-	}, [isAnimated, stableId, setting, navigation]);
+	}, [isAnimated, stableId, setting, navigation, layout]);
 
 	// Early return if setting is null, undefined, or missing required properties
 	if (!setting || !setting.name || !setting.colors) {

@@ -2,6 +2,7 @@ import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import React from "react";
 import {
 	Alert,
+	Dimensions,
 	SafeAreaView,
 	StyleSheet,
 	TouchableOpacity,
@@ -26,11 +27,13 @@ import { useConfiguration } from "@/src/context/ConfigurationContext";
 import type { Setting } from "@/src/types/SettingInterface";
 import { loadSettings, saveSettings } from "@/src/services/SettingsService";
 import { getStableSettingId } from "@/src/utils/settingUtils";
-import { DIMENSIONS } from "@/src/styles/SharedStyles";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "@/src/screens/index";
 
 type SettingsProps = NativeStackScreenProps<RootStackParamList, "Settings">;
+
+const width = Dimensions.get("window").width;
+const height = Dimensions.get("window").height;
 
 export default function Settings({ navigation }: SettingsProps) {
 	const { lastEdited, setLastEdited } = useConfiguration();
@@ -305,20 +308,14 @@ export default function Settings({ navigation }: SettingsProps) {
 	);
 	return (
 		<SafeAreaView style={styles.container}>
-			{/* 10% - Button Area */}
-			<View style={styles.buttonArea}>
-				<InfoButton style={styles.infoButtonInContainer} />
-				<BackButton
-					beforePress={() => setLastEdited("0")}
-					onPress={() => navigation.popToTop()}
-					afterPress={() => setLastEdited("0")}
-					style={styles.backButtonInContainer}
-				/>
-			</View>
-
-			{/* 50% - Settings Area */}
-			<View style={styles.settingsArea}>
-				<View style={styles.focusedItem}>
+			<InfoButton />
+			<BackButton
+				beforePress={() => setLastEdited("0")}
+				onPress={() => navigation.popToTop()}
+				afterPress={() => setLastEdited("0")}
+			/>
+			<View style={styles.notBackButton}>
+				<View style={[styles.focusedItem, { position: "relative" }]}>
 					{currentIndex < 0 ? <View key="negative-index" /> : null}
 					{currentIndex < (settingsData?.length || 0) ? (
 						<React.Fragment
@@ -326,22 +323,27 @@ export default function Settings({ navigation }: SettingsProps) {
 						>
 							<TouchableOpacity
 								key={`duplicate-${currentIndex < (settingsData?.length || 0) ? getStableSettingId(settingsData?.[currentIndex]) : "no-setting"}`}
-								style={styles.duplicateButton}
+								style={{
+									position: "absolute",
+									top: 10,
+									left: 10,
+									zIndex: 1,
+								}}
 								onPress={() => {
 									handleDuplicate();
 								}}
 							>
-								<MaterialIcons 
-									name="content-copy" 
-									size={Math.min(24, DIMENSIONS.SCREEN_HEIGHT * 0.02)} 
-									color="white" 
-								/>
+								<MaterialIcons name="content-copy" size={24} color="white" />
 							</TouchableOpacity>
 							<TouchableOpacity
 								key={`delete-${currentIndex < (settingsData?.length || 0) ? getStableSettingId(settingsData?.[currentIndex]) : "no-setting"}`}
-								style={[styles.deleteButton, {
+								style={{
+									position: "absolute",
+									top: 10,
+									right: 10,
+									zIndex: 1,
 									opacity: currentIndex < 12 ? 0.3 : 1,
-								}]}
+								}}
 								disabled={currentIndex < 12}
 								onPress={() => {
 									handleDelete();
@@ -349,7 +351,7 @@ export default function Settings({ navigation }: SettingsProps) {
 							>
 								<Ionicons
 									name="trash-outline"
-									size={Math.min(24, DIMENSIONS.SCREEN_HEIGHT * 0.02)}
+									size={24}
 									color={currentIndex < 12 ? "#666" : "white"}
 								/>
 							</TouchableOpacity>
@@ -360,66 +362,56 @@ export default function Settings({ navigation }: SettingsProps) {
 						<CreateButton key="create-new-setting" onPress={createNewSetting} />
 					) : null}
 				</View>
-			</View>
+				<View style={styles.carCont}>
+					<Carousel
+						ref={ref}
+						data={carouselData}
+						width={width}
+						defaultIndex={0}
+						enabled={true}
+						loop={true}
+						autoPlay={false}
+						windowSize={1}
+						pagingEnabled={true}
+						snapEnabled={true}
+						onProgressChange={handleProgressChange}
+						renderItem={renderItem}
+						mode="parallax"
+						style={styles.carousel}
+					/>
 
-			{/* 40% - Carousel Area */}
-			<View style={styles.carouselArea}>
-				<Carousel
-					ref={ref}
-					data={carouselData}
-					width={DIMENSIONS.SCREEN_WIDTH}
-					defaultIndex={0}
-					enabled={true}
-					loop={true}
-					autoPlay={false}
-					windowSize={1}
-					pagingEnabled={true}
-					snapEnabled={true}
-					onProgressChange={handleProgressChange}
-					renderItem={renderItem}
-					mode="parallax"
-					style={styles.carousel}
-				/>
+					{/* Left scroll indicator */}
+					<Animated.View style={[animatedIndicatorStyle]}>
+						<TouchableOpacity
+							style={[styles.scrollIndicator, styles.scrollIndicatorLeft]}
+							onPress={() => {
+								if (ref.current && carouselData.length > 1) {
+									ref.current.prev({ animated: true });
+								}
+							}}
+							activeOpacity={0.5}
+							disabled={carouselData.length <= 1}
+						>
+							<Ionicons name="chevron-back" size={32} color="white" />
+						</TouchableOpacity>
+					</Animated.View>
 
-				{/* Left scroll indicator */}
-				<Animated.View style={[animatedIndicatorStyle]}>
-					<TouchableOpacity
-						style={[styles.scrollIndicator, styles.scrollIndicatorLeft]}
-						onPress={() => {
-							if (ref.current && carouselData.length > 1) {
-								ref.current.prev({ animated: true });
-							}
-						}}
-						activeOpacity={0.5}
-						disabled={carouselData.length <= 1}
-					>
-						<Ionicons 
-							name="chevron-back" 
-							size={Math.min(32, DIMENSIONS.SCREEN_HEIGHT * 0.025)} 
-							color="white" 
-						/>
-					</TouchableOpacity>
-				</Animated.View>
-
-				{/* Right scroll indicator */}
-				<Animated.View style={[animatedIndicatorStyle]}>
-					<TouchableOpacity
-						style={[styles.scrollIndicator, styles.scrollIndicatorRight]}
-						onPress={() => {
-							if (ref.current && carouselData.length > 1) {
-								ref.current.next({ animated: true });
-							}
-						}}
-						activeOpacity={0.5}
-						disabled={carouselData.length <= 1}
-					>
-						<Ionicons 
-							name="chevron-forward" 
-							size={Math.min(32, DIMENSIONS.SCREEN_HEIGHT * 0.025)} 
-							color="white" 
-						/>
-					</TouchableOpacity>
-				</Animated.View>
+					{/* Right scroll indicator */}
+					<Animated.View style={[animatedIndicatorStyle]}>
+						<TouchableOpacity
+							style={[styles.scrollIndicator, styles.scrollIndicatorRight]}
+							onPress={() => {
+								if (ref.current && carouselData.length > 1) {
+									ref.current.next({ animated: true });
+								}
+							}}
+							activeOpacity={0.5}
+							disabled={carouselData.length <= 1}
+						>
+							<Ionicons name="chevron-forward" size={32} color="white" />
+						</TouchableOpacity>
+					</Animated.View>
+				</View>
 			</View>
 		</SafeAreaView>
 	);
@@ -428,167 +420,101 @@ export default function Settings({ navigation }: SettingsProps) {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
+		alignItems: "center",
+		justifyContent: "center",
 		backgroundColor: "#000000",
 	},
-
-	// 10% - Button area
-	buttonArea: {
-		height: DIMENSIONS.SCREEN_HEIGHT * 0.10,
-		width: DIMENSIONS.SCREEN_WIDTH,
-		flexDirection: "row",
-		justifyContent: "space-between",
-		alignItems: "center",
-		paddingHorizontal: DIMENSIONS.SCREEN_WIDTH * 0.05,
-	},
-
-	infoButtonInContainer: {
-		position: "relative",
-		right: 0,
-		top: 0,
-	},
-
-	backButtonInContainer: {
-		position: "relative",
-		left: 0,
-		top: 0,
-	},
-
-	// 50% - Settings area
-	settingsArea: {
-		height: DIMENSIONS.SCREEN_HEIGHT * 0.50,
-		width: DIMENSIONS.SCREEN_WIDTH,
-		justifyContent: "center",
-		alignItems: "center",
-	},
-
-	// 40% - Carousel area
-	carouselArea: {
-		flex: 1,
-		width: DIMENSIONS.SCREEN_WIDTH,
-		justifyContent: "center",
-		alignItems: "center",
-		position: "relative",
-	},
-
-	focusedItem: {
-		height: "100%",
-		width: DIMENSIONS.SCREEN_WIDTH,
-		borderStyle: "solid",
-		borderWidth: 2,
-		borderColor: "white",
-		justifyContent: "center",
-		alignItems: "center",
-		position: "relative",
-	},
-
-	duplicateButton: {
-		position: "absolute",
-		top: Math.max(10, DIMENSIONS.SCREEN_HEIGHT * 0.015),
-		left: Math.max(10, DIMENSIONS.SCREEN_WIDTH * 0.03),
-		zIndex: 1,
-	},
-
-	deleteButton: {
-		position: "absolute",
-		top: Math.max(10, DIMENSIONS.SCREEN_HEIGHT * 0.015),
-		right: Math.max(10, DIMENSIONS.SCREEN_WIDTH * 0.03),
-		zIndex: 1,
-	},
-
-	renderItem: {
-		borderStyle: "solid",
-		borderWidth: 2,
-		width: DIMENSIONS.SCREEN_WIDTH,
-		height: DIMENSIONS.SCREEN_HEIGHT * 0.25,
-		justifyContent: "center",
-		alignItems: "center",
-		shadowColor: "#000",
-	},
-
-	carousel: {
-		flex: 1,
-		width: DIMENSIONS.SCREEN_WIDTH * 0.9,
-		justifyContent: "center",
-		alignItems: "flex-end",
-	},
-
-	scrollIndicator: {
-		position: "absolute",
-		zIndex: 2,
-		width: Math.max(40, DIMENSIONS.SCREEN_WIDTH * 0.08),
-		height: Math.max(40, DIMENSIONS.SCREEN_WIDTH * 0.08),
-		justifyContent: "center",
-		alignItems: "center",
-		transform: [{ translateY: -DIMENSIONS.SCREEN_HEIGHT * 0.05 }],
-	},
-
-	scrollIndicatorLeft: {
-		left: Math.max(10, DIMENSIONS.SCREEN_WIDTH * 0.03),
-	},
-
-	scrollIndicatorRight: {
-		right: Math.max(10, DIMENSIONS.SCREEN_WIDTH * 0.03),
-	},
-
-	// Legacy styles (keeping for compatibility)
 	text: {
 		fontFamily: "Thesignature",
-		fontSize: Math.min(130, DIMENSIONS.SCREEN_HEIGHT * 0.08),
+		fontSize: 130,
 		color: "#ffffff",
 	},
-
 	notBackButton: {
 		flex: 1,
 		justifyContent: "center",
 		alignItems: "center",
-		paddingTop: Math.max(100, DIMENSIONS.SCREEN_HEIGHT * 0.08),
+		paddingTop: 100,
 	},
-
+	renderItem: {
+		borderStyle: "solid",
+		borderWidth: 2,
+		width: width,
+		height: (height * 11) / 35,
+		justifyContent: "center",
+		alignItems: "center",
+		shadowColor: "#000",
+	},
 	carCont: {
 		flex: 1,
 		justifyContent: "center",
 		alignItems: "center",
 	},
-
-	title: {
-		height: DIMENSIONS.SCREEN_HEIGHT * 0.2,
+	carousel: {
+		flex: 1,
+		width: width * 0.9,
+		justifyContent: "center",
+		alignItems: "flex-end",
+	},
+	focusedItem: {
+		height: height / 2.2,
+		width: width,
+		borderStyle: "solid",
+		borderWidth: 2,
+		borderBottomColor: "white",
+		borderTopColor: "white",
+		borderLeftColor: "white",
+		borderRightColor: "white",
 		justifyContent: "center",
 		alignItems: "center",
 	},
-
+	title: {
+		height: (height * 2) / 10,
+		justifyContent: "center",
+		alignItems: "center",
+	},
 	nothing: {
 		justifyContent: "center",
 		alignItems: "center",
 	},
-
 	newSettingItem: {
 		borderColor: "black",
 		justifyContent: "center",
 		alignItems: "center",
 	},
-
 	sideButton: {
 		position: "absolute",
-		top: Math.max(10, DIMENSIONS.SCREEN_HEIGHT * 0.015),
-		right: Math.max(10, DIMENSIONS.SCREEN_WIDTH * 0.03),
+		top: 10,
+		right: 10,
 		zIndex: 1,
 	},
-
+	scrollIndicator: {
+		position: "absolute",
+		zIndex: 2,
+		width: 40,
+		height: 40,
+		justifyContent: "center",
+		alignItems: "center",
+		transform: [{ translateY: -60 }],
+	},
+	scrollIndicatorLeft: {
+		left: 10,
+	},
+	scrollIndicatorRight: {
+		right: 10,
+	},
 	dotsContainer: {
 		flexDirection: "row",
 		justifyContent: "center",
 		alignItems: "center",
 	},
-
 	dot: {
-		width: Math.max(8, DIMENSIONS.SCALE * 8),
-		height: Math.max(8, DIMENSIONS.SCALE * 8),
-		borderRadius: Math.max(4, DIMENSIONS.SCALE * 4),
+		width: 8,
+		height: 8,
+		borderRadius: 4,
 		backgroundColor: "#ffffff",
 		opacity: 0.3,
-		marginHorizontal: Math.max(4, DIMENSIONS.SCALE * 4),
+		marginHorizontal: 4,
 	},
-
 	activeDot: {
 		opacity: 1,
 		transform: [{ scale: 1.2 }],

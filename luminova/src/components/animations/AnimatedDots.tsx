@@ -16,6 +16,8 @@ interface AnimatedDotsProps {
 	navigation?: NativeStackNavigationProp<RootStackParamList>;
 	setting: Setting;
 	layout?: "ring" | "linear";
+	dotSize?: number;
+	overlap?: number;
 }
 
 const LIGHT_COUNT = 16;
@@ -23,7 +25,7 @@ const LIGHT_COUNT = 16;
 const black = "#000000";
 
 const AnimatedDots = React.memo(
-	function AnimatedDots({ setting, layout = "linear" }: AnimatedDotsProps) {
+	function AnimatedDots({ setting, layout = "linear", dotSize, overlap }: AnimatedDotsProps) {
 		const COLOR_COUNT = setting.colors.length;
 
 		const animationRef = useRef<boolean>(false);
@@ -969,7 +971,7 @@ const AnimatedDots = React.memo(
 									};
 									return (
 										<View key={stableKey} style={ringStyle}>
-											<Dot color={color || black} />
+											<Dot color={color || black} size={dotSize} overlap={overlap} />
 										</View>
 									);
 								})
@@ -980,7 +982,7 @@ const AnimatedDots = React.memo(
 						{dotColors
 							? dotColors.map((color, index) => {
 									const stableKey = `${getStableSettingId(setting)}-dot-${index}`;
-									return <Dot key={stableKey} color={color || black} />;
+									return <Dot key={stableKey} color={color || black} size={dotSize} overlap={overlap} />;
 								})
 							: null}
 					</View>
@@ -995,7 +997,9 @@ const AnimatedDots = React.memo(
 			prevProps.setting.flashingPattern === nextProps.setting.flashingPattern &&
 			JSON.stringify(prevProps.setting.colors) ===
 				JSON.stringify(nextProps.setting.colors) &&
-			prevProps.layout === nextProps.layout
+			prevProps.layout === nextProps.layout &&
+			prevProps.dotSize === nextProps.dotSize &&
+			prevProps.overlap === nextProps.overlap
 		);
 	},
 );

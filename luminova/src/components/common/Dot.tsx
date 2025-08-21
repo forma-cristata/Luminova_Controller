@@ -3,17 +3,19 @@ import { View } from "react-native";
 
 interface DotProps {
 	color: string;
+	size?: number;
+	overlap?: number;
 }
 
-export default function Dot({ color }: DotProps) {
+export default function Dot({ color, size = 35, overlap = 7 }: DotProps) {
 	return (
 		<View
 			style={{
-				width: 35,
-				height: 35,
-				marginHorizontal: -7,
+				width: size,
+				height: size,
+				marginHorizontal: -overlap,
 				backgroundColor: color,
-				borderRadius: 17.5, // Half of the width/height (35) to make a perfect circle
+				borderRadius: size / 2, // Half of the size to make a perfect circle
 			}}
 		/>
 	);

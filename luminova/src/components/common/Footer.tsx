@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
         bottom: 0,
     },
     footerBar: {
-        flex: 1,
+        flex: 0.7 * DIMENSIONS.SCALE,
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",
@@ -80,8 +80,8 @@ const styles = StyleSheet.create({
         justifyContent: "center",
     },
     sideButton: {
-        width: 40,
-        height: 40,
+        width: 40 * DIMENSIONS.SCALE,
+        height: 40 * DIMENSIONS.SCALE,
         justifyContent: "center",
         alignItems: "center",
     },

@@ -210,17 +210,10 @@ const styles = StyleSheet.create({
 		marginBottom: 10 * DIMENSIONS.SCALE,
 		alignSelf: "center",
 	},
-	deleteButton: {
-		position: "absolute",
-		top: 10,
-		right: 10,
-		zIndex: 1,
-	},
 	compactDotsContainer: {
 		alignSelf: "center",
 		alignItems: "center",
 		justifyContent: "center",
-		// allow children to overflow slightly if they use negative margins for overlap
 		overflow: "visible",
 	},
 });

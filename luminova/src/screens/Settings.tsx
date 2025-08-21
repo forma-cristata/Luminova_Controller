@@ -29,7 +29,7 @@ import { loadSettings, saveSettings } from "@/src/services/SettingsService";
 import { getStableSettingId } from "@/src/utils/settingUtils";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "@/src/screens/index";
-import { DIMENSIONS } from "../styles/SharedStyles";
+import { COLORS, DIMENSIONS } from "../styles/SharedStyles";
 
 type SettingsProps = NativeStackScreenProps<RootStackParamList, "Settings">;
 
@@ -321,24 +321,24 @@ export default function Settings({ navigation }: SettingsProps) {
 								key={`duplicate-${currentIndex < (settingsData?.length || 0) ? getStableSettingId(settingsData?.[currentIndex]) : "no-setting"}`}
 								style={{
 									position: "absolute",
-									top: 10,
-									left: 10,
+									top: 10 * DIMENSIONS.SCALE,
+									left: 10 * DIMENSIONS.SCALE,
 									zIndex: 1,
 								}}
 								onPress={() => {
 									handleDuplicate();
 								}}
 							>
-								<MaterialIcons name="content-copy" size={24} color="white" />
+								<MaterialIcons name="content-copy" size={24 * DIMENSIONS.SCALE} color="white" />
 							</TouchableOpacity>
 							<TouchableOpacity
 								key={`delete-${currentIndex < (settingsData?.length || 0) ? getStableSettingId(settingsData?.[currentIndex]) : "no-setting"}`}
 								style={{
 									position: "absolute",
-									top: 10,
-									right: 10,
+									top: 10 * DIMENSIONS.SCALE,
+									right: 10 * DIMENSIONS.SCALE,
 									zIndex: 1,
-									opacity: currentIndex < 12 ? 0.3 : 1,
+									opacity: currentIndex < 12 ? COLORS.DISABLED_OPACITY : 1,
 								}}
 								disabled={currentIndex < 12}
 								onPress={() => {
@@ -347,8 +347,8 @@ export default function Settings({ navigation }: SettingsProps) {
 							>
 								<Ionicons
 									name="trash-outline"
-									size={24}
-									color={currentIndex < 12 ? "#666" : "white"}
+									size={24 * DIMENSIONS.SCALE}
+									color={"white"}
 								/>
 							</TouchableOpacity>
 							{focusedSettingBlock}
@@ -406,47 +406,47 @@ const styles = StyleSheet.create({
 	},
 	text: {
 		fontFamily: "Thesignature",
-		fontSize: 130,
+		fontSize: 130 * DIMENSIONS.SCALE,
 		color: "#ffffff",
 	},
 	notBackButton: {
 		flex: 1,
-		paddingTop: 20,
+		paddingTop: 20 * DIMENSIONS.SCALE,
 		justifyContent: "space-between",
 	},
 	renderItem: {
 		borderStyle: "solid",
-		borderWidth: 2,
+		borderWidth: 2 * DIMENSIONS.SCALE,
 		justifyContent: "center",
 		alignItems: "center",
 		shadowColor: "#000",
 	},
 	carCont: {
-		flex: 0.7,
+		flex: 0.7 * DIMENSIONS.SCALE,
 		justifyContent: "center",
 		alignItems: "center",
 		minHeight: DIMENSIONS.SCREEN_HEIGHT / 5,
 	},
 	carousel: {
-		width: width * 0.9,
+		width: width * 0.9 - 20 * DIMENSIONS.SCALE,
 		height: DIMENSIONS.SCREEN_HEIGHT / 5,
 		justifyContent: "center",
 	},
 	focusedItem: {
-		flex: 3,
+		flex: 3 * DIMENSIONS.SCALE,
 		width: "90%",
 		borderStyle: "solid",
-		borderWidth: 2,
+		borderWidth: 2 * DIMENSIONS.SCALE,
 		borderBottomColor: "white",
 		borderTopColor: "white",
 		borderLeftColor: "white",
 		borderRightColor: "white",
 		justifyContent: "center",
 		alignItems: "center",
-		marginVertical: 10,
+		marginVertical: 10 * DIMENSIONS.SCALE,
 	},
 	title: {
-		height: (height * 2) / 10,
+		height: (height * 2 * DIMENSIONS.SCALE) / 10,
 		justifyContent: "center",
 		alignItems: "center",
 	},
@@ -460,24 +460,24 @@ const styles = StyleSheet.create({
 	},
 	sideButton: {
 		position: "absolute",
-		top: 10,
-		right: 10,
+		top: 10 * DIMENSIONS.SCALE,
+		right: 10 * DIMENSIONS.SCALE,
 		zIndex: 1,
 	},
 	scrollIndicator: {
 		position: "absolute",
 		zIndex: 2,
-		width: 40,
-		height: 40,
+		width: 40 * DIMENSIONS.SCALE,
+		height: 40 * DIMENSIONS.SCALE,
 		justifyContent: "center",
 		alignItems: "center",
 		transform: [{ translateY: -60 }],
 	},
 	scrollIndicatorLeft: {
-		left: 10,
+		left: 10 * DIMENSIONS.SCALE,
 	},
 	scrollIndicatorRight: {
-		right: 10,
+		right: 10 * DIMENSIONS.SCALE,
 	},
 	dotsContainer: {
 		flexDirection: "row",
@@ -485,12 +485,12 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 	},
 	dot: {
-		width: 8,
-		height: 8,
+		width: 8 * DIMENSIONS.SCALE,
+		height: 8 * DIMENSIONS.SCALE,
 		borderRadius: 4,
 		backgroundColor: "#ffffff",
 		opacity: 0.3,
-		marginHorizontal: 4,
+		marginHorizontal: 10 * DIMENSIONS.SCALE,
 	},
 	activeDot: {
 		opacity: 1,

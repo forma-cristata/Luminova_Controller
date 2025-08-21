@@ -21,6 +21,7 @@ import Animated, {
 
 import CreateButton from "@/src/components/buttons/CreateButton";
 import Header from "@/src/components/common/Header";
+import Footer from "@/src/components/common/Footer";
 import SettingBlock from "@/src/components/settings/SettingBlock";
 import { useConfiguration } from "@/src/context/ConfigurationContext";
 import type { Setting } from "@/src/types/SettingInterface";
@@ -375,37 +376,21 @@ export default function Settings({ navigation }: SettingsProps) {
 						style={styles.carousel}
 					/>
 
-					{/* Left scroll indicator */}
-					<Animated.View style={[animatedIndicatorStyle]}>
-						<TouchableOpacity
-							style={[styles.scrollIndicator, styles.scrollIndicatorLeft]}
-							onPress={() => {
-								if (ref.current && carouselData.length > 1) {
-									ref.current.prev({ animated: true });
-								}
-							}}
-							activeOpacity={0.5}
-							disabled={carouselData.length <= 1}
-						>
-							<Ionicons name="chevron-forward" size={32} color="white" />
-						</TouchableOpacity>
-					</Animated.View>
-
-					{/* Right scroll indicator */}
-					<Animated.View style={[animatedIndicatorStyle]}>
-						<TouchableOpacity
-							style={[styles.scrollIndicator, styles.scrollIndicatorRight]}
-							onPress={() => {
-								if (ref.current && carouselData.length > 1) {
-									ref.current.next({ animated: true });
-								}
-							}}
-							activeOpacity={0.5}
-							disabled={carouselData.length <= 1}
-						>
-							<Ionicons name="chevron-back" size={32} color="white" />
-						</TouchableOpacity>
-					</Animated.View>
+					{/* Footer controls (replaces inline chevrons) */}
+					<Footer
+						onLeftPress={() => {
+							if (ref.current && carouselData.length > 1) {
+								ref.current.prev({ animated: true });
+							}
+						}}
+						onRightPress={() => {
+							if (ref.current && carouselData.length > 1) {
+								ref.current.next({ animated: true });
+							}
+						}}
+						leftDisabled={carouselData.length <= 1}
+						rightDisabled={carouselData.length <= 1}
+					/>
 				</View>
 			</View>
 		</SafeAreaView>

@@ -112,12 +112,12 @@ const ColorDots = React.memo(
 				...(isInteractive
 					? isBlack
 						? {
-								shadowColor: getFirstNonBlackColor(),
-								shadowOffset: { width: 0, height: 0 },
-								shadowOpacity: 0.6,
-								shadowRadius: 5 * DIMENSIONS.SCALE,
-								elevation: 5 * DIMENSIONS.SCALE,
-							}
+							shadowColor: getFirstNonBlackColor(),
+							shadowOffset: { width: 0, height: 0 },
+							shadowOpacity: 0.6,
+							shadowRadius: 5 * DIMENSIONS.SCALE,
+							elevation: 5 * DIMENSIONS.SCALE,
+						}
 						: {}
 					: {}),
 			};

@@ -11,13 +11,12 @@ import {
 
 import AnimatedTitle from "@/src/components/common/AnimatedTitle";
 import Button from "@/src/components/buttons/Button";
-import InfoButton from "@/src/components/buttons/InfoButton";
 import WelcomeTutorial from "@/src/components/common/WelcomeTutorial";
+import Header from "@/src/components/common/Header";
 import { COLORS, FONTS, DIMENSIONS } from "@/src/styles/SharedStyles";
 import { useConfiguration } from "@/src/context/ConfigurationContext";
 import { FirstTimeUserService } from "@/src/services/FirstTimeUserService";
 import IpAddressInput from "@/src/components/welcome/IpAddressInput";
-import LedToggle from "@/src/components/welcome/LedToggle";
 import React from "react";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "./index";
@@ -127,13 +126,7 @@ export default function Welcome({ navigation }: WelcomeProps) {
 	return (
 		<TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
 			<SafeAreaView style={styles.container}>
-				<InfoButton />
-				<LedToggle
-					isShelfConnected={isShelfConnected}
-					setIsShelfConnected={setIsShelfConnected}
-					isEnabled={isEnabled}
-					setIsEnabled={setIsEnabled}
-				/>
+				<Header isEnabled={isEnabled} setIsEnabled={setIsEnabled} />
 
 				<ScrollView
 					ref={scrollViewRef}

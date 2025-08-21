@@ -10,7 +10,6 @@ interface ColorDotsProps {
 	layout?: "single-row" | "two-rows";
 	dotSize?: number;
 	spacing?: number;
-	overlap?: number;
 }
 
 const ColorDots = React.memo(
@@ -22,7 +21,6 @@ const ColorDots = React.memo(
 			layout = "single-row",
 			dotSize = 35,
 			spacing = -7,
-			overlap = 7,
 		} = props;
 
 		// Generate stable ID for the colors array using hash-based approach
@@ -72,8 +70,8 @@ const ColorDots = React.memo(
 					width: dotSize,
 					height: dotSize,
 					backgroundColor: "#000000",
-					borderRadius: dotSize / 2,
-					marginHorizontal: -overlap,
+					borderRadius: "50%",
+					marginHorizontal: spacing,
 				};
 			}
 
@@ -84,8 +82,8 @@ const ColorDots = React.memo(
 				width: baseSize,
 				height: baseSize,
 				backgroundColor: colors[index],
-				borderRadius: baseSize / 2,
-				marginHorizontal: isInteractive ? spacing : -overlap,
+				borderRadius: "50%",
+				marginHorizontal: spacing,
 				transform: isInteractive ? [{ scale: scales[index] }] : [],
 				// Add shadow for black dots in interactive mode
 				...(isInteractive

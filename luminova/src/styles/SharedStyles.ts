@@ -23,6 +23,9 @@ export const DIMENSIONS = {
 	SCALE: scale,
 };
 
+// Use the project's SCALE constant for small helper/hint text so it scales
+// consistently across devices. (SCALE is available as DIMENSIONS.SCALE.)
+
 export const COMMON_STYLES = StyleSheet.create({
 	container: {
 		flex: 1,
@@ -46,10 +49,9 @@ export const COMMON_STYLES = StyleSheet.create({
 		textAlign: "center",
 		flexWrap: "nowrap",
 	},
-
 	hintText: {
 		color: COLORS.WHITE,
-		fontSize: 20,
+		fontSize: 25 * DIMENSIONS.SCALE,
 		fontFamily: FONTS.CLEAR,
 		opacity: 0.7,
 	},

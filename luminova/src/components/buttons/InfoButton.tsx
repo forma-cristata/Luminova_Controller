@@ -20,7 +20,7 @@ export default function InfoButton() {
 	return (
 		<View style={styles.container}>
 			<TouchableOpacity
-				style={[styles.button, styles.glowEffect]}
+				style={styles.button}
 				onPress={handlePress}
 				hitSlop={{
 					top: DIMENSIONS.SCREEN_HEIGHT * 0.015,
@@ -43,12 +43,5 @@ const styles = StyleSheet.create({
 	button: {
 		alignItems: "center",
 		justifyContent: "center",
-	},
-	glowEffect: {
-		shadowColor: "#ffffff",
-		shadowOffset: { width: 0, height: 0 },
-		shadowOpacity: 1,
-		shadowRadius: Math.max(6, DIMENSIONS.SCREEN_HEIGHT * 0.01),
-		elevation: 8,
 	},
 });

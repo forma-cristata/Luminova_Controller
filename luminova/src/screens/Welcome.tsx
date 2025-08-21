@@ -216,13 +216,6 @@ const styles = StyleSheet.create({
 		paddingVertical: DIMENSIONS.SCREEN_HEIGHT * 0.02,
 		minHeight: DIMENSIONS.SCREEN_HEIGHT * 0.15,
 	},
-	topSection: {
-		flex: 2,
-		justifyContent: "center",
-		alignItems: "center",
-		width: "100%",
-		minHeight: DIMENSIONS.SCREEN_HEIGHT * 0.25,
-	},
 	middleSection: {
 		flex: 1,
 		justifyContent: "center",
@@ -237,7 +230,7 @@ const styles = StyleSheet.create({
 	},
 	buttonText: {
 		color: COLORS.WHITE,
-		fontSize: Math.min(75, DIMENSIONS.SCREEN_HEIGHT * 0.0375),
+		fontSize: DIMENSIONS.SCALE * 37,
 		fontFamily: FONTS.SIGNATURE,
 	},
 });

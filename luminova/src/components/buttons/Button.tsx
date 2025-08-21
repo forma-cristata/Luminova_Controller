@@ -62,7 +62,13 @@ const Button = React.memo(
 				onPress={onPress}
 				disabled={disabled}
 			>
-				<Text style={[COMMON_STYLES.buttonText, textStyle]}>{title}</Text>
+				<Text
+					style={[COMMON_STYLES.buttonText, textStyle]}
+					adjustsFontSizeToFit={true}
+					numberOfLines={1}
+				>
+					{title}
+				</Text>
 			</TouchableOpacity>
 		);
 	},

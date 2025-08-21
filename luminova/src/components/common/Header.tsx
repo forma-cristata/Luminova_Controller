@@ -30,7 +30,7 @@ export default function Header({
     const showInfo = routeName !== "Info";
 
     // Deterministic header sizing (avoid Math.min/Math.max in layout math)
-    let topOffset = DIMENSIONS.SCREEN_HEIGHT * 0.005;
+    const topOffset = DIMENSIONS.SCREEN_HEIGHT * 0.005;
     const iconSize = DIMENSIONS.SCREEN_HEIGHT * 0.04;
     const headerHeight = topOffset * 2 + iconSize;
 

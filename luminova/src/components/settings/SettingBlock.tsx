@@ -141,7 +141,7 @@ const SettingBlock = ({
 					<View style={[styles.compactDotsContainer, { width: DIMENSIONS.SCREEN_WIDTH * 0.85 }]}>
 						{dotsRendered}
 					</View>
-					<FlashButton setting={setting} style={styles.flashButtonCompact} />
+					<FlashButton setting={setting} style={styles.flashButtonCompact} variant="secondary" />
 				</View>
 			) : null}
 		</>
@@ -174,11 +174,10 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 	},
 	flashButtonCompact: {
-		...COMMON_STYLES.wideButton,
+		...COMMON_STYLES.secondaryButton,
 		marginTop: 10,
-		paddingVertical: 5,
-		paddingHorizontal: 15,
 		marginBottom: 10,
+		alignSelf: "center",
 	},
 	deleteButton: {
 		position: "absolute",

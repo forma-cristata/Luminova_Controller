@@ -5,7 +5,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { getStatus, toggleLed } from "@/src/services/ApiService";
 import { useConfiguration } from "@/src/context/ConfigurationContext";
 import { useDebounce } from "@/src/hooks/useDebounce";
-import { COMMON_STYLES } from "@/src/styles/SharedStyles";
+import { COMMON_STYLES, DIMENSIONS } from "@/src/styles/SharedStyles";
 import type { Setting } from "@/src/types/SettingInterface";
 
 interface LedToggleProps {
@@ -34,6 +34,11 @@ export default function LedToggle({
 		new Animated.Value(disableAnimation ? 1 : 0.3),
 	).current;
 	const thumbPosition = useRef(new Animated.Value(0)).current;
+
+	// Deterministic sizes for header layout (avoid Math.min for predictable results)
+	const toggleWidth = DIMENSIONS.SCREEN_HEIGHT * 0.072;
+	const thumbSize = DIMENSIONS.SCREEN_HEIGHT * 0.029;
+	const iconSize = DIMENSIONS.SCREEN_HEIGHT * 0.017;
 
 	useEffect(() => {
 		const fetchInitialStatus = async () => {
@@ -78,15 +83,25 @@ export default function LedToggle({
 	}, [isShelfConnected, isLoading, toggleOpacity, disableAnimation]);
 
 	useEffect(() => {
+		const toggleWidth = DIMENSIONS.SCREEN_HEIGHT * 0.072;
+		const thumbSize = DIMENSIONS.SCREEN_HEIGHT * 0.029;
+		const rightPosition = 4;
+		const leftPosition = toggleWidth - thumbSize - 4;
+
 		Animated.timing(thumbPosition, {
-			toValue: isEnabled ? 2 : 28,
+			toValue: isEnabled ? rightPosition : leftPosition,
 			duration: 200,
 			useNativeDriver: true,
 		}).start();
 	}, [isEnabled, thumbPosition]);
 
 	useEffect(() => {
-		thumbPosition.setValue(isEnabled ? 2 : 28);
+		const toggleWidth = DIMENSIONS.SCREEN_HEIGHT * 0.072;
+		const thumbSize = DIMENSIONS.SCREEN_HEIGHT * 0.029;
+		const rightPosition = 4;
+		const leftPosition = toggleWidth - thumbSize - 4;
+
+		thumbPosition.setValue(isEnabled ? rightPosition : leftPosition);
 	}, [isEnabled, thumbPosition.setValue]); // eslint-disable-line react-hooks/exhaustive-deps
 
 	const toggleSwitch = async () => {
@@ -178,28 +193,27 @@ export default function LedToggle({
 	};
 
 	return (
-		<Animated.View
-			style={[
-				containerStyle ? {} : COMMON_STYLES.navButton,
-				containerStyle ? containerStyle : { left: 20 },
-				{ opacity: toggleOpacity },
-			]}
-		>
+		<Animated.View style={[styles.wrapper, { opacity: toggleOpacity }, containerStyle]}>
 			<View style={styles.toggleContainer}>
 				<TouchableOpacity
 					style={[
 						styles.customToggle,
 						{
-							backgroundColor: isEnabled
-								? "#ffffff"
-								: isShelfConnected
-									? "#665e73"
-									: "#444",
+							width: toggleWidth,
+							height: DIMENSIONS.SCREEN_HEIGHT * 0.039,
+							borderRadius: DIMENSIONS.SCREEN_HEIGHT * 0.0195,
+							backgroundColor: isEnabled ? "#ffffff" : isShelfConnected ? "#665e73" : "#444",
 						},
 					]}
 					onPress={toggleSwitch}
 					disabled={isLoading || debouncedPendingToggle || !isShelfConnected}
 					activeOpacity={0.8}
+					hitSlop={{
+						top: DIMENSIONS.SCREEN_HEIGHT * 0.015,
+						bottom: DIMENSIONS.SCREEN_HEIGHT * 0.015,
+						left: DIMENSIONS.SCREEN_WIDTH * 0.025,
+						right: DIMENSIONS.SCREEN_WIDTH * 0.025,
+					}}
 				>
 					<View
 						style={[
@@ -208,7 +222,7 @@ export default function LedToggle({
 							{ opacity: isEnabled ? 1 : 0.3 },
 						]}
 					>
-						<Ionicons name="sunny" size={16} color="#000000" />
+						<Ionicons name="sunny" size={iconSize} color="#000000" />
 					</View>
 					<View
 						style={[
@@ -217,21 +231,16 @@ export default function LedToggle({
 							{ opacity: !isEnabled ? 1 : 0.3 },
 						]}
 					>
-						<Ionicons
-							name="moon"
-							size={16}
-							color={isShelfConnected ? "#00ff00" : "#ff4444"}
-						/>
+						<Ionicons name="moon" size={iconSize} color={isShelfConnected ? "#00ff00" : "#ff4444"} />
 					</View>
 					<Animated.View
 						style={[
 							styles.toggleThumb,
 							{
-								backgroundColor: !isShelfConnected
-									? "#666"
-									: isEnabled
-										? "#665e73"
-										: "#f4f3f4",
+								width: thumbSize,
+								height: thumbSize,
+								borderRadius: thumbSize / 2,
+								backgroundColor: !isShelfConnected ? "#666" : isEnabled ? "#665e73" : "#f4f3f4",
 								transform: [{ translateX: thumbPosition }],
 							},
 						]}
@@ -248,10 +257,11 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		justifyContent: "center",
 	},
+	wrapper: {
+		alignItems: "flex-start",
+		justifyContent: "center",
+	},
 	customToggle: {
-		width: 60,
-		height: 32,
-		borderRadius: 16,
 		position: "relative",
 		justifyContent: "center",
 		borderWidth: 2,
@@ -261,19 +271,16 @@ const styles = StyleSheet.create({
 		position: "absolute",
 		alignItems: "center",
 		justifyContent: "center",
-		width: 20,
-		height: 20,
+		width: DIMENSIONS.SCREEN_HEIGHT * 0.022,
+		height: DIMENSIONS.SCREEN_HEIGHT * 0.022,
 	},
 	sunContainer: {
-		right: 6,
+		right: DIMENSIONS.SCREEN_HEIGHT * 0.007,
 	},
 	moonContainer: {
-		left: 6,
+		left: DIMENSIONS.SCREEN_HEIGHT * 0.007,
 	},
 	toggleThumb: {
-		width: 24,
-		height: 24,
-		borderRadius: 12,
 		position: "absolute",
 		shadowColor: "#000",
 		shadowOffset: { width: 0, height: 2 },

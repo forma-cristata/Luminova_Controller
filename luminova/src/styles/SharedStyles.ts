@@ -23,6 +23,9 @@ export const DIMENSIONS = {
 	SCALE: scale,
 };
 
+// Use the project's SCALE constant for small helper/hint text so it scales
+// consistently across devices. (SCALE is available as DIMENSIONS.SCALE.)
+
 export const COMMON_STYLES = StyleSheet.create({
 	container: {
 		flex: 1,
@@ -46,10 +49,9 @@ export const COMMON_STYLES = StyleSheet.create({
 		textAlign: "center",
 		flexWrap: "nowrap",
 	},
-
 	hintText: {
 		color: COLORS.WHITE,
-		fontSize: 20,
+		fontSize: 25 * DIMENSIONS.SCALE,
 		fontFamily: FONTS.CLEAR,
 		opacity: 0.7,
 	},
@@ -146,12 +148,12 @@ export const COMMON_STYLES = StyleSheet.create({
 	welcomeButton: {
 		backgroundColor: COLORS.BLACK,
 		borderRadius: 10,
-		paddingVertical: 10,
-		paddingHorizontal: 20,
+		paddingVertical: Math.max(10, height * 0.015),
+		paddingHorizontal: Math.max(20, height * 0.025),
 		alignItems: "center",
 		borderStyle: "solid",
 		borderBottomWidth: 2,
 		borderBottomColor: COLORS.WHITE,
-		marginBottom: "25%",
+		marginBottom: height * 0.08,
 	},
 });

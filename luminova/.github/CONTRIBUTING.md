@@ -338,8 +338,29 @@ The project includes automated quality checks that run on every push:
 2. Ensure TypeScript compiles: `npx tsc --noEmit`
 3. Test key functionality after changes
 4. **Check git status**: Run `git status` after staging to verify changes
-5. Commit with descriptive messages
+5. Commit with descriptive messages (see commit guidelines below)
 6. Push - CI pipeline will validate code quality
+
+### 💬 **Commit Message Guidelines**
+
+#### **For Human Contributors:**
+- **Keep it concise**: Commit messages should be no longer than one sentence
+- **Be descriptive**: Clearly explain what was changed and why
+- **Use present tense**: "Add feature" not "Added feature"
+- **Include context**: Mention component or area affected
+
+#### **For AI Contributors:**
+- **Single sentence rule**: Commit messages must not exceed one sentence length
+- **Multi-line format allowed**: Use title + detailed bullet points if needed
+- **Include scope**: Specify which components/screens were modified
+- **Summarize impact**: Brief mention of user-facing changes or fixes
+
+#### **Examples:**
+```
+✅ Good: "Add responsive scaling to InfoButton for iPhone 16 Plus compatibility"
+✅ Good: "Fix LedToggle positioning to match InfoButton alignment"
+❌ Too long: "This commit adds responsive scaling to the InfoButton component and also fixes the positioning to work better on larger screens like the iPhone 16 Plus and makes sure it aligns properly with other elements."
+```
 
 ## Native Code Changes
 

@@ -11,13 +11,12 @@ import {
 
 import AnimatedTitle from "@/src/components/common/AnimatedTitle";
 import Button from "@/src/components/buttons/Button";
-import InfoButton from "@/src/components/buttons/InfoButton";
 import WelcomeTutorial from "@/src/components/common/WelcomeTutorial";
-import { COLORS, FONTS } from "@/src/styles/SharedStyles";
+import Header from "@/src/components/common/Header";
+import { COLORS, FONTS, DIMENSIONS } from "@/src/styles/SharedStyles";
 import { useConfiguration } from "@/src/context/ConfigurationContext";
 import { FirstTimeUserService } from "@/src/services/FirstTimeUserService";
 import IpAddressInput from "@/src/components/welcome/IpAddressInput";
-import LedToggle from "@/src/components/welcome/LedToggle";
 import React from "react";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "./index";
@@ -77,7 +76,8 @@ export default function Welcome({ navigation }: WelcomeProps) {
 		const keyboardDidShowListener = Keyboard.addListener(
 			"keyboardDidShow",
 			() => {
-				scrollViewRef.current?.scrollToEnd({ animated: true });
+				const scrollDistance = DIMENSIONS.SCREEN_HEIGHT * 0.37; // Scroll 31% (61.75% / 2) to move inputs from 81.75% to 20%
+				scrollViewRef.current?.scrollTo({ y: scrollDistance, animated: true });
 			},
 		);
 
@@ -116,13 +116,7 @@ export default function Welcome({ navigation }: WelcomeProps) {
 	return (
 		<TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
 			<SafeAreaView style={styles.container}>
-				<InfoButton />
-				<LedToggle
-					isShelfConnected={isShelfConnected}
-					setIsShelfConnected={setIsShelfConnected}
-					isEnabled={isEnabled}
-					setIsEnabled={setIsEnabled}
-				/>
+				<Header isEnabled={isEnabled} setIsEnabled={setIsEnabled} />
 
 				<ScrollView
 					ref={scrollViewRef}
@@ -132,25 +126,56 @@ export default function Welcome({ navigation }: WelcomeProps) {
 					style={styles.scrollView}
 					scrollEnabled={false}
 				>
-					<TouchableOpacity
-						style={styles.titleContainer}
-						onPress={handleDebugTap}
-						activeOpacity={1}
-					>
-						<AnimatedTitle
-							text={displayText}
-							fontSize={130}
-							marginBottom="10%"
+					{/* 30% - Title Section */}
+					<View style={{
+						height: DIMENSIONS.SCREEN_HEIGHT * 0.25,
+						width: "100%",
+						justifyContent: "center",
+						alignItems: "center"
+					}}>
+						<TouchableOpacity
+							style={styles.titleContainer}
+							onPress={handleDebugTap}
+							activeOpacity={1}
+							hitSlop={{
+								top: DIMENSIONS.SCREEN_HEIGHT * 0.02,
+								bottom: DIMENSIONS.SCREEN_HEIGHT * 0.02,
+								left: DIMENSIONS.SCREEN_WIDTH * 0.05,
+								right: DIMENSIONS.SCREEN_WIDTH * 0.05,
+							}}
+						>
+							<AnimatedTitle
+								text={displayText}
+								fontSize={Math.min(240, DIMENSIONS.SCREEN_HEIGHT * 0.12)}
+								marginBottom={DIMENSIONS.SCREEN_HEIGHT * 0.02}
+							/>
+						</TouchableOpacity>
+					</View>
+
+					{/* 30% - Create Button Section */}
+					<View style={{
+						height: DIMENSIONS.SCREEN_HEIGHT * 0.30,
+						width: "100%",
+						justifyContent: "center",
+						alignItems: "center"
+					}}>
+						<Button
+							title="Create ⟩"
+							onPress={createButtonPressed}
+							variant="welcome"
+							textStyle={styles.buttonText}
 						/>
-					</TouchableOpacity>
-					<Button
-						title="Create ⟩"
-						onPress={createButtonPressed}
-						variant="welcome"
-						textStyle={styles.buttonText}
-					/>
-					<IpAddressInput onIpSaved={handleIpSaved} />
-					<View style={{ height: 250 }} />
+					</View>
+
+					{/* 30% - IP Inputs Section */}
+					<View style={{
+						height: DIMENSIONS.SCREEN_HEIGHT * 0.30,
+						width: "100%",
+						justifyContent: "center",
+						alignItems: "center"
+					}}>
+						<IpAddressInput onIpSaved={handleIpSaved} />
+					</View>
 				</ScrollView>
 
 				{/* Welcome Tutorial Modal */}
@@ -173,22 +198,39 @@ const styles = StyleSheet.create({
 	scrollContent: {
 		flexGrow: 1,
 		alignItems: "center",
-		paddingBottom: 50,
-		paddingTop: 120,
-		minHeight: "100%",
+		justifyContent: "flex-start",
+		paddingBottom: DIMENSIONS.SCREEN_HEIGHT * 0.4, // Extra padding for scroll space
+		paddingTop: DIMENSIONS.SCREEN_HEIGHT * 0.10, // 10% for toggle/info area
+		minHeight: DIMENSIONS.SCREEN_HEIGHT, // Content fits in 100% screen height
 	},
 	scrollView: {
 		flex: 1,
 		width: "100%",
+
 	},
 	titleContainer: {
 		alignItems: "center",
 		justifyContent: "center",
-		marginBottom: 20,
+		marginBottom: DIMENSIONS.SCREEN_HEIGHT * 0.03,
+		paddingHorizontal: DIMENSIONS.SCREEN_WIDTH * 0.05,
+		paddingVertical: DIMENSIONS.SCREEN_HEIGHT * 0.02,
+		minHeight: DIMENSIONS.SCREEN_HEIGHT * 0.15,
+	},
+	middleSection: {
+		flex: 1,
+		justifyContent: "center",
+		alignItems: "center",
+		width: "100%",
+	},
+	bottomSection: {
+		flex: 2,
+		justifyContent: "flex-start",
+		alignItems: "center",
+		width: "100%",
 	},
 	buttonText: {
 		color: COLORS.WHITE,
-		fontSize: 40,
+		fontSize: DIMENSIONS.SCALE * 37,
 		fontFamily: FONTS.SIGNATURE,
 	},
 });

@@ -10,6 +10,8 @@ interface ColorDotsProps {
 	layout?: "single-row" | "two-rows";
 	dotSize?: number;
 	spacing?: number;
+	// Optional container width in pixels so dot sizing can be responsive
+	containerWidth?: number;
 }
 
 const ColorDots = React.memo(
@@ -19,9 +21,29 @@ const ColorDots = React.memo(
 			onDotSelect,
 			selectedDot = null,
 			layout = "single-row",
-			dotSize = 35,
-			spacing = -7,
+			dotSize: dotSizeProp,
+			spacing: spacingProp,
+			containerWidth,
 		} = props;
+
+		// If a containerWidth is provided and dotSize/spacing not explicitly set,
+		// compute sizes so 16 dots (single row) fill ~90% of container width with overlap.
+		let computedDotSize = 35;
+		let computedSpacing = -7;
+
+		if (containerWidth && !props.dotSize && !props.spacing) {
+			const n = Math.min(16, colors.length || 16);
+			// Aim to fill most of container; allow some overlap. Use overlap fraction 0.2
+			const overlapFraction = 0.2;
+			const stepFraction = 1 - 2 * overlapFraction; // effective step per dot
+			const sizeEstimate = containerWidth / (1 + (n - 1) * stepFraction);
+			computedDotSize = Math.max(10, Math.round(sizeEstimate));
+			// spacing should be negative for overlap
+			computedSpacing = Math.round(-overlapFraction * computedDotSize);
+		} else {
+			computedDotSize = dotSizeProp ?? 35;
+			computedSpacing = spacingProp ?? -7;
+		}
 
 		// Generate stable ID for the colors array using hash-based approach
 		const getStableColorsId = (colors: string[]): string => {
@@ -67,23 +89,23 @@ const ColorDots = React.memo(
 			// Safety check for colors array bounds
 			if (!colors || index >= colors.length) {
 				return {
-					width: dotSize,
-					height: dotSize,
+					width: computedDotSize,
+					height: computedDotSize,
 					backgroundColor: "#000000",
 					borderRadius: "50%",
-					marginHorizontal: spacing,
+					marginHorizontal: computedSpacing,
 				};
 			}
 
 			const isBlack = colors[index] === "#000000";
-			const baseSize = isInteractive ? 55 : dotSize;
+			const baseSize = isInteractive ? 55 : computedDotSize;
 
 			return {
 				width: baseSize,
 				height: baseSize,
 				backgroundColor: colors[index],
 				borderRadius: "50%",
-				marginHorizontal: spacing,
+				marginHorizontal: computedSpacing,
 				transform: isInteractive ? [{ scale: scales[index] }] : [],
 				// Add shadow for black dots in interactive mode
 				...(isInteractive

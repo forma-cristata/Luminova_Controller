@@ -1,8 +1,8 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import React from "react";
-import { TouchableOpacity, type ViewStyle } from "react-native";
-import { COMMON_STYLES } from "@/src/styles/SharedStyles";
+import { TouchableOpacity, type ViewStyle, StyleSheet } from "react-native";
+import { COMMON_STYLES, DIMENSIONS } from "@/src/styles/SharedStyles";
 
 interface BackButtonProps {
 	beforePress?: () => void | Promise<void>;
@@ -33,12 +33,34 @@ export default function BackButton({
 		}
 	};
 
+	const iconSize = DIMENSIONS.SCREEN_HEIGHT * 0.04;
+
 	return (
 		<TouchableOpacity
-			style={[COMMON_STYLES.navButton, { left: 20 }, style]}
+			style={[styles.container, styles.glowEffect, style]}
 			onPress={handlePress}
+			hitSlop={{
+				top: DIMENSIONS.SCREEN_HEIGHT * 0.015,
+				bottom: DIMENSIONS.SCREEN_HEIGHT * 0.015,
+				left: DIMENSIONS.SCREEN_WIDTH * 0.025,
+				right: DIMENSIONS.SCREEN_WIDTH * 0.025,
+			}}
 		>
-			<Ionicons name="chevron-back-circle-outline" size={32} color="white" />
+			<Ionicons name="chevron-back-circle-outline" size={iconSize} color="white" />
 		</TouchableOpacity>
 	);
 }
+
+const styles = StyleSheet.create({
+	container: {
+		alignItems: "center",
+		justifyContent: "center",
+	},
+	glowEffect: {
+		shadowColor: "#ffffff",
+		shadowOffset: { width: 0, height: 0 },
+		shadowOpacity: 1,
+		shadowRadius: Math.max(6, DIMENSIONS.SCREEN_HEIGHT * 0.01),
+		elevation: 8,
+	},
+});

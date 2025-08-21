@@ -1,7 +1,7 @@
 import React from "react";
 import type { ViewStyle } from "react-native";
 import Button, { type BaseButtonProps } from "@/src/components/buttons/Button";
-import { COLORS, FONTS } from "@/src/styles/SharedStyles";
+import { COLORS, FONTS, DIMENSIONS } from "@/src/styles/SharedStyles";
 import { useConfiguration } from "@/src/context/ConfigurationContext";
 import type { Setting } from "@/src/types/SettingInterface";
 import { flashSetting } from "@/src/services/ApiService";
@@ -22,6 +22,7 @@ const FlashButton = React.memo(
 		onSuccess,
 		onError,
 		textStyle,
+		variant = "wide",
 	}: FlashButtonProps) => {
 		const { setCurrentConfiguration, isShelfConnected, setIsShelfConnected } =
 			useConfiguration();
@@ -61,10 +62,10 @@ const FlashButton = React.memo(
 			}
 		};
 
-		// Default text style that matches SettingBlock buttons
+		// Default text style that matches SettingBlock buttons with responsive sizing
 		const defaultTextStyle = {
 			color: COLORS.WHITE,
-			fontSize: 40,
+			fontSize: 40 * DIMENSIONS.SCALE, // Responsive sizing with max cap
 			fontFamily: FONTS.CLEAR,
 		};
 
@@ -82,7 +83,7 @@ const FlashButton = React.memo(
 				title="Flash"
 				onPress={handleFlash}
 				disabled={isDisabled}
-				variant="wide"
+				variant={variant}
 				style={combinedStyle}
 				textStyle={textStyle || defaultTextStyle}
 			/>

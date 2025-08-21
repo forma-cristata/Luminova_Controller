@@ -188,6 +188,17 @@ If you run out of tool attempts, continue automatically iterating. Don't require
 - **Check git status** after staging changes to verify correctness
 - **COMMIT AND PUSH**: After completing any task, run `git commit -am "<INSERT COMMIT MESSAGE>"; git push` to save changes
 
+#### **Commit Message Guidelines for AI:**
+- **Single sentence rule**: Commit messages must be no longer than one sentence
+- **Multi-line format**: Use title + bullet points for complex changes
+- **Include scope**: Specify which components/screens were modified
+- **Be descriptive**: Clearly explain what was changed and impact
+- **Examples**:
+  ```
+  ✅ "Add responsive scaling to InfoButton for iPhone 16 Plus compatibility"
+  ✅ "Fix LedToggle positioning and sizing for cross-device consistency"
+  ```
+
 #### **Never Do:**
 - Ask permission to scan files
 - Ignore existing patterns

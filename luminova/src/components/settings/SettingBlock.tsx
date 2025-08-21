@@ -4,7 +4,7 @@ import AnimatedDots from "@/src/components/animations/AnimatedDots";
 import ColorDots from "@/src/components/color-picker/ColorDots";
 import FlashButton from "@/src/components/buttons/FlashButton";
 import type { Setting } from "@/src/types/SettingInterface";
-import { COMMON_STYLES } from "@/src/styles/SharedStyles";
+import { COMMON_STYLES, DIMENSIONS, COLORS } from "@/src/styles/SharedStyles";
 import { useConfiguration } from "@/src/context/ConfigurationContext";
 import { getStableSettingId } from "@/src/utils/settingUtils";
 import type { ViewStyle } from "react-native";
@@ -28,7 +28,7 @@ const areEqual = (prevProps: SettingItemProps, nextProps: SettingItemProps) => {
 		prevProps.isAnimated === nextProps.isAnimated &&
 		prevProps.index === nextProps.index &&
 		JSON.stringify(prevProps.setting?.colors) ===
-			JSON.stringify(nextProps.setting?.colors)
+		JSON.stringify(nextProps.setting?.colors)
 	);
 };
 
@@ -45,6 +45,9 @@ const SettingBlock = ({
 	// Generate stable ID for the setting using utility function (even for null settings)
 	const stableId = setting ? getStableSettingId(setting) : "null-setting";
 
+	// Calculate target container width for dots (90% of screen width)
+	const containerWidth = DIMENSIONS.SCREEN_WIDTH * 0.9;
+
 	// Memoize the dots rendering to prevent unnecessary re-renders
 	const dotsRendered = React.useMemo(() => {
 		// Additional safety check to ensure setting has required properties
@@ -57,11 +60,12 @@ const SettingBlock = ({
 				key={`animated-${stableId}`}
 				navigation={navigation}
 				setting={setting}
+				containerWidth={containerWidth}
 			/>
 		) : (
-			<ColorDots key={`static-${stableId}`} colors={setting.colors} />
+			<ColorDots key={`static-${stableId}`} colors={setting.colors} containerWidth={containerWidth} />
 		);
-	}, [isAnimated, stableId, setting, navigation]);
+	}, [isAnimated, stableId, setting, navigation, containerWidth]);
 
 	// Early return if setting is null, undefined, or missing required properties
 	if (!setting || !setting.name || !setting.colors) {
@@ -79,8 +83,8 @@ const SettingBlock = ({
 	// Dynamic title processing with character limit and font sizing
 	const processTitle = (title: string | undefined | null) => {
 		const MAX_CHARACTERS = 20; // Slightly longer than "Toter Schmetterling" (18 chars)
-		const BASE_FONT_SIZE = 70;
-		const MIN_FONT_SIZE = 45;
+		const BASE_FONT_SIZE = 60 * DIMENSIONS.SCALE;
+		const MIN_FONT_SIZE = 50 * DIMENSIONS.SCALE;
 
 		// Ensure title is a valid string
 		const safeTitle = String(title || "");
@@ -109,6 +113,14 @@ const SettingBlock = ({
 		setting.name,
 	);
 
+	// Dynamic padding based on font size to prevent clipping
+	// The Thesignature font has glyphs that bleed to the left of their bounding box
+	const dynamicHeaderStyle = {
+		paddingHorizontal: Math.max(20, titleFontSize * 0.3) * DIMENSIONS.SCALE, // Symmetric padding for the background
+		paddingVertical: Math.max(6, titleFontSize * 0.1) * DIMENSIONS.SCALE,
+		borderRadius: Math.max(6, titleFontSize * 0.08) * DIMENSIONS.SCALE,
+	};
+
 	return (
 		<>
 			{layout === "full" ? (
@@ -119,7 +131,17 @@ const SettingBlock = ({
 				>
 					<View style={styles.headerContainer}>
 						<Text
-							style={[COMMON_STYLES.whiteText, { fontSize: titleFontSize }]}
+							style={[
+								COMMON_STYLES.whiteText,
+								styles.headerText,
+								dynamicHeaderStyle,
+								{
+									fontSize: titleFontSize,
+									textAlign: 'center', // Back to center alignment
+									includeFontPadding: false, // Android-specific: remove extra font padding
+									textAlignVertical: 'center', // Android-specific: center vertically
+								}
+							]}
 							numberOfLines={1}
 							adjustsFontSizeToFit={true}
 							minimumFontScale={0.7}
@@ -128,7 +150,7 @@ const SettingBlock = ({
 						</Text>
 					</View>
 
-					<View style={styles.dotsContainer}>{dotsRendered}</View>
+					<View style={[styles.dotsContainer, { width: containerWidth }]}>{dotsRendered}</View>
 					<View style={styles.tapToEditContainer}>
 						<Text style={COMMON_STYLES.hintText}>tap to edit</Text>
 					</View>
@@ -137,8 +159,11 @@ const SettingBlock = ({
 
 			{layout === "compact" ? (
 				<View style={style}>
-					{dotsRendered}
-					<FlashButton setting={setting} style={styles.flashButtonCompact} />
+					{/* Constrain dots to 90% of screen width while keeping internal overlapping */}
+					<View style={[styles.compactDotsContainer, { width: containerWidth }]}>
+						{dotsRendered}
+					</View>
+					<FlashButton setting={setting} style={styles.flashButtonCompact} variant="secondary" />
 				</View>
 			) : null}
 		</>
@@ -151,36 +176,45 @@ const styles = StyleSheet.create({
 		height: "100%",
 		justifyContent: "center",
 		alignItems: "center",
+		overflow: "visible",
 	},
 	headerContainer: {
 		width: "100%",
 		alignItems: "center",
 		justifyContent: "center",
-		paddingHorizontal: 40,
+		paddingHorizontal: 0, // Remove padding that clips the text container
 		position: "relative",
+		zIndex: 10,
+		elevation: 10,
 	},
 	dotsContainer: {
-		paddingHorizontal: 15,
-		paddingVertical: 20,
+		paddingHorizontal: 15 * DIMENSIONS.SCALE,
+		paddingVertical: 20 * DIMENSIONS.SCALE,
 		alignItems: "center",
 		justifyContent: "center",
+		zIndex: 0,
+	},
+	headerText: {
+		backgroundColor: COLORS.BLACK,
+		zIndex: 20,
+		elevation: 20,
 	},
 	tapToEditContainer: {
-		marginTop: 30,
+		marginTop: 30 * DIMENSIONS.SCALE,
 		alignItems: "center",
 		justifyContent: "center",
 	},
 	flashButtonCompact: {
-		...COMMON_STYLES.wideButton,
-		marginTop: 10,
-		paddingVertical: 5,
-		paddingHorizontal: 15,
+		...COMMON_STYLES.secondaryButton,
+		marginTop: 10 * DIMENSIONS.SCALE,
+		marginBottom: 10 * DIMENSIONS.SCALE,
+		alignSelf: "center",
 	},
-	deleteButton: {
-		position: "absolute",
-		top: 10,
-		right: 10,
-		zIndex: 1,
+	compactDotsContainer: {
+		alignSelf: "center",
+		alignItems: "center",
+		justifyContent: "center",
+		overflow: "visible",
 	},
 });
 

@@ -19,9 +19,9 @@ import Animated, {
 	withTiming,
 } from "react-native-reanimated";
 
-import BackButton from "@/src/components/buttons/BackButton";
 import CreateButton from "@/src/components/buttons/CreateButton";
-import InfoButton from "@/src/components/buttons/InfoButton";
+import Header from "@/src/components/common/Header";
+import Footer from "@/src/components/common/Footer";
 import SettingBlock from "@/src/components/settings/SettingBlock";
 import { useConfiguration } from "@/src/context/ConfigurationContext";
 import type { Setting } from "@/src/types/SettingInterface";
@@ -29,6 +29,7 @@ import { loadSettings, saveSettings } from "@/src/services/SettingsService";
 import { getStableSettingId } from "@/src/utils/settingUtils";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "@/src/screens/index";
+import { COLORS, DIMENSIONS } from "../styles/SharedStyles";
 
 type SettingsProps = NativeStackScreenProps<RootStackParamList, "Settings">;
 
@@ -308,12 +309,7 @@ export default function Settings({ navigation }: SettingsProps) {
 	);
 	return (
 		<SafeAreaView style={styles.container}>
-			<InfoButton />
-			<BackButton
-				beforePress={() => setLastEdited("0")}
-				onPress={() => navigation.popToTop()}
-				afterPress={() => setLastEdited("0")}
-			/>
+			<Header backButtonProps={{ beforePress: () => setLastEdited("0"), onPress: () => navigation.popToTop(), afterPress: () => setLastEdited("0") }} />
 			<View style={styles.notBackButton}>
 				<View style={[styles.focusedItem, { position: "relative" }]}>
 					{currentIndex < 0 ? <View key="negative-index" /> : null}
@@ -325,24 +321,24 @@ export default function Settings({ navigation }: SettingsProps) {
 								key={`duplicate-${currentIndex < (settingsData?.length || 0) ? getStableSettingId(settingsData?.[currentIndex]) : "no-setting"}`}
 								style={{
 									position: "absolute",
-									top: 10,
-									left: 10,
+									top: 10 * DIMENSIONS.SCALE,
+									left: 10 * DIMENSIONS.SCALE,
 									zIndex: 1,
 								}}
 								onPress={() => {
 									handleDuplicate();
 								}}
 							>
-								<MaterialIcons name="content-copy" size={24} color="white" />
+								<MaterialIcons name="content-copy" size={24 * DIMENSIONS.SCALE} color="white" />
 							</TouchableOpacity>
 							<TouchableOpacity
 								key={`delete-${currentIndex < (settingsData?.length || 0) ? getStableSettingId(settingsData?.[currentIndex]) : "no-setting"}`}
 								style={{
 									position: "absolute",
-									top: 10,
-									right: 10,
+									top: 10 * DIMENSIONS.SCALE,
+									right: 10 * DIMENSIONS.SCALE,
 									zIndex: 1,
-									opacity: currentIndex < 12 ? 0.3 : 1,
+									opacity: currentIndex < 12 ? COLORS.DISABLED_OPACITY : 1,
 								}}
 								disabled={currentIndex < 12}
 								onPress={() => {
@@ -351,8 +347,8 @@ export default function Settings({ navigation }: SettingsProps) {
 							>
 								<Ionicons
 									name="trash-outline"
-									size={24}
-									color={currentIndex < 12 ? "#666" : "white"}
+									size={24 * DIMENSIONS.SCALE}
+									color={"white"}
 								/>
 							</TouchableOpacity>
 							{focusedSettingBlock}
@@ -380,37 +376,21 @@ export default function Settings({ navigation }: SettingsProps) {
 						style={styles.carousel}
 					/>
 
-					{/* Left scroll indicator */}
-					<Animated.View style={[animatedIndicatorStyle]}>
-						<TouchableOpacity
-							style={[styles.scrollIndicator, styles.scrollIndicatorLeft]}
-							onPress={() => {
-								if (ref.current && carouselData.length > 1) {
-									ref.current.prev({ animated: true });
-								}
-							}}
-							activeOpacity={0.5}
-							disabled={carouselData.length <= 1}
-						>
-							<Ionicons name="chevron-back" size={32} color="white" />
-						</TouchableOpacity>
-					</Animated.View>
-
-					{/* Right scroll indicator */}
-					<Animated.View style={[animatedIndicatorStyle]}>
-						<TouchableOpacity
-							style={[styles.scrollIndicator, styles.scrollIndicatorRight]}
-							onPress={() => {
-								if (ref.current && carouselData.length > 1) {
-									ref.current.next({ animated: true });
-								}
-							}}
-							activeOpacity={0.5}
-							disabled={carouselData.length <= 1}
-						>
-							<Ionicons name="chevron-forward" size={32} color="white" />
-						</TouchableOpacity>
-					</Animated.View>
+					{/* Footer controls (replaces inline chevrons) */}
+					<Footer
+						onLeftPress={() => {
+							if (ref.current && carouselData.length > 1) {
+								ref.current.prev({ animated: true });
+							}
+						}}
+						onRightPress={() => {
+							if (ref.current && carouselData.length > 1) {
+								ref.current.next({ animated: true });
+							}
+						}}
+						leftDisabled={carouselData.length <= 1}
+						rightDisabled={carouselData.length <= 1}
+					/>
 				</View>
 			</View>
 		</SafeAreaView>
@@ -426,49 +406,47 @@ const styles = StyleSheet.create({
 	},
 	text: {
 		fontFamily: "Thesignature",
-		fontSize: 130,
+		fontSize: 130 * DIMENSIONS.SCALE,
 		color: "#ffffff",
 	},
 	notBackButton: {
 		flex: 1,
-		justifyContent: "center",
-		alignItems: "center",
-		paddingTop: 100,
+		paddingTop: 20 * DIMENSIONS.SCALE,
+		justifyContent: "space-between",
 	},
 	renderItem: {
 		borderStyle: "solid",
-		borderWidth: 2,
-		width: width,
-		height: (height * 11) / 35,
+		borderWidth: 2 * DIMENSIONS.SCALE,
 		justifyContent: "center",
 		alignItems: "center",
 		shadowColor: "#000",
 	},
 	carCont: {
-		flex: 1,
+		flex: 0.7 * DIMENSIONS.SCALE,
 		justifyContent: "center",
 		alignItems: "center",
+		minHeight: DIMENSIONS.SCREEN_HEIGHT / 5,
 	},
 	carousel: {
-		flex: 1,
-		width: width * 0.9,
+		width: width * 0.9 - 20 * DIMENSIONS.SCALE,
+		height: DIMENSIONS.SCREEN_HEIGHT / 5,
 		justifyContent: "center",
-		alignItems: "flex-end",
 	},
 	focusedItem: {
-		height: height / 2.2,
-		width: width,
+		flex: 3 * DIMENSIONS.SCALE,
+		width: "90%",
 		borderStyle: "solid",
-		borderWidth: 2,
+		borderWidth: 2 * DIMENSIONS.SCALE,
 		borderBottomColor: "white",
 		borderTopColor: "white",
 		borderLeftColor: "white",
 		borderRightColor: "white",
 		justifyContent: "center",
 		alignItems: "center",
+		marginVertical: 10 * DIMENSIONS.SCALE,
 	},
 	title: {
-		height: (height * 2) / 10,
+		height: (height * 2 * DIMENSIONS.SCALE) / 10,
 		justifyContent: "center",
 		alignItems: "center",
 	},
@@ -477,30 +455,29 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 	},
 	newSettingItem: {
-		borderColor: "black",
 		justifyContent: "center",
 		alignItems: "center",
 	},
 	sideButton: {
 		position: "absolute",
-		top: 10,
-		right: 10,
+		top: 10 * DIMENSIONS.SCALE,
+		right: 10 * DIMENSIONS.SCALE,
 		zIndex: 1,
 	},
 	scrollIndicator: {
 		position: "absolute",
 		zIndex: 2,
-		width: 40,
-		height: 40,
+		width: 40 * DIMENSIONS.SCALE,
+		height: 40 * DIMENSIONS.SCALE,
 		justifyContent: "center",
 		alignItems: "center",
 		transform: [{ translateY: -60 }],
 	},
 	scrollIndicatorLeft: {
-		left: 10,
+		left: 10 * DIMENSIONS.SCALE,
 	},
 	scrollIndicatorRight: {
-		right: 10,
+		right: 10 * DIMENSIONS.SCALE,
 	},
 	dotsContainer: {
 		flexDirection: "row",
@@ -508,12 +485,12 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 	},
 	dot: {
-		width: 8,
-		height: 8,
+		width: 8 * DIMENSIONS.SCALE,
+		height: 8 * DIMENSIONS.SCALE,
 		borderRadius: 4,
 		backgroundColor: "#ffffff",
 		opacity: 0.3,
-		marginHorizontal: 4,
+		marginHorizontal: 10 * DIMENSIONS.SCALE,
 	},
 	activeDot: {
 		opacity: 1,

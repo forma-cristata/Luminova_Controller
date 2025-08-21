@@ -73,6 +73,9 @@ luminova/
 - First-time user tutorial with guided onboarding
 - Animated text display and status indicators
 - IP address configuration and connection testing
+- **Responsive layout**: Dynamically scales across iPhone sizes (iPhone 15 to iPhone 16 Plus)
+- **Adaptive sizing**: Title and button text scale with screen dimensions
+- **Touch optimization**: Responsive hit areas and touch targets for all devices
 
 ### ⚙️ **Settings Screen** (`src/screens/Settings.tsx`)
 - Main settings management with carousel view

@@ -13,6 +13,9 @@
     },
     "description": "A React Native LED controller app for creating and managing custom lighting configurations with various animation patterns and color schemes.",
     "ios": {
+      "config": {
+        "usesNonExemptEncryption": false
+      },
 		"jsEngine": "hermes",
       "supportsTablet": false,
       "bundleIdentifier": "com.formacristata.luminovacontroller",

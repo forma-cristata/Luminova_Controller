@@ -33,12 +33,11 @@ import Animated, {
 } from "react-native-reanimated";
 
 import ActionButton from "@/src/components/buttons/ActionButton";
-import BackButton from "@/src/components/buttons/BackButton";
+import Header from "@/src/components/common/Header";
 import ColorButton from "@/src/components/buttons/ColorButton";
 import ColorDots from "@/src/components/color-picker/ColorDots";
 import HexKeyboard from "@/src/components/common/HexKeyboard";
 import HueSliderBackground from "@/src/components/color-picker/HueSliderBackground";
-import InfoButton from "@/src/components/buttons/InfoButton";
 import RandomizeButton from "@/src/components/buttons/RandomizeButton";
 import { COLORS, COMMON_STYLES, FONTS } from "@/src/styles/SharedStyles";
 import type { Setting } from "@/src/types/SettingInterface";
@@ -119,10 +118,10 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 		const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
 		return result
 			? {
-					r: parseInt(result[1], 16),
-					g: parseInt(result[2], 16),
-					b: parseInt(result[3], 16),
-				}
+				r: parseInt(result[1], 16),
+				g: parseInt(result[2], 16),
+				b: parseInt(result[3], 16),
+			}
 			: null;
 	}, []);
 
@@ -299,18 +298,18 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 			debouncedHexInput.length === 6
 		) {
 			const finalHex = hexValue.startsWith("#") ? hexValue : `#${hexValue}`;
-			
+
 			setColors((prevColors) => {
 				// Save to history before updating
 				setColorHistory((prevHistory) => [...prevHistory, [...prevColors]]);
-				
+
 				const newColors = [...prevColors];
 				newColors[selectedDot] = finalHex;
 				return newColors;
 			});
-			
+
 			setHasChanges(true);
-			
+
 			const rgb = hexToRgb(finalHex);
 			if (rgb) {
 				const hsv = rgbToHsv(rgb.r, rgb.g, rgb.b);
@@ -445,7 +444,7 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 			startY.value = event.absoluteY;
 			startX.value = event.absoluteX;
 		},
-		onActive: () => {},
+		onActive: () => { },
 		onEnd: (event) => {
 			const initY = startY.value;
 			const initX = startX.value;
@@ -568,10 +567,7 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 				<PanGestureHandler onGestureEvent={panGestureEvent}>
 					<Animated.View style={{ flex: 1 }}>
 						<SafeAreaView style={COMMON_STYLES.container}>
-							<InfoButton />
-							<BackButton
-								beforePress={previewMode ? unPreviewAPI : undefined}
-							/>
+							<Header backButtonProps={{ beforePress: previewMode ? unPreviewAPI : undefined }} />
 							{renderTitle()}
 							<ColorDots
 								colors={colors}

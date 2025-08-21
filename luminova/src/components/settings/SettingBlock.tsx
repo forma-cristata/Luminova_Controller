@@ -83,8 +83,8 @@ const SettingBlock = ({
 	// Dynamic title processing with character limit and font sizing
 	const processTitle = (title: string | undefined | null) => {
 		const MAX_CHARACTERS = 20; // Slightly longer than "Toter Schmetterling" (18 chars)
-		const BASE_FONT_SIZE = 70;
-		const MIN_FONT_SIZE = 45;
+		const BASE_FONT_SIZE = 70 * DIMENSIONS.SCALE;
+		const MIN_FONT_SIZE = 50 * DIMENSIONS.SCALE;
 
 		// Ensure title is a valid string
 		const safeTitle = String(title || "");

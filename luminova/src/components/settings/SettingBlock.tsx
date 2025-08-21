@@ -4,7 +4,7 @@ import AnimatedDots from "@/src/components/animations/AnimatedDots";
 import ColorDots from "@/src/components/color-picker/ColorDots";
 import FlashButton from "@/src/components/buttons/FlashButton";
 import type { Setting } from "@/src/types/SettingInterface";
-import { COMMON_STYLES, DIMENSIONS } from "@/src/styles/SharedStyles";
+import { COMMON_STYLES, DIMENSIONS, COLORS, FONTS } from "@/src/styles/SharedStyles";
 import { useConfiguration } from "@/src/context/ConfigurationContext";
 import { getStableSettingId } from "@/src/utils/settingUtils";
 import type { ViewStyle } from "react-native";
@@ -154,7 +154,7 @@ const SettingBlock = ({
 
 					<View style={styles.dotsContainer}>{dotsRendered}</View>
 					<View style={styles.tapToEditContainer}>
-						<Text style={COMMON_STYLES.hintText}>tap to edit</Text>
+						<Text style={styles.tapToEditText}>tap to edit</Text>
 					</View>
 				</TouchableOpacity>
 			) : null}
@@ -193,6 +193,17 @@ const styles = StyleSheet.create({
 		marginTop: 30,
 		alignItems: "center",
 		justifyContent: "center",
+		width: DIMENSIONS.SCREEN_WIDTH * 0.3,
+		height: 40,
+	},
+	tapToEditText: {
+		color: COLORS.WHITE,
+		fontFamily: FONTS.CLEAR,
+		opacity: 0.7,
+		fontSize: 36,
+		textAlign: "center",
+		includeFontPadding: false,
+		textAlignVertical: "center",
 	},
 	flashButtonCompact: {
 		...COMMON_STYLES.wideButton,

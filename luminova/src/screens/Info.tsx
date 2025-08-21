@@ -24,7 +24,7 @@ export default function Info() {
 
 	const sendFeedback = () => {
 		// App Store URLs for leaving reviews
-		const appStoreUrl = Platform.OS === "ios" 
+		const appStoreUrl = Platform.OS === "ios"
 			? "itms-apps://itunes.apple.com/app/viewContentsUserReviews?id=YOUR_APP_ID" // Replace YOUR_APP_ID with actual App Store ID when published
 			: "market://details?id=com.formacristata.luminovacontroller";
 

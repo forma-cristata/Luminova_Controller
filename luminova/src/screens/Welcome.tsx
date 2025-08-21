@@ -76,17 +76,7 @@ export default function Welcome({ navigation }: WelcomeProps) {
 		const keyboardDidShowListener = Keyboard.addListener(
 			"keyboardDidShow",
 			() => {
-				// Scroll distance to show inputs above keyboard
-				// IP inputs container starts at 70% (10% + 30% + 30%)
-				// IpAddressInput precise measurements:
-				// - ipContainer: marginBottom 10
-				// - ipOctet: paddingVertical 4*2 + fontSize 22*scale ≈ 30px
-				// - saveButton: paddingVertical 8*scale*2 + marginBottom 20 + font ≈ 50px
-				// Total: 10 + 30 + 50 = 90px ≈ 6.5% of screen height (iPhone 16 Plus: 90/2868 ≈ 3.1%)
-				// Implicit margin: (30% container - 6.5% element) / 2 = 11.75%
-				// So inputs are positioned at 70% + 11.75% = 81.75% of screen height
-				// Need to bring them to ~20% position to be above keyboard
-				const scrollDistance = DIMENSIONS.SCREEN_HEIGHT * 0.31; // Scroll 31% (61.75% / 2) to move inputs from 81.75% to 20%
+				const scrollDistance = DIMENSIONS.SCREEN_HEIGHT * 0.37; // Scroll 31% (61.75% / 2) to move inputs from 81.75% to 20%
 				scrollViewRef.current?.scrollTo({ y: scrollDistance, animated: true });
 			},
 		);
@@ -138,7 +128,7 @@ export default function Welcome({ navigation }: WelcomeProps) {
 				>
 					{/* 30% - Title Section */}
 					<View style={{
-						height: DIMENSIONS.SCREEN_HEIGHT * 0.30,
+						height: DIMENSIONS.SCREEN_HEIGHT * 0.25,
 						width: "100%",
 						justifyContent: "center",
 						alignItems: "center"
@@ -216,6 +206,7 @@ const styles = StyleSheet.create({
 	scrollView: {
 		flex: 1,
 		width: "100%",
+
 	},
 	titleContainer: {
 		alignItems: "center",

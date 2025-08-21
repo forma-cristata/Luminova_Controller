@@ -45,6 +45,9 @@ const SettingBlock = ({
 	// Generate stable ID for the setting using utility function (even for null settings)
 	const stableId = setting ? getStableSettingId(setting) : "null-setting";
 
+	// Calculate target container width for dots (90% of screen width)
+	const containerWidth = DIMENSIONS.SCREEN_WIDTH * 0.9;
+
 	// Memoize the dots rendering to prevent unnecessary re-renders
 	const dotsRendered = React.useMemo(() => {
 		// Additional safety check to ensure setting has required properties
@@ -57,11 +60,12 @@ const SettingBlock = ({
 				key={`animated-${stableId}`}
 				navigation={navigation}
 				setting={setting}
+				containerWidth={containerWidth}
 			/>
 		) : (
-			<ColorDots key={`static-${stableId}`} colors={setting.colors} />
+			<ColorDots key={`static-${stableId}`} colors={setting.colors} containerWidth={containerWidth} />
 		);
-	}, [isAnimated, stableId, setting, navigation]);
+	}, [isAnimated, stableId, setting, navigation, containerWidth]);
 
 	// Early return if setting is null, undefined, or missing required properties
 	if (!setting || !setting.name || !setting.colors) {
@@ -128,7 +132,7 @@ const SettingBlock = ({
 						</Text>
 					</View>
 
-					<View style={styles.dotsContainer}>{dotsRendered}</View>
+					<View style={[styles.dotsContainer, { width: containerWidth }]}>{dotsRendered}</View>
 					<View style={styles.tapToEditContainer}>
 						<Text style={COMMON_STYLES.hintText}>tap to edit</Text>
 					</View>
@@ -137,8 +141,8 @@ const SettingBlock = ({
 
 			{layout === "compact" ? (
 				<View style={style}>
-					{/* Constrain dots to 85% of screen width while keeping internal overlapping */}
-					<View style={[styles.compactDotsContainer, { width: DIMENSIONS.SCREEN_WIDTH * 0.85 }]}>
+					{/* Constrain dots to 90% of screen width while keeping internal overlapping */}
+					<View style={[styles.compactDotsContainer, { width: containerWidth }]}>
 						{dotsRendered}
 					</View>
 					<FlashButton setting={setting} style={styles.flashButtonCompact} variant="secondary" />

@@ -62,7 +62,6 @@ export default function Header({
 const styles = StyleSheet.create({
     headerWrapper: {
         width: "100%",
-        backgroundColor: "red",
     },
     headerBar: {
         flex: 1,

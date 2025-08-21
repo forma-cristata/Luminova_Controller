@@ -17,6 +17,8 @@ interface AnimatedDotsProps {
 	navigation?: NativeStackNavigationProp<RootStackParamList>;
 	setting: Setting;
 	layout?: "ring" | "linear";
+	// Optional container width to allow parent sizing (pixels)
+	containerWidth?: number;
 }
 
 const LIGHT_COUNT = 16;
@@ -24,7 +26,7 @@ const LIGHT_COUNT = 16;
 const black = "#000000";
 
 const AnimatedDots = React.memo(
-	function AnimatedDots({ setting, layout = "linear" }: AnimatedDotsProps) {
+	function AnimatedDots({ setting, layout = "linear", containerWidth }: AnimatedDotsProps) {
 		const COLOR_COUNT = setting.colors.length;
 
 		const animationRef = useRef<boolean>(false);
@@ -977,11 +979,11 @@ const AnimatedDots = React.memo(
 							: null}
 					</View>
 				) : (
-					<View style={[styles.linearContainer, { width: DIMENSIONS.SCREEN_WIDTH * 0.85 }]}>
+					<View style={[styles.linearContainer, { width: containerWidth ?? DIMENSIONS.SCREEN_WIDTH * 0.85 }]}> 
 						{dotColors
 							? (() => {
 								// Compute dot size so 16 dots with overlap fill the container width
-								const containerW = DIMENSIONS.SCREEN_WIDTH * 0.85;
+								const containerW = containerWidth ?? DIMENSIONS.SCREEN_WIDTH * 0.85;
 								// Let overlap be 0.2 (20% of dot width) as a default
 								const overlapFraction = 0.2;
 								// Effective horizontal step per dot = size - 2*overlap*size = size*(1 - 2*overlap)

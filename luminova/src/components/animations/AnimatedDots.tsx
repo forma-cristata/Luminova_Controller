@@ -1027,6 +1027,7 @@ const styles = StyleSheet.create({
 	background: {
 		justifyContent: "center",
 		alignItems: "center",
+		paddingVertical: DIMENSIONS.SCREEN_HEIGHT * 0.01,
 	},
 	ringContainer: {
 		width: 120,

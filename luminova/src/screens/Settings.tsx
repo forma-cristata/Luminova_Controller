@@ -426,7 +426,8 @@ const styles = StyleSheet.create({
 	},
 	notBackButton: {
 		flex: 1,
-		paddingTop: 20
+		paddingTop: 20,
+		justifyContent: "space-between",
 	},
 	renderItem: {
 		borderStyle: "solid",
@@ -440,15 +441,15 @@ const styles = StyleSheet.create({
 		flex: 1,
 		justifyContent: "center",
 		alignItems: "center",
+		minHeight: DIMENSIONS.SCREEN_HEIGHT / 4,
 	},
 	carousel: {
-		flex: 1,
 		width: width * 0.9,
-		minHeight: DIMENSIONS.SCREEN_HEIGHT / 3,
+		height: DIMENSIONS.SCREEN_HEIGHT / 4,
 		justifyContent: "center",
 	},
 	focusedItem: {
-		height: height / 2.2,
+		flex: 2,
 		width: width,
 		borderStyle: "solid",
 		borderWidth: 2,
@@ -458,6 +459,7 @@ const styles = StyleSheet.create({
 		borderRightColor: "white",
 		justifyContent: "center",
 		alignItems: "center",
+		marginVertical: 10,
 	},
 	title: {
 		height: (height * 2) / 10,

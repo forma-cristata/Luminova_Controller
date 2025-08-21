@@ -23,40 +23,40 @@ export default function Info() {
 	const [debugTapCount, setDebugTapCount] = useState(0);
 
 	const sendFeedback = () => {
-		const phoneNumber = "720-665-3101";
-		const message = "Feedback for Pixel Controller: ";
+		// App Store URLs for leaving reviews
+		const appStoreUrl = Platform.OS === "ios" 
+			? "itms-apps://itunes.apple.com/app/viewContentsUserReviews?id=YOUR_APP_ID" // Replace YOUR_APP_ID with actual App Store ID when published
+			: "market://details?id=com.formacristata.luminovacontroller";
 
-		let url = "";
-		if (Platform.OS === "ios") {
-			url = `sms:${phoneNumber}&body=${encodeURIComponent(message)}`;
-		} else {
-			url = `sms:${phoneNumber}?body=${encodeURIComponent(message)}`;
-		}
-
-		Linking.canOpenURL(url)
+		Linking.canOpenURL(appStoreUrl)
 			.then((supported) => {
 				if (supported) {
-					return Linking.openURL(url);
+					return Linking.openURL(appStoreUrl);
 				} else {
-					Alert.alert("Error", "SMS messaging is not supported on this device");
+					// Fallback to web URLs if native apps aren't available
+					const webUrl = Platform.OS === "ios"
+						? "https://apps.apple.com/app/YOUR_APP_ID" // Replace YOUR_APP_ID with actual App Store ID when published
+						: "https://play.google.com/store/apps/details?id=com.formacristata.luminovacontroller";
+					return Linking.openURL(webUrl);
 				}
 			})
 			.catch((error) => {
-				console.error("Error opening SMS app:", error);
+				console.error("Error opening App Store:", error);
+				Alert.alert("Error", "Unable to open App Store. Please search for 'Luminova Controller' to leave a review.");
 			});
 	};
 
 	const showFeedbackAlert = () => {
 		Alert.alert(
-			"Send Feedback",
-			"Would you like to send feedback via text message?",
+			"Leave a Review",
+			"Help us improve by leaving a review on the App Store!",
 			[
 				{
 					text: "Cancel",
 					style: "cancel",
 				},
 				{
-					text: "Send",
+					text: "Review App",
 					onPress: sendFeedback,
 				},
 			],
@@ -168,14 +168,14 @@ export default function Info() {
 					activeOpacity={0.8}
 				>
 					<Text style={styles.supportText}>
-						We love you! Please help us improve by critiquing our app!
+						We love you! Please help us improve by leaving a review!
 					</Text>
 					<TouchableOpacity
 						style={styles.feedbackButton}
 						onPress={showFeedbackAlert}
 					>
 						<Ionicons name="chatbubble-outline" size={24} color="white" />
-						<Text style={styles.feedbackText}>Feedback</Text>
+						<Text style={styles.feedbackText}>Review App</Text>
 					</TouchableOpacity>
 				</TouchableOpacity>
 			</View>

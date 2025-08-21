@@ -39,7 +39,7 @@ import ColorDots from "@/src/components/color-picker/ColorDots";
 import HexKeyboard from "@/src/components/common/HexKeyboard";
 import HueSliderBackground from "@/src/components/color-picker/HueSliderBackground";
 import RandomizeButton from "@/src/components/buttons/RandomizeButton";
-import { COLORS, COMMON_STYLES, FONTS } from "@/src/styles/SharedStyles";
+import { COLORS, COMMON_STYLES, FONTS, DIMENSIONS } from "@/src/styles/SharedStyles";
 import type { Setting } from "@/src/types/SettingInterface";
 import React from "react";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -221,9 +221,8 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 		} catch {
 			console.log("no keyboard to dismiss");
 		}
-
-		setSelectedDot(index);
 		setHexInput(colors[index].replace("#", ""));
+
 		const rgb = hexToRgb(colors[index]);
 		if (rgb) {
 			const hsv = rgbToHsv(rgb.r, rgb.g, rgb.b);
@@ -231,6 +230,8 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 			setBrightness(hsv.v);
 			setSaturation(hsv.s);
 		}
+		setSelectedDot(index);
+
 	};
 
 	const handleHexKeyPress = (key: string) => {
@@ -608,7 +609,7 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 												applyHexColor("#FFFFFF");
 											}
 										}}
-										scale={scale}
+										scale={DIMENSIONS.SCALE}
 									/>
 									<ColorButton
 										color="black"
@@ -619,7 +620,7 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 												applyHexColor("#000000");
 											}
 										}}
-										scale={scale}
+										scale={DIMENSIONS.SCALE}
 									/>
 								</View>
 							</View>
@@ -790,44 +791,43 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 }
 
 const { width, height } = Dimensions.get("window");
-const scale = Math.min(width, height) / 375;
 
 const styles = StyleSheet.create({
 	whiteText: {
 		color: COLORS.WHITE,
-		fontSize: 30 * scale,
+		fontSize: 30 * DIMENSIONS.SCALE,
 		fontFamily: FONTS.SIGNATURE,
 		textAlign: "center",
 	},
 	sliderRow: {
-		marginVertical: 5 * scale,
+		marginVertical: 5 * DIMENSIONS.SCALE,
 	},
 	slider: {
 		width: "100%",
-		height: 50 * scale,
+		height: 50 * DIMENSIONS.SCALE,
 	},
 	hexContainer: {
 		flexDirection: "row",
 		alignItems: "center",
-		marginTop: scale * 30,
+		marginTop: DIMENSIONS.SCALE * 30,
 		width: width * 0.85,
 		borderStyle: "solid",
-		borderWidth: 2,
+		borderWidth: 2 * DIMENSIONS.SCALE,
 		borderColor: COLORS.WHITE,
-		padding: 10 * scale,
-		borderRadius: 10,
+		padding: 10 * DIMENSIONS.SCALE,
+		borderRadius: 10 * DIMENSIONS.SCALE,
 	},
 	hexInput: {
 		color: COLORS.WHITE,
-		fontSize: 22 * scale,
+		fontSize: 22 * DIMENSIONS.SCALE,
 		fontFamily: FONTS.CLEAR,
 		textTransform: "uppercase",
-		letterSpacing: 2,
-		borderBottomWidth: 1,
+		letterSpacing: 2 * DIMENSIONS.SCALE,
+		borderBottomWidth: 1 * DIMENSIONS.SCALE,
 		borderBottomColor: COLORS.WHITE,
-		paddingVertical: 4,
-		paddingHorizontal: 8,
-		width: 120 * scale,
+		paddingVertical: 4 * DIMENSIONS.SCALE,
+		paddingHorizontal: 8 * DIMENSIONS.SCALE,
+		width: 120 * DIMENSIONS.SCALE,
 		textAlign: "center",
 		backgroundColor: "transparent",
 		justifyContent: "center",
@@ -835,10 +835,10 @@ const styles = StyleSheet.create({
 	},
 	hexInputText: {
 		color: COLORS.WHITE,
-		fontSize: 22 * scale,
+		fontSize: 22 * DIMENSIONS.SCALE,
 		fontFamily: FONTS.CLEAR,
 		textTransform: "uppercase",
-		letterSpacing: 2,
+		letterSpacing: 2 * DIMENSIONS.SCALE,
 		textAlign: "center",
 	},
 	titleContainer: {
@@ -846,34 +846,34 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		justifyContent: "center",
 		width: width * 0.9,
-		marginTop: 40,
+		marginTop: 10 * DIMENSIONS.SCALE,
 		marginBottom: height * 0.03,
 		borderStyle: "solid",
-		borderBottomWidth: 2,
+		borderBottomWidth: 2 * DIMENSIONS.SCALE,
 		borderColor: COLORS.WHITE,
 	},
 	sliderWrapper: {
 		position: "relative",
 		width: "100%",
-		height: 40 * scale,
+		height: 40 * DIMENSIONS.SCALE,
 		justifyContent: "center",
 	}, // Removed styles for shuffle button as they are now in the RandomizeButton component
 	sortButton: {
 		justifyContent: "center",
 		alignItems: "center",
-		marginLeft: 20 * scale,
-		width: 60 * scale,
-		height: 60 * scale,
+		marginLeft: 20 * DIMENSIONS.SCALE,
+		width: Math.max(60 * DIMENSIONS.SCALE, width * 0.12),
+		height: Math.max(60 * DIMENSIONS.SCALE, width * 0.12),
 	},
 	sortIcon: {
 		color: COLORS.WHITE,
-		fontSize: 20 * scale,
+		fontSize: Math.max(20 * DIMENSIONS.SCALE, width * 0.04),
 		fontWeight: "ultralight",
 		textAlign: "center",
 	},
 	colorButtons: {
 		flexDirection: "row",
-		marginLeft: 30 * scale,
+		marginLeft: 30 * DIMENSIONS.SCALE,
 	},
 	nameInputContainer: {
 		flex: 1,
@@ -882,10 +882,10 @@ const styles = StyleSheet.create({
 	},
 	nameInput: {
 		color: COLORS.WHITE,
-		fontSize: 30 * scale,
+		fontSize: 30 * DIMENSIONS.SCALE,
 		fontFamily: FONTS.SIGNATURE,
 		textAlign: "center",
 		minWidth: width * 0.6,
-		padding: 10,
+		padding: 10 * DIMENSIONS.SCALE,
 	},
 });

@@ -1,5 +1,6 @@
 import React, { useMemo } from "react";
 import { TouchableOpacity, View } from "react-native";
+import { DIMENSIONS } from "@/src/styles/SharedStyles";
 
 interface ColorDotsProps {
 	colors: string[];
@@ -28,8 +29,8 @@ const ColorDots = React.memo(
 
 		// If a containerWidth is provided and dotSize/spacing not explicitly set,
 		// compute sizes so 16 dots (single row) fill ~90% of container width with overlap.
-		let computedDotSize = 35;
-		let computedSpacing = -7;
+		let computedDotSize = 35 * DIMENSIONS.SCALE;
+		let computedSpacing = -7 * DIMENSIONS.SCALE;
 
 		if (containerWidth && !props.dotSize && !props.spacing) {
 			const n = Math.min(16, colors.length || 16);
@@ -37,12 +38,12 @@ const ColorDots = React.memo(
 			const overlapFraction = 0.2;
 			const stepFraction = 1 - 2 * overlapFraction; // effective step per dot
 			const sizeEstimate = containerWidth / (1 + (n - 1) * stepFraction);
-			computedDotSize = Math.max(10, Math.round(sizeEstimate));
+			computedDotSize = Math.max(10 * DIMENSIONS.SCALE, Math.round(sizeEstimate));
 			// spacing should be negative for overlap
 			computedSpacing = Math.round(-overlapFraction * computedDotSize);
 		} else {
-			computedDotSize = dotSizeProp ?? 35;
-			computedSpacing = spacingProp ?? -7;
+			computedDotSize = dotSizeProp ? dotSizeProp * DIMENSIONS.SCALE : 35 * DIMENSIONS.SCALE;
+			computedSpacing = spacingProp ? spacingProp * DIMENSIONS.SCALE : -7 * DIMENSIONS.SCALE;
 		}
 
 		// Generate stable ID for the colors array using hash-based approach
@@ -98,7 +99,7 @@ const ColorDots = React.memo(
 			}
 
 			const isBlack = colors[index] === "#000000";
-			const baseSize = isInteractive ? 55 : computedDotSize;
+			const baseSize = isInteractive ? 55 * DIMENSIONS.SCALE : computedDotSize;
 
 			return {
 				width: baseSize,
@@ -114,8 +115,8 @@ const ColorDots = React.memo(
 								shadowColor: getFirstNonBlackColor(),
 								shadowOffset: { width: 0, height: 0 },
 								shadowOpacity: 0.6,
-								shadowRadius: 5,
-								elevation: 5,
+								shadowRadius: 5 * DIMENSIONS.SCALE,
+								elevation: 5 * DIMENSIONS.SCALE,
 							}
 						: {}
 					: {}),
@@ -163,7 +164,7 @@ const ColorDots = React.memo(
 				<View
 					style={{
 						flexDirection: "row",
-						marginTop: 30,
+						marginTop: 30 * DIMENSIONS.SCALE,
 					}}
 				>
 					{[...Array(Math.min(8, Math.max(0, colors.length - 8)))]

@@ -4,7 +4,7 @@ import { SafeAreaView, StyleSheet, View } from "react-native";
 import AnimatedDots from "@/src/components/animations/AnimatedDots";
 import Button from "@/src/components/buttons/Button";
 import Header from "@/src/components/common/Header";
-import { COLORS } from "@/src/styles/SharedStyles";
+import { COLORS, DIMENSIONS } from "@/src/styles/SharedStyles";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "@/src/screens/index";
 
@@ -63,17 +63,17 @@ const styles = StyleSheet.create({
 		flex: 1,
 		justifyContent: "center",
 		alignItems: "center",
-		paddingHorizontal: 20,
-		paddingVertical: 60,
+		paddingHorizontal: 20 * DIMENSIONS.SCALE,
+		paddingVertical: 60 * DIMENSIONS.SCALE,
 	},
 	button: {
-		marginVertical: 40,
-		minWidth: 280,
-		paddingHorizontal: 15,
-		paddingVertical: 5,
+		marginVertical: 40 * DIMENSIONS.SCALE,
+		minWidth: 280 * DIMENSIONS.SCALE,
+		paddingHorizontal: 15 * DIMENSIONS.SCALE,
+		paddingVertical: 5 * DIMENSIONS.SCALE,
 	},
 	animationContainer: {
-		marginVertical: 100,
-		transform: [{ scale: 2.2 }],
+		marginVertical: 100 * DIMENSIONS.SCALE,
+		transform: [{ scale: 2.2 * DIMENSIONS.SCALE }],
 	},
 });

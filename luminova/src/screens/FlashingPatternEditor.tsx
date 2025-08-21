@@ -22,7 +22,7 @@ import BPMMeasurer from "@/src/components/audio/BPMMeasurer";
 import MetronomeButton from "@/src/components/buttons/MetronomeButton";
 import Picker, { type PickerRef } from "@/src/components/color-picker/Picker";
 import RandomizeButton from "@/src/components/buttons/RandomizeButton";
-import { COLORS, COMMON_STYLES, FONTS } from "@/src/styles/SharedStyles";
+import { COLORS, COMMON_STYLES, FONTS, DIMENSIONS } from "@/src/styles/SharedStyles";
 import { ANIMATION_PATTERNS } from "@/src/configurations/patterns";
 import { useConfiguration } from "@/src/context/ConfigurationContext";
 import { useDebounce } from "@/src/hooks/useDebounce";
@@ -530,7 +530,6 @@ export default function FlashingPatternEditor({
 	);
 }
 const { width, height } = Dimensions.get("window");
-const scale = Math.min(width, height) / 375;
 
 const styles = StyleSheet.create({
 	scrollView: {
@@ -538,25 +537,25 @@ const styles = StyleSheet.create({
 	},
 	scrollContent: {
 		flexGrow: 1,
-		paddingBottom: 200, // Extra space to ensure scrolling works with keyboard
+		paddingBottom: 200 * DIMENSIONS.SCALE, // Extra space to ensure scrolling works with keyboard
 	},
 	keyboardSpacer: {
-		height: 50, // Additional space for keyboard visibility
+		height: 50 * DIMENSIONS.SCALE, // Additional space for keyboard visibility
 	},
 	titleContainer: {
 		flexDirection: "row",
 		alignItems: "center",
 		justifyContent: "center",
 		width: width * 0.9,
-		marginTop: 40,
+		marginTop: 40 * DIMENSIONS.SCALE,
 		marginBottom: height * 0.03,
 		borderStyle: "solid",
-		borderBottomWidth: 2,
+		borderBottomWidth: 2 * DIMENSIONS.SCALE,
 		borderColor: COLORS.WHITE,
 	},
 	whiteText: {
 		color: COLORS.WHITE,
-		fontSize: 30 * scale,
+		fontSize: 30 * DIMENSIONS.SCALE,
 		fontFamily: FONTS.SIGNATURE,
 		textAlign: "center",
 		flex: 1,
@@ -564,28 +563,28 @@ const styles = StyleSheet.create({
 	fpContainer: {
 		flexDirection: "row",
 		alignItems: "center",
-		marginTop: 20,
-		marginBottom: 20,
+		marginTop: 20 * DIMENSIONS.SCALE,
+		marginBottom: 20 * DIMENSIONS.SCALE,
 		width: width * 0.85,
 		borderStyle: "solid",
-		borderWidth: 2,
+		borderWidth: 2 * DIMENSIONS.SCALE,
 		borderColor: COLORS.WHITE,
-		padding: 10 * scale,
-		borderRadius: 10,
+		padding: 10 * DIMENSIONS.SCALE,
+		borderRadius: 10 * DIMENSIONS.SCALE,
 	},
 	sliderRow: {
-		marginVertical: 5 * scale,
+		marginVertical: 5 * DIMENSIONS.SCALE,
 	},
 	slider: {
 		width: "100%",
-		height: 30 * scale,
+		height: 30 * DIMENSIONS.SCALE,
 	},
 	dotPadding: {
-		marginTop: 20,
-		marginBottom: 20,
+		marginTop: 20 * DIMENSIONS.SCALE,
+		marginBottom: 20 * DIMENSIONS.SCALE,
 	},
 	sliderPadding: {
-		marginBottom: 20,
+		marginBottom: 20 * DIMENSIONS.SCALE,
 	},
 	nameInputContainer: {
 		flex: 1,
@@ -594,40 +593,40 @@ const styles = StyleSheet.create({
 	},
 	nameInput: {
 		color: COLORS.WHITE,
-		fontSize: 30 * scale,
+		fontSize: 30 * DIMENSIONS.SCALE,
 		fontFamily: FONTS.SIGNATURE,
 		textAlign: "center",
 		minWidth: width * 0.6,
-		padding: 10,
+		padding: 10 * DIMENSIONS.SCALE,
 	},
 	bpmRow: {
 		flexDirection: "row",
 		alignItems: "center",
 		justifyContent: "flex-start",
-		marginBottom: 10 * scale,
+		marginBottom: 10 * DIMENSIONS.SCALE,
 	},
 	bpmLabel: {
-		marginRight: 10 * scale,
+		marginRight: 10 * DIMENSIONS.SCALE,
 	},
 	bpmInput: {
 		color: COLORS.WHITE,
-		fontSize: 22 * scale,
+		fontSize: 22 * DIMENSIONS.SCALE,
 		fontFamily: FONTS.CLEAR,
 		textAlign: "center",
-		borderBottomWidth: 1,
+		borderBottomWidth: 1 * DIMENSIONS.SCALE,
 		borderBottomColor: COLORS.WHITE,
-		paddingHorizontal: 10 * scale,
-		paddingVertical: 5 * scale,
-		marginHorizontal: 10 * scale,
-		minWidth: 80 * scale,
-		letterSpacing: 2,
+		paddingHorizontal: 10 * DIMENSIONS.SCALE,
+		paddingVertical: 5 * DIMENSIONS.SCALE,
+		marginHorizontal: 10 * DIMENSIONS.SCALE,
+		minWidth: 80 * DIMENSIONS.SCALE,
+		letterSpacing: 2 * DIMENSIONS.SCALE,
 	},
 	bpmRangeText: {
 		color: COLORS.WHITE,
-		fontSize: 14 * scale,
+		fontSize: 14 * DIMENSIONS.SCALE,
 		fontFamily: FONTS.CLEAR,
 		textAlign: "center",
-		marginTop: 5 * scale,
+		marginTop: 5 * DIMENSIONS.SCALE,
 		opacity: 0.7,
 	},
 });

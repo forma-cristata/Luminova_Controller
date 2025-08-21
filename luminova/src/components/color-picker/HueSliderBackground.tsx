@@ -1,5 +1,6 @@
 import React, { useMemo } from "react";
 import { StyleSheet, View } from "react-native";
+import { DIMENSIONS } from "@/src/styles/SharedStyles";
 
 // Define the ColorItem interface
 interface ColorItem {
@@ -112,9 +113,9 @@ const HueSliderBackground = () => {
 
 const styles = StyleSheet.create({
 	sliderBackground: {
-		height: 10,
+		height: 10 * DIMENSIONS.SCALE,
 		width: "100%",
-		borderRadius: 5,
+		borderRadius: 5 * DIMENSIONS.SCALE,
 		overflow: "hidden",
 		position: "absolute",
 	},

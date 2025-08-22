@@ -15,6 +15,7 @@ import {
 	Dimensions,
 	Keyboard,
 	SafeAreaView,
+	ScrollView,
 	StyleSheet,
 	Text,
 	TextInput,
@@ -285,6 +286,34 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 		},
 		[selectedDot, colors, hexToRgb, rgbToHsv],
 	);
+
+	// Get unique colors from palette (excluding white and black)
+	const getPaletteColors = useCallback(() => {
+		const uniqueColors = [...new Set(colors)];
+		return uniqueColors.filter(color => {
+			const upperColor = color.toUpperCase();
+			return upperColor !== "#FFFFFF" && upperColor !== "#000000";
+		});
+	}, [colors]);
+
+	const handlePaletteColorSelect = useCallback((color: string) => {
+		if (selectedDot !== null) {
+			setColorHistory(prev => [...prev, [...colors]]);
+			const newColors = [...colors];
+			newColors[selectedDot] = color;
+			setColors(newColors);
+			setHasChanges(true);
+			setHexInput(color.replace("#", ""));
+
+			const rgb = hexToRgb(color);
+			if (rgb) {
+				const hsv = rgbToHsv(rgb.r, rgb.g, rgb.b);
+				setHue(hsv.h);
+				setBrightness(hsv.v);
+				setSaturation(hsv.s);
+			}
+		}
+	}, [selectedDot, colors, hexToRgb, rgbToHsv]);
 
 	// Process debounced hex input for typed input
 	React.useEffect(() => {
@@ -577,6 +606,32 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 								layout="two-rows"
 								key={colors.join(",")}
 							/>
+
+							{/* Color Palette Section */}
+							{getPaletteColors().length > 0 ? (
+								<View style={styles.paletteContainer}>
+									<ScrollView
+										horizontal
+										showsHorizontalScrollIndicator={false}
+										contentContainerStyle={styles.paletteScrollContent}
+									>
+										{getPaletteColors().map((color, index) => (
+											<TouchableOpacity
+												key={`${color}-${index}`}
+												style={[
+													styles.paletteColorButton,
+													{ backgroundColor: color },
+													{ opacity: selectedDot !== null ? 1 : 0.5 }
+												]}
+												onPress={() => handlePaletteColorSelect(color)}
+												disabled={selectedDot === null}
+												activeOpacity={0.7}
+											/>
+										))}
+									</ScrollView>
+								</View>
+							) : null}
+
 							<View
 								style={[
 									styles.hexContainer,
@@ -624,6 +679,7 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 									/>
 								</View>
 							</View>
+
 							<View
 								style={[
 									COMMON_STYLES.sliderContainer,
@@ -800,7 +856,7 @@ const styles = StyleSheet.create({
 		textAlign: "center",
 	},
 	sliderRow: {
-		marginVertical: 5 * DIMENSIONS.SCALE,
+		marginVertical: 3 * DIMENSIONS.SCALE,
 	},
 	slider: {
 		width: "100%",
@@ -809,13 +865,9 @@ const styles = StyleSheet.create({
 	hexContainer: {
 		flexDirection: "row",
 		alignItems: "center",
-		marginTop: DIMENSIONS.SCALE * 30,
+		marginTop: DIMENSIONS.SCALE * 12,
 		width: width * 0.85,
-		borderStyle: "solid",
-		borderWidth: 2 * DIMENSIONS.SCALE,
-		borderColor: COLORS.WHITE,
-		padding: 10 * DIMENSIONS.SCALE,
-		borderRadius: 10 * DIMENSIONS.SCALE,
+		padding: 3 * DIMENSIONS.SCALE,
 	},
 	hexInput: {
 		color: COLORS.WHITE,
@@ -846,8 +898,8 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		justifyContent: "center",
 		width: width * 0.9,
-		marginTop: 10 * DIMENSIONS.SCALE,
-		marginBottom: height * 0.03,
+		marginTop: 5 * DIMENSIONS.SCALE,
+		marginBottom: height * 0.015,
 		borderStyle: "solid",
 		borderBottomWidth: 2 * DIMENSIONS.SCALE,
 		borderColor: COLORS.WHITE,
@@ -886,6 +938,22 @@ const styles = StyleSheet.create({
 		fontFamily: FONTS.SIGNATURE,
 		textAlign: "center",
 		minWidth: width * 0.6,
-		padding: 10 * DIMENSIONS.SCALE,
+		padding: 5 * DIMENSIONS.SCALE,
+	},
+	paletteContainer: {
+		alignItems: "center",
+		marginTop: 15 * DIMENSIONS.SCALE,
+		marginBottom: 3 * DIMENSIONS.SCALE,
+		width: width * 0.85,
+	},
+	paletteScrollContent: {
+		paddingHorizontal: 5 * DIMENSIONS.SCALE,
+		alignItems: "center",
+	},
+	paletteColorButton: {
+		width: 20 * DIMENSIONS.SCALE,
+		height: 20 * DIMENSIONS.SCALE,
+		borderRadius: 10 * DIMENSIONS.SCALE,
+		marginHorizontal: 3 * DIMENSIONS.SCALE,
 	},
 });

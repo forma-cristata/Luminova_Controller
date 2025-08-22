@@ -72,6 +72,8 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 
 	const [hexInput, setHexInput] = useState("");
 	const debouncedHexInput = useDebounce(hexInput, 200);
+	const [paletteSelectedColor, setPaletteSelectedColor] = useState<string | null>(null);
+	const debouncedPaletteColor = useDebounce(paletteSelectedColor, 150);
 	const [colorHistory, setColorHistory] = useState<string[][]>([]);
 	const [hasChanges, setHasChanges] = useState(isNew);
 	const [hexKeyboardVisible, setHexKeyboardVisible] = useState(false);
@@ -289,23 +291,36 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 
 	// Get unique colors from palette (excluding white and black)
 	const getPaletteColors = useCallback(() => {
-		const uniqueColors = [...new Set(colors)];
+		// Normalize colors to uppercase and ensure they start with #
+		const normalizedColors = colors.map(color => {
+			const normalized = color.toUpperCase();
+			return normalized.startsWith("#") ? normalized : `#${normalized}`;
+		});
+
+		// Create set for uniqueness, then filter out white and black
+		const uniqueColors = [...new Set(normalizedColors)];
 		return uniqueColors.filter(color => {
-			const upperColor = color.toUpperCase();
-			return upperColor !== "#FFFFFF" && upperColor !== "#000000";
+			return color !== "#FFFFFF" && color !== "#000000";
 		});
 	}, [colors]);
 
 	const handlePaletteColorSelect = useCallback((color: string) => {
 		if (selectedDot !== null) {
+			setPaletteSelectedColor(color);
+		}
+	}, [selectedDot]);
+
+	// Process debounced palette color selection
+	React.useEffect(() => {
+		if (debouncedPaletteColor && selectedDot !== null) {
 			setColorHistory(prev => [...prev, [...colors]]);
 			const newColors = [...colors];
-			newColors[selectedDot] = color;
+			newColors[selectedDot] = debouncedPaletteColor;
 			setColors(newColors);
 			setHasChanges(true);
-			setHexInput(color.replace("#", ""));
+			setHexInput(debouncedPaletteColor.replace("#", ""));
 
-			const rgb = hexToRgb(color);
+			const rgb = hexToRgb(debouncedPaletteColor);
 			if (rgb) {
 				const hsv = rgbToHsv(rgb.r, rgb.g, rgb.b);
 				setHue(hsv.h);
@@ -313,7 +328,7 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 				setSaturation(hsv.s);
 			}
 		}
-	}, [selectedDot, colors, hexToRgb, rgbToHsv]);
+	}, [debouncedPaletteColor, selectedDot, colors, hexToRgb, rgbToHsv]);
 
 	// Process debounced hex input for typed input
 	React.useEffect(() => {

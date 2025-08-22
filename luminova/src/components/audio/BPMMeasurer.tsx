@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import {
 	ActivityIndicator,
+	Dimensions,
 	Modal,
 	StyleSheet,
 	Text,
@@ -8,14 +9,10 @@ import {
 	View,
 } from "react-native";
 import * as Audio from "expo-audio";
-import {
-	COLORS,
-	COMMON_STYLES,
-	FONTS,
-	DIMENSIONS,
-} from "@/src/styles/SharedStyles";
+import { COLORS, COMMON_STYLES, FONTS } from "@/src/styles/SharedStyles";
 
-const { SCALE: scale, SCREEN_WIDTH: width } = DIMENSIONS;
+const { width, height } = Dimensions.get("window");
+const scale = Math.min(width, height) / 375;
 
 interface BPMMeasurerProps {
 	isVisible: boolean;
@@ -28,9 +25,7 @@ export default function BPMMeasurer({
 	onClose,
 	onBPMDetected,
 }: BPMMeasurerProps) {
-	const [status, setStatus] = useState<
-		"idle" | "requesting" | "recording" | "error"
-	>("idle");
+	const [recording, setRecording] = useState(false);
 	const [detectedBPM, setDetectedBPM] = useState<number | null>(null);
 	const [error, setError] = useState<string | null>(null);
 	const [beatTimes, setBeatTimes] = useState<number[]>([]);
@@ -38,20 +33,6 @@ export default function BPMMeasurer({
 
 	const recorder = Audio.useAudioRecorder(Audio.RecordingPresets.HIGH_QUALITY);
 	const recorderState = Audio.useAudioRecorderState(recorder, 100); // Update every 100ms
-
-	// Add timeout for permission request
-	useEffect(() => {
-		if (status === "requesting") {
-			const timeout = setTimeout(() => {
-				setError(
-					"Permission request timed out. Please check your device settings.",
-				);
-				setStatus("error");
-			}, 10000); // 10 second timeout
-
-			return () => clearTimeout(timeout);
-		}
-	}, [status]);
 
 	// BPM calculation functions
 	const calculateBPM = useCallback((times: number[]): number => {
@@ -71,7 +52,7 @@ export default function BPMMeasurer({
 
 	const processAudioLevel = useCallback(
 		(level: number) => {
-			if (status !== "recording" || level === null) return;
+			if (!recording || level === null) return;
 
 			const now = Date.now();
 			const BEAT_THRESHOLD = -20; // Adjust based on testing
@@ -92,15 +73,15 @@ export default function BPMMeasurer({
 					const bpm = calculateBPM(filteredTimes);
 					setDetectedBPM(bpm);
 
-					// If we've been recording for 5 seconds, finalize the BPM
-					if (now - startTime >= 5000) {
+					// Automatically apply BPM after getting a stable reading (3 seconds of recording)
+					if (now - startTime >= 3000) {
 						onBPMDetected(bpm);
 						onClose();
 					}
 				}
 			}
 		},
-		[status, beatTimes, startTime, calculateBPM, onBPMDetected, onClose],
+		[recording, beatTimes, startTime, calculateBPM, onBPMDetected, onClose],
 	);
 
 	// Process audio levels from recorder state
@@ -110,286 +91,192 @@ export default function BPMMeasurer({
 		}
 	}, [recorderState?.metering, processAudioLevel]);
 
+	// Reset state when modal opens
+	useEffect(() => {
+		if (isVisible) {
+			setDetectedBPM(null);
+			setError(null);
+			setBeatTimes([]);
+			setStartTime(0);
+			setRecording(false);
+		}
+	}, [isVisible]);
+
 	// Handle recording start/stop based on visibility
 	useEffect(() => {
-		let isCancelled = false;
-
-		const manageRecording = async () => {
-			if (!isVisible) {
-				// When not visible, reset to idle
-				setStatus("idle");
-				setError(null);
-				setBeatTimes([]);
-				setDetectedBPM(null);
-				return;
-			}
-
-			// Only start if we're idle and visible
-			if (status === "idle") {
-				setStatus("requesting");
-				setError(null);
-
-				try {
-					// Check existing permissions first
-					const currentPermissions = await Audio.getRecordingPermissionsAsync();
-					let permission = currentPermissions;
-
-					// Only request if we don't already have permission
-					if (!permission.granted) {
-						permission = await Audio.requestRecordingPermissionsAsync();
-					}
-
-					if (isCancelled) return;
-
-					if (!permission.granted) {
-						throw new Error(
-							"Microphone permission is required for BPM detection",
-						);
-					}
-
-					// Set audio mode
-					await Audio.setAudioModeAsync({
-						allowsRecording: true,
-						playsInSilentMode: true,
-					});
-
-					if (isCancelled) return;
-
-					// Prepare recorder
-					await recorder.prepareToRecordAsync({
-						isMeteringEnabled: true,
-						android: {
-							audioEncoder: "aac",
-							outputFormat: "mpeg4",
-						},
-						ios: {
-							audioQuality: Audio.AudioQuality.MAX,
-							outputFormat: Audio.IOSOutputFormat.MPEG4AAC,
-						},
-					});
-
-					if (isCancelled) return;
-
-					// Start recording
-					await recorder.record();
-
-					if (isCancelled) return;
-
-					setStatus("recording");
-					setBeatTimes([]);
-					setStartTime(Date.now());
-					setError(null);
-				} catch (err) {
-					if (isCancelled) return;
-					console.error("Failed to start recording:", err);
-					const errorMessage =
-						err instanceof Error ? err.message : "Failed to start recording";
-					setError(errorMessage);
-					setStatus("error");
+		const startRecording = async () => {
+			try {
+				const permission = await Audio.requestRecordingPermissionsAsync();
+				if (!permission.granted) {
+					throw new Error("Microphone permission denied");
 				}
+
+				await Audio.setAudioModeAsync({
+					allowsRecording: true,
+					playsInSilentMode: true,
+				});
+
+				await recorder.prepareToRecordAsync({
+					isMeteringEnabled: true,
+					android: {
+						audioEncoder: "aac",
+						outputFormat: "mpeg4",
+					},
+					ios: {
+						audioQuality: Audio.AudioQuality.MAX,
+						outputFormat: Audio.IOSOutputFormat.MPEG4AAC,
+					},
+				});
+
+				await recorder.record();
+				setRecording(true);
+				setBeatTimes([]);
+				setStartTime(Date.now());
+				setError(null);
+			} catch (err) {
+				console.error("Failed to start recording:", err);
+				setError(
+					err instanceof Error ? err.message : "Failed to start recording",
+				);
 			}
 		};
 
-		manageRecording();
+		const stopRecording = async () => {
+			try {
+				if (recorder) {
+					await recorder.stop();
+				}
+				await Audio.setAudioModeAsync({
+					allowsRecording: false,
+					playsInSilentMode: false,
+				});
+			} catch (err) {
+				console.error("Failed to stop recording:", err);
+			}
+			setRecording(false);
+		};
+
+		if (isVisible) {
+			startRecording();
+		} else {
+			stopRecording();
+		}
 
 		return () => {
-			isCancelled = true;
-			// Cleanup function to stop recording
-			const cleanup = async () => {
-				try {
-					const currentStatus = await recorder.getStatus();
-					if (currentStatus.isRecording) {
-						await recorder.stop();
-						await Audio.setAudioModeAsync({ allowsRecording: false });
-					}
-				} catch (e) {
-					console.error("Cleanup failed to stop recorder:", e);
-				}
-			};
-			cleanup();
+			stopRecording();
 		};
-	}, [isVisible, recorder, status]);
+	}, [isVisible, recorder]);
 
-	const handleManualStop = () => {
+	const handleRetry = async () => {
+		setError(null);
+		setBeatTimes([]);
+		setDetectedBPM(null);
+	};
+
+	const handleManualFinish = () => {
 		if (detectedBPM) {
 			onBPMDetected(detectedBPM);
 		}
 		onClose();
 	};
 
-	const handleRetry = () => {
-		setStatus("idle");
-		setError(null);
-		setBeatTimes([]);
-		setDetectedBPM(null);
-	};
-
-	const renderContent = () => {
-		switch (status) {
-			case "requesting":
-				return (
-					<>
-						<ActivityIndicator size="large" color={COLORS.WHITE} />
-						<Text style={styles.text}>Requesting permission...</Text>
-					</>
-				);
-			case "recording":
-				return (
-					<>
-						<Text style={styles.title}>Detecting BPM...</Text>
-						<View style={styles.bpmContainer}>
-							<Text style={styles.bpmText}>
-								{detectedBPM ? Math.round(detectedBPM) : "--"}
-							</Text>
-							<Text style={styles.bpmLabel}>BPM</Text>
-						</View>
-						<View style={styles.meteringBar}>
-							<View
-								style={[
-									styles.meteringFill,
-									{
-										width: `${Math.max(
-											0,
-											100 + (recorderState?.metering ?? -100),
-										)}%`,
-									},
-								]}
-							/>
-						</View>
-						<Text style={styles.instructions}>
-							Tap anywhere to finalize the BPM.
-						</Text>
-					</>
-				);
-			case "error":
-				return (
-					<>
-						<Text style={styles.title}>Error</Text>
-						<Text style={styles.errorText}>{error}</Text>
-						<View style={styles.buttonContainer}>
-							<TouchableOpacity style={styles.button} onPress={handleRetry}>
-								<Text style={styles.buttonText}>Retry</Text>
-							</TouchableOpacity>
-							<TouchableOpacity
-								style={[styles.button, styles.closeButton]}
-								onPress={onClose}
-							>
-								<Text style={styles.buttonText}>Close</Text>
-							</TouchableOpacity>
-						</View>
-					</>
-				);
-			default:
-				return (
-					<>
-						<ActivityIndicator size="large" color={COLORS.WHITE} />
-						<Text style={styles.text}>Preparing...</Text>
-					</>
-				);
-		}
-	};
-
 	return (
 		<Modal
-			animationType="slide"
-			transparent={true}
 			visible={isVisible}
+			transparent
+			animationType="fade"
 			onRequestClose={onClose}
 		>
 			<TouchableOpacity
-				style={styles.container}
+				style={styles.overlay}
 				activeOpacity={1}
-				onPress={status === "recording" ? handleManualStop : undefined}
+				onPress={detectedBPM ? handleManualFinish : undefined}
 			>
-				<View style={styles.content}>{renderContent()}</View>
+				<View style={styles.modalContent}>
+					<Text style={styles.title}>BPM Detection</Text>
+					{error ? (
+						<Text style={styles.error}>{error}</Text>
+					) : (
+						<>
+							<Text style={styles.description}>
+								{recording
+									? "Listening for beats..."
+									: "Starting microphone..."}
+							</Text>
+							{recording && !detectedBPM && (
+								<ActivityIndicator size="large" color={COLORS.WHITE} />
+							)}
+							{detectedBPM && (
+								<>
+									<Text style={styles.bpmText}>{detectedBPM} BPM</Text>
+									<Text style={styles.tapInstruction}>BPM detected! Applying automatically...</Text>
+								</>
+							)}
+						</>
+					)}
+					<TouchableOpacity
+						style={[COMMON_STYLES.styleAButton, styles.button]}
+						onPress={onClose}
+					>
+						<Text style={COMMON_STYLES.buttonText}>Cancel</Text>
+					</TouchableOpacity>
+				</View>
 			</TouchableOpacity>
 		</Modal>
 	);
 }
 
 const styles = StyleSheet.create({
-	container: {
+	overlay: {
 		flex: 1,
+		backgroundColor: "rgba(0, 0, 0, 0.5)",
 		justifyContent: "center",
 		alignItems: "center",
-		backgroundColor: "rgba(0, 0, 0, 0.8)",
 	},
-	content: {
-		width: width * 0.9,
-		maxWidth: 400,
-		padding: 20 * scale,
+	modalContent: {
 		backgroundColor: COLORS.BLACK,
-		borderRadius: 15 * scale,
+		borderRadius: 20,
+		padding: 20 * scale,
 		alignItems: "center",
+		borderWidth: 2,
+		borderColor: COLORS.WHITE,
+		width: width * 0.8,
 	},
 	title: {
-		fontFamily: FONTS.SIGNATURE,
-		fontSize: 22 * scale,
 		color: COLORS.WHITE,
-		marginBottom: 20 * scale,
+		fontSize: 24 * scale,
+		fontFamily: FONTS.CLEAR,
+		marginBottom: 15 * scale,
 	},
-	bpmContainer: {
-		alignItems: "center",
-		justifyContent: "center",
+	description: {
+		color: COLORS.WHITE,
+		fontSize: 18 * scale,
+		fontFamily: FONTS.CLEAR,
 		marginBottom: 20 * scale,
+		textAlign: "center",
 	},
 	bpmText: {
-		fontFamily: FONTS.SIGNATURE,
-		fontSize: 72 * scale,
 		color: COLORS.WHITE,
-		lineHeight: 80 * scale,
-	},
-	bpmLabel: {
+		fontSize: 36 * scale,
 		fontFamily: FONTS.CLEAR,
-		fontSize: 18 * scale,
-		color: COLORS.WHITE,
-		marginTop: -10 * scale,
-	},
-	meteringBar: {
-		width: "100%",
-		height: 10 * scale,
-		backgroundColor: COLORS.BORDER,
-		borderRadius: 5 * scale,
-		overflow: "hidden",
-		marginBottom: 20 * scale,
-	},
-	meteringFill: {
-		height: "100%",
-		backgroundColor: COLORS.WHITE,
-	},
-	instructions: {
-		fontFamily: FONTS.CLEAR,
-		fontSize: 14 * scale,
-		color: COLORS.PLACEHOLDER,
-		textAlign: "center",
-	},
-	errorText: {
-		fontFamily: FONTS.CLEAR,
-		fontSize: 16 * scale,
-		color: COLORS.ERROR,
-		textAlign: "center",
-		marginBottom: 20 * scale,
+		marginVertical: 20 * scale,
 	},
 	button: {
-		...COMMON_STYLES.styleAButton,
-		paddingVertical: 12 * scale,
-		paddingHorizontal: 30 * scale,
+		marginTop: 20 * scale,
 	},
-	buttonContainer: {
-		flexDirection: "row",
-		gap: 10 * scale,
-		marginTop: 10 * scale,
-	},
-	closeButton: {
-		backgroundColor: COLORS.BORDER,
-	},
-	buttonText: {
-		...COMMON_STYLES.buttonText,
-	},
-	text: {
-		fontFamily: FONTS.CLEAR,
+	error: {
+		color: COLORS.ERROR,
 		fontSize: 16 * scale,
+		fontFamily: FONTS.CLEAR,
+		textAlign: "center",
+		marginVertical: 20 * scale,
+	},
+	tapInstruction: {
 		color: COLORS.WHITE,
+		fontSize: 14 * scale,
+		fontFamily: FONTS.CLEAR,
+		textAlign: "center",
+		opacity: 0.8,
 		marginTop: 10 * scale,
 	},
 });

@@ -24,13 +24,29 @@ const FlashButton = React.memo(
 		textStyle,
 		variant = "wide",
 	}: FlashButtonProps) => {
-		const { setCurrentConfiguration, isShelfConnected, setIsShelfConnected } =
+		const { currentConfiguration, setCurrentConfiguration, isShelfConnected, setIsShelfConnected } =
 			useConfiguration();
 
+		const [isFlashing, setIsFlashing] = React.useState(false);
+
+		// Check if the setting is the same as the current configuration
+		const isSameAsCurrentConfig = React.useMemo(() => {
+			if (!currentConfiguration || !setting) return false;
+
+			return (
+				currentConfiguration.name === setting.name &&
+				currentConfiguration.delayTime === setting.delayTime &&
+				currentConfiguration.flashingPattern === setting.flashingPattern &&
+				JSON.stringify(currentConfiguration.colors) === JSON.stringify(setting.colors) &&
+				JSON.stringify(currentConfiguration.whiteValues) === JSON.stringify(setting.whiteValues) &&
+				JSON.stringify(currentConfiguration.brightnessValues) === JSON.stringify(setting.brightnessValues)
+			);
+		}, [currentConfiguration, setting]);
+
 		const handleFlash = async () => {
-			// Don't proceed if shelf is not connected
-			if (!isShelfConnected) {
-				console.warn("Cannot flash: Shelf is not connected");
+			// Don't proceed if shelf is not connected, already flashing, or no changes
+			if (!isShelfConnected || isFlashing || isSameAsCurrentConfig) {
+				console.warn("Cannot flash: Shelf is not connected, request in progress, or no changes detected");
 				return;
 			}
 
@@ -38,6 +54,8 @@ const FlashButton = React.memo(
 			if (onPress) {
 				onPress();
 			}
+
+			setIsFlashing(true);
 
 			try {
 				await flashSetting(setting);
@@ -59,6 +77,8 @@ const FlashButton = React.memo(
 						error instanceof Error ? error : new Error(String(error));
 					onError(errorToPass);
 				}
+			} finally {
+				setIsFlashing(false);
 			}
 		};
 
@@ -69,8 +89,8 @@ const FlashButton = React.memo(
 			fontFamily: FONTS.CLEAR,
 		};
 
-		// Combine external disabled prop with shelf connectivity
-		const isDisabled = disabled || !isShelfConnected;
+		// Combine external disabled prop with shelf connectivity, loading state, and no-changes check
+		const isDisabled = disabled || !isShelfConnected || isFlashing || isSameAsCurrentConfig;
 
 		// Create combined style with opacity for disabled state
 		const combinedStyle: ViewStyle = {
@@ -80,7 +100,7 @@ const FlashButton = React.memo(
 
 		return (
 			<Button
-				title="Flash"
+				title={isFlashing ? "Flashing..." : "Flash"}
 				onPress={handleFlash}
 				disabled={isDisabled}
 				variant={variant}

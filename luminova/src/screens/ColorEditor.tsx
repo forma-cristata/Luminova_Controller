@@ -72,8 +72,14 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 
 	const [hexInput, setHexInput] = useState("");
 	const debouncedHexInput = useDebounce(hexInput, 200);
-	const [paletteSelectedColor, setPaletteSelectedColor] = useState<string | null>(null);
-	const debouncedPaletteColor = useDebounce(paletteSelectedColor, 150);
+	// When a dot is selected we set hexInput from the existing color value.
+	// That can race with the debounced-hex effect and cause the previous
+	// debounced value to be applied to the newly-selected dot. Use a
+	// suppression ref to ignore the next debounced hex update when it
+	// originated from selecting a dot.
+	const suppressDebouncedHexRef = React.useRef(false);
+	const suppressTimeoutRef = React.useRef<number | null>(null);
+	// Palette selection applied immediately (no debounce) to avoid race conditions
 	const [colorHistory, setColorHistory] = useState<string[][]>([]);
 	const [hasChanges, setHasChanges] = useState(isNew);
 	const [hexKeyboardVisible, setHexKeyboardVisible] = useState(false);
@@ -209,7 +215,7 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 	const updateColor = (h: number, s: number, v: number) => {
 		if (selectedDot !== null) {
 			const newColor = hsvToHex(h, s, v);
-			setColorHistory([...colorHistory, [...colors]]);
+			setColorHistory(prev => [...prev, [...colors]]);
 			const newColors = [...colors];
 			newColors[selectedDot] = newColor;
 			setColors(newColors);
@@ -224,6 +230,18 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 		} catch {
 			// Keyboard was not visible or other error
 		}
+		// Suppress the debounced hex-effect for a short window so the
+		// debounced value from a previous selection doesn't get applied
+		// to the newly-selected dot.
+		suppressDebouncedHexRef.current = true;
+		if (suppressTimeoutRef.current) {
+			clearTimeout(suppressTimeoutRef.current as any);
+		}
+		suppressTimeoutRef.current = (setTimeout(() => {
+			suppressDebouncedHexRef.current = false;
+			suppressTimeoutRef.current = null;
+		}, 100) as unknown) as number;
+
 		setHexInput(colors[index].replace("#", ""));
 
 		const rgb = hexToRgb(colors[index]);
@@ -305,33 +323,36 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 	}, [colors]);
 
 	const handlePaletteColorSelect = useCallback((color: string) => {
-		if (selectedDot !== null) {
-			setPaletteSelectedColor(color);
-		}
-	}, [selectedDot]);
+		if (selectedDot === null) return;
 
-	// Process debounced palette color selection
-	React.useEffect(() => {
-		if (debouncedPaletteColor && selectedDot !== null) {
-			setColorHistory(prev => [...prev, [...colors]]);
-			const newColors = [...colors];
-			newColors[selectedDot] = debouncedPaletteColor;
-			setColors(newColors);
-			setHasChanges(true);
-			setHexInput(debouncedPaletteColor.replace("#", ""));
+		// Save to history and update the selected dot atomically
+		setColors((prevColors) => {
+			setColorHistory((prevHistory) => [...prevHistory, [...prevColors]]);
+			const newColors = [...prevColors];
+			newColors[selectedDot as number] = color;
+			return newColors;
+		});
 
-			const rgb = hexToRgb(debouncedPaletteColor);
-			if (rgb) {
-				const hsv = rgbToHsv(rgb.r, rgb.g, rgb.b);
-				setHue(hsv.h);
-				setBrightness(hsv.v);
-				setSaturation(hsv.s);
-			}
+		setHasChanges(true);
+		setHexInput(color.replace("#", ""));
+
+		const rgb = hexToRgb(color);
+		if (rgb) {
+			const hsv = rgbToHsv(rgb.r, rgb.g, rgb.b);
+			setHue(hsv.h);
+			setBrightness(hsv.v);
+			setSaturation(hsv.s);
 		}
-	}, [debouncedPaletteColor, selectedDot, colors, hexToRgb, rgbToHsv]);
+	}, [selectedDot, hexToRgb, rgbToHsv]);
+
+	// palette selection is applied immediately in handlePaletteColorSelect
 
 	// Process debounced hex input for typed input
 	React.useEffect(() => {
+		// If a recent dot selection set the hexInput, suppress applying any
+		// previously-debounced value to avoid applying the wrong color to the
+		// newly-selected dot.
+		if (suppressDebouncedHexRef.current) return;
 		const hexRegex = /^#?([A-Fa-f0-9]{6})$/;
 		const hexValue = debouncedHexInput.startsWith("#")
 			? debouncedHexInput
@@ -364,6 +385,15 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 			}
 		}
 	}, [debouncedHexInput, selectedDot, hexToRgb, rgbToHsv]);
+
+	// cleanup suppress timeout on unmount
+	React.useEffect(() => {
+		return () => {
+			if (suppressTimeoutRef.current) {
+				clearTimeout(suppressTimeoutRef.current as any);
+			}
+		};
+	}, []);
 
 	const handleCancel = () => {
 		unPreviewAPI();
@@ -434,7 +464,7 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 
 	const handleSliderComplete = (h: number, s: number, v: number) => {
 		if (selectedDot !== null) {
-			setColorHistory([...colorHistory, [...colors]]);
+			setColorHistory(prev => [...prev, [...colors]]);
 			const newColor = hsvToHex(h, s, v);
 			const newColors = [...colors];
 			newColors[selectedDot] = newColor;
@@ -449,7 +479,7 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 			newColors[i + 8] = newColors[i];
 		}
 		setColors(newColors);
-		setColorHistory([...colorHistory, [...colors]]);
+		setColorHistory(prev => [...prev, [...colors]]);
 		setHasChanges(true);
 	};
 
@@ -459,7 +489,7 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 			newColors[i - 8] = newColors[i];
 		}
 		setColors(newColors);
-		setColorHistory([...colorHistory, [...colors]]);
+		setColorHistory(prev => [...prev, [...colors]]);
 		setHasChanges(true);
 	};
 
@@ -469,7 +499,7 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 			newColors[i] = colors[7 - i];
 		}
 		setColors(newColors);
-		setColorHistory([...colorHistory, [...colors]]);
+		setColorHistory(prev => [...prev, [...colors]]);
 		setHasChanges(true);
 	};
 
@@ -479,7 +509,7 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 			newColors[i + 8] = colors[15 - i];
 		}
 		setColors(newColors);
-		setColorHistory([...colorHistory, [...colors]]);
+		setColorHistory(prev => [...prev, [...colors]]);
 		setHasChanges(true);
 	};
 
@@ -562,7 +592,7 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 		});
 		colorsWithHSV.sort((a, b) => a.h - b.h);
 		const sortedColors = colorsWithHSV.map((item) => item.color);
-		setColorHistory([...colorHistory, [...colors]]);
+		setColorHistory(prev => [...prev, [...colors]]);
 		setColors(sortedColors);
 		setHasChanges(true);
 	};

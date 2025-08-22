@@ -90,19 +90,10 @@ export default function LedToggle({
 
 		Animated.timing(thumbPosition, {
 			toValue: isEnabled ? rightPosition : leftPosition,
-			duration: 200,
+			duration: 600,
 			useNativeDriver: true,
 		}).start();
 	}, [isEnabled, thumbPosition]);
-
-	useEffect(() => {
-		const toggleWidth = DIMENSIONS.SCREEN_HEIGHT * 0.072;
-		const thumbSize = DIMENSIONS.SCREEN_HEIGHT * 0.029;
-		const rightPosition = 4;
-		const leftPosition = toggleWidth - thumbSize - 4;
-
-		thumbPosition.setValue(isEnabled ? rightPosition : leftPosition);
-	}, [isEnabled, thumbPosition.setValue]); // eslint-disable-line react-hooks/exhaustive-deps
 
 	const toggleSwitch = async () => {
 		if (isLoading) {

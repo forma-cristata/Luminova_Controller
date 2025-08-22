@@ -68,7 +68,7 @@ export default function Settings({ navigation }: SettingsProps) {
 		}
 	}, [carouselData.length, pulseOpacity]);
 
-	const animatedIndicatorStyle = useAnimatedStyle(() => ({
+	const _animatedIndicatorStyle = useAnimatedStyle(() => ({
 		opacity: carouselData.length > 1 ? pulseOpacity.value : 0.3,
 	}));
 

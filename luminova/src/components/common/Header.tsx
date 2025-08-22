@@ -3,16 +3,24 @@ import InfoButton from "@/src/components/buttons/InfoButton";
 import LedToggle from "@/src/components/welcome/LedToggle";
 import BackButton from "@/src/components/buttons/BackButton";
 import { useConfiguration } from "@/src/context/ConfigurationContext";
-import { useRoute } from "@react-navigation/native";
-import { View, StyleSheet } from "react-native";
+import { useRoute, type RouteProp } from "@react-navigation/native";
+import { View, StyleSheet, type ViewStyle } from "react-native";
 import { DIMENSIONS } from "@/src/styles/SharedStyles";
+import type { RootStackParamList } from "@/src/screens/index";
+
+interface BackButtonProps {
+    beforePress?: () => void | Promise<void>;
+    afterPress?: () => void;
+    onPress?: () => void;
+    style?: ViewStyle;
+}
 
 interface HeaderProps {
     isEnabled?: boolean;
     setIsEnabled?: (enabled: boolean) => void;
     disableAnimation?: boolean;
-    containerStyle?: object;
-    backButtonProps?: any;
+    containerStyle?: ViewStyle;
+    backButtonProps?: BackButtonProps;
 }
 
 export default function Header({
@@ -23,8 +31,8 @@ export default function Header({
     backButtonProps,
 }: HeaderProps) {
     const { isShelfConnected, setIsShelfConnected } = useConfiguration();
-    const route = useRoute();
-    const routeName = (route as any)?.name ?? "";
+    const route = useRoute<RouteProp<RootStackParamList>>();
+    const routeName = route?.name ?? "";
 
     const showToggle = routeName === "Welcome";
     const showInfo = routeName !== "Info";

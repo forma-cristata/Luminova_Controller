@@ -26,7 +26,7 @@ interface WelcomeProps {
 }
 
 export default function Welcome({ navigation }: WelcomeProps) {
-	const { setLastEdited, isShelfConnected, setIsShelfConnected } =
+	const { setLastEdited, setIsShelfConnected } =
 		useConfiguration();
 	const [displayText, setDisplayText] = useState("");
 	const fullText = "Hello";

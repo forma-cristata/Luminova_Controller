@@ -74,15 +74,15 @@ export default function WelcomeTutorial({
 	// Pan responder for swipe gestures
 	const panResponder = PanResponder.create({
 		onStartShouldSetPanResponder: () => true,
-		onMoveShouldSetPanResponder: (evt, gestureState) => {
+		onMoveShouldSetPanResponder: (_evt, gestureState) => {
 			// Only respond to horizontal swipes - much more sensitive
 			return Math.abs(gestureState.dx) > 10;
 		},
-		onPanResponderMove: (evt, gestureState) => {
+		onPanResponderMove: (_evt, gestureState) => {
 			// Prevent scrolling interference during horizontal swipes
 			return Math.abs(gestureState.dx) > Math.abs(gestureState.dy);
 		},
-		onPanResponderRelease: (evt, gestureState) => {
+		onPanResponderRelease: (_evt, gestureState) => {
 			const { dx, dy } = gestureState;
 
 			// iOS-level sensitivity - much lower threshold

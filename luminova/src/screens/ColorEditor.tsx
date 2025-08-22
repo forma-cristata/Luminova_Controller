@@ -222,7 +222,7 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 		try {
 			Keyboard.dismiss();
 		} catch {
-			console.log("no keyboard to dismiss");
+			// Keyboard was not visible or other error
 		}
 		setHexInput(colors[index].replace("#", ""));
 
@@ -464,7 +464,6 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 	};
 
 	const handleReverseTopRow = () => {
-		/*if(pixels > 200 && < 260)*/
 		const newColors = [...colors];
 		for (let i = 0; i < 8; i++) {
 			newColors[i] = colors[7 - i];
@@ -507,7 +506,6 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 						runOnJS(handleReverseTopRow)();
 					} else if (startY.value > 260 && startY.value < 360) {
 						runOnJS(handleReverseBottomRow)();
-						console.log("Reversed bottom row");
 					}
 				}
 			}
@@ -630,9 +628,9 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 										showsHorizontalScrollIndicator={false}
 										contentContainerStyle={styles.paletteScrollContent}
 									>
-										{getPaletteColors().map((color, index) => (
+										{getPaletteColors().map((color) => (
 											<TouchableOpacity
-												key={`${color}-${index}`}
+												key={color}
 												style={[
 													styles.paletteColorButton,
 													{ backgroundColor: color },
@@ -721,7 +719,7 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 													try {
 														Keyboard.dismiss();
 													} catch {
-														console.log("no keyboard to dismiss");
+														// Keyboard was not visible or other error
 													}
 													setHue(value);
 													updateColor(value, saturation, brightness);

@@ -85,10 +85,8 @@ export default function BPMMeasurer({
                 }
             }
         },
-        [recording, beatTimes, startTime, calculateBPM, onBPMDetected, onClose],
-    );
-
-    // Process audio levels from recorder state
+        [recording, beatTimes, calculateBPM, onBPMDetected, onClose],
+    );    // Process audio levels from recorder state
     useEffect(() => {
         if (recorderState?.metering !== undefined) {
             processAudioLevel(recorderState.metering);

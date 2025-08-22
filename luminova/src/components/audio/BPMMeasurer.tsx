@@ -34,19 +34,41 @@ export default function BPMMeasurer({
 	const recorder = Audio.useAudioRecorder(Audio.RecordingPresets.HIGH_QUALITY);
 	const recorderState = Audio.useAudioRecorderState(recorder, 100); // Update every 100ms
 
-	// BPM calculation functions - collect 12 beats and average
+	// BPM calculation functions - more robust against outliers
 	const calculateBPM = useCallback((times: number[]): number => {
-		if (times.length < 12) return 0; // Need at least 12 beats for accurate measurement
+		if (times.length < 6) return 0; // Need at least 6 beats for any calculation
 
-		// Use all 12 beats to calculate intervals
+		// Use all available beats to calculate intervals
 		const intervals = times.slice(1).map((time, i) => time - times[i]);
 
-		// Calculate average interval for most accurate measurement
-		const totalInterval = intervals.reduce((sum, interval) => sum + interval, 0);
-		const averageInterval = totalInterval / intervals.length;
+		// Remove outliers using interquartile range method
+		const sortedIntervals = [...intervals].sort((a, b) => a - b);
+		const q1Index = Math.floor(sortedIntervals.length * 0.25);
+		const q3Index = Math.floor(sortedIntervals.length * 0.75);
+		const q1 = sortedIntervals[q1Index];
+		const q3 = sortedIntervals[q3Index];
+		const iqr = q3 - q1;
+		const lowerBound = q1 - 1.5 * iqr;
+		const upperBound = q3 + 1.5 * iqr;
+
+		// Filter out outliers
+		const filteredIntervals = intervals.filter(
+			interval => interval >= lowerBound && interval <= upperBound
+		);
+
+		// If we filtered out too many intervals, use original data
+		const finalIntervals = filteredIntervals.length >= Math.ceil(intervals.length * 0.5) 
+			? filteredIntervals 
+			: intervals;
+
+		// Calculate median interval for stability (more robust than average)
+		const sortedFinal = [...finalIntervals].sort((a, b) => a - b);
+		const medianInterval = sortedFinal.length % 2 === 0
+			? (sortedFinal[sortedFinal.length / 2 - 1] + sortedFinal[sortedFinal.length / 2]) / 2
+			: sortedFinal[Math.floor(sortedFinal.length / 2)];
 
 		// Convert to BPM
-		const bpm = Math.round(60000 / averageInterval);
+		const bpm = Math.round(60000 / medianInterval);
 
 		// Return BPM within reasonable bounds
 		return Math.max(60, Math.min(200, bpm));
@@ -59,6 +81,8 @@ export default function BPMMeasurer({
 			const now = Date.now();
 			const BEAT_THRESHOLD = -20; // Adjust based on testing
 			const MIN_INTERVAL = 300; // Minimum 300ms between beats
+			const MIN_BEATS_FOR_PREVIEW = 6; // Need at least 6 beats before showing any BPM
+			const REQUIRED_BEATS = 12; // Still require 12 beats for final calculation
 			const lastBeat = beatTimes[beatTimes.length - 1] || 0;
 
 			if (level > BEAT_THRESHOLD && now - lastBeat > MIN_INTERVAL) {
@@ -71,16 +95,20 @@ export default function BPMMeasurer({
 				);
 				setBeatTimes(filteredTimes);
 
-				// Only calculate BPM when we have exactly 12 beats
-				if (filteredTimes.length >= 12) {
+				if (filteredTimes.length >= REQUIRED_BEATS) {
+					// Final calculation with all beats
 					const bpm = calculateBPM(filteredTimes);
 					setDetectedBPM(bpm);
 
-					// Automatically apply and close after 12 beats are collected
+					// Automatically apply and close after required beats are collected
 					onBPMDetected(bpm);
 					onClose();
+				} else if (filteredTimes.length >= MIN_BEATS_FOR_PREVIEW) {
+					// Preview BPM calculation after minimum beats (but don't auto-apply)
+					const previewBpm = calculateBPM(filteredTimes);
+					setDetectedBPM(previewBpm);
 				} else {
-					// Show progress: how many beats collected so far
+					// Just show beat count progress until we have enough for preview
 					setDetectedBPM(filteredTimes.length);
 				}
 			}
@@ -184,9 +212,11 @@ export default function BPMMeasurer({
 							)}
 							{recording && detectedBPM && (
 								<Text style={styles.progressText}>
-									{typeof detectedBPM === 'number' && detectedBPM > 0 && detectedBPM < 12
+									{typeof detectedBPM === 'number' && detectedBPM > 0 && detectedBPM < 6
+										? `${detectedBPM}/12 beats detected (waiting for stable reading...)`
+										: typeof detectedBPM === 'number' && detectedBPM < 12
 										? `${detectedBPM}/12 beats detected`
-										: `${detectedBPM} BPM`}
+										: `${detectedBPM} BPM (preview - collecting more beats...)`}
 								</Text>
 							)}
 						</>

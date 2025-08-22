@@ -57,8 +57,8 @@ export default function BPMMeasurer({
 		);
 
 		// If we filtered out too many intervals, use original data
-		const finalIntervals = filteredIntervals.length >= Math.ceil(intervals.length * 0.5) 
-			? filteredIntervals 
+		const finalIntervals = filteredIntervals.length >= Math.ceil(intervals.length * 0.5)
+			? filteredIntervals
 			: intervals;
 
 		// Calculate median interval for stability (more robust than average)
@@ -215,8 +215,8 @@ export default function BPMMeasurer({
 									{typeof detectedBPM === 'number' && detectedBPM > 0 && detectedBPM < 6
 										? `${detectedBPM}/12 beats detected (waiting for stable reading...)`
 										: typeof detectedBPM === 'number' && detectedBPM < 12
-										? `${detectedBPM}/12 beats detected`
-										: `${detectedBPM} BPM (preview - collecting more beats...)`}
+											? `${detectedBPM}/12 beats detected`
+											: `${detectedBPM} BPM (preview - collecting more beats...)`}
 								</Text>
 							)}
 						</>

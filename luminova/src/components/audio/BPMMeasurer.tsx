@@ -164,7 +164,8 @@ export default function BPMMeasurer({
 
 		const stopRecording = async () => {
 			try {
-				if (recorder) {
+				// Check if recorder exists and is in a valid state for stopping
+				if (recorder && recorderState?.canRecord !== false) {
 					await recorder.stop();
 				}
 				await Audio.setAudioModeAsync({
@@ -173,6 +174,7 @@ export default function BPMMeasurer({
 				});
 			} catch (err) {
 				console.error("Failed to stop recording:", err);
+				// Don't throw - just log the error to prevent crashes
 			}
 			setRecording(false);
 		};
@@ -184,9 +186,36 @@ export default function BPMMeasurer({
 		}
 
 		return () => {
-			stopRecording();
+			// Cleanup function - handle cases where component unmounts while recording
+			const cleanup = async () => {
+				try {
+					// Check if recorder is still valid before attempting to stop
+					if (recorder && recorderState?.canRecord !== false) {
+						await recorder.stop();
+					}
+					await Audio.setAudioModeAsync({
+						allowsRecording: false,
+						playsInSilentMode: false,
+					});
+				} catch (err) {
+					// Silent cleanup - don't crash if recorder is already released
+					console.warn("Audio cleanup warning:", err);
+				}
+			};
+			cleanup();
 		};
-	}, [isVisible, recorder]);
+	}, [isVisible, recorder, recorderState?.canRecord]);
+
+	// Additional cleanup effect to handle component unmounting
+	useEffect(() => {
+		return () => {
+			// Reset state on unmount to prevent stale state issues
+			setRecording(false);
+			setBeatTimes([]);
+			setDetectedBPM(null);
+			setError(null);
+		};
+	}, []);
 
 	return (
 		<Modal

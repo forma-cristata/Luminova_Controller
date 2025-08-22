@@ -444,6 +444,7 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		alignItems: "center",
 		marginVertical: 10 * DIMENSIONS.SCALE,
+		paddingHorizontal: 8 * DIMENSIONS.SCALE,
 	},
 	title: {
 		height: (height * 2 * DIMENSIONS.SCALE) / 10,

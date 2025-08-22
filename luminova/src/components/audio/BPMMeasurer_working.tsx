@@ -230,12 +230,7 @@ const styles = StyleSheet.create({
         marginBottom: 20 * scale,
         textAlign: "center",
     },
-    bpmText: {
-        color: COLORS.WHITE,
-        fontSize: 36 * scale,
-        fontFamily: FONTS.CLEAR,
-        marginVertical: 20 * scale,
-    },
+    // removed unused bpmText style
     progressText: {
         color: COLORS.WHITE,
         fontSize: 24 * scale,

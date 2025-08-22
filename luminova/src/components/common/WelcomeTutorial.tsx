@@ -364,12 +364,6 @@ const styles = StyleSheet.create({
 	contentAreaNoIcon: {
 		height: 200 * DIMENSIONS.SCALE,
 	},
-	pageContentWithIcon: {
-		height: 300 * DIMENSIONS.SCALE,
-	},
-	pageContentNoIcon: {
-		height: 200 * DIMENSIONS.SCALE,
-	},
 	animating: {
 		opacity: 0.3,
 	},
@@ -405,26 +399,7 @@ const styles = StyleSheet.create({
 		marginBottom: 20 * DIMENSIONS.SCALE,
 		paddingHorizontal: 10 * DIMENSIONS.SCALE,
 	},
-	highlightContainer: {
-		alignItems: "center",
-		marginTop: 20 * DIMENSIONS.SCALE,
-		padding: 15 * DIMENSIONS.SCALE,
-		borderRadius: 10 * DIMENSIONS.SCALE,
-		borderWidth: 1 * DIMENSIONS.SCALE,
-		borderColor: COLORS.WHITE,
-		borderStyle: "dashed",
-		opacity: 0.7,
-	},
-	highlightText: {
-		color: COLORS.WHITE,
-		fontFamily: FONTS.CLEAR,
-		fontSize: 18 * DIMENSIONS.SCALE,
-		textAlign: "center",
-		marginBottom: 8 * DIMENSIONS.SCALE,
-	},
-	arrowIcon: {
-		opacity: 0.8,
-	},
+	// removed unused styles: pageContentWithIcon, pageContentNoIcon, highlightContainer, highlightText, arrowIcon
 	footer: {
 		marginTop: 20 * DIMENSIONS.SCALE,
 	},

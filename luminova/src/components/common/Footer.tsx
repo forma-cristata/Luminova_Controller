@@ -27,7 +27,7 @@ export default function Footer({
             <View style={styles.footerBar}>
                 <View style={styles.left}>
                     <TouchableOpacity
-                        style={[styles.sideButton, styles.leftButton]}
+                        style={styles.sideButton}
                         onPress={onLeftPress}
                         activeOpacity={0.6}
                         disabled={leftDisabled}
@@ -40,7 +40,7 @@ export default function Footer({
 
                 <View style={styles.right}>
                     <TouchableOpacity
-                        style={[styles.sideButton, styles.rightButton]}
+                        style={styles.sideButton}
                         onPress={onRightPress}
                         activeOpacity={0.6}
                         disabled={rightDisabled}

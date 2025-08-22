@@ -125,18 +125,13 @@ const Picker = forwardRef<PickerRef, PickerProps>(
 
 Picker.displayName = "Picker";
 
+
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		alignItems: "center",
 		justifyContent: "center",
 		width: "100%",
-	},
-	label: {
-		color: COLORS.WHITE,
-		fontSize: 18 * scale,
-		fontFamily: FONTS.CLEAR,
-		marginBottom: 8 * scale,
 	},
 	pickerContainer: {
 		height: 150 * scale,

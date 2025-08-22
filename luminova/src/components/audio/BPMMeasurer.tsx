@@ -263,10 +263,7 @@ const styles = StyleSheet.create({
 		textAlign: "center",
 	},
 	bpmText: {
-		color: COLORS.WHITE,
-		fontSize: 36 * scale,
-		fontFamily: FONTS.CLEAR,
-		marginVertical: 20 * scale,
+		// removed - unused
 	},
 	progressText: {
 		color: COLORS.WHITE,

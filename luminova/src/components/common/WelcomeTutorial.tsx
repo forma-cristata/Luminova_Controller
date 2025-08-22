@@ -7,6 +7,7 @@ import {
 	TouchableOpacity,
 	SafeAreaView,
 	Image,
+	PanResponder,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import {
@@ -69,6 +70,33 @@ export default function WelcomeTutorial({
 	// Demo toggle state for the tutorial
 	const [demoIsShelfConnected, setDemoIsShelfConnected] = useState(true);
 	const [demoIsEnabled, setDemoIsEnabled] = useState(false);
+
+	// Pan responder for swipe gestures
+	const panResponder = PanResponder.create({
+		onStartShouldSetPanResponder: () => true,
+		onMoveShouldSetPanResponder: (evt, gestureState) => {
+			// Only respond to horizontal swipes - much more sensitive
+			return Math.abs(gestureState.dx) > 10;
+		},
+		onPanResponderMove: (evt, gestureState) => {
+			// Prevent scrolling interference during horizontal swipes
+			return Math.abs(gestureState.dx) > Math.abs(gestureState.dy);
+		},
+		onPanResponderRelease: (evt, gestureState) => {
+			const { dx, dy } = gestureState;
+
+			// iOS-level sensitivity - much lower threshold
+			if (Math.abs(dx) > 30 && Math.abs(dy) < 100) {
+				if (dx < 0) {
+					// Right-to-left swipe - advance to next page
+					handleNext();
+				} else if (dx > 0) {
+					// Left-to-right swipe - go to previous page
+					handlePrevious();
+				}
+			}
+		},
+	});
 
 	// Demo toggle state descriptions
 	const getToggleStateDescription = () => {
@@ -147,7 +175,7 @@ export default function WelcomeTutorial({
 			transparent={true}
 			statusBarTranslucent={true}
 		>
-			<View style={styles.overlay}>
+			<View style={styles.overlay} {...panResponder.panHandlers}>
 				<SafeAreaView style={styles.container}>
 					<View style={styles.modalContent}>
 						{/* Header */}

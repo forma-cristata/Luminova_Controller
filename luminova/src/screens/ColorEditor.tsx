@@ -235,7 +235,7 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 		// to the newly-selected dot.
 		suppressDebouncedHexRef.current = true;
 		if (suppressTimeoutRef.current) {
-			clearTimeout(suppressTimeoutRef.current as any);
+			clearTimeout(suppressTimeoutRef.current);
 		}
 		suppressTimeoutRef.current = (setTimeout(() => {
 			suppressDebouncedHexRef.current = false;
@@ -390,7 +390,7 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 	React.useEffect(() => {
 		return () => {
 			if (suppressTimeoutRef.current) {
-				clearTimeout(suppressTimeoutRef.current as any);
+				clearTimeout(suppressTimeoutRef.current);
 			}
 		};
 	}, []);

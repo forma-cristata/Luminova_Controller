@@ -29,7 +29,6 @@ export default function BPMMeasurer({
     const [detectedBPM, setDetectedBPM] = useState<number | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [beatTimes, setBeatTimes] = useState<number[]>([]);
-    const [startTime, setStartTime] = useState<number>(0);
 
     const recorder = Audio.useAudioRecorder(Audio.RecordingPresets.HIGH_QUALITY);
     const recorderState = Audio.useAudioRecorderState(recorder, 100); // Update every 100ms
@@ -122,7 +121,6 @@ export default function BPMMeasurer({
                 await recorder.record();
                 setRecording(true);
                 setBeatTimes([]);
-                setStartTime(Date.now());
                 setError(null);
             } catch (err) {
                 console.error("Failed to start recording:", err);

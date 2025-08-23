@@ -688,8 +688,9 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 								>
 									<ScrollView
 										horizontal
-										showsHorizontalScrollIndicator={false}
+										showsHorizontalScrollIndicator={true}
 										contentContainerStyle={styles.paletteScrollContent}
+										style={{ width: "100%" }}
 									>
 										{getPaletteColors().map((color) => (
 											<TouchableOpacity
@@ -1020,11 +1021,13 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		marginTop: 15 * DIMENSIONS.SCALE,
 		marginBottom: 3 * DIMENSIONS.SCALE,
-		width: width * 0.85,
+		width: "100%",
 	},
 	paletteScrollContent: {
-		paddingHorizontal: 5 * DIMENSIONS.SCALE,
+		paddingHorizontal: 20 * DIMENSIONS.SCALE,
+		paddingVertical: 8 * DIMENSIONS.SCALE,
 		alignItems: "center",
+		flexGrow: 1,
 	},
 	paletteColorButton: {
 		width: 20 * DIMENSIONS.SCALE,

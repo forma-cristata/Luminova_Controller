@@ -390,17 +390,19 @@ export default function FlashingPatternEditor({
 
 								// Random pattern from valid animation patterns (excluding current one)
 								const availablePatterns = ANIMATION_PATTERNS.filter(
-									pattern => pattern !== flashingPattern
+									(pattern) => pattern !== flashingPattern,
 								);
 
 								// If all patterns are the same or only one pattern exists, use any pattern
-								const patternsToChooseFrom = availablePatterns.length > 0
-									? availablePatterns
-									: ANIMATION_PATTERNS;
+								const patternsToChooseFrom =
+									availablePatterns.length > 0
+										? availablePatterns
+										: ANIMATION_PATTERNS;
 
-								const randomPattern = patternsToChooseFrom[
-									Math.floor(Math.random() * patternsToChooseFrom.length)
-								];
+								const randomPattern =
+									patternsToChooseFrom[
+										Math.floor(Math.random() * patternsToChooseFrom.length)
+									];
 								setFlashingPattern(randomPattern);
 
 								// Random BPM within 60-200 range

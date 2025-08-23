@@ -7,19 +7,12 @@
 	},
 	"files": {
 		"ignoreUnknown": false,
-		"includes": [
-			"src/*",
-			"src/**/*",
-			".github/docs/*",
-			".github/docs/**/*",
-			".github/*",
-			".github/**/*",
-			"*/*"
-		]
+		"includes": ["src/**/*"]
 	},
 	"formatter": {
 		"enabled": true,
-		"indentStyle": "tab"
+		"indentStyle": "tab",
+		"lineEnding": "lf"
 	},
 	"linter": {
 		"enabled": true,

@@ -82,7 +82,7 @@ export default function Settings({ navigation }: SettingsProps) {
 		// Simple fade in from 0.3 to 1 for smooth transition without black flash
 		focusedBlockOpacity.value = 0.3;
 		focusedBlockOpacity.value = withTiming(1, { duration: 300 });
-	}, [currentIndex, isInitialRender, focusedBlockOpacity]);
+	}, [isInitialRender, focusedBlockOpacity]);
 
 	const _animatedIndicatorStyle = useAnimatedStyle(() => ({
 		opacity: carouselData.length > 1 ? pulseOpacity.value : 0.3,

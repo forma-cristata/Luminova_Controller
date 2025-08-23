@@ -40,7 +40,12 @@ import ColorDots from "@/src/components/color-picker/ColorDots";
 import HexKeyboard from "@/src/components/common/HexKeyboard";
 import HueSliderBackground from "@/src/components/color-picker/HueSliderBackground";
 import RandomizeButton from "@/src/components/buttons/RandomizeButton";
-import { COLORS, COMMON_STYLES, FONTS, DIMENSIONS } from "@/src/styles/SharedStyles";
+import {
+	COLORS,
+	COMMON_STYLES,
+	FONTS,
+	DIMENSIONS,
+} from "@/src/styles/SharedStyles";
 import type { Setting } from "@/src/types/SettingInterface";
 import React from "react";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -127,10 +132,10 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 		const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
 		return result
 			? {
-				r: parseInt(result[1], 16),
-				g: parseInt(result[2], 16),
-				b: parseInt(result[3], 16),
-			}
+					r: parseInt(result[1], 16),
+					g: parseInt(result[2], 16),
+					b: parseInt(result[3], 16),
+				}
 			: null;
 	}, []);
 
@@ -215,7 +220,7 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 	const updateColor = (h: number, s: number, v: number) => {
 		if (selectedDot !== null) {
 			const newColor = hsvToHex(h, s, v);
-			setColorHistory(prev => [...prev, [...colors]]);
+			setColorHistory((prev) => [...prev, [...colors]]);
 			const newColors = [...colors];
 			newColors[selectedDot] = newColor;
 			setColors(newColors);
@@ -237,10 +242,10 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 		if (suppressTimeoutRef.current) {
 			clearTimeout(suppressTimeoutRef.current);
 		}
-		suppressTimeoutRef.current = (setTimeout(() => {
+		suppressTimeoutRef.current = setTimeout(() => {
 			suppressDebouncedHexRef.current = false;
 			suppressTimeoutRef.current = null;
-		}, 100) as unknown) as number;
+		}, 100) as unknown as number;
 
 		setHexInput(colors[index].replace("#", ""));
 
@@ -252,7 +257,6 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 			setSaturation(hsv.s);
 		}
 		setSelectedDot(index);
-
 	};
 
 	const handleHexKeyPress = (key: string) => {
@@ -310,40 +314,43 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 	// Get unique colors from palette (excluding white and black)
 	const getPaletteColors = useCallback(() => {
 		// Normalize colors to uppercase and ensure they start with #
-		const normalizedColors = colors.map(color => {
+		const normalizedColors = colors.map((color) => {
 			const normalized = color.toUpperCase();
 			return normalized.startsWith("#") ? normalized : `#${normalized}`;
 		});
 
 		// Create set for uniqueness, then filter out white and black
 		const uniqueColors = [...new Set(normalizedColors)];
-		return uniqueColors.filter(color => {
+		return uniqueColors.filter((color) => {
 			return color !== "#FFFFFF" && color !== "#000000";
 		});
 	}, [colors]);
 
-	const handlePaletteColorSelect = useCallback((color: string) => {
-		if (selectedDot === null) return;
+	const handlePaletteColorSelect = useCallback(
+		(color: string) => {
+			if (selectedDot === null) return;
 
-		// Save to history and update the selected dot atomically
-		setColors((prevColors) => {
-			setColorHistory((prevHistory) => [...prevHistory, [...prevColors]]);
-			const newColors = [...prevColors];
-			newColors[selectedDot as number] = color;
-			return newColors;
-		});
+			// Save to history and update the selected dot atomically
+			setColors((prevColors) => {
+				setColorHistory((prevHistory) => [...prevHistory, [...prevColors]]);
+				const newColors = [...prevColors];
+				newColors[selectedDot as number] = color;
+				return newColors;
+			});
 
-		setHasChanges(true);
-		setHexInput(color.replace("#", ""));
+			setHasChanges(true);
+			setHexInput(color.replace("#", ""));
 
-		const rgb = hexToRgb(color);
-		if (rgb) {
-			const hsv = rgbToHsv(rgb.r, rgb.g, rgb.b);
-			setHue(hsv.h);
-			setBrightness(hsv.v);
-			setSaturation(hsv.s);
-		}
-	}, [selectedDot, hexToRgb, rgbToHsv]);
+			const rgb = hexToRgb(color);
+			if (rgb) {
+				const hsv = rgbToHsv(rgb.r, rgb.g, rgb.b);
+				setHue(hsv.h);
+				setBrightness(hsv.v);
+				setSaturation(hsv.s);
+			}
+		},
+		[selectedDot, hexToRgb, rgbToHsv],
+	);
 
 	// palette selection is applied immediately in handlePaletteColorSelect
 
@@ -464,7 +471,7 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 
 	const handleSliderComplete = (h: number, s: number, v: number) => {
 		if (selectedDot !== null) {
-			setColorHistory(prev => [...prev, [...colors]]);
+			setColorHistory((prev) => [...prev, [...colors]]);
 			const newColor = hsvToHex(h, s, v);
 			const newColors = [...colors];
 			newColors[selectedDot] = newColor;
@@ -479,7 +486,7 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 			newColors[i + 8] = newColors[i];
 		}
 		setColors(newColors);
-		setColorHistory(prev => [...prev, [...colors]]);
+		setColorHistory((prev) => [...prev, [...colors]]);
 		setHasChanges(true);
 	};
 
@@ -489,7 +496,7 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 			newColors[i - 8] = newColors[i];
 		}
 		setColors(newColors);
-		setColorHistory(prev => [...prev, [...colors]]);
+		setColorHistory((prev) => [...prev, [...colors]]);
 		setHasChanges(true);
 	};
 
@@ -499,7 +506,7 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 			newColors[i] = colors[7 - i];
 		}
 		setColors(newColors);
-		setColorHistory(prev => [...prev, [...colors]]);
+		setColorHistory((prev) => [...prev, [...colors]]);
 		setHasChanges(true);
 	};
 
@@ -509,7 +516,7 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 			newColors[i + 8] = colors[15 - i];
 		}
 		setColors(newColors);
-		setColorHistory(prev => [...prev, [...colors]]);
+		setColorHistory((prev) => [...prev, [...colors]]);
 		setHasChanges(true);
 	};
 
@@ -518,7 +525,7 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 			startY.value = event.absoluteY;
 			startX.value = event.absoluteX;
 		},
-		onActive: () => { },
+		onActive: () => {},
 		onEnd: (event) => {
 			const initY = startY.value;
 			const initX = startX.value;
@@ -592,7 +599,7 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 		});
 		colorsWithHSV.sort((a, b) => a.h - b.h);
 		const sortedColors = colorsWithHSV.map((item) => item.color);
-		setColorHistory(prev => [...prev, [...colors]]);
+		setColorHistory((prev) => [...prev, [...colors]]);
 		setColors(sortedColors);
 		setHasChanges(true);
 	};
@@ -640,7 +647,11 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 				<PanGestureHandler onGestureEvent={panGestureEvent}>
 					<Animated.View style={{ flex: 1 }}>
 						<SafeAreaView style={COMMON_STYLES.container}>
-							<Header backButtonProps={{ beforePress: previewMode ? unPreviewAPI : undefined }} />
+							<Header
+								backButtonProps={{
+									beforePress: previewMode ? unPreviewAPI : undefined,
+								}}
+							/>
 							{renderTitle()}
 							<ColorDots
 								colors={colors}
@@ -664,7 +675,7 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 												style={[
 													styles.paletteColorButton,
 													{ backgroundColor: color },
-													{ opacity: selectedDot !== null ? 1 : 0.5 }
+													{ opacity: selectedDot !== null ? 1 : 0.5 },
 												]}
 												onPress={() => handlePaletteColorSelect(color)}
 												disabled={selectedDot === null}

@@ -53,19 +53,23 @@ export default function BPMMeasurer({
 
 		// Filter out outliers
 		const filteredIntervals = intervals.filter(
-			interval => interval >= lowerBound && interval <= upperBound
+			(interval) => interval >= lowerBound && interval <= upperBound,
 		);
 
 		// If we filtered out too many intervals, use original data
-		const finalIntervals = filteredIntervals.length >= Math.ceil(intervals.length * 0.5)
-			? filteredIntervals
-			: intervals;
+		const finalIntervals =
+			filteredIntervals.length >= Math.ceil(intervals.length * 0.5)
+				? filteredIntervals
+				: intervals;
 
 		// Calculate median interval for stability (more robust than average)
 		const sortedFinal = [...finalIntervals].sort((a, b) => a - b);
-		const medianInterval = sortedFinal.length % 2 === 0
-			? (sortedFinal[sortedFinal.length / 2 - 1] + sortedFinal[sortedFinal.length / 2]) / 2
-			: sortedFinal[Math.floor(sortedFinal.length / 2)];
+		const medianInterval =
+			sortedFinal.length % 2 === 0
+				? (sortedFinal[sortedFinal.length / 2 - 1] +
+						sortedFinal[sortedFinal.length / 2]) /
+					2
+				: sortedFinal[Math.floor(sortedFinal.length / 2)];
 
 		// Convert to BPM
 		const bpm = Math.round(60000 / medianInterval);
@@ -241,9 +245,11 @@ export default function BPMMeasurer({
 							)}
 							{recording && detectedBPM && (
 								<Text style={styles.progressText}>
-									{typeof detectedBPM === 'number' && detectedBPM > 0 && detectedBPM < 6
+									{typeof detectedBPM === "number" &&
+									detectedBPM > 0 &&
+									detectedBPM < 6
 										? `${detectedBPM}/12 beats detected (waiting for stable reading...)`
-										: typeof detectedBPM === 'number' && detectedBPM < 12
+										: typeof detectedBPM === "number" && detectedBPM < 12
 											? `${detectedBPM}/12 beats detected`
 											: `${detectedBPM} BPM (preview - collecting more beats...)`}
 								</Text>

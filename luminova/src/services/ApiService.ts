@@ -45,7 +45,8 @@ async function request(
 			try {
 				const errorBody = await response.json();
 				throw new Error(
-					`HTTP error! status: ${response.status}, message: ${errorBody.message || "Unknown error"
+					`HTTP error! status: ${response.status}, message: ${
+						errorBody.message || "Unknown error"
 					}`,
 				);
 			} catch (_e) {

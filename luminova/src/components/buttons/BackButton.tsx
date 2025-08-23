@@ -46,7 +46,11 @@ export default function BackButton({
 				right: DIMENSIONS.SCREEN_WIDTH * 0.025,
 			}}
 		>
-			<Ionicons name="chevron-back-circle-outline" size={iconSize} color="white" />
+			<Ionicons
+				name="chevron-back-circle-outline"
+				size={iconSize}
+				color="white"
+			/>
 		</TouchableOpacity>
 	);
 }

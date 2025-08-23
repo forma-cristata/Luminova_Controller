@@ -24,9 +24,10 @@ export default function Info() {
 
 	const sendFeedback = () => {
 		// App Store URLs for leaving reviews
-		const appStoreUrl = Platform.OS === "ios"
-			? "itms-apps://itunes.apple.com/app/viewContentsUserReviews?id=YOUR_APP_ID" // Replace YOUR_APP_ID with actual App Store ID when published
-			: "market://details?id=com.formacristata.luminovacontroller";
+		const appStoreUrl =
+			Platform.OS === "ios"
+				? "itms-apps://itunes.apple.com/app/viewContentsUserReviews?id=YOUR_APP_ID" // Replace YOUR_APP_ID with actual App Store ID when published
+				: "market://details?id=com.formacristata.luminovacontroller";
 
 		Linking.canOpenURL(appStoreUrl)
 			.then((supported) => {
@@ -34,15 +35,19 @@ export default function Info() {
 					return Linking.openURL(appStoreUrl);
 				} else {
 					// Fallback to web URLs if native apps aren't available
-					const webUrl = Platform.OS === "ios"
-						? "https://apps.apple.com/app/YOUR_APP_ID" // Replace YOUR_APP_ID with actual App Store ID when published
-						: "https://play.google.com/store/apps/details?id=com.formacristata.luminovacontroller";
+					const webUrl =
+						Platform.OS === "ios"
+							? "https://apps.apple.com/app/YOUR_APP_ID" // Replace YOUR_APP_ID with actual App Store ID when published
+							: "https://play.google.com/store/apps/details?id=com.formacristata.luminovacontroller";
 					return Linking.openURL(webUrl);
 				}
 			})
 			.catch((error) => {
 				console.error("Error opening App Store:", error);
-				Alert.alert("Error", "Unable to open App Store. Please search for 'Luminova Controller' to leave a review.");
+				Alert.alert(
+					"Error",
+					"Unable to open App Store. Please search for 'Luminova Controller' to leave a review.",
+				);
 			});
 	};
 

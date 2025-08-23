@@ -239,9 +239,9 @@ export default function WelcomeTutorial({
 										<View style={styles.toggleRow}>
 											<LedToggle
 												isShelfConnected={false}
-												setIsShelfConnected={() => { }} // No-op for demo
+												setIsShelfConnected={() => {}} // No-op for demo
 												isEnabled={false}
-												setIsEnabled={() => { }} // No-op for demo
+												setIsEnabled={() => {}} // No-op for demo
 												disableAnimation={true}
 												containerStyle={styles.toggleInlineContainer}
 											/>

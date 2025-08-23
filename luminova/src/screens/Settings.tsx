@@ -309,7 +309,13 @@ export default function Settings({ navigation }: SettingsProps) {
 	);
 	return (
 		<SafeAreaView style={styles.container}>
-			<Header backButtonProps={{ beforePress: () => setLastEdited("0"), onPress: () => navigation.popToTop(), afterPress: () => setLastEdited("0") }} />
+			<Header
+				backButtonProps={{
+					beforePress: () => setLastEdited("0"),
+					onPress: () => navigation.popToTop(),
+					afterPress: () => setLastEdited("0"),
+				}}
+			/>
 			<View style={styles.notBackButton}>
 				<View style={[styles.focusedItem, { position: "relative" }]}>
 					{currentIndex < 0 ? <View key="negative-index" /> : null}
@@ -329,7 +335,11 @@ export default function Settings({ navigation }: SettingsProps) {
 									handleDuplicate();
 								}}
 							>
-								<MaterialIcons name="content-copy" size={24 * DIMENSIONS.SCALE} color="white" />
+								<MaterialIcons
+									name="content-copy"
+									size={24 * DIMENSIONS.SCALE}
+									color="white"
+								/>
 							</TouchableOpacity>
 							<TouchableOpacity
 								key={`delete-${currentIndex < (settingsData?.length || 0) ? getStableSettingId(settingsData?.[currentIndex]) : "no-setting"}`}

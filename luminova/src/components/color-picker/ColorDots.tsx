@@ -38,12 +38,19 @@ const ColorDots = React.memo(
 			const overlapFraction = 0.2;
 			const stepFraction = 1 - 2 * overlapFraction; // effective step per dot
 			const sizeEstimate = containerWidth / (1 + (n - 1) * stepFraction);
-			computedDotSize = Math.max(10 * DIMENSIONS.SCALE, Math.round(sizeEstimate));
+			computedDotSize = Math.max(
+				10 * DIMENSIONS.SCALE,
+				Math.round(sizeEstimate),
+			);
 			// spacing should be negative for overlap
 			computedSpacing = Math.round(-overlapFraction * computedDotSize);
 		} else {
-			computedDotSize = dotSizeProp ? dotSizeProp * DIMENSIONS.SCALE : 35 * DIMENSIONS.SCALE;
-			computedSpacing = spacingProp ? spacingProp * DIMENSIONS.SCALE : -7 * DIMENSIONS.SCALE;
+			computedDotSize = dotSizeProp
+				? dotSizeProp * DIMENSIONS.SCALE
+				: 35 * DIMENSIONS.SCALE;
+			computedSpacing = spacingProp
+				? spacingProp * DIMENSIONS.SCALE
+				: -7 * DIMENSIONS.SCALE;
 		}
 
 		// Generate stable ID for the colors array using hash-based approach
@@ -112,12 +119,12 @@ const ColorDots = React.memo(
 				...(isInteractive
 					? isBlack
 						? {
-							shadowColor: getFirstNonBlackColor(),
-							shadowOffset: { width: 0, height: 0 },
-							shadowOpacity: 0.6,
-							shadowRadius: 5 * DIMENSIONS.SCALE,
-							elevation: 5 * DIMENSIONS.SCALE,
-						}
+								shadowColor: getFirstNonBlackColor(),
+								shadowOffset: { width: 0, height: 0 },
+								shadowOpacity: 0.6,
+								shadowRadius: 5 * DIMENSIONS.SCALE,
+								elevation: 5 * DIMENSIONS.SCALE,
+							}
 						: {}
 					: {}),
 			};

@@ -9,7 +9,10 @@ interface RandomizeButtonProps {
 const RandomizeButton = ({ onPress }: RandomizeButtonProps) => {
 	return (
 		<TouchableOpacity
-			style={[COMMON_STYLES.utilityButton, { marginRight: 20 * DIMENSIONS.SCALE }]}
+			style={[
+				COMMON_STYLES.utilityButton,
+				{ marginRight: 20 * DIMENSIONS.SCALE },
+			]}
 			onPress={onPress}
 		>
 			<Text style={COMMON_STYLES.utilityButtonIcon}>⟳</Text>

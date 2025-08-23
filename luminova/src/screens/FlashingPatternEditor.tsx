@@ -22,7 +22,12 @@ import BPMMeasurer from "@/src/components/audio/BPMMeasurer";
 import MetronomeButton from "@/src/components/buttons/MetronomeButton";
 import Picker, { type PickerRef } from "@/src/components/color-picker/Picker";
 import RandomizeButton from "@/src/components/buttons/RandomizeButton";
-import { COLORS, COMMON_STYLES, FONTS, DIMENSIONS } from "@/src/styles/SharedStyles";
+import {
+	COLORS,
+	COMMON_STYLES,
+	FONTS,
+	DIMENSIONS,
+} from "@/src/styles/SharedStyles";
 import { ANIMATION_PATTERNS } from "@/src/configurations/patterns";
 import { useConfiguration } from "@/src/context/ConfigurationContext";
 import { useDebounce } from "@/src/hooks/useDebounce";
@@ -353,7 +358,11 @@ export default function FlashingPatternEditor({
 	return (
 		<TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
 			<SafeAreaView style={COMMON_STYLES.container}>
-				<Header backButtonProps={{ beforePress: previewMode ? unPreviewAPI : undefined }} />
+				<Header
+					backButtonProps={{
+						beforePress: previewMode ? unPreviewAPI : undefined,
+					}}
+				/>
 				<ScrollView
 					ref={scrollViewRef}
 					style={styles.scrollView}
@@ -367,7 +376,7 @@ export default function FlashingPatternEditor({
 								// Random pattern from valid animation patterns (excluding STILL)
 								const randomPattern =
 									ANIMATION_PATTERNS[
-									Math.floor(Math.random() * ANIMATION_PATTERNS.length)
+										Math.floor(Math.random() * ANIMATION_PATTERNS.length)
 									];
 								setFlashingPattern(randomPattern);
 

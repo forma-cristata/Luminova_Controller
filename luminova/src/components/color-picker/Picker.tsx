@@ -125,7 +125,6 @@ const Picker = forwardRef<PickerRef, PickerProps>(
 
 Picker.displayName = "Picker";
 
-
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,

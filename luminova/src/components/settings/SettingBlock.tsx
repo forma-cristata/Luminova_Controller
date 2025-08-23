@@ -28,7 +28,7 @@ const areEqual = (prevProps: SettingItemProps, nextProps: SettingItemProps) => {
 		prevProps.isAnimated === nextProps.isAnimated &&
 		prevProps.index === nextProps.index &&
 		JSON.stringify(prevProps.setting?.colors) ===
-		JSON.stringify(nextProps.setting?.colors)
+			JSON.stringify(nextProps.setting?.colors)
 	);
 };
 
@@ -63,7 +63,11 @@ const SettingBlock = ({
 				containerWidth={containerWidth}
 			/>
 		) : (
-			<ColorDots key={`static-${stableId}`} colors={setting.colors} containerWidth={containerWidth} />
+			<ColorDots
+				key={`static-${stableId}`}
+				colors={setting.colors}
+				containerWidth={containerWidth}
+			/>
 		);
 	}, [isAnimated, stableId, setting, navigation, containerWidth]);
 
@@ -137,10 +141,10 @@ const SettingBlock = ({
 								dynamicHeaderStyle,
 								{
 									fontSize: titleFontSize,
-									textAlign: 'center', // Back to center alignment
+									textAlign: "center", // Back to center alignment
 									includeFontPadding: false, // Android-specific: remove extra font padding
-									textAlignVertical: 'center', // Android-specific: center vertically
-								}
+									textAlignVertical: "center", // Android-specific: center vertically
+								},
 							]}
 							numberOfLines={1}
 							adjustsFontSizeToFit={true}
@@ -150,7 +154,9 @@ const SettingBlock = ({
 						</Text>
 					</View>
 
-					<View style={[styles.dotsContainer, { width: containerWidth }]}>{dotsRendered}</View>
+					<View style={[styles.dotsContainer, { width: containerWidth }]}>
+						{dotsRendered}
+					</View>
 					<View style={styles.tapToEditContainer}>
 						<Text style={COMMON_STYLES.hintText}>tap to edit</Text>
 					</View>
@@ -160,10 +166,16 @@ const SettingBlock = ({
 			{layout === "compact" ? (
 				<View style={style}>
 					{/* Constrain dots to 90% of screen width while keeping internal overlapping */}
-					<View style={[styles.compactDotsContainer, { width: containerWidth }]}>
+					<View
+						style={[styles.compactDotsContainer, { width: containerWidth }]}
+					>
 						{dotsRendered}
 					</View>
-					<FlashButton setting={setting} style={styles.flashButtonCompact} variant="secondary" />
+					<FlashButton
+						setting={setting}
+						style={styles.flashButtonCompact}
+						variant="secondary"
+					/>
 				</View>
 			) : null}
 		</>

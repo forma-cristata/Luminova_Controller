@@ -184,7 +184,9 @@ export default function LedToggle({
 	};
 
 	return (
-		<Animated.View style={[styles.wrapper, { opacity: toggleOpacity }, containerStyle]}>
+		<Animated.View
+			style={[styles.wrapper, { opacity: toggleOpacity }, containerStyle]}
+		>
 			<View style={styles.toggleContainer}>
 				<TouchableOpacity
 					style={[
@@ -193,7 +195,11 @@ export default function LedToggle({
 							width: toggleWidth,
 							height: DIMENSIONS.SCREEN_HEIGHT * 0.039,
 							borderRadius: DIMENSIONS.SCREEN_HEIGHT * 0.0195,
-							backgroundColor: isEnabled ? "#ffffff" : isShelfConnected ? "#665e73" : "#444",
+							backgroundColor: isEnabled
+								? "#ffffff"
+								: isShelfConnected
+									? "#665e73"
+									: "#444",
 						},
 					]}
 					onPress={toggleSwitch}
@@ -222,7 +228,11 @@ export default function LedToggle({
 							{ opacity: !isEnabled ? 1 : 0.3 },
 						]}
 					>
-						<Ionicons name="moon" size={iconSize} color={isShelfConnected ? "#00ff00" : "#ff4444"} />
+						<Ionicons
+							name="moon"
+							size={iconSize}
+							color={isShelfConnected ? "#00ff00" : "#ff4444"}
+						/>
 					</View>
 					<Animated.View
 						style={[
@@ -231,7 +241,11 @@ export default function LedToggle({
 								width: thumbSize,
 								height: thumbSize,
 								borderRadius: thumbSize / 2,
-								backgroundColor: !isShelfConnected ? "#666" : isEnabled ? "#665e73" : "#f4f3f4",
+								backgroundColor: !isShelfConnected
+									? "#666"
+									: isEnabled
+										? "#665e73"
+										: "#f4f3f4",
 								transform: [{ translateX: thumbPosition }],
 							},
 						]}

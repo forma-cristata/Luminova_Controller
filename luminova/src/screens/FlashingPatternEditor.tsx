@@ -84,6 +84,7 @@ export default function FlashingPatternEditor({
 
 	const [previewMode, setPreviewMode] = useState(false);
 	const [showBPMMeasurer, setShowBPMMeasurer] = useState(false);
+	const [isRandomizing, setIsRandomizing] = useState(false); // Flag to prevent conflicts during randomization
 	const pickerRef = React.useRef<PickerRef>(null);
 	const scrollViewRef = React.useRef<ScrollView>(null);
 
@@ -173,7 +174,7 @@ export default function FlashingPatternEditor({
 
 	// Handle BPM text input changes
 	useEffect(() => {
-		if (debouncedBpmInput.trim() === "") return;
+		if (debouncedBpmInput.trim() === "" || isRandomizing) return;
 
 		const inputValue = parseFloat(debouncedBpmInput);
 		if (!Number.isNaN(inputValue)) {
@@ -185,10 +186,12 @@ export default function FlashingPatternEditor({
 				setHasChanges(true);
 			}
 		}
-	}, [debouncedBpmInput, flashingPattern]); // Removed BPM dependency to prevent loops
+	}, [debouncedBpmInput, flashingPattern, isRandomizing]); // Added isRandomizing dependency
 
 	// Update text input when BPM slider changes
 	useEffect(() => {
+		if (isRandomizing) return; // Don't interfere during randomization
+
 		const currentInputValue = parseFloat(bpmInput);
 		// Only update if the input is significantly different or invalid
 		if (
@@ -197,7 +200,7 @@ export default function FlashingPatternEditor({
 		) {
 			setBpmInput(BPM.toFixed(0));
 		}
-	}, [BPM, bpmInput]);
+	}, [BPM, bpmInput, isRandomizing]);
 
 	// Auto-scroll with keyboard show/hide for BPM input visibility
 	React.useEffect(() => {
@@ -264,6 +267,10 @@ export default function FlashingPatternEditor({
 
 	const handleReset = () => {
 		unPreviewAPI();
+
+		// Set flag to prevent conflicts during reset
+		setIsRandomizing(true);
+
 		setDelayTime(initialDelayTime);
 		const resetBpm = parseFloat(calculateBPM(initialDelayTime));
 		setBPM(resetBpm);
@@ -276,6 +283,11 @@ export default function FlashingPatternEditor({
 		setTimeout(() => {
 			setHasChanges(false); // Reset the changes flag
 		}, 0);
+
+		// Clear the randomizing flag after debounce period
+		setTimeout(() => {
+			setIsRandomizing(false);
+		}, 350); // Wait for debounce period to complete
 
 		// Refocus the picker to the reset pattern
 		setTimeout(() => {
@@ -373,11 +385,22 @@ export default function FlashingPatternEditor({
 					<View style={styles.titleContainer}>
 						<RandomizeButton
 							onPress={() => {
-								// Random pattern from valid animation patterns (excluding STILL)
-								const randomPattern =
-									ANIMATION_PATTERNS[
-										Math.floor(Math.random() * ANIMATION_PATTERNS.length)
-									];
+								// Set flag to prevent conflicts during randomization
+								setIsRandomizing(true);
+
+								// Random pattern from valid animation patterns (excluding current one)
+								const availablePatterns = ANIMATION_PATTERNS.filter(
+									pattern => pattern !== flashingPattern
+								);
+
+								// If all patterns are the same or only one pattern exists, use any pattern
+								const patternsToChooseFrom = availablePatterns.length > 0
+									? availablePatterns
+									: ANIMATION_PATTERNS;
+
+								const randomPattern = patternsToChooseFrom[
+									Math.floor(Math.random() * patternsToChooseFrom.length)
+								];
 								setFlashingPattern(randomPattern);
 
 								// Random BPM within 60-200 range
@@ -386,6 +409,16 @@ export default function FlashingPatternEditor({
 								setBpmInput(randomBPM.toString());
 
 								setHasChanges(true);
+
+								// Clear the randomizing flag after all state updates
+								setTimeout(() => {
+									setIsRandomizing(false);
+								}, 350); // Wait for debounce period to complete
+
+								// Focus picker on the new random pattern
+								setTimeout(() => {
+									pickerRef.current?.refocus();
+								}, 100);
 							}}
 						/>
 						<View style={styles.nameInputContainer}>

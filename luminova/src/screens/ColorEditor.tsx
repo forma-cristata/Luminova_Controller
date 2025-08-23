@@ -132,10 +132,10 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 		const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
 		return result
 			? {
-					r: parseInt(result[1], 16),
-					g: parseInt(result[2], 16),
-					b: parseInt(result[3], 16),
-				}
+				r: parseInt(result[1], 16),
+				g: parseInt(result[2], 16),
+				b: parseInt(result[3], 16),
+			}
 			: null;
 	}, []);
 
@@ -311,7 +311,7 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 		[selectedDot, colors, hexToRgb, rgbToHsv],
 	);
 
-	// Get unique colors from palette (excluding white and black)
+	// Get unique colors from palette (excluding white and black), always sorted by hue
 	const getPaletteColors = useCallback(() => {
 		// Normalize colors to uppercase and ensure they start with #
 		const normalizedColors = colors.map((color) => {
@@ -321,10 +321,22 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 
 		// Create set for uniqueness, then filter out white and black
 		const uniqueColors = [...new Set(normalizedColors)];
-		return uniqueColors.filter((color) => {
+		const filteredColors = uniqueColors.filter((color) => {
 			return color !== "#FFFFFF" && color !== "#000000";
 		});
-	}, [colors]);
+
+		// Sort by hue regardless of main colors array order
+		const colorsWithHSV = filteredColors.map((color) => {
+			const rgb = hexToRgb(color);
+			if (rgb) {
+				const hsv = rgbToHsv(rgb.r, rgb.g, rgb.b);
+				return { color, h: hsv.h, s: hsv.s, v: hsv.v };
+			}
+			return { color, h: 0, s: 0, v: 0 };
+		});
+		colorsWithHSV.sort((a, b) => a.h - b.h);
+		return colorsWithHSV.map((item) => item.color);
+	}, [colors, hexToRgb, rgbToHsv]);
 
 	const handlePaletteColorSelect = useCallback(
 		(color: string) => {
@@ -525,7 +537,7 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 			startY.value = event.absoluteY;
 			startX.value = event.absoluteX;
 		},
-		onActive: () => {},
+		onActive: () => { },
 		onEnd: (event) => {
 			const initY = startY.value;
 			const initX = startX.value;
@@ -663,7 +675,17 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 
 							{/* Color Palette Section */}
 							{getPaletteColors().length > 0 ? (
-								<View style={styles.paletteContainer}>
+								<View
+									style={[
+										styles.paletteContainer,
+										{
+											marginTop:
+												selectedDot !== null && selectedDot >= 8
+													? 25 * DIMENSIONS.SCALE // Push down for bottom row dots
+													: 15 * DIMENSIONS.SCALE, // Normal position for top row dots
+										},
+									]}
+								>
 									<ScrollView
 										horizontal
 										showsHorizontalScrollIndicator={false}

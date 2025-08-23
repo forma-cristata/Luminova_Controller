@@ -37,7 +37,9 @@ export default function Welcome({ navigation }: WelcomeProps) {
 
 	useEffect(() => {
 		setLastEdited("0");
-	}, [setLastEdited]); // Check for first-time user on component mount
+	}, [setLastEdited]);
+
+	// Check for first-time user on component mount
 	useEffect(() => {
 		const checkFirstTimeUser = async () => {
 			const isFirstTime = await FirstTimeUserService.isFirstTimeUser();
@@ -113,7 +115,8 @@ export default function Welcome({ navigation }: WelcomeProps) {
 	return (
 		<TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
 			<SafeAreaView style={styles.container}>
-				<Header isEnabled={isEnabled} setIsEnabled={setIsEnabled} />{" "}
+				<Header isEnabled={isEnabled} setIsEnabled={setIsEnabled} />
+
 				<ScrollView
 					ref={scrollViewRef}
 					contentContainerStyle={styles.scrollContent}

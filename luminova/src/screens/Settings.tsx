@@ -73,6 +73,7 @@ export default function Settings({ navigation }: SettingsProps) {
 
 	// Fade in focused block when currentIndex changes
 	React.useEffect(() => {
+		let something = currentIndex; // Force re-run when currentIndex changes
 		// Don't animate on initial render or when deleting
 		if (isInitialRender || isDeletingRef.current) {
 			focusedBlockOpacity.value = 1;
@@ -82,7 +83,7 @@ export default function Settings({ navigation }: SettingsProps) {
 		// Simple fade in from 0.3 to 1 for smooth transition without black flash
 		focusedBlockOpacity.value = 0.3;
 		focusedBlockOpacity.value = withTiming(1, { duration: 300 });
-	}, [isInitialRender, focusedBlockOpacity]);
+	}, [currentIndex, isInitialRender, focusedBlockOpacity]);
 
 	const _animatedIndicatorStyle = useAnimatedStyle(() => ({
 		opacity: carouselData.length > 1 ? pulseOpacity.value : 0.3,

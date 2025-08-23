@@ -512,7 +512,6 @@ export default function FlashingPatternEditor({
 									maximumTrackTintColor={COLORS.WHITE}
 									thumbTintColor={COLORS.WHITE}
 								/>
-								<Text style={styles.bpmRangeText}>60-200 BPM</Text>
 							</View>
 						</View>
 					</View>

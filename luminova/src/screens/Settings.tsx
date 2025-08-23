@@ -55,6 +55,9 @@ export default function Settings({ navigation }: SettingsProps) {
 	// Animation for scroll indicators
 	const pulseOpacity = useReanimatedSharedValue(0.8);
 
+	// Animation for focused block fade-in
+	const focusedBlockOpacity = useReanimatedSharedValue(1);
+
 	// Start pulsing animation when there are multiple items
 	React.useEffect(() => {
 		if (carouselData.length > 1) {
@@ -68,8 +71,25 @@ export default function Settings({ navigation }: SettingsProps) {
 		}
 	}, [carouselData.length, pulseOpacity]);
 
+	// Fade in focused block when currentIndex changes
+	React.useEffect(() => {
+		// Don't animate on initial render or when deleting
+		if (isInitialRender || isDeletingRef.current) {
+			focusedBlockOpacity.value = 1;
+			return;
+		}
+
+		// Simple fade in from 0.3 to 1 for smooth transition without black flash
+		focusedBlockOpacity.value = 0.3;
+		focusedBlockOpacity.value = withTiming(1, { duration: 300 });
+	}, [currentIndex, isInitialRender, focusedBlockOpacity]);
+
 	const _animatedIndicatorStyle = useAnimatedStyle(() => ({
 		opacity: carouselData.length > 1 ? pulseOpacity.value : 0.3,
+	}));
+
+	const focusedBlockAnimatedStyle = useAnimatedStyle(() => ({
+		opacity: focusedBlockOpacity.value,
 	}));
 
 	const createNewSetting = () => {
@@ -341,27 +361,29 @@ export default function Settings({ navigation }: SettingsProps) {
 									color="white"
 								/>
 							</TouchableOpacity>
-							<TouchableOpacity
-								key={`delete-${currentIndex < (settingsData?.length || 0) ? getStableSettingId(settingsData?.[currentIndex]) : "no-setting"}`}
-								style={{
-									position: "absolute",
-									top: 10 * DIMENSIONS.SCALE,
-									right: 10 * DIMENSIONS.SCALE,
-									zIndex: 1,
-									opacity: currentIndex < 12 ? COLORS.DISABLED_OPACITY : 1,
-								}}
-								disabled={currentIndex < 12}
-								onPress={() => {
-									handleDelete();
-								}}
-							>
-								<Ionicons
-									name="trash-outline"
-									size={24 * DIMENSIONS.SCALE}
-									color={"white"}
-								/>
-							</TouchableOpacity>
-							{focusedSettingBlock}
+							<Animated.View style={focusedBlockAnimatedStyle}>
+								<TouchableOpacity
+									key={`delete-${currentIndex < (settingsData?.length || 0) ? getStableSettingId(settingsData?.[currentIndex]) : "no-setting"}`}
+									style={{
+										position: "absolute",
+										top: 10 * DIMENSIONS.SCALE,
+										right: 10 * DIMENSIONS.SCALE,
+										zIndex: 1,
+										opacity: currentIndex < 12 ? COLORS.DISABLED_OPACITY : 1,
+									}}
+									disabled={currentIndex < 12}
+									onPress={() => {
+										handleDelete();
+									}}
+								>
+									<Ionicons
+										name="trash-outline"
+										size={24 * DIMENSIONS.SCALE}
+										color={"white"}
+									/>
+								</TouchableOpacity>
+								{focusedSettingBlock}
+							</Animated.View>
 						</React.Fragment>
 					) : null}
 					{currentIndex >= (settingsData?.length || 0) ? (

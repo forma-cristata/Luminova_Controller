@@ -14,7 +14,7 @@
     "devclear": "npx expo start --clear",
     "devtunnel": "npx expo start --tunnel",
     "format": "npx @biomejs/biome format --write",
-    "format-lint": "npx @biomejs/biome lint --write",
+    "format-lint": "npx @biomejs/biome lint --write && npx @biomejs/biome format --write",
     "format-lint-org": "npx @biomejs/biome check --write",
     "unsafeFix": "npx biome check --write --unsafe"
   },

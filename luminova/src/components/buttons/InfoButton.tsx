@@ -14,7 +14,6 @@ export default function InfoButton() {
 		navigation.navigate("Info");
 	};
 
-
 	const iconSize = DIMENSIONS.SCREEN_HEIGHT * 0.04;
 
 	return (
@@ -29,7 +28,11 @@ export default function InfoButton() {
 					right: DIMENSIONS.SCREEN_WIDTH * 0.025,
 				}}
 			>
-				<Ionicons name="information-circle-outline" size={iconSize} color="white" />
+				<Ionicons
+					name="information-circle-outline"
+					size={iconSize}
+					color="white"
+				/>
 			</TouchableOpacity>
 		</View>
 	);

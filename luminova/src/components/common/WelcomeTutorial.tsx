@@ -7,6 +7,7 @@ import {
 	TouchableOpacity,
 	SafeAreaView,
 	Image,
+	PanResponder,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import {
@@ -65,10 +66,38 @@ export default function WelcomeTutorial({
 }: WelcomeTutorialProps) {
 	const [currentPage, setCurrentPage] = useState(0);
 	const [isAnimating, setIsAnimating] = useState(false);
+	const [imageLoaded, setImageLoaded] = useState(false);
 
 	// Demo toggle state for the tutorial
 	const [demoIsShelfConnected, setDemoIsShelfConnected] = useState(true);
 	const [demoIsEnabled, setDemoIsEnabled] = useState(false);
+
+	// Pan responder for swipe gestures
+	const panResponder = PanResponder.create({
+		onStartShouldSetPanResponder: () => true,
+		onMoveShouldSetPanResponder: (_evt, gestureState) => {
+			// Only respond to horizontal swipes - much more sensitive
+			return Math.abs(gestureState.dx) > 10;
+		},
+		onPanResponderMove: (_evt, gestureState) => {
+			// Prevent scrolling interference during horizontal swipes
+			return Math.abs(gestureState.dx) > Math.abs(gestureState.dy);
+		},
+		onPanResponderRelease: (_evt, gestureState) => {
+			const { dx, dy } = gestureState;
+
+			// iOS-level sensitivity - much lower threshold
+			if (Math.abs(dx) > 30 && Math.abs(dy) < 100) {
+				if (dx < 0) {
+					// Right-to-left swipe - advance to next page
+					handleNext();
+				} else if (dx > 0) {
+					// Left-to-right swipe - go to previous page
+					handlePrevious();
+				}
+			}
+		},
+	});
 
 	// Demo toggle state descriptions
 	const getToggleStateDescription = () => {
@@ -147,7 +176,7 @@ export default function WelcomeTutorial({
 			transparent={true}
 			statusBarTranslucent={true}
 		>
-			<View style={styles.overlay}>
+			<View style={styles.overlay} {...panResponder.panHandlers}>
 				<SafeAreaView style={styles.container}>
 					<View style={styles.modalContent}>
 						{/* Header */}
@@ -177,9 +206,17 @@ export default function WelcomeTutorial({
 									<View style={styles.iconContainer}>
 										<Image
 											source={require("@/assets/images/icon.png")}
-											style={styles.appIcon}
+											style={[
+												styles.appIcon,
+												!imageLoaded && styles.hiddenImage,
+											]}
 											resizeMode="contain"
+											onLoad={() => setImageLoaded(true)}
+											onError={() => setImageLoaded(true)}
 										/>
+										{!imageLoaded ? (
+											<View style={styles.imagePlaceholder} />
+										) : null}
 									</View>
 								) : null}
 
@@ -239,7 +276,7 @@ export default function WelcomeTutorial({
 								>
 									<Ionicons
 										name="chevron-back-circle-outline"
-										size={32}
+										size={32 * DIMENSIONS.SCALE}
 										color={isFirstPage ? "rgba(255,255,255,0.3)" : "white"}
 									/>
 								</TouchableOpacity>
@@ -263,7 +300,7 @@ export default function WelcomeTutorial({
 									) : (
 										<Ionicons
 											name="chevron-forward-circle-outline"
-											size={32}
+											size={32 * DIMENSIONS.SCALE}
 											color="white"
 										/>
 									)}
@@ -288,83 +325,88 @@ const styles = StyleSheet.create({
 		flex: 1,
 		justifyContent: "center",
 		alignItems: "center",
-		paddingHorizontal: 20,
+		paddingHorizontal: 20 * DIMENSIONS.SCALE,
 	},
 	modalContent: {
 		backgroundColor: COLORS.BLACK,
-		borderRadius: 15,
-		borderWidth: 2,
+		borderRadius: 15 * DIMENSIONS.SCALE,
+		borderWidth: 2 * DIMENSIONS.SCALE,
 		borderColor: COLORS.WHITE,
-		width: "90%",
-		minWidth: "90%",
-		height: 450, // Fixed height so modal doesn't change size
-		padding: 20,
+		width: Math.min(DIMENSIONS.SCREEN_WIDTH * 0.9, 500 * DIMENSIONS.SCALE),
+		minWidth: Math.min(DIMENSIONS.SCREEN_WIDTH * 0.85, 400 * DIMENSIONS.SCALE),
+		height: Math.max(450 * DIMENSIONS.SCALE, DIMENSIONS.SCREEN_HEIGHT * 0.6),
+		maxHeight: DIMENSIONS.SCREEN_HEIGHT * 0.85,
+		padding: 20 * DIMENSIONS.SCALE,
 		position: "relative",
 	},
 	header: {
 		flexDirection: "row",
 		justifyContent: "space-between",
 		alignItems: "center",
-		marginBottom: 20,
+		marginBottom: 20 * DIMENSIONS.SCALE,
 	},
 	pageIndicator: {
 		...COMMON_STYLES.hintText,
-		fontSize: 18,
+		fontSize: 18 * DIMENSIONS.SCALE,
 	},
 	skipButton: {
-		padding: 8,
+		padding: 8 * DIMENSIONS.SCALE,
 	},
 	skipText: {
 		color: COLORS.WHITE,
 		fontFamily: FONTS.CLEAR,
-		fontSize: 20,
+		fontSize: 20 * DIMENSIONS.SCALE,
 		opacity: 0.8,
 	},
 	pageContent: {
 		alignItems: "center",
 		justifyContent: "flex-start",
-		paddingVertical: 10,
+		paddingVertical: 10 * DIMENSIONS.SCALE,
 	},
 	dynamicContentArea: {
 		justifyContent: "flex-start",
-		marginBottom: 80, // Space for fixed footer
+		marginBottom: 80 * DIMENSIONS.SCALE, // Space for fixed footer
 	},
 	contentAreaWithIcon: {
-		height: 300,
+		height: 300 * DIMENSIONS.SCALE,
 	},
 	contentAreaNoIcon: {
-		height: 200,
-	},
-	pageContentWithIcon: {
-		height: 300,
-	},
-	pageContentNoIcon: {
-		height: 200,
+		height: 200 * DIMENSIONS.SCALE,
 	},
 	animating: {
 		opacity: 0.3,
 	},
 	iconContainer: {
-		marginBottom: 20,
-		padding: 15,
-		borderRadius: 50,
-		borderWidth: 1,
+		marginBottom: 20 * DIMENSIONS.SCALE,
+		padding: 15 * DIMENSIONS.SCALE,
+		borderRadius: 50 * DIMENSIONS.SCALE,
+		borderWidth: 1 * DIMENSIONS.SCALE,
 		borderColor: COLORS.WHITE,
 		borderStyle: "dashed",
 		opacity: 0.8,
 		alignItems: "center",
 		justifyContent: "center",
-		width: 90,
-		height: 90,
+		width: 90 * DIMENSIONS.SCALE,
+		height: 90 * DIMENSIONS.SCALE,
 	},
 	appIcon: {
-		width: 60,
-		height: 60,
+		width: 60 * DIMENSIONS.SCALE,
+		height: 60 * DIMENSIONS.SCALE,
+	},
+	hiddenImage: {
+		opacity: 0,
+	},
+	imagePlaceholder: {
+		position: "absolute",
+		width: 60 * DIMENSIONS.SCALE,
+		height: 60 * DIMENSIONS.SCALE,
+		backgroundColor: "rgba(255, 255, 255, 0.1)",
+		borderRadius: 30 * DIMENSIONS.SCALE,
 	},
 	title: {
 		...COMMON_STYLES.whiteText,
 		fontSize: 34 * DIMENSIONS.SCALE,
-		marginBottom: 20,
+		marginBottom: 20 * DIMENSIONS.SCALE,
 		textAlign: "center",
 	},
 	content: {
@@ -373,38 +415,19 @@ const styles = StyleSheet.create({
 		fontSize: 22 * DIMENSIONS.SCALE,
 		lineHeight: 30 * DIMENSIONS.SCALE,
 		textAlign: "center",
-		marginBottom: 20,
-		paddingHorizontal: 10,
+		marginBottom: 20 * DIMENSIONS.SCALE,
+		paddingHorizontal: 10 * DIMENSIONS.SCALE,
 	},
-	highlightContainer: {
-		alignItems: "center",
-		marginTop: 20,
-		padding: 15,
-		borderRadius: 10,
-		borderWidth: 1,
-		borderColor: COLORS.WHITE,
-		borderStyle: "dashed",
-		opacity: 0.7,
-	},
-	highlightText: {
-		color: COLORS.WHITE,
-		fontFamily: FONTS.CLEAR,
-		fontSize: 18 * DIMENSIONS.SCALE,
-		textAlign: "center",
-		marginBottom: 8,
-	},
-	arrowIcon: {
-		opacity: 0.8,
-	},
+	// removed unused styles: pageContentWithIcon, pageContentNoIcon, highlightContainer, highlightText, arrowIcon
 	footer: {
-		marginTop: 20,
+		marginTop: 20 * DIMENSIONS.SCALE,
 	},
 	fixedFooter: {
 		position: "absolute",
-		bottom: 20,
-		left: 20,
-		right: 20,
-		height: 60,
+		bottom: 20 * DIMENSIONS.SCALE,
+		left: 20 * DIMENSIONS.SCALE,
+		right: 20 * DIMENSIONS.SCALE,
+		height: 60 * DIMENSIONS.SCALE,
 		justifyContent: "center",
 	},
 	singleLineNavigation: {
@@ -416,15 +439,15 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 		justifyContent: "space-between",
 		alignItems: "center",
-		marginBottom: 20,
+		marginBottom: 20 * DIMENSIONS.SCALE,
 	},
 	navButton: {
-		padding: 12,
-		borderRadius: 50,
+		padding: 12 * DIMENSIONS.SCALE,
+		borderRadius: 50 * DIMENSIONS.SCALE,
 		alignItems: "center",
 		justifyContent: "center",
-		minWidth: 44,
-		minHeight: 44,
+		minWidth: 44 * DIMENSIONS.SCALE,
+		minHeight: 44 * DIMENSIONS.SCALE,
 	},
 	navButtonDisabled: {
 		opacity: 0.3,
@@ -441,16 +464,16 @@ const styles = StyleSheet.create({
 		flex: 1,
 	},
 	dot: {
-		width: 8,
-		height: 8,
-		borderRadius: 4,
+		width: 8 * DIMENSIONS.SCALE,
+		height: 8 * DIMENSIONS.SCALE,
+		borderRadius: 4 * DIMENSIONS.SCALE,
 		backgroundColor: COLORS.WHITE,
 		opacity: 0.3,
-		marginHorizontal: 4,
+		marginHorizontal: 4 * DIMENSIONS.SCALE,
 	},
 	activeDot: {
 		opacity: 1,
-		transform: [{ scale: 1.2 }],
+		transform: [{ scale: 1.2 * DIMENSIONS.SCALE }],
 	},
 	demoToggleContainer: {
 		alignItems: "center",
@@ -460,12 +483,12 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 		alignItems: "center",
 		width: "100%",
-		paddingHorizontal: 20,
-		marginBottom: 6,
+		paddingHorizontal: 20 * DIMENSIONS.SCALE,
+		marginBottom: 6 * DIMENSIONS.SCALE,
 	},
 	toggleInlineContainer: {
 		position: "relative",
-		marginRight: 15,
+		marginRight: 15 * DIMENSIONS.SCALE,
 	},
 	toggleRowText: {
 		color: COLORS.WHITE,
@@ -474,6 +497,6 @@ const styles = StyleSheet.create({
 		textAlign: "left",
 		lineHeight: 20 * DIMENSIONS.SCALE,
 		flex: 1,
-		paddingLeft: 10,
+		paddingLeft: 10 * DIMENSIONS.SCALE,
 	},
 });

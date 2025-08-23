@@ -15,6 +15,7 @@ import {
 	Dimensions,
 	Keyboard,
 	SafeAreaView,
+	ScrollView,
 	StyleSheet,
 	Text,
 	TextInput,
@@ -39,7 +40,12 @@ import ColorDots from "@/src/components/color-picker/ColorDots";
 import HexKeyboard from "@/src/components/common/HexKeyboard";
 import HueSliderBackground from "@/src/components/color-picker/HueSliderBackground";
 import RandomizeButton from "@/src/components/buttons/RandomizeButton";
-import { COLORS, COMMON_STYLES, FONTS } from "@/src/styles/SharedStyles";
+import {
+	COLORS,
+	COMMON_STYLES,
+	FONTS,
+	DIMENSIONS,
+} from "@/src/styles/SharedStyles";
 import type { Setting } from "@/src/types/SettingInterface";
 import React from "react";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -71,6 +77,14 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 
 	const [hexInput, setHexInput] = useState("");
 	const debouncedHexInput = useDebounce(hexInput, 200);
+	// When a dot is selected we set hexInput from the existing color value.
+	// That can race with the debounced-hex effect and cause the previous
+	// debounced value to be applied to the newly-selected dot. Use a
+	// suppression ref to ignore the next debounced hex update when it
+	// originated from selecting a dot.
+	const suppressDebouncedHexRef = React.useRef(false);
+	const suppressTimeoutRef = React.useRef<number | null>(null);
+	// Palette selection applied immediately (no debounce) to avoid race conditions
 	const [colorHistory, setColorHistory] = useState<string[][]>([]);
 	const [hasChanges, setHasChanges] = useState(isNew);
 	const [hexKeyboardVisible, setHexKeyboardVisible] = useState(false);
@@ -206,7 +220,7 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 	const updateColor = (h: number, s: number, v: number) => {
 		if (selectedDot !== null) {
 			const newColor = hsvToHex(h, s, v);
-			setColorHistory([...colorHistory, [...colors]]);
+			setColorHistory((prev) => [...prev, [...colors]]);
 			const newColors = [...colors];
 			newColors[selectedDot] = newColor;
 			setColors(newColors);
@@ -219,11 +233,22 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 		try {
 			Keyboard.dismiss();
 		} catch {
-			console.log("no keyboard to dismiss");
+			// Keyboard was not visible or other error
 		}
+		// Suppress the debounced hex-effect for a short window so the
+		// debounced value from a previous selection doesn't get applied
+		// to the newly-selected dot.
+		suppressDebouncedHexRef.current = true;
+		if (suppressTimeoutRef.current) {
+			clearTimeout(suppressTimeoutRef.current);
+		}
+		suppressTimeoutRef.current = setTimeout(() => {
+			suppressDebouncedHexRef.current = false;
+			suppressTimeoutRef.current = null;
+		}, 100) as unknown as number;
 
-		setSelectedDot(index);
 		setHexInput(colors[index].replace("#", ""));
+
 		const rgb = hexToRgb(colors[index]);
 		if (rgb) {
 			const hsv = rgbToHsv(rgb.r, rgb.g, rgb.b);
@@ -231,6 +256,7 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 			setBrightness(hsv.v);
 			setSaturation(hsv.s);
 		}
+		setSelectedDot(index);
 	};
 
 	const handleHexKeyPress = (key: string) => {
@@ -285,8 +311,67 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 		[selectedDot, colors, hexToRgb, rgbToHsv],
 	);
 
+	// Get unique colors from palette (excluding white and black), always sorted by hue
+	const getPaletteColors = useCallback(() => {
+		// Normalize colors to uppercase and ensure they start with #
+		const normalizedColors = colors.map((color) => {
+			const normalized = color.toUpperCase();
+			return normalized.startsWith("#") ? normalized : `#${normalized}`;
+		});
+
+		// Create set for uniqueness, then filter out white and black
+		const uniqueColors = [...new Set(normalizedColors)];
+		const filteredColors = uniqueColors.filter((color) => {
+			return color !== "#FFFFFF" && color !== "#000000";
+		});
+
+		// Sort by hue regardless of main colors array order
+		const colorsWithHSV = filteredColors.map((color) => {
+			const rgb = hexToRgb(color);
+			if (rgb) {
+				const hsv = rgbToHsv(rgb.r, rgb.g, rgb.b);
+				return { color, h: hsv.h, s: hsv.s, v: hsv.v };
+			}
+			return { color, h: 0, s: 0, v: 0 };
+		});
+		colorsWithHSV.sort((a, b) => a.h - b.h);
+		return colorsWithHSV.map((item) => item.color);
+	}, [colors, hexToRgb, rgbToHsv]);
+
+	const handlePaletteColorSelect = useCallback(
+		(color: string) => {
+			if (selectedDot === null) return;
+
+			// Save to history and update the selected dot atomically
+			setColors((prevColors) => {
+				setColorHistory((prevHistory) => [...prevHistory, [...prevColors]]);
+				const newColors = [...prevColors];
+				newColors[selectedDot as number] = color;
+				return newColors;
+			});
+
+			setHasChanges(true);
+			setHexInput(color.replace("#", ""));
+
+			const rgb = hexToRgb(color);
+			if (rgb) {
+				const hsv = rgbToHsv(rgb.r, rgb.g, rgb.b);
+				setHue(hsv.h);
+				setBrightness(hsv.v);
+				setSaturation(hsv.s);
+			}
+		},
+		[selectedDot, hexToRgb, rgbToHsv],
+	);
+
+	// palette selection is applied immediately in handlePaletteColorSelect
+
 	// Process debounced hex input for typed input
 	React.useEffect(() => {
+		// If a recent dot selection set the hexInput, suppress applying any
+		// previously-debounced value to avoid applying the wrong color to the
+		// newly-selected dot.
+		if (suppressDebouncedHexRef.current) return;
 		const hexRegex = /^#?([A-Fa-f0-9]{6})$/;
 		const hexValue = debouncedHexInput.startsWith("#")
 			? debouncedHexInput
@@ -319,6 +404,15 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 			}
 		}
 	}, [debouncedHexInput, selectedDot, hexToRgb, rgbToHsv]);
+
+	// cleanup suppress timeout on unmount
+	React.useEffect(() => {
+		return () => {
+			if (suppressTimeoutRef.current) {
+				clearTimeout(suppressTimeoutRef.current);
+			}
+		};
+	}, []);
 
 	const handleCancel = () => {
 		unPreviewAPI();
@@ -389,7 +483,7 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 
 	const handleSliderComplete = (h: number, s: number, v: number) => {
 		if (selectedDot !== null) {
-			setColorHistory([...colorHistory, [...colors]]);
+			setColorHistory((prev) => [...prev, [...colors]]);
 			const newColor = hsvToHex(h, s, v);
 			const newColors = [...colors];
 			newColors[selectedDot] = newColor;
@@ -404,7 +498,7 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 			newColors[i + 8] = newColors[i];
 		}
 		setColors(newColors);
-		setColorHistory([...colorHistory, [...colors]]);
+		setColorHistory((prev) => [...prev, [...colors]]);
 		setHasChanges(true);
 	};
 
@@ -414,18 +508,17 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 			newColors[i - 8] = newColors[i];
 		}
 		setColors(newColors);
-		setColorHistory([...colorHistory, [...colors]]);
+		setColorHistory((prev) => [...prev, [...colors]]);
 		setHasChanges(true);
 	};
 
 	const handleReverseTopRow = () => {
-		/*if(pixels > 200 && < 260)*/
 		const newColors = [...colors];
 		for (let i = 0; i < 8; i++) {
 			newColors[i] = colors[7 - i];
 		}
 		setColors(newColors);
-		setColorHistory([...colorHistory, [...colors]]);
+		setColorHistory((prev) => [...prev, [...colors]]);
 		setHasChanges(true);
 	};
 
@@ -435,7 +528,7 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 			newColors[i + 8] = colors[15 - i];
 		}
 		setColors(newColors);
-		setColorHistory([...colorHistory, [...colors]]);
+		setColorHistory((prev) => [...prev, [...colors]]);
 		setHasChanges(true);
 	};
 
@@ -462,7 +555,6 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 						runOnJS(handleReverseTopRow)();
 					} else if (startY.value > 260 && startY.value < 360) {
 						runOnJS(handleReverseBottomRow)();
-						console.log("Reversed bottom row");
 					}
 				}
 			}
@@ -519,7 +611,7 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 		});
 		colorsWithHSV.sort((a, b) => a.h - b.h);
 		const sortedColors = colorsWithHSV.map((item) => item.color);
-		setColorHistory([...colorHistory, [...colors]]);
+		setColorHistory((prev) => [...prev, [...colors]]);
 		setColors(sortedColors);
 		setHasChanges(true);
 	};
@@ -567,7 +659,11 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 				<PanGestureHandler onGestureEvent={panGestureEvent}>
 					<Animated.View style={{ flex: 1 }}>
 						<SafeAreaView style={COMMON_STYLES.container}>
-							<Header backButtonProps={{ beforePress: previewMode ? unPreviewAPI : undefined }} />
+							<Header
+								backButtonProps={{
+									beforePress: previewMode ? unPreviewAPI : undefined,
+								}}
+							/>
 							{renderTitle()}
 							<ColorDots
 								colors={colors}
@@ -576,6 +672,43 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 								layout="two-rows"
 								key={colors.join(",")}
 							/>
+
+							{/* Color Palette Section */}
+							{getPaletteColors().length > 0 ? (
+								<View
+									style={[
+										styles.paletteContainer,
+										{
+											marginTop:
+												selectedDot !== null && selectedDot >= 8
+													? 25 * DIMENSIONS.SCALE // Push down for bottom row dots
+													: 15 * DIMENSIONS.SCALE, // Normal position for top row dots
+										},
+									]}
+								>
+									<ScrollView
+										horizontal
+										showsHorizontalScrollIndicator={true}
+										contentContainerStyle={styles.paletteScrollContent}
+										style={{ width: "100%" }}
+									>
+										{getPaletteColors().map((color) => (
+											<TouchableOpacity
+												key={color}
+												style={[
+													styles.paletteColorButton,
+													{ backgroundColor: color },
+													{ opacity: selectedDot !== null ? 1 : 0.5 },
+												]}
+												onPress={() => handlePaletteColorSelect(color)}
+												disabled={selectedDot === null}
+												activeOpacity={0.7}
+											/>
+										))}
+									</ScrollView>
+								</View>
+							) : null}
+
 							<View
 								style={[
 									styles.hexContainer,
@@ -608,7 +741,7 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 												applyHexColor("#FFFFFF");
 											}
 										}}
-										scale={scale}
+										scale={DIMENSIONS.SCALE}
 									/>
 									<ColorButton
 										color="black"
@@ -619,10 +752,11 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 												applyHexColor("#000000");
 											}
 										}}
-										scale={scale}
+										scale={DIMENSIONS.SCALE}
 									/>
 								</View>
 							</View>
+
 							<View
 								style={[
 									COMMON_STYLES.sliderContainer,
@@ -649,7 +783,7 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 													try {
 														Keyboard.dismiss();
 													} catch {
-														console.log("no keyboard to dismiss");
+														// Keyboard was not visible or other error
 													}
 													setHue(value);
 													updateColor(value, saturation, brightness);
@@ -790,44 +924,39 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 }
 
 const { width, height } = Dimensions.get("window");
-const scale = Math.min(width, height) / 375;
 
 const styles = StyleSheet.create({
 	whiteText: {
 		color: COLORS.WHITE,
-		fontSize: 30 * scale,
+		fontSize: 30 * DIMENSIONS.SCALE,
 		fontFamily: FONTS.SIGNATURE,
 		textAlign: "center",
 	},
 	sliderRow: {
-		marginVertical: 5 * scale,
+		marginVertical: 3 * DIMENSIONS.SCALE,
 	},
 	slider: {
 		width: "100%",
-		height: 50 * scale,
+		height: 50 * DIMENSIONS.SCALE,
 	},
 	hexContainer: {
 		flexDirection: "row",
 		alignItems: "center",
-		marginTop: scale * 30,
+		marginTop: DIMENSIONS.SCALE * 12,
 		width: width * 0.85,
-		borderStyle: "solid",
-		borderWidth: 2,
-		borderColor: COLORS.WHITE,
-		padding: 10 * scale,
-		borderRadius: 10,
+		padding: 3 * DIMENSIONS.SCALE,
 	},
 	hexInput: {
 		color: COLORS.WHITE,
-		fontSize: 22 * scale,
+		fontSize: 22 * DIMENSIONS.SCALE,
 		fontFamily: FONTS.CLEAR,
 		textTransform: "uppercase",
-		letterSpacing: 2,
-		borderBottomWidth: 1,
+		letterSpacing: 2 * DIMENSIONS.SCALE,
+		borderBottomWidth: 1 * DIMENSIONS.SCALE,
 		borderBottomColor: COLORS.WHITE,
-		paddingVertical: 4,
-		paddingHorizontal: 8,
-		width: 120 * scale,
+		paddingVertical: 4 * DIMENSIONS.SCALE,
+		paddingHorizontal: 8 * DIMENSIONS.SCALE,
+		width: 120 * DIMENSIONS.SCALE,
 		textAlign: "center",
 		backgroundColor: "transparent",
 		justifyContent: "center",
@@ -835,10 +964,10 @@ const styles = StyleSheet.create({
 	},
 	hexInputText: {
 		color: COLORS.WHITE,
-		fontSize: 22 * scale,
+		fontSize: 22 * DIMENSIONS.SCALE,
 		fontFamily: FONTS.CLEAR,
 		textTransform: "uppercase",
-		letterSpacing: 2,
+		letterSpacing: 2 * DIMENSIONS.SCALE,
 		textAlign: "center",
 	},
 	titleContainer: {
@@ -846,34 +975,34 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		justifyContent: "center",
 		width: width * 0.9,
-		marginTop: 40,
-		marginBottom: height * 0.03,
+		marginTop: 5 * DIMENSIONS.SCALE,
+		marginBottom: height * 0.015,
 		borderStyle: "solid",
-		borderBottomWidth: 2,
+		borderBottomWidth: 2 * DIMENSIONS.SCALE,
 		borderColor: COLORS.WHITE,
 	},
 	sliderWrapper: {
 		position: "relative",
 		width: "100%",
-		height: 40 * scale,
+		height: 40 * DIMENSIONS.SCALE,
 		justifyContent: "center",
 	}, // Removed styles for shuffle button as they are now in the RandomizeButton component
 	sortButton: {
 		justifyContent: "center",
 		alignItems: "center",
-		marginLeft: 20 * scale,
-		width: 60 * scale,
-		height: 60 * scale,
+		marginLeft: 20 * DIMENSIONS.SCALE,
+		width: Math.max(60 * DIMENSIONS.SCALE, width * 0.12),
+		height: Math.max(60 * DIMENSIONS.SCALE, width * 0.12),
 	},
 	sortIcon: {
 		color: COLORS.WHITE,
-		fontSize: 20 * scale,
+		fontSize: Math.max(20 * DIMENSIONS.SCALE, width * 0.04),
 		fontWeight: "ultralight",
 		textAlign: "center",
 	},
 	colorButtons: {
 		flexDirection: "row",
-		marginLeft: 30 * scale,
+		marginLeft: 30 * DIMENSIONS.SCALE,
 	},
 	nameInputContainer: {
 		flex: 1,
@@ -882,10 +1011,28 @@ const styles = StyleSheet.create({
 	},
 	nameInput: {
 		color: COLORS.WHITE,
-		fontSize: 30 * scale,
+		fontSize: 30 * DIMENSIONS.SCALE,
 		fontFamily: FONTS.SIGNATURE,
 		textAlign: "center",
 		minWidth: width * 0.6,
-		padding: 10,
+		padding: 5 * DIMENSIONS.SCALE,
+	},
+	paletteContainer: {
+		alignItems: "center",
+		marginTop: 15 * DIMENSIONS.SCALE,
+		marginBottom: 3 * DIMENSIONS.SCALE,
+		width: "100%",
+	},
+	paletteScrollContent: {
+		paddingHorizontal: 20 * DIMENSIONS.SCALE,
+		paddingVertical: 8 * DIMENSIONS.SCALE,
+		alignItems: "center",
+		flexGrow: 1,
+	},
+	paletteColorButton: {
+		width: 20 * DIMENSIONS.SCALE,
+		height: 20 * DIMENSIONS.SCALE,
+		borderRadius: 10 * DIMENSIONS.SCALE,
+		marginHorizontal: 3 * DIMENSIONS.SCALE,
 	},
 });

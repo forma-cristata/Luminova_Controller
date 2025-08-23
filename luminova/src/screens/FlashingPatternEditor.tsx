@@ -22,7 +22,12 @@ import BPMMeasurer from "@/src/components/audio/BPMMeasurer";
 import MetronomeButton from "@/src/components/buttons/MetronomeButton";
 import Picker, { type PickerRef } from "@/src/components/color-picker/Picker";
 import RandomizeButton from "@/src/components/buttons/RandomizeButton";
-import { COLORS, COMMON_STYLES, FONTS } from "@/src/styles/SharedStyles";
+import {
+	COLORS,
+	COMMON_STYLES,
+	FONTS,
+	DIMENSIONS,
+} from "@/src/styles/SharedStyles";
 import { ANIMATION_PATTERNS } from "@/src/configurations/patterns";
 import { useConfiguration } from "@/src/context/ConfigurationContext";
 import { useDebounce } from "@/src/hooks/useDebounce";
@@ -79,6 +84,7 @@ export default function FlashingPatternEditor({
 
 	const [previewMode, setPreviewMode] = useState(false);
 	const [showBPMMeasurer, setShowBPMMeasurer] = useState(false);
+	const [isRandomizing, setIsRandomizing] = useState(false); // Flag to prevent conflicts during randomization
 	const pickerRef = React.useRef<PickerRef>(null);
 	const scrollViewRef = React.useRef<ScrollView>(null);
 
@@ -168,7 +174,7 @@ export default function FlashingPatternEditor({
 
 	// Handle BPM text input changes
 	useEffect(() => {
-		if (debouncedBpmInput.trim() === "") return;
+		if (debouncedBpmInput.trim() === "" || isRandomizing) return;
 
 		const inputValue = parseFloat(debouncedBpmInput);
 		if (!Number.isNaN(inputValue)) {
@@ -180,10 +186,12 @@ export default function FlashingPatternEditor({
 				setHasChanges(true);
 			}
 		}
-	}, [debouncedBpmInput, flashingPattern]); // Removed BPM dependency to prevent loops
+	}, [debouncedBpmInput, flashingPattern, isRandomizing]); // Added isRandomizing dependency
 
 	// Update text input when BPM slider changes
 	useEffect(() => {
+		if (isRandomizing) return; // Don't interfere during randomization
+
 		const currentInputValue = parseFloat(bpmInput);
 		// Only update if the input is significantly different or invalid
 		if (
@@ -192,7 +200,7 @@ export default function FlashingPatternEditor({
 		) {
 			setBpmInput(BPM.toFixed(0));
 		}
-	}, [BPM, bpmInput]);
+	}, [BPM, bpmInput, isRandomizing]);
 
 	// Auto-scroll with keyboard show/hide for BPM input visibility
 	React.useEffect(() => {
@@ -259,6 +267,10 @@ export default function FlashingPatternEditor({
 
 	const handleReset = () => {
 		unPreviewAPI();
+
+		// Set flag to prevent conflicts during reset
+		setIsRandomizing(true);
+
 		setDelayTime(initialDelayTime);
 		const resetBpm = parseFloat(calculateBPM(initialDelayTime));
 		setBPM(resetBpm);
@@ -271,6 +283,11 @@ export default function FlashingPatternEditor({
 		setTimeout(() => {
 			setHasChanges(false); // Reset the changes flag
 		}, 0);
+
+		// Clear the randomizing flag after debounce period
+		setTimeout(() => {
+			setIsRandomizing(false);
+		}, 350); // Wait for debounce period to complete
 
 		// Refocus the picker to the reset pattern
 		setTimeout(() => {
@@ -353,7 +370,11 @@ export default function FlashingPatternEditor({
 	return (
 		<TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
 			<SafeAreaView style={COMMON_STYLES.container}>
-				<Header backButtonProps={{ beforePress: previewMode ? unPreviewAPI : undefined }} />
+				<Header
+					backButtonProps={{
+						beforePress: previewMode ? unPreviewAPI : undefined,
+					}}
+				/>
 				<ScrollView
 					ref={scrollViewRef}
 					style={styles.scrollView}
@@ -364,11 +385,22 @@ export default function FlashingPatternEditor({
 					<View style={styles.titleContainer}>
 						<RandomizeButton
 							onPress={() => {
-								// Random pattern from valid animation patterns (excluding STILL)
-								const randomPattern =
-									ANIMATION_PATTERNS[
-									Math.floor(Math.random() * ANIMATION_PATTERNS.length)
-									];
+								// Set flag to prevent conflicts during randomization
+								setIsRandomizing(true);
+
+								// Random pattern from valid animation patterns (excluding current one)
+								const availablePatterns = ANIMATION_PATTERNS.filter(
+									pattern => pattern !== flashingPattern
+								);
+
+								// If all patterns are the same or only one pattern exists, use any pattern
+								const patternsToChooseFrom = availablePatterns.length > 0
+									? availablePatterns
+									: ANIMATION_PATTERNS;
+
+								const randomPattern = patternsToChooseFrom[
+									Math.floor(Math.random() * patternsToChooseFrom.length)
+								];
 								setFlashingPattern(randomPattern);
 
 								// Random BPM within 60-200 range
@@ -377,6 +409,16 @@ export default function FlashingPatternEditor({
 								setBpmInput(randomBPM.toString());
 
 								setHasChanges(true);
+
+								// Clear the randomizing flag after all state updates
+								setTimeout(() => {
+									setIsRandomizing(false);
+								}, 350); // Wait for debounce period to complete
+
+								// Focus picker on the new random pattern
+								setTimeout(() => {
+									pickerRef.current?.refocus();
+								}, 100);
 							}}
 						/>
 						<View style={styles.nameInputContainer}>
@@ -470,7 +512,6 @@ export default function FlashingPatternEditor({
 									maximumTrackTintColor={COLORS.WHITE}
 									thumbTintColor={COLORS.WHITE}
 								/>
-								<Text style={styles.bpmRangeText}>60-200 BPM</Text>
 							</View>
 						</View>
 					</View>
@@ -530,7 +571,6 @@ export default function FlashingPatternEditor({
 	);
 }
 const { width, height } = Dimensions.get("window");
-const scale = Math.min(width, height) / 375;
 
 const styles = StyleSheet.create({
 	scrollView: {
@@ -538,25 +578,25 @@ const styles = StyleSheet.create({
 	},
 	scrollContent: {
 		flexGrow: 1,
-		paddingBottom: 200, // Extra space to ensure scrolling works with keyboard
+		paddingBottom: 200 * DIMENSIONS.SCALE, // Extra space to ensure scrolling works with keyboard
 	},
 	keyboardSpacer: {
-		height: 50, // Additional space for keyboard visibility
+		height: 50 * DIMENSIONS.SCALE, // Additional space for keyboard visibility
 	},
 	titleContainer: {
 		flexDirection: "row",
 		alignItems: "center",
 		justifyContent: "center",
 		width: width * 0.9,
-		marginTop: 40,
+		marginTop: 40 * DIMENSIONS.SCALE,
 		marginBottom: height * 0.03,
 		borderStyle: "solid",
-		borderBottomWidth: 2,
+		borderBottomWidth: 2 * DIMENSIONS.SCALE,
 		borderColor: COLORS.WHITE,
 	},
 	whiteText: {
 		color: COLORS.WHITE,
-		fontSize: 30 * scale,
+		fontSize: 30 * DIMENSIONS.SCALE,
 		fontFamily: FONTS.SIGNATURE,
 		textAlign: "center",
 		flex: 1,
@@ -564,28 +604,28 @@ const styles = StyleSheet.create({
 	fpContainer: {
 		flexDirection: "row",
 		alignItems: "center",
-		marginTop: 20,
-		marginBottom: 20,
+		marginTop: 20 * DIMENSIONS.SCALE,
+		marginBottom: 20 * DIMENSIONS.SCALE,
 		width: width * 0.85,
 		borderStyle: "solid",
-		borderWidth: 2,
+		borderWidth: 2 * DIMENSIONS.SCALE,
 		borderColor: COLORS.WHITE,
-		padding: 10 * scale,
-		borderRadius: 10,
+		padding: 10 * DIMENSIONS.SCALE,
+		borderRadius: 10 * DIMENSIONS.SCALE,
 	},
 	sliderRow: {
-		marginVertical: 5 * scale,
+		marginVertical: 5 * DIMENSIONS.SCALE,
 	},
 	slider: {
 		width: "100%",
-		height: 30 * scale,
+		height: 30 * DIMENSIONS.SCALE,
 	},
 	dotPadding: {
-		marginTop: 20,
-		marginBottom: 20,
+		marginTop: 20 * DIMENSIONS.SCALE,
+		marginBottom: 20 * DIMENSIONS.SCALE,
 	},
 	sliderPadding: {
-		marginBottom: 20,
+		marginBottom: 20 * DIMENSIONS.SCALE,
 	},
 	nameInputContainer: {
 		flex: 1,
@@ -594,40 +634,40 @@ const styles = StyleSheet.create({
 	},
 	nameInput: {
 		color: COLORS.WHITE,
-		fontSize: 30 * scale,
+		fontSize: 30 * DIMENSIONS.SCALE,
 		fontFamily: FONTS.SIGNATURE,
 		textAlign: "center",
 		minWidth: width * 0.6,
-		padding: 10,
+		padding: 10 * DIMENSIONS.SCALE,
 	},
 	bpmRow: {
 		flexDirection: "row",
 		alignItems: "center",
 		justifyContent: "flex-start",
-		marginBottom: 10 * scale,
+		marginBottom: 10 * DIMENSIONS.SCALE,
 	},
 	bpmLabel: {
-		marginRight: 10 * scale,
+		marginRight: 10 * DIMENSIONS.SCALE,
 	},
 	bpmInput: {
 		color: COLORS.WHITE,
-		fontSize: 22 * scale,
+		fontSize: 22 * DIMENSIONS.SCALE,
 		fontFamily: FONTS.CLEAR,
 		textAlign: "center",
-		borderBottomWidth: 1,
+		borderBottomWidth: 1 * DIMENSIONS.SCALE,
 		borderBottomColor: COLORS.WHITE,
-		paddingHorizontal: 10 * scale,
-		paddingVertical: 5 * scale,
-		marginHorizontal: 10 * scale,
-		minWidth: 80 * scale,
-		letterSpacing: 2,
+		paddingHorizontal: 10 * DIMENSIONS.SCALE,
+		paddingVertical: 5 * DIMENSIONS.SCALE,
+		marginHorizontal: 10 * DIMENSIONS.SCALE,
+		minWidth: 80 * DIMENSIONS.SCALE,
+		letterSpacing: 2 * DIMENSIONS.SCALE,
 	},
 	bpmRangeText: {
 		color: COLORS.WHITE,
-		fontSize: 14 * scale,
+		fontSize: 14 * DIMENSIONS.SCALE,
 		fontFamily: FONTS.CLEAR,
 		textAlign: "center",
-		marginTop: 5 * scale,
+		marginTop: 5 * DIMENSIONS.SCALE,
 		opacity: 0.7,
 	},
 });

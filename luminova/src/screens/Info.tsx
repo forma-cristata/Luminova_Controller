@@ -15,7 +15,7 @@ import {
 
 import AnimatedTitle from "@/src/components/common/AnimatedTitle";
 import Header from "@/src/components/common/Header";
-import { FONTS } from "@/src/styles/SharedStyles";
+import { FONTS, COLORS, DIMENSIONS } from "@/src/styles/SharedStyles";
 import { FirstTimeUserService } from "@/src/services/FirstTimeUserService";
 import React from "react";
 
@@ -23,40 +23,45 @@ export default function Info() {
 	const [debugTapCount, setDebugTapCount] = useState(0);
 
 	const sendFeedback = () => {
-		const phoneNumber = "720-665-3101";
-		const message = "Feedback for Pixel Controller: ";
+		// App Store URLs for leaving reviews
+		const appStoreUrl =
+			Platform.OS === "ios"
+				? "itms-apps://itunes.apple.com/app/viewContentsUserReviews?id=YOUR_APP_ID" // Replace YOUR_APP_ID with actual App Store ID when published
+				: "market://details?id=com.formacristata.luminovacontroller";
 
-		let url = "";
-		if (Platform.OS === "ios") {
-			url = `sms:${phoneNumber}&body=${encodeURIComponent(message)}`;
-		} else {
-			url = `sms:${phoneNumber}?body=${encodeURIComponent(message)}`;
-		}
-
-		Linking.canOpenURL(url)
+		Linking.canOpenURL(appStoreUrl)
 			.then((supported) => {
 				if (supported) {
-					return Linking.openURL(url);
+					return Linking.openURL(appStoreUrl);
 				} else {
-					Alert.alert("Error", "SMS messaging is not supported on this device");
+					// Fallback to web URLs if native apps aren't available
+					const webUrl =
+						Platform.OS === "ios"
+							? "https://apps.apple.com/app/YOUR_APP_ID" // Replace YOUR_APP_ID with actual App Store ID when published
+							: "https://play.google.com/store/apps/details?id=com.formacristata.luminovacontroller";
+					return Linking.openURL(webUrl);
 				}
 			})
 			.catch((error) => {
-				console.error("Error opening SMS app:", error);
+				console.error("Error opening App Store:", error);
+				Alert.alert(
+					"Error",
+					"Unable to open App Store. Please search for 'Luminova Controller' to leave a review.",
+				);
 			});
 	};
 
 	const showFeedbackAlert = () => {
 		Alert.alert(
-			"Send Feedback",
-			"Would you like to send feedback via text message?",
+			"Leave a Review",
+			"Help us improve by leaving a review on the App Store!",
 			[
 				{
 					text: "Cancel",
 					style: "cancel",
 				},
 				{
-					text: "Send",
+					text: "Review App",
 					onPress: sendFeedback,
 				},
 			],
@@ -157,9 +162,9 @@ export default function Info() {
 			<Header />
 			<AnimatedTitle
 				text="How to Use This App"
-				fontSize={50}
-				marginBottom={15}
-				marginTop={50}
+				fontSize={45 * DIMENSIONS.SCALE}
+				marginBottom={15 * DIMENSIONS.SCALE}
+				marginTop={50 * DIMENSIONS.SCALE}
 			/>
 			<View style={styles.feedbackContainer}>
 				<TouchableOpacity
@@ -168,14 +173,14 @@ export default function Info() {
 					activeOpacity={0.8}
 				>
 					<Text style={styles.supportText}>
-						We love you! Please help us improve by critiquing our app!
+						We love you! Please help us improve by leaving a review!
 					</Text>
 					<TouchableOpacity
 						style={styles.feedbackButton}
 						onPress={showFeedbackAlert}
 					>
 						<Ionicons name="chatbubble-outline" size={24} color="white" />
-						<Text style={styles.feedbackText}>Feedback</Text>
+						<Text style={styles.feedbackText}>Review App</Text>
 					</TouchableOpacity>
 				</TouchableOpacity>
 			</View>
@@ -215,87 +220,87 @@ const BulletPoint = ({ text }: { text: string }) => (
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: "#000000",
-		padding: 20,
+		backgroundColor: COLORS.BLACK,
+		padding: 20 * DIMENSIONS.SCALE,
 	},
 	scrollView: {
 		flex: 1,
 		width: "100%",
-		paddingHorizontal: 15,
+		paddingHorizontal: 15 * DIMENSIONS.SCALE,
 	},
 	scrollContent: {
-		paddingBottom: 40,
+		paddingBottom: 40 * DIMENSIONS.SCALE,
 	},
 	sectionHeaderWrapper: {
 		position: "relative",
 	},
 	sectionTitleContainer: {
-		backgroundColor: "#000000",
-		paddingBottom: 20,
+		backgroundColor: COLORS.BLACK,
+		paddingBottom: 20 * DIMENSIONS.SCALE,
 		zIndex: 2,
 		elevation: 2,
 	},
 	sectionTitle: {
-		color: "white",
+		color: COLORS.WHITE,
 		fontFamily: FONTS.CLEAR,
-		fontSize: 36,
-		borderBottomWidth: 1,
+		fontSize: 36 * DIMENSIONS.SCALE,
+		borderBottomWidth: 1 * DIMENSIONS.SCALE,
 		borderBottomColor: "#333",
-		paddingBottom: 5,
-		paddingHorizontal: 15,
+		paddingBottom: 5 * DIMENSIONS.SCALE,
+		paddingHorizontal: 15 * DIMENSIONS.SCALE,
 	},
 	fadeGradient: {
 		position: "absolute",
-		bottom: -40,
+		bottom: -40 * DIMENSIONS.SCALE,
 		left: 0,
 		right: 0,
-		height: 40,
+		height: 40 * DIMENSIONS.SCALE,
 		zIndex: 1,
 	},
 	sectionSeparator: {
-		height: 20,
+		height: 20 * DIMENSIONS.SCALE,
 	},
 	bulletPoint: {
 		flexDirection: "row",
-		marginBottom: 10,
-		paddingLeft: 10,
-		paddingTop: 10,
+		marginBottom: 10 * DIMENSIONS.SCALE,
+		paddingLeft: 10 * DIMENSIONS.SCALE,
+		paddingTop: 10 * DIMENSIONS.SCALE,
 	},
 	bulletDot: {
-		color: "white",
-		fontSize: 18,
-		marginRight: 10,
+		color: COLORS.WHITE,
+		fontSize: 18 * DIMENSIONS.SCALE,
+		marginRight: 10 * DIMENSIONS.SCALE,
 	},
 	bulletText: {
-		color: "white",
+		color: COLORS.WHITE,
 		fontFamily: FONTS.CLEAR,
-		fontSize: 26,
+		fontSize: 26 * DIMENSIONS.SCALE,
 		flex: 1,
 	},
 	feedbackButton: {
 		flexDirection: "row",
 		alignItems: "center",
-		padding: 8,
+		padding: 8 * DIMENSIONS.SCALE,
 	},
 	feedbackText: {
-		color: "white",
+		color: COLORS.WHITE,
 		fontFamily: FONTS.CLEAR,
-		fontSize: 16,
-		marginLeft: 5,
+		fontSize: 16 * DIMENSIONS.SCALE,
+		marginLeft: 5 * DIMENSIONS.SCALE,
 	},
 	feedbackContainer: {
 		alignItems: "center",
-		marginBottom: 20,
+		marginBottom: 20 * DIMENSIONS.SCALE,
 	},
 	debugTouchArea: {
 		alignItems: "center",
-		padding: 10,
+		padding: 10 * DIMENSIONS.SCALE,
 	},
 	supportText: {
-		color: "white",
+		color: COLORS.WHITE,
 		fontFamily: FONTS.CLEAR,
-		fontSize: 18,
+		fontSize: 18 * DIMENSIONS.SCALE,
 		textAlign: "center",
-		marginBottom: 10,
+		marginBottom: 10 * DIMENSIONS.SCALE,
 	},
 });

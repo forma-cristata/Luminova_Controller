@@ -26,8 +26,7 @@ interface WelcomeProps {
 }
 
 export default function Welcome({ navigation }: WelcomeProps) {
-	const { setLastEdited, isShelfConnected, setIsShelfConnected } =
-		useConfiguration();
+	const { setLastEdited, setIsShelfConnected } = useConfiguration();
 	const [displayText, setDisplayText] = useState("");
 	const fullText = "Hello";
 	const [isEnabled, setIsEnabled] = useState(false);
@@ -127,12 +126,14 @@ export default function Welcome({ navigation }: WelcomeProps) {
 					scrollEnabled={false}
 				>
 					{/* 30% - Title Section */}
-					<View style={{
-						height: DIMENSIONS.SCREEN_HEIGHT * 0.25,
-						width: "100%",
-						justifyContent: "center",
-						alignItems: "center"
-					}}>
+					<View
+						style={{
+							height: DIMENSIONS.SCREEN_HEIGHT * 0.25,
+							width: "100%",
+							justifyContent: "center",
+							alignItems: "center",
+						}}
+					>
 						<TouchableOpacity
 							style={styles.titleContainer}
 							onPress={handleDebugTap}
@@ -153,12 +154,14 @@ export default function Welcome({ navigation }: WelcomeProps) {
 					</View>
 
 					{/* 30% - Create Button Section */}
-					<View style={{
-						height: DIMENSIONS.SCREEN_HEIGHT * 0.30,
-						width: "100%",
-						justifyContent: "center",
-						alignItems: "center"
-					}}>
+					<View
+						style={{
+							height: DIMENSIONS.SCREEN_HEIGHT * 0.3,
+							width: "100%",
+							justifyContent: "center",
+							alignItems: "center",
+						}}
+					>
 						<Button
 							title="Create ⟩"
 							onPress={createButtonPressed}
@@ -168,16 +171,17 @@ export default function Welcome({ navigation }: WelcomeProps) {
 					</View>
 
 					{/* 30% - IP Inputs Section */}
-					<View style={{
-						height: DIMENSIONS.SCREEN_HEIGHT * 0.30,
-						width: "100%",
-						justifyContent: "center",
-						alignItems: "center"
-					}}>
+					<View
+						style={{
+							height: DIMENSIONS.SCREEN_HEIGHT * 0.3,
+							width: "100%",
+							justifyContent: "center",
+							alignItems: "center",
+						}}
+					>
 						<IpAddressInput onIpSaved={handleIpSaved} />
 					</View>
 				</ScrollView>
-
 				{/* Welcome Tutorial Modal */}
 				<WelcomeTutorial
 					visible={showTutorial}
@@ -200,13 +204,12 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		justifyContent: "flex-start",
 		paddingBottom: DIMENSIONS.SCREEN_HEIGHT * 0.4, // Extra padding for scroll space
-		paddingTop: DIMENSIONS.SCREEN_HEIGHT * 0.10, // 10% for toggle/info area
+		paddingTop: DIMENSIONS.SCREEN_HEIGHT * 0.1, // 10% for toggle/info area
 		minHeight: DIMENSIONS.SCREEN_HEIGHT, // Content fits in 100% screen height
 	},
 	scrollView: {
 		flex: 1,
 		width: "100%",
-
 	},
 	titleContainer: {
 		alignItems: "center",

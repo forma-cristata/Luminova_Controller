@@ -26,6 +26,7 @@ export default function IpAddressInput({ onIpSaved }: IpAddressInputProps) {
 
 	const [savedIpAddress, setSavedIpAddress] = useState("");
 	const [isSavingIp, setIsSavingIp] = useState(false);
+	const [isTestingConnection, setIsTestingConnection] = useState(false);
 
 	const octet1Ref = useRef<TextInput>(null);
 	const octet2Ref = useRef<TextInput>(null);
@@ -85,16 +86,22 @@ export default function IpAddressInput({ onIpSaved }: IpAddressInputProps) {
 
 	const isIpChanged = debouncedIpAddress !== savedIpAddress;
 	const canSaveIp =
-		isIpChanged && validateIp(debouncedIpAddress) && !isSavingIp;
+		isIpChanged &&
+		validateIp(debouncedIpAddress) &&
+		!isSavingIp &&
+		!isTestingConnection;
+	const isInputDisabled = isSavingIp || isTestingConnection;
 
 	const getSaveButtonText = () => {
 		return isSavingIp
 			? "Saving..."
-			: !isOctet1Valid || !isOctet2Valid || !isOctet3Valid || !isOctet4Valid
-				? "Invalid IP"
-				: !isIpChanged && validateIp(debouncedIpAddress)
-					? "Saved"
-					: "Save IP";
+			: isTestingConnection
+				? "Testing..."
+				: !isOctet1Valid || !isOctet2Valid || !isOctet3Valid || !isOctet4Valid
+					? "Invalid IP"
+					: !isIpChanged && validateIp(debouncedIpAddress)
+						? "Saved"
+						: "Save IP";
 	};
 
 	const getSaveButtonStyle = () => {
@@ -147,41 +154,40 @@ export default function IpAddressInput({ onIpSaved }: IpAddressInputProps) {
 		const finalIpAddress = debouncedIpAddress;
 
 		setIsSavingIp(true);
+		setIsTestingConnection(false); // Ensure clean state
 		try {
 			// Save IP address to storage (this is fast)
 			await saveIpAddress(finalIpAddress);
 			setSavedIpAddress(finalIpAddress);
 			Keyboard.dismiss();
 
-			// Update UI immediately to show IP is saved
-			setIsSavingIp(false);
+			// Start connection testing immediately, keeping inputs disabled
+			setIsTestingConnection(true);
+			setIsSavingIp(false); // Only release saving state after connection testing starts
 
-			// Test connection in background with shorter timeout
-			const connectionTest = async () => {
-				try {
-					// Create a promise that resolves faster than the default 5s timeout
-					const timeoutPromise = new Promise((_, reject) =>
-						setTimeout(() => reject(new Error("Connection timeout")), 2000),
-					);
+			// Test connection with shorter timeout
+			try {
+				// Create a promise that resolves faster than the default 5s timeout
+				const timeoutPromise = new Promise((_, reject) =>
+					setTimeout(() => reject(new Error("Connection timeout")), 2000),
+				);
 
-					const statusPromise = getStatus();
-					const data = (await Promise.race([
-						statusPromise,
-						timeoutPromise,
-					])) as { shelfOn: boolean };
-					onIpSaved(data.shelfOn, true);
-				} catch (error) {
-					console.error("Error testing connection after IP change:", error);
-					onIpSaved(false, false);
-				}
-			};
-
-			// Run connection test in background without blocking UI
-			connectionTest();
+				const statusPromise = getStatus();
+				const data = (await Promise.race([statusPromise, timeoutPromise])) as {
+					shelfOn: boolean;
+				};
+				onIpSaved(data.shelfOn, true);
+			} catch (error) {
+				console.error("Error testing connection after IP change:", error);
+				onIpSaved(false, false);
+			} finally {
+				setIsTestingConnection(false);
+			}
 		} catch (error) {
 			console.error("Error saving IP address:", error);
 			Alert.alert("Error", "Failed to save IP address. Please try again.");
 			setIsSavingIp(false);
+			setIsTestingConnection(false);
 		}
 	};
 
@@ -190,7 +196,11 @@ export default function IpAddressInput({ onIpSaved }: IpAddressInputProps) {
 			<View style={styles.ipContainer}>
 				<TextInput
 					ref={octet1Ref}
-					style={[styles.ipOctet, !isOctet1Valid ? styles.ipInputError : null]}
+					style={[
+						styles.ipOctet,
+						!isOctet1Valid ? styles.ipInputError : null,
+						isInputDisabled ? styles.ipInputDisabled : null,
+					]}
 					value={ipOctet1}
 					onChangeText={(text) =>
 						handleOctetChange(text, setOctet1Chars, octet2Ref)
@@ -205,11 +215,16 @@ export default function IpAddressInput({ onIpSaved }: IpAddressInputProps) {
 					blurOnSubmit={false}
 					keyboardAppearance="dark"
 					onSubmitEditing={() => octet2Ref.current?.focus()}
+					editable={!isInputDisabled}
 				/>
 				<Text style={styles.ipDot}>.</Text>
 				<TextInput
 					ref={octet2Ref}
-					style={[styles.ipOctet, !isOctet2Valid ? styles.ipInputError : null]}
+					style={[
+						styles.ipOctet,
+						!isOctet2Valid ? styles.ipInputError : null,
+						isInputDisabled ? styles.ipInputDisabled : null,
+					]}
 					value={ipOctet2}
 					onChangeText={(text) =>
 						handleOctetChange(text, setOctet2Chars, octet3Ref)
@@ -224,11 +239,16 @@ export default function IpAddressInput({ onIpSaved }: IpAddressInputProps) {
 					blurOnSubmit={false}
 					keyboardAppearance="dark"
 					onSubmitEditing={() => octet3Ref.current?.focus()}
+					editable={!isInputDisabled}
 				/>
 				<Text style={styles.ipDot}>.</Text>
 				<TextInput
 					ref={octet3Ref}
-					style={[styles.ipOctet, !isOctet3Valid ? styles.ipInputError : null]}
+					style={[
+						styles.ipOctet,
+						!isOctet3Valid ? styles.ipInputError : null,
+						isInputDisabled ? styles.ipInputDisabled : null,
+					]}
 					value={ipOctet3}
 					onChangeText={(text) =>
 						handleOctetChange(text, setOctet3Chars, octet4Ref)
@@ -243,11 +263,16 @@ export default function IpAddressInput({ onIpSaved }: IpAddressInputProps) {
 					blurOnSubmit={false}
 					keyboardAppearance="dark"
 					onSubmitEditing={() => octet4Ref.current?.focus()}
+					editable={!isInputDisabled}
 				/>
 				<Text style={styles.ipDot}>.</Text>
 				<TextInput
 					ref={octet4Ref}
-					style={[styles.ipOctet, !isOctet4Valid ? styles.ipInputError : null]}
+					style={[
+						styles.ipOctet,
+						!isOctet4Valid ? styles.ipInputError : null,
+						isInputDisabled ? styles.ipInputDisabled : null,
+					]}
 					value={ipOctet4}
 					onChangeText={(text) =>
 						handleOctetChange(text, setOctet4Chars, undefined)
@@ -261,6 +286,7 @@ export default function IpAddressInput({ onIpSaved }: IpAddressInputProps) {
 					clearButtonMode="while-editing"
 					keyboardAppearance="dark"
 					onSubmitEditing={handleSaveIp}
+					editable={!isInputDisabled}
 				/>
 			</View>
 			<Button
@@ -307,6 +333,10 @@ const styles = StyleSheet.create({
 	},
 	ipInputError: {
 		borderBottomColor: COLORS.ERROR,
+	},
+	ipInputDisabled: {
+		opacity: 0.5,
+		borderBottomColor: COLORS.PLACEHOLDER,
 	},
 	saveButton: {
 		marginBottom: 20,

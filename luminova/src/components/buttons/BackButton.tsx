@@ -37,7 +37,7 @@ export default function BackButton({
 
 	return (
 		<TouchableOpacity
-			style={[styles.container, styles.glowEffect, style]}
+			style={[styles.container, style]}
 			onPress={handlePress}
 			hitSlop={{
 				top: DIMENSIONS.SCREEN_HEIGHT * 0.015,
@@ -46,7 +46,11 @@ export default function BackButton({
 				right: DIMENSIONS.SCREEN_WIDTH * 0.025,
 			}}
 		>
-			<Ionicons name="chevron-back-circle-outline" size={iconSize} color="white" />
+			<Ionicons
+				name="chevron-back-circle-outline"
+				size={iconSize}
+				color="white"
+			/>
 		</TouchableOpacity>
 	);
 }
@@ -55,12 +59,5 @@ const styles = StyleSheet.create({
 	container: {
 		alignItems: "center",
 		justifyContent: "center",
-	},
-	glowEffect: {
-		shadowColor: "#ffffff",
-		shadowOffset: { width: 0, height: 0 },
-		shadowOpacity: 1,
-		shadowRadius: Math.max(6, DIMENSIONS.SCREEN_HEIGHT * 0.01),
-		elevation: 8,
 	},
 });

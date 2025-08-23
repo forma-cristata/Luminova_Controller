@@ -132,12 +132,6 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		width: "100%",
 	},
-	label: {
-		color: COLORS.WHITE,
-		fontSize: 18 * scale,
-		fontFamily: FONTS.CLEAR,
-		marginBottom: 8 * scale,
-	},
 	pickerContainer: {
 		height: 150 * scale,
 		width: "100%",

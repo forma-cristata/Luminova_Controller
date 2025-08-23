@@ -66,6 +66,7 @@ export default function WelcomeTutorial({
 }: WelcomeTutorialProps) {
 	const [currentPage, setCurrentPage] = useState(0);
 	const [isAnimating, setIsAnimating] = useState(false);
+	const [imageLoaded, setImageLoaded] = useState(false);
 
 	// Demo toggle state for the tutorial
 	const [demoIsShelfConnected, setDemoIsShelfConnected] = useState(true);
@@ -205,9 +206,17 @@ export default function WelcomeTutorial({
 									<View style={styles.iconContainer}>
 										<Image
 											source={require("@/assets/images/icon.png")}
-											style={styles.appIcon}
+											style={[
+												styles.appIcon,
+												!imageLoaded && styles.hiddenImage,
+											]}
 											resizeMode="contain"
+											onLoad={() => setImageLoaded(true)}
+											onError={() => setImageLoaded(true)}
 										/>
+										{!imageLoaded ? (
+											<View style={styles.imagePlaceholder} />
+										) : null}
 									</View>
 								) : null}
 
@@ -383,6 +392,16 @@ const styles = StyleSheet.create({
 	appIcon: {
 		width: 60 * DIMENSIONS.SCALE,
 		height: 60 * DIMENSIONS.SCALE,
+	},
+	hiddenImage: {
+		opacity: 0,
+	},
+	imagePlaceholder: {
+		position: "absolute",
+		width: 60 * DIMENSIONS.SCALE,
+		height: 60 * DIMENSIONS.SCALE,
+		backgroundColor: "rgba(255, 255, 255, 0.1)",
+		borderRadius: 30 * DIMENSIONS.SCALE,
 	},
 	title: {
 		...COMMON_STYLES.whiteText,

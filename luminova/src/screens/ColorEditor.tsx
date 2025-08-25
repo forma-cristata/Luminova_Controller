@@ -14,6 +14,7 @@ import { useState, useCallback } from "react";
 import {
 	Dimensions,
 	Keyboard,
+	Platform,
 	SafeAreaView,
 	ScrollView,
 	StyleSheet,
@@ -132,10 +133,10 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 		const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
 		return result
 			? {
-				r: parseInt(result[1], 16),
-				g: parseInt(result[2], 16),
-				b: parseInt(result[3], 16),
-			}
+					r: parseInt(result[1], 16),
+					g: parseInt(result[2], 16),
+					b: parseInt(result[3], 16),
+				}
 			: null;
 	}, []);
 
@@ -163,7 +164,7 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 		return { h, s, v };
 	}, []);
 
-	const hsvToHex = (h: number, s: number, v: number) => {
+	const hsvToHex = useCallback((h: number, s: number, v: number) => {
 		h = h / 360;
 		s = s / 100;
 		v = v / 100;
@@ -215,19 +216,22 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 				.toString(16)
 				.padStart(2, "0");
 		return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
-	};
+	}, []);
 
-	const updateColor = (h: number, s: number, v: number) => {
-		if (selectedDot !== null) {
-			const newColor = hsvToHex(h, s, v);
-			setColorHistory((prev) => [...prev, [...colors]]);
-			const newColors = [...colors];
-			newColors[selectedDot] = newColor;
-			setColors(newColors);
-			setHexInput(newColor.replace("#", ""));
-			setHasChanges(true);
-		}
-	};
+	const updateColor = useCallback(
+		(h: number, s: number, v: number) => {
+			if (selectedDot !== null) {
+				const newColor = hsvToHex(h, s, v);
+				setColorHistory((prev) => [...prev, [...colors]]);
+				const newColors = [...colors];
+				newColors[selectedDot] = newColor;
+				setColors(newColors);
+				setHexInput(newColor.replace("#", ""));
+				setHasChanges(true);
+			}
+		},
+		[selectedDot, colors, hsvToHex],
+	);
 
 	const handleDotSelect = (index: number) => {
 		try {
@@ -478,16 +482,83 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 		}
 	};
 
-	const handleSliderComplete = (h: number, s: number, v: number) => {
-		if (selectedDot !== null) {
-			setColorHistory((prev) => [...prev, [...colors]]);
-			const newColor = hsvToHex(h, s, v);
-			const newColors = [...colors];
-			newColors[selectedDot] = newColor;
-			setColors(newColors);
-			setHexInput(newColor.replace("#", ""));
-		}
-	};
+	const handleSliderComplete = useCallback(
+		(h: number, s: number, v: number) => {
+			if (selectedDot !== null) {
+				setColorHistory((prev) => [...prev, [...colors]]);
+				const newColor = hsvToHex(h, s, v);
+				const newColors = [...colors];
+				newColors[selectedDot] = newColor;
+				setColors(newColors);
+				setHexInput(newColor.replace("#", ""));
+			}
+		},
+		[selectedDot, colors, hsvToHex],
+	);
+
+	// Android plus/minus button handlers
+	const adjustHue = useCallback(
+		(increment: boolean) => {
+			if (selectedDot === null) return;
+			const step = 10; // 10 degree steps for hue
+			const newValue = increment
+				? Math.min(360, hue + step)
+				: Math.max(0, hue - step);
+			setHue(newValue);
+			updateColor(newValue, saturation, brightness);
+			handleSliderComplete(newValue, saturation, brightness);
+		},
+		[
+			selectedDot,
+			hue,
+			saturation,
+			brightness,
+			updateColor,
+			handleSliderComplete,
+		],
+	);
+
+	const adjustSaturation = useCallback(
+		(increment: boolean) => {
+			if (selectedDot === null) return;
+			const step = 5; // 5% steps for saturation
+			const newValue = increment
+				? Math.min(100, saturation + step)
+				: Math.max(0, saturation - step);
+			setSaturation(newValue);
+			updateColor(hue, newValue, brightness);
+			handleSliderComplete(hue, newValue, brightness);
+		},
+		[
+			selectedDot,
+			hue,
+			saturation,
+			brightness,
+			updateColor,
+			handleSliderComplete,
+		],
+	);
+
+	const adjustBrightness = useCallback(
+		(increment: boolean) => {
+			if (selectedDot === null) return;
+			const step = 5; // 5% steps for brightness
+			const newValue = increment
+				? Math.min(100, brightness + step)
+				: Math.max(0, brightness - step);
+			setBrightness(newValue);
+			updateColor(hue, saturation, newValue);
+			handleSliderComplete(hue, saturation, newValue);
+		},
+		[
+			selectedDot,
+			hue,
+			saturation,
+			brightness,
+			updateColor,
+			handleSliderComplete,
+		],
+	);
 
 	const handleCopyToBottom = () => {
 		const newColors = [...colors];
@@ -534,7 +605,7 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 			startY.value = event.absoluteY;
 			startX.value = event.absoluteX;
 		},
-		onActive: () => { },
+		onActive: () => {},
 		onEnd: (event) => {
 			const initY = startY.value;
 			const initX = startX.value;
@@ -612,6 +683,64 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 		setColors(sortedColors);
 		setHasChanges(true);
 	};
+
+	// Component for Android plus/minus controls
+	const PlusMinusControl = ({
+		label,
+		value,
+		onMinus,
+		onPlus,
+		disabled = false,
+	}: {
+		label: string;
+		value: number;
+		onMinus: () => void;
+		onPlus: () => void;
+		disabled?: boolean;
+	}) => (
+		<View style={styles.androidSliderRow}>
+			<Text style={COMMON_STYLES.sliderText}>{label}</Text>
+			<View style={styles.plusMinusContainer}>
+				<TouchableOpacity
+					style={[
+						COMMON_STYLES.utilityButton,
+						styles.plusMinusButton,
+						{ opacity: disabled ? COLORS.DISABLED_OPACITY : 1 },
+					]}
+					onPress={onMinus}
+					disabled={disabled}
+				>
+					<Text style={[COMMON_STYLES.buttonText, styles.plusMinusText]}>
+						−
+					</Text>
+				</TouchableOpacity>
+				<View style={styles.valueDisplay}>
+					<Text
+						style={[
+							COMMON_STYLES.sliderText,
+							{ fontSize: 18 * DIMENSIONS.SCALE },
+						]}
+					>
+						{Math.round(value)}
+						{label.includes("Hue") ? "°" : "%"}
+					</Text>
+				</View>
+				<TouchableOpacity
+					style={[
+						COMMON_STYLES.utilityButton,
+						styles.plusMinusButton,
+						{ opacity: disabled ? COLORS.DISABLED_OPACITY : 1 },
+					]}
+					onPress={onPlus}
+					disabled={disabled}
+				>
+					<Text style={[COMMON_STYLES.buttonText, styles.plusMinusText]}>
+						+
+					</Text>
+				</TouchableOpacity>
+			</View>
+		</View>
+	);
 
 	const renderTitle = () => {
 		// Always show name input for both new and existing settings
@@ -760,101 +889,131 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 									{ opacity: selectedDot !== null ? 1 : 0.5 },
 								]}
 							>
-								<View style={styles.sliderRow}>
-									<Text style={COMMON_STYLES.sliderText}>
-										Hue: {Math.round(hue)}°
-									</Text>
-									<View style={styles.sliderWrapper}>
-										<HueSliderBackground />
+								{Platform.OS === "android" ? (
+									<PlusMinusControl
+										label="Hue"
+										value={hue}
+										onMinus={() => adjustHue(false)}
+										onPlus={() => adjustHue(true)}
+										disabled={selectedDot === null}
+									/>
+								) : (
+									<View style={styles.sliderRow}>
+										<Text style={COMMON_STYLES.sliderText}>
+											Hue: {Math.round(hue)}°
+										</Text>
+										<View style={styles.sliderWrapper}>
+											<HueSliderBackground />
+											<Slider
+												style={[
+													styles.slider,
+													{ opacity: selectedDot !== null ? 1 : 0.5 },
+												]}
+												minimumValue={0}
+												maximumValue={360}
+												value={hue}
+												disabled={selectedDot === null}
+												onValueChange={(value) => {
+													if (selectedDot !== null) {
+														try {
+															Keyboard.dismiss();
+														} catch {
+															// Keyboard was not visible or other error
+														}
+														setHue(value);
+														updateColor(value, saturation, brightness);
+													}
+												}}
+												onSlidingComplete={(value) => {
+													if (selectedDot !== null) {
+														handleSliderComplete(value, saturation, brightness);
+													}
+												}}
+												minimumTrackTintColor="#ff0000"
+												maximumTrackTintColor={COLORS.WHITE}
+												thumbTintColor={COLORS.WHITE}
+											/>
+										</View>
+									</View>
+								)}
+								{Platform.OS === "android" ? (
+									<PlusMinusControl
+										label="Saturation"
+										value={saturation}
+										onMinus={() => adjustSaturation(false)}
+										onPlus={() => adjustSaturation(true)}
+										disabled={selectedDot === null}
+									/>
+								) : (
+									<View style={styles.sliderRow}>
+										<Text style={COMMON_STYLES.sliderText}>
+											Saturation: {Math.round(saturation)}%
+										</Text>
 										<Slider
 											style={[
 												styles.slider,
 												{ opacity: selectedDot !== null ? 1 : 0.5 },
 											]}
 											minimumValue={0}
-											maximumValue={360}
-											value={hue}
+											maximumValue={100}
 											disabled={selectedDot === null}
+											value={saturation}
 											onValueChange={(value) => {
 												if (selectedDot !== null) {
-													try {
-														Keyboard.dismiss();
-													} catch {
-														// Keyboard was not visible or other error
-													}
-													setHue(value);
-													updateColor(value, saturation, brightness);
+													setSaturation(value);
+													updateColor(hue, value, brightness);
 												}
 											}}
 											onSlidingComplete={(value) => {
 												if (selectedDot !== null) {
-													handleSliderComplete(value, saturation, brightness);
+													handleSliderComplete(hue, value, brightness);
 												}
 											}}
-											minimumTrackTintColor="#ff0000"
-											maximumTrackTintColor={COLORS.WHITE}
+											minimumTrackTintColor={COLORS.WHITE}
+											maximumTrackTintColor="#333333"
 											thumbTintColor={COLORS.WHITE}
 										/>
 									</View>
-								</View>
-								<View style={styles.sliderRow}>
-									<Text style={COMMON_STYLES.sliderText}>
-										Saturation: {Math.round(saturation)}%
-									</Text>
-									<Slider
-										style={[
-											styles.slider,
-											{ opacity: selectedDot !== null ? 1 : 0.5 },
-										]}
-										minimumValue={0}
-										maximumValue={100}
-										disabled={selectedDot === null}
-										value={saturation}
-										onValueChange={(value) => {
-											if (selectedDot !== null) {
-												setSaturation(value);
-												updateColor(hue, value, brightness);
-											}
-										}}
-										onSlidingComplete={(value) => {
-											if (selectedDot !== null) {
-												handleSliderComplete(hue, value, brightness);
-											}
-										}}
-										minimumTrackTintColor={COLORS.WHITE}
-										maximumTrackTintColor="#333333"
-										thumbTintColor={COLORS.WHITE}
-									/>
-								</View>
-								<View style={styles.sliderRow}>
-									<Text style={COMMON_STYLES.sliderText}>
-										Brightness: {Math.round(brightness)}%
-									</Text>
-									<Slider
-										style={[
-											styles.slider,
-											{ opacity: selectedDot !== null ? 1 : 0.5 },
-										]}
-										minimumValue={0}
-										maximumValue={100}
-										disabled={selectedDot === null}
+								)}
+								{Platform.OS === "android" ? (
+									<PlusMinusControl
+										label="Brightness"
 										value={brightness}
-										onValueChange={(value) => {
-											if (selectedDot !== null) {
-												setBrightness(value);
-												updateColor(hue, saturation, value);
-											}
-										}}
-										onSlidingComplete={(value) => {
-											if (selectedDot !== null) {
-												handleSliderComplete(hue, saturation, value);
-											}
-										}}
-										minimumTrackTintColor={COLORS.WHITE}
-										maximumTrackTintColor="#333333"
-										thumbTintColor={COLORS.WHITE}
+										onMinus={() => adjustBrightness(false)}
+										onPlus={() => adjustBrightness(true)}
+										disabled={selectedDot === null}
 									/>
-								</View>
+								) : (
+									<View style={styles.sliderRow}>
+										<Text style={COMMON_STYLES.sliderText}>
+											Brightness: {Math.round(brightness)}%
+										</Text>
+										<Slider
+											style={[
+												styles.slider,
+												{ opacity: selectedDot !== null ? 1 : 0.5 },
+											]}
+											minimumValue={0}
+											maximumValue={100}
+											disabled={selectedDot === null}
+											value={brightness}
+											onValueChange={(value) => {
+												if (selectedDot !== null) {
+													setBrightness(value);
+													updateColor(hue, saturation, value);
+												}
+											}}
+											onSlidingComplete={(value) => {
+												if (selectedDot !== null) {
+													handleSliderComplete(hue, saturation, value);
+												}
+											}}
+											minimumTrackTintColor={COLORS.WHITE}
+											maximumTrackTintColor="#333333"
+											thumbTintColor={COLORS.WHITE}
+										/>
+									</View>
+								)}
 							</View>
 							<View style={COMMON_STYLES.buttonContainer}>
 								<View style={COMMON_STYLES.buttonRow}>
@@ -931,6 +1090,14 @@ const styles = StyleSheet.create({
 	},
 	sliderRow: {
 		marginVertical: 3 * DIMENSIONS.SCALE,
+	},
+	// Android-specific slider row with more spacing
+	androidSliderRow: {
+		marginVertical: 8 * DIMENSIONS.SCALE,
+		minHeight: 50 * DIMENSIONS.SCALE,
+		alignItems: "center",
+		flexDirection: "row",
+		justifyContent: "space-between",
 	},
 	slider: {
 		width: "100%",
@@ -1031,5 +1198,37 @@ const styles = StyleSheet.create({
 		height: 20 * DIMENSIONS.SCALE,
 		borderRadius: 10 * DIMENSIONS.SCALE,
 		marginHorizontal: 3 * DIMENSIONS.SCALE,
+	},
+	// Android plus/minus control styles
+	plusMinusContainer: {
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "flex-end",
+		flex: 1,
+		marginLeft: 20 * DIMENSIONS.SCALE,
+		minHeight: 50 * DIMENSIONS.SCALE,
+	},
+	plusMinusButton: {
+		width: 50 * DIMENSIONS.SCALE,
+		height: 50 * DIMENSIONS.SCALE,
+		borderRadius: 25 * DIMENSIONS.SCALE,
+		justifyContent: "center",
+		alignItems: "center",
+		marginHorizontal: 8 * DIMENSIONS.SCALE,
+		borderWidth: 1 * DIMENSIONS.SCALE,
+		borderColor: COLORS.WHITE,
+	},
+	plusMinusText: {
+		fontSize: 28 * DIMENSIONS.SCALE,
+		fontWeight: "bold",
+		textAlign: "center",
+		lineHeight: 30 * DIMENSIONS.SCALE,
+	},
+	valueDisplay: {
+		minWidth: 80 * DIMENSIONS.SCALE,
+		paddingHorizontal: 15 * DIMENSIONS.SCALE,
+		alignItems: "center",
+		justifyContent: "center",
+		minHeight: 40 * DIMENSIONS.SCALE,
 	},
 });

@@ -28,7 +28,7 @@ const areEqual = (prevProps: SettingItemProps, nextProps: SettingItemProps) => {
 		prevProps.isAnimated === nextProps.isAnimated &&
 		prevProps.index === nextProps.index &&
 		JSON.stringify(prevProps.setting?.colors) ===
-		JSON.stringify(nextProps.setting?.colors)
+			JSON.stringify(nextProps.setting?.colors)
 	);
 };
 

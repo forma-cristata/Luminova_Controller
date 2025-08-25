@@ -402,7 +402,7 @@ export default function FlashingPatternEditor({
 
 								const randomPattern =
 									patternsToChooseFrom[
-										Math.floor(Math.random() * patternsToChooseFrom.length)
+									Math.floor(Math.random() * patternsToChooseFrom.length)
 									];
 								setFlashingPattern(randomPattern);
 

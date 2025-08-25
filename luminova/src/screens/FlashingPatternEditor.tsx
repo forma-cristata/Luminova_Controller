@@ -6,11 +6,13 @@ const { useEffect, useState } = React;
 import {
 	Dimensions,
 	Keyboard,
+	Platform,
 	SafeAreaView,
 	ScrollView,
 	StyleSheet,
 	Text,
 	TextInput,
+	TouchableOpacity,
 	View,
 	TouchableWithoutFeedback,
 } from "react-native";
@@ -234,6 +236,20 @@ export default function FlashingPatternEditor({
 		};
 	}, []);
 
+	// Android plus/minus button handlers for BPM
+	const adjustBPM = React.useCallback(
+		(increment: boolean) => {
+			const step = 5; // 5 BPM steps
+			const newValue = increment
+				? Math.min(200, BPM + step)
+				: Math.max(60, BPM - step);
+			setBPM(newValue);
+			setBpmInput(newValue.toString());
+			setHasChanges(true);
+		},
+		[BPM, setHasChanges],
+	);
+
 	// Memoized animated dots that only updates when debounced values change
 	const modeDots = React.useMemo(() => {
 		const newSetting = {
@@ -367,6 +383,63 @@ export default function FlashingPatternEditor({
 		}
 	};
 
+	// Component for Android plus/minus controls
+	const PlusMinusControl = ({
+		label,
+		value,
+		onMinus,
+		onPlus,
+		disabled = false,
+	}: {
+		label: string;
+		value: number;
+		onMinus: () => void;
+		onPlus: () => void;
+		disabled?: boolean;
+	}) => (
+		<View style={styles.androidSliderRow}>
+			<Text style={COMMON_STYLES.sliderText}>{label}</Text>
+			<View style={styles.plusMinusContainer}>
+				<TouchableOpacity
+					style={[
+						COMMON_STYLES.utilityButton,
+						styles.plusMinusButton,
+						{ opacity: disabled ? COLORS.DISABLED_OPACITY : 1 },
+					]}
+					onPress={onMinus}
+					disabled={disabled}
+				>
+					<Text style={[COMMON_STYLES.buttonText, styles.plusMinusText]}>
+						−
+					</Text>
+				</TouchableOpacity>
+				<View style={styles.valueDisplay}>
+					<Text
+						style={[
+							COMMON_STYLES.sliderText,
+							{ fontSize: 18 * DIMENSIONS.SCALE },
+						]}
+					>
+						{Math.round(value)} bpm
+					</Text>
+				</View>
+				<TouchableOpacity
+					style={[
+						COMMON_STYLES.utilityButton,
+						styles.plusMinusButton,
+						{ opacity: disabled ? COLORS.DISABLED_OPACITY : 1 },
+					]}
+					onPress={onPlus}
+					disabled={disabled}
+				>
+					<Text style={[COMMON_STYLES.buttonText, styles.plusMinusText]}>
+						+
+					</Text>
+				</TouchableOpacity>
+			</View>
+		</View>
+	);
+
 	return (
 		<TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
 			<SafeAreaView style={COMMON_STYLES.container}>
@@ -459,62 +532,72 @@ export default function FlashingPatternEditor({
 					</View>
 					<View style={styles.sliderPadding}>
 						<View style={COMMON_STYLES.sliderContainer}>
-							<View style={styles.sliderRow}>
-								<View style={styles.bpmRow}>
-									<Text style={[COMMON_STYLES.sliderText, styles.bpmLabel]}>
-										Speed:
-									</Text>
-									<TextInput
-										style={styles.bpmInput}
-										value={bpmInput}
-										onChangeText={(text) => {
-											// Allow only numbers and decimal point
-											const numericText = text.replace(/[^0-9.]/g, "");
-											setBpmInput(numericText);
-										}}
-										placeholder="BPM"
-										placeholderTextColor={COLORS.PLACEHOLDER}
-										keyboardType="numeric"
-										maxLength={4}
-										clearButtonMode="while-editing"
-										onBlur={() => {
-											// Ensure the input is properly formatted when user finishes editing
-											const inputValue = parseFloat(bpmInput);
-											if (!Number.isNaN(inputValue)) {
-												const clampedValue = Math.max(
-													60,
-													Math.min(200, inputValue),
-												);
-												setBpmInput(clampedValue.toFixed(0));
-												if (clampedValue !== BPM) {
-													setBPM(clampedValue);
-													setHasChanges(true);
-												}
-											} else if (bpmInput.trim() === "") {
-												setBpmInput(BPM.toFixed(0));
-											}
-											Keyboard.dismiss();
-										}}
-										keyboardAppearance="dark"
-									/>
-									<Text style={COMMON_STYLES.sliderText}>bpm</Text>
-								</View>
-								<Slider
-									style={styles.slider}
-									minimumValue={60}
-									maximumValue={200}
+							{Platform.OS === "android" ? (
+								<PlusMinusControl
+									label="Speed"
 									value={BPM}
-									onValueChange={(value) => {
-										const roundedValue = Math.round(value);
-										setBPM(roundedValue);
-										setBpmInput(roundedValue.toString());
-										setHasChanges(true);
-									}}
-									minimumTrackTintColor="#ff0000"
-									maximumTrackTintColor={COLORS.WHITE}
-									thumbTintColor={COLORS.WHITE}
+									onMinus={() => adjustBPM(false)}
+									onPlus={() => adjustBPM(true)}
+									disabled={false}
 								/>
-							</View>
+							) : (
+								<View style={styles.sliderRow}>
+									<View style={styles.bpmRow}>
+										<Text style={[COMMON_STYLES.sliderText, styles.bpmLabel]}>
+											Speed:
+										</Text>
+										<TextInput
+											style={styles.bpmInput}
+											value={bpmInput}
+											onChangeText={(text) => {
+												// Allow only numbers and decimal point
+												const numericText = text.replace(/[^0-9.]/g, "");
+												setBpmInput(numericText);
+											}}
+											placeholder="BPM"
+											placeholderTextColor={COLORS.PLACEHOLDER}
+											keyboardType="numeric"
+											maxLength={4}
+											clearButtonMode="while-editing"
+											onBlur={() => {
+												// Ensure the input is properly formatted when user finishes editing
+												const inputValue = parseFloat(bpmInput);
+												if (!Number.isNaN(inputValue)) {
+													const clampedValue = Math.max(
+														60,
+														Math.min(200, inputValue),
+													);
+													setBpmInput(clampedValue.toFixed(0));
+													if (clampedValue !== BPM) {
+														setBPM(clampedValue);
+														setHasChanges(true);
+													}
+												} else if (bpmInput.trim() === "") {
+													setBpmInput(BPM.toFixed(0));
+												}
+												Keyboard.dismiss();
+											}}
+											keyboardAppearance="dark"
+										/>
+										<Text style={COMMON_STYLES.sliderText}>bpm</Text>
+									</View>
+									<Slider
+										style={styles.slider}
+										minimumValue={60}
+										maximumValue={200}
+										value={BPM}
+										onValueChange={(value) => {
+											const roundedValue = Math.round(value);
+											setBPM(roundedValue);
+											setBpmInput(roundedValue.toString());
+											setHasChanges(true);
+										}}
+										minimumTrackTintColor="#ff0000"
+										maximumTrackTintColor={COLORS.WHITE}
+										thumbTintColor={COLORS.WHITE}
+									/>
+								</View>
+							)}
 						</View>
 					</View>
 					<View style={COMMON_STYLES.buttonContainer}>
@@ -671,5 +754,45 @@ const styles = StyleSheet.create({
 		textAlign: "center",
 		marginTop: 5 * DIMENSIONS.SCALE,
 		opacity: 0.7,
+	},
+	// Android-specific slider row with more spacing
+	androidSliderRow: {
+		marginVertical: 8 * DIMENSIONS.SCALE,
+		minHeight: 50 * DIMENSIONS.SCALE,
+		alignItems: "center",
+		flexDirection: "row",
+		justifyContent: "space-between",
+	},
+	// Android plus/minus control styles
+	plusMinusContainer: {
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "flex-end",
+		flex: 1,
+		marginLeft: 20 * DIMENSIONS.SCALE,
+		minHeight: 50 * DIMENSIONS.SCALE,
+	},
+	plusMinusButton: {
+		width: 50 * DIMENSIONS.SCALE,
+		height: 50 * DIMENSIONS.SCALE,
+		borderRadius: 25 * DIMENSIONS.SCALE,
+		justifyContent: "center",
+		alignItems: "center",
+		marginHorizontal: 8 * DIMENSIONS.SCALE,
+		borderWidth: 1 * DIMENSIONS.SCALE,
+		borderColor: COLORS.WHITE,
+	},
+	plusMinusText: {
+		fontSize: 28 * DIMENSIONS.SCALE,
+		fontWeight: "bold",
+		textAlign: "center",
+		lineHeight: 30 * DIMENSIONS.SCALE,
+	},
+	valueDisplay: {
+		minWidth: 80 * DIMENSIONS.SCALE,
+		paddingHorizontal: 15 * DIMENSIONS.SCALE,
+		alignItems: "center",
+		justifyContent: "center",
+		minHeight: 40 * DIMENSIONS.SCALE,
 	},
 });

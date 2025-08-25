@@ -4,7 +4,7 @@ import LedToggle from "@/src/components/welcome/LedToggle";
 import BackButton from "@/src/components/buttons/BackButton";
 import { useConfiguration } from "@/src/context/ConfigurationContext";
 import { useRoute, type RouteProp } from "@react-navigation/native";
-import { View, StyleSheet, type ViewStyle } from "react-native";
+import { View, StyleSheet, type ViewStyle, Platform } from "react-native";
 import { DIMENSIONS } from "@/src/styles/SharedStyles";
 import type { RootStackParamList } from "@/src/screens/index";
 
@@ -41,9 +41,20 @@ export default function Header({
 	const iconSize = DIMENSIONS.SCREEN_HEIGHT * 0.04;
 	const headerHeight = topOffset * 2 + iconSize;
 
+	// Android-specific top padding to push header down 8% of page height
+	const androidTopPadding =
+		Platform.OS === "android" ? DIMENSIONS.SCREEN_HEIGHT * 0.08 : 0;
+
 	return (
 		<View
-			style={[styles.headerWrapper, { height: headerHeight }, containerStyle]}
+			style={[
+				styles.headerWrapper,
+				{
+					height: headerHeight + androidTopPadding,
+					paddingTop: androidTopPadding,
+				},
+				containerStyle,
+			]}
 		>
 			<View style={[styles.headerBar]}>
 				<View style={styles.left}>

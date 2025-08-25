@@ -10,6 +10,8 @@ import type { Setting } from "@/src/types/SettingInterface";
 import Settings from "./Settings";
 import Welcome from "./Welcome";
 import React from "react";
+import { Platform } from "react-native";
+import { COLORS } from "@/src/styles/SharedStyles";
 
 export type RootStackParamList = {
 	Welcome: undefined;
@@ -36,11 +38,50 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 function Index() {
 	return (
 		<ConfigurationProvider>
-			<GestureHandlerRootView style={{ flex: 1 }}>
-				<NavigationContainer>
+			<GestureHandlerRootView
+				style={{ flex: 1, backgroundColor: COLORS.BLACK }}
+			>
+				<NavigationContainer
+					theme={{
+						dark: true,
+						colors: {
+							primary: COLORS.WHITE,
+							background: COLORS.BLACK,
+							card: COLORS.BLACK,
+							text: COLORS.WHITE,
+							border: COLORS.BORDER,
+							notification: COLORS.WHITE,
+						},
+						fonts: {
+							regular: {
+								fontFamily: "System",
+								fontWeight: "normal",
+							},
+							medium: {
+								fontFamily: "System",
+								fontWeight: "500",
+							},
+							bold: {
+								fontFamily: "System",
+								fontWeight: "bold",
+							},
+							heavy: {
+								fontFamily: "System",
+								fontWeight: "900",
+							},
+						},
+					}}
+				>
 					<Stack.Navigator
 						screenOptions={{
 							headerShown: false,
+							...(Platform.OS === "android" && {
+								animation: "fade",
+								animationDuration: 150,
+							}),
+							contentStyle: {
+								backgroundColor: COLORS.BLACK,
+							},
 						}}
 					>
 						<Stack.Screen name="Welcome" component={Welcome} />

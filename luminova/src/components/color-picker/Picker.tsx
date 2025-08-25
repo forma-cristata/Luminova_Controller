@@ -3,6 +3,7 @@ import React, {
 	useRef,
 	useImperativeHandle,
 	forwardRef,
+	useCallback,
 } from "react";
 import {
 	ScrollView,
@@ -38,32 +39,38 @@ const Picker = forwardRef<PickerRef, PickerProps>(
 	) => {
 		const scrollViewRef = useRef<ScrollView>(null);
 
-		const scrollToSelectedPattern = (animated = true) => {
-			if (scrollViewRef.current && selectedPattern) {
-				const selectedIndex = FLASHING_PATTERNS.findIndex(
-					(p) => p.id === selectedPattern,
-				);
-				if (selectedIndex !== -1) {
-					// Calculate actual item height: paddingVertical(24 total) + fontSize(25) + borderBottomWidth(1)
-					const itemHeight = 24 * scale + 25 * scale + 1;
-					const containerHeight = 150 * scale;
-					const scrollContentPadding = 5 * scale; // paddingVertical from scrollContent
+		const scrollToSelectedPattern = useCallback(
+			(animated = true) => {
+				if (scrollViewRef.current && selectedPattern) {
+					const selectedIndex = FLASHING_PATTERNS.findIndex(
+						(p) => p.id === selectedPattern,
+					);
+					if (selectedIndex !== -1) {
+						// Calculate actual item height: paddingVertical(24 total) + fontSize(25) + borderBottomWidth(1)
+						const itemHeight = 24 * scale + 25 * scale + 1;
+						const containerHeight = 150 * scale;
+						const scrollContentPadding = 5 * scale; // paddingVertical from scrollContent
 
-					// Calculate position to center the selected item
-					const itemTopPosition = selectedIndex * itemHeight + scrollContentPadding;
-					const scrollY = Math.max(0, itemTopPosition - (containerHeight / 2) + (itemHeight / 2));
+						// Calculate position to center the selected item
+						const itemTopPosition =
+							selectedIndex * itemHeight + scrollContentPadding;
+						const scrollY = Math.max(
+							0,
+							itemTopPosition - containerHeight / 2 + itemHeight / 2,
+						);
 
-					// Use requestAnimationFrame for smoother scrolling
-					requestAnimationFrame(() => {
-						scrollViewRef.current?.scrollTo({
-							y: scrollY,
-							animated,
+						// Use requestAnimationFrame for smoother scrolling
+						requestAnimationFrame(() => {
+							scrollViewRef.current?.scrollTo({
+								y: scrollY,
+								animated,
+							});
 						});
-					});
+					}
 				}
-			}
-		};
-
+			},
+			[selectedPattern],
+		);
 		useImperativeHandle(ref, () => ({
 			refocus: () => {
 				// Use the same animated scroll logic as pattern changes
@@ -81,7 +88,7 @@ const Picker = forwardRef<PickerRef, PickerProps>(
 
 				return () => clearTimeout(timeoutId);
 			}
-		}, [selectedPattern]);
+		}, [selectedPattern, scrollToSelectedPattern]);
 
 		const handlePatternSelect = (patternId: string) => {
 			setSelectedPattern(patternId);

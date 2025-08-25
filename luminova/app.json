@@ -45,14 +45,7 @@
         "android.permission.RECORD_AUDIO",
         "android.permission.MODIFY_AUDIO_SETTINGS"
       ],
-      "package": "com.formacristata.luminovacontroller",
-      "navigationBar": {
-        "backgroundColor": "#000000"
-      },
-      "statusBar": {
-        "backgroundColor": "#000000",
-        "barStyle": "light-content"
-      }
+      "package": "com.formacristata.luminovacontroller"
     },
     "plugins": [
       [

@@ -1,7 +1,6 @@
 import React, {
 	useEffect,
 	useRef,
-	useState,
 	useImperativeHandle,
 	forwardRef,
 } from "react";
@@ -38,55 +37,54 @@ const Picker = forwardRef<PickerRef, PickerProps>(
 		ref,
 	) => {
 		const scrollViewRef = useRef<ScrollView>(null);
-		const [isInitialLoad, setIsInitialLoad] = useState(true);
 
-		const scrollToSelectedPattern = () => {
-			if (scrollViewRef.current) {
+		const scrollToSelectedPattern = (animated = true) => {
+			if (scrollViewRef.current && selectedPattern) {
 				const selectedIndex = FLASHING_PATTERNS.findIndex(
 					(p) => p.id === selectedPattern,
 				);
 				if (selectedIndex !== -1) {
-					const itemHeight = 12 * 2 * scale + 25 * scale + 2;
-					setTimeout(() => {
+					// Calculate actual item height: paddingVertical(24 total) + fontSize(25) + borderBottomWidth(1)
+					const itemHeight = 24 * scale + 25 * scale + 1;
+					const containerHeight = 150 * scale;
+					const scrollContentPadding = 5 * scale; // paddingVertical from scrollContent
+
+					// Calculate position to center the selected item
+					const itemTopPosition = selectedIndex * itemHeight + scrollContentPadding;
+					const scrollY = Math.max(0, itemTopPosition - (containerHeight / 2) + (itemHeight / 2));
+
+					// Use requestAnimationFrame for smoother scrolling
+					requestAnimationFrame(() => {
 						scrollViewRef.current?.scrollTo({
-							y: selectedIndex * itemHeight - 0.5 * itemHeight,
-							animated: true,
+							y: scrollY,
+							animated,
 						});
-					}, 100);
+					});
 				}
 			}
 		};
 
 		useImperativeHandle(ref, () => ({
 			refocus: () => {
-				scrollToSelectedPattern();
+				// Use the same animated scroll logic as pattern changes
+				scrollToSelectedPattern(true);
 			},
 		}));
 
 		useEffect(() => {
-			// Only auto-scroll on initial load, not on subsequent pattern changes
-			if (scrollViewRef.current && isInitialLoad) {
-				const selectedIndex = FLASHING_PATTERNS.findIndex(
-					(p) => p.id === selectedPattern,
-				);
-				if (selectedIndex !== -1) {
-					const itemHeight = 12 * 2 * scale + 25 * scale + 2;
-					setTimeout(() => {
-						scrollViewRef.current?.scrollTo({
-							y: selectedIndex * itemHeight - 0.5 * itemHeight,
-							animated: false,
-						});
-						setIsInitialLoad(false); // Mark initial load as complete
-					}, 100);
-				} else {
-					setIsInitialLoad(false); // Mark initial load as complete even if no pattern found
-				}
+			// Auto-scroll to center the selected pattern whenever it changes (with animation)
+			if (selectedPattern && scrollViewRef.current) {
+				// Small delay to ensure ScrollView is fully rendered
+				const timeoutId = setTimeout(() => {
+					scrollToSelectedPattern(true); // Use animation for all pattern changes
+				}, 50);
+
+				return () => clearTimeout(timeoutId);
 			}
-		}, [selectedPattern, isInitialLoad]);
+		}, [selectedPattern]);
 
 		const handlePatternSelect = (patternId: string) => {
 			setSelectedPattern(patternId);
-			// Remove direct mutation - let parent component handle the setting update
 		};
 
 		return (
@@ -96,6 +94,12 @@ const Picker = forwardRef<PickerRef, PickerProps>(
 						ref={scrollViewRef}
 						showsVerticalScrollIndicator={false}
 						contentContainerStyle={styles.scrollContent}
+						scrollEventThrottle={1}
+						decelerationRate="normal"
+						bounces={false}
+						overScrollMode="never"
+						nestedScrollEnabled={true}
+						removeClippedSubviews={false}
 					>
 						{FLASHING_PATTERNS.map((pattern) => (
 							<TouchableOpacity

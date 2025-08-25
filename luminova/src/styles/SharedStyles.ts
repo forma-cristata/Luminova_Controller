@@ -107,7 +107,7 @@ export const COMMON_STYLES = StyleSheet.create({
 
 	sliderContainer: {
 		width: width * 0.85,
-		marginTop: scale * 20,
+		marginTop: scale * 5,
 		borderStyle: "solid",
 		borderWidth: 2,
 		borderColor: COLORS.WHITE,

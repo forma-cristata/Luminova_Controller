@@ -132,10 +132,10 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 		const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
 		return result
 			? {
-					r: parseInt(result[1], 16),
-					g: parseInt(result[2], 16),
-					b: parseInt(result[3], 16),
-				}
+				r: parseInt(result[1], 16),
+				g: parseInt(result[2], 16),
+				b: parseInt(result[3], 16),
+			}
 			: null;
 	}, []);
 
@@ -448,22 +448,19 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 	};
 
 	const handleSave = async () => {
-		// Always update the setting name
-		setting.name = settingName;
-		setting.colors = [...colors];
+		// Create a new setting object instead of modifying the original
+		const updatedSetting = {
+			...setting,
+			name: settingName,
+			colors: [...colors],
+		};
 
 		if (isNew) {
 			navigation.navigate("FlashingPatternEditor", {
-				setting: setting,
+				setting: updatedSetting,
 				isNew: true,
 			});
 		} else {
-			const updatedSetting = {
-				...setting,
-				name: settingName,
-				colors: [...colors],
-			};
-
 			if (settingIndex !== undefined) {
 				const _updatedSettings = await updateSetting(
 					settingIndex,
@@ -537,7 +534,7 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 			startY.value = event.absoluteY;
 			startX.value = event.absoluteX;
 		},
-		onActive: () => {},
+		onActive: () => { },
 		onEnd: (event) => {
 			const initY = startY.value;
 			const initX = startX.value;

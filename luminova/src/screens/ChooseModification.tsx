@@ -20,12 +20,14 @@ export default function ChooseModification({ navigation, route }: Props) {
 			<View style={styles.content}>
 				<Button
 					title="Edit Colors"
-					onPress={() =>
+					onPress={() => {
+						// Create a deep copy to avoid Reanimated shareable object issues
+						const settingCopy = JSON.parse(JSON.stringify(setting));
 						navigation.navigate("ColorEditor", {
-							setting: setting,
+							setting: settingCopy,
 							settingIndex: settingIndex,
-						})
-					}
+						});
+					}}
 					variant="default"
 					style={styles.button}
 				/>
@@ -40,12 +42,14 @@ export default function ChooseModification({ navigation, route }: Props) {
 
 				<Button
 					title="Edit Flashing Pattern"
-					onPress={() =>
+					onPress={() => {
+						// Create a deep copy to avoid Reanimated shareable object issues
+						const settingCopy = JSON.parse(JSON.stringify(setting));
 						navigation.navigate("FlashingPatternEditor", {
-							setting: setting,
+							setting: settingCopy,
 							settingIndex: settingIndex,
-						})
-					}
+						});
+					}}
 					variant="default"
 					style={styles.button}
 				/>

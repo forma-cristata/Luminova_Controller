@@ -28,7 +28,7 @@ const areEqual = (prevProps: SettingItemProps, nextProps: SettingItemProps) => {
 		prevProps.isAnimated === nextProps.isAnimated &&
 		prevProps.index === nextProps.index &&
 		JSON.stringify(prevProps.setting?.colors) ===
-			JSON.stringify(nextProps.setting?.colors)
+		JSON.stringify(nextProps.setting?.colors)
 	);
 };
 
@@ -78,8 +78,10 @@ const SettingBlock = ({
 
 	const handleEdit = () => {
 		setLastEdited(index?.toString() ?? null);
+		// Create a deep copy to avoid Reanimated shareable object issues
+		const settingCopy = JSON.parse(JSON.stringify(setting));
 		navigation.navigate("ChooseModification", {
-			setting: setting,
+			setting: settingCopy,
 			settingIndex: index,
 		});
 	};

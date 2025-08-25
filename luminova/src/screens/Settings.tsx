@@ -73,7 +73,7 @@ export default function Settings({ navigation }: SettingsProps) {
 
 	// Fade in focused block when currentIndex changes
 	React.useEffect(() => {
-		let something = currentIndex; // Force re-run when currentIndex changes
+		const _something = currentIndex; // Force re-run when currentIndex changes
 		// Don't animate on initial render or when deleting
 		if (isInitialRender || isDeletingRef.current) {
 			focusedBlockOpacity.value = 1;
@@ -104,8 +104,11 @@ export default function Settings({ navigation }: SettingsProps) {
 			delayTime: 100,
 		};
 
+		// Create a deep copy to avoid Reanimated shareable object issues
+		const settingCopy = JSON.parse(JSON.stringify(newSetting));
+
 		navigation.navigate("ColorEditor", {
-			setting: newSetting,
+			setting: settingCopy,
 			isNew: true,
 			originalName: newSetting.name,
 			newSettingCarouselIndex: settingsLength,

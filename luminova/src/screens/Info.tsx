@@ -54,7 +54,7 @@ export default function Info() {
 	const showFeedbackAlert = () => {
 		Alert.alert(
 			"Leave a Review",
-			"Help us improve by leaving a review on the App Store!",
+			`Help us improve by leaving a review on the ${Platform.OS === 'ios' ? 'App Store' : 'Google Play Store'}!`,
 			[
 				{
 					text: "Cancel",

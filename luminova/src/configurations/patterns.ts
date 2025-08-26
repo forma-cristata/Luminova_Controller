@@ -15,4 +15,4 @@ export const FLASHING_PATTERNS = [
 
 export const ANIMATION_PATTERNS = FLASHING_PATTERNS.filter(
 	(p) => p.name !== "Still",
-).map((p) => p.id);
+).map((p) => p.id);

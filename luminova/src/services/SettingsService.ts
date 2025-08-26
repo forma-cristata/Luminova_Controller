@@ -64,4 +64,4 @@ export async function deleteSettingsFile(): Promise<void> {
 		console.error("Error deleting settings file:", error);
 		Alert.alert("Error", "Failed to delete settings file.");
 	}
-}
+}

@@ -173,4 +173,4 @@ export async function restoreConfiguration(
 		brightnessValues: config?.brightnessValues,
 		colors: config?.colors,
 	});
-}
+}

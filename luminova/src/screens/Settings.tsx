@@ -17,6 +17,7 @@ import Animated, {
 	useSharedValue as useReanimatedSharedValue,
 	withRepeat,
 	withTiming,
+	Easing,
 } from "react-native-reanimated";
 import CreateButton from "@/src/components/buttons/CreateButton";
 import Header from "@/src/components/common/Header";
@@ -26,6 +27,7 @@ import { useConfiguration } from "@/src/context/ConfigurationContext";
 import type { Setting } from "@/src/types/SettingInterface";
 import { loadSettings, saveSettings } from "@/src/services/SettingsService";
 import { getStableSettingId } from "@/src/utils/settingUtils";
+import { useDebounce } from "@/src/hooks/useDebounce";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "@/src/screens/index";
 import { COLORS, DIMENSIONS } from "../styles/SharedStyles";
@@ -42,8 +44,14 @@ export default function Settings({ navigation }: SettingsProps) {
 	const ref = React.useRef<ICarouselInstance>(null);
 	const progress = useSharedValue<number>(0);
 	const [currentIndex, setCurrentIndex] = React.useState(0);
+	const [tempIndex, setTempIndex] = React.useState(0);
 	const [isInitialRender, setIsInitialRender] = React.useState(true);
+	const [isInitialSetupComplete, setIsInitialSetupComplete] = React.useState(false);
 	const isDeletingRef = React.useRef(false);
+	const previousIndexRef = React.useRef(0);
+
+	// Debounce rapid index changes during boundary crossings
+	const debouncedTempIndex = useDebounce(tempIndex, 50);
 
 	// Memoize carousel data to prevent unnecessary re-renders
 	const carouselData = React.useMemo(
@@ -56,33 +64,55 @@ export default function Settings({ navigation }: SettingsProps) {
 
 	// Animation for focused block fade-in
 	const focusedBlockOpacity = useReanimatedSharedValue(1);
+	const focusedBlockScale = useReanimatedSharedValue(1);
 
 	// Start pulsing animation when there are multiple items
 	React.useEffect(() => {
 		if (carouselData.length > 1) {
 			pulseOpacity.value = withRepeat(
-				withTiming(0.4, { duration: 1500 }),
+				withTiming(0.5, {
+					duration: 800,
+					easing: Easing.inOut(Easing.ease)
+				}),
 				-1,
 				true,
 			);
 		} else {
-			pulseOpacity.value = withTiming(0.3, { duration: 300 });
+			pulseOpacity.value = withTiming(0.3, {
+				duration: 200,
+				easing: Easing.out(Easing.ease)
+			});
 		}
 	}, [carouselData.length, pulseOpacity]);
 
 	// Fade in focused block when currentIndex changes
 	React.useEffect(() => {
-		const _something = currentIndex; // Force re-run when currentIndex changes
-		// Don't animate on initial render or when deleting
-		if (isInitialRender || isDeletingRef.current) {
+		// Don't animate on initial render, during deletion, or before initial setup is complete
+		if (isInitialRender || isDeletingRef.current || !isInitialSetupComplete) {
 			focusedBlockOpacity.value = 1;
+			focusedBlockScale.value = 1;
+			previousIndexRef.current = currentIndex;
 			return;
 		}
 
-		// Simple fade in from 0.3 to 1 for smooth transition without black flash
-		focusedBlockOpacity.value = 0.3;
-		focusedBlockOpacity.value = withTiming(1, { duration: 300 });
-	}, [currentIndex, isInitialRender, focusedBlockOpacity]);
+		// Only animate if the index actually changed (user interaction)
+		if (previousIndexRef.current !== currentIndex && settingsData.length > 0) {
+			// Smooth fade in from 0.2 to 1 with subtle scale for more polished transition
+			focusedBlockOpacity.value = 0.2;
+			focusedBlockScale.value = 0.98;
+			focusedBlockOpacity.value = withTiming(1, {
+				duration: 250,
+				easing: Easing.out(Easing.cubic)
+			});
+			focusedBlockScale.value = withTiming(1, {
+				duration: 250,
+				easing: Easing.out(Easing.cubic)
+			});
+		}
+
+		// Update the previous index reference
+		previousIndexRef.current = currentIndex;
+	}, [currentIndex, isInitialRender, isInitialSetupComplete, focusedBlockOpacity, focusedBlockScale, settingsData.length]);
 
 	const _animatedIndicatorStyle = useAnimatedStyle(() => ({
 		opacity: carouselData.length > 1 ? pulseOpacity.value : 0.3,
@@ -90,6 +120,7 @@ export default function Settings({ navigation }: SettingsProps) {
 
 	const focusedBlockAnimatedStyle = useAnimatedStyle(() => ({
 		opacity: focusedBlockOpacity.value,
+		transform: [{ scale: focusedBlockScale.value }],
 	}));
 
 	const createNewSetting = () => {
@@ -126,7 +157,10 @@ export default function Settings({ navigation }: SettingsProps) {
 
 						const lastEditedIndex = lastEdited ? parseInt(lastEdited) : 0;
 						setCurrentIndex(lastEditedIndex);
+						setTempIndex(lastEditedIndex);
 						setIsInitialRender(true);
+						setIsInitialSetupComplete(false);
+						previousIndexRef.current = lastEditedIndex;
 					} else {
 						// Ensure settingsData is never undefined - set to empty array
 						setSettingsData([]);
@@ -156,13 +190,25 @@ export default function Settings({ navigation }: SettingsProps) {
 					if (ref.current && !isDeletingRef.current) {
 						ref.current.scrollTo({ index: targetIndex, animated: false });
 					}
+					// Complete initial setup first, then allow animations
 					setTimeout(() => {
-						setIsInitialRender(false);
-					}, 150);
+						setIsInitialSetupComplete(true);
+						// Small additional delay before allowing animations
+						setTimeout(() => {
+							setIsInitialRender(false);
+						}, 100);
+					}, 250);
 				}, 100);
 			}, 50);
 		}
 	}, [settingsData?.length, lastEdited]);
+
+	// Sync debounced temp index to current index for smoother boundary handling
+	React.useEffect(() => {
+		if (debouncedTempIndex !== currentIndex && !isDeletingRef.current && !isInitialRender) {
+			setCurrentIndex(debouncedTempIndex);
+		}
+	}, [debouncedTempIndex, currentIndex, isInitialRender]);
 
 	const handleProgressChange = React.useCallback(
 		(offset: number, absoluteProgress: number) => {
@@ -180,22 +226,35 @@ export default function Settings({ navigation }: SettingsProps) {
 			if (isInitialRender) {
 				setIsInitialRender(false);
 			}
-			progress.value = offset;
-			const newIndex = Math.round(absoluteProgress);
 
-			// Only update if index actually changed to prevent unnecessary re-renders
-			if (newIndex !== currentIndex) {
-				// Use requestAnimationFrame to ensure smooth updates
-				requestAnimationFrame(() => {
-					setCurrentIndex(newIndex);
-				});
+			progress.value = offset;
+
+			// Handle infinite loop boundary calculations more smoothly
+			const dataLength = carouselData.length;
+			let newIndex = Math.round(absoluteProgress);
+
+			// Normalize index for infinite scroll boundaries
+			if (dataLength > 0) {
+				// Handle negative indices (going backwards past 0)
+				if (newIndex < 0) {
+					newIndex = dataLength + (newIndex % dataLength);
+				}
+				// Handle indices beyond array length (going forward past end)
+				else if (newIndex >= dataLength) {
+					newIndex = newIndex % dataLength;
+				}
+			}
+
+			// Use temporary index for immediate updates, debounced index for stable state
+			if (newIndex !== tempIndex && newIndex >= 0 && newIndex < dataLength) {
+				setTempIndex(newIndex);
 			}
 		},
-		[isInitialRender, currentIndex, progress],
+		[isInitialRender, tempIndex, progress, carouselData.length],
 	);
 
 	const handleDelete = async () => {
-		if (currentIndex < 12) {
+		if (currentIndex < 13) {
 			return; // Simply do nothing for default settings
 		}
 		Alert.alert(
@@ -239,6 +298,7 @@ export default function Settings({ navigation }: SettingsProps) {
 							const deepCopy = JSON.parse(JSON.stringify(updatedSettings));
 							setSettingsData(deepCopy);
 							setCurrentIndex(targetIndex);
+							setTempIndex(targetIndex);
 
 							// Wait for state updates to complete before scrolling
 							setTimeout(() => {
@@ -374,9 +434,9 @@ export default function Settings({ navigation }: SettingsProps) {
 										top: 10 * DIMENSIONS.SCALE,
 										right: 10 * DIMENSIONS.SCALE,
 										zIndex: 1,
-										opacity: currentIndex < 12 ? COLORS.DISABLED_OPACITY : 1,
+										opacity: currentIndex < 13 ? COLORS.DISABLED_OPACITY : 1,
 									}}
-									disabled={currentIndex < 12}
+									disabled={currentIndex < 13}
 									onPress={() => {
 										handleDelete();
 									}}
@@ -402,11 +462,12 @@ export default function Settings({ navigation }: SettingsProps) {
 						width={width}
 						defaultIndex={0}
 						enabled={true}
-						loop={true}
+						loop={carouselData.length > 2}
 						autoPlay={false}
-						windowSize={1}
+						windowSize={3}
 						pagingEnabled={true}
 						snapEnabled={true}
+						scrollAnimationDuration={300}
 						onProgressChange={handleProgressChange}
 						renderItem={renderItem}
 						mode="parallax"
@@ -416,12 +477,18 @@ export default function Settings({ navigation }: SettingsProps) {
 					<Footer
 						onLeftPress={() => {
 							if (ref.current && carouselData.length > 1) {
-								ref.current.prev({ animated: true });
+								// Prevent navigation during boundary transitions
+								if (!isDeletingRef.current) {
+									ref.current.prev({ animated: true });
+								}
 							}
 						}}
 						onRightPress={() => {
 							if (ref.current && carouselData.length > 1) {
-								ref.current.next({ animated: true });
+								// Prevent navigation during boundary transitions
+								if (!isDeletingRef.current) {
+									ref.current.next({ animated: true });
+								}
 							}
 						}}
 						leftDisabled={carouselData.length <= 1}

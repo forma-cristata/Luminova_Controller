@@ -198,4 +198,4 @@ const styles = StyleSheet.create({
 	backspaceText: {
 		fontSize: 20 * scale,
 	},
-});
+});

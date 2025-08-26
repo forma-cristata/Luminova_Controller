@@ -230,4 +230,4 @@ const styles = StyleSheet.create({
 	},
 });
 
-export default React.memo(SettingBlock, areEqual);
+export default React.memo(SettingBlock, areEqual);

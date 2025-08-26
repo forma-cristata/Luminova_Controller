@@ -142,4 +142,4 @@ export const COMMON_STYLES = StyleSheet.create({
 		borderBottomColor: COLORS.WHITE,
 		marginBottom: height * 0.08,
 	},
-});
+});

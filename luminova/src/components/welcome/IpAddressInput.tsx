@@ -360,4 +360,4 @@ const styles = StyleSheet.create({
 	saveButtonInvalidText: {
 		color: COLORS.ERROR,
 	},
-});
+});

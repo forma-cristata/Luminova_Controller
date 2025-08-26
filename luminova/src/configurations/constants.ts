@@ -23,4 +23,4 @@ const BASE_ANIMATION_COLORS = [
 const ANIMATION_COLORS = BASE_ANIMATION_COLORS.flatMap((color) => [
 	color,
 	"#000000",
-]);
+]);

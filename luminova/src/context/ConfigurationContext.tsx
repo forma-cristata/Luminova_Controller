@@ -55,4 +55,4 @@ export function useConfiguration() {
 		);
 	}
 	return context;
-}
+}

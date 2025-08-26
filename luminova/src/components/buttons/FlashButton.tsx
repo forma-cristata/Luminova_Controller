@@ -101,4 +101,4 @@ const FlashButton = React.memo(
 );
 FlashButton.displayName = "FlashButton";
 
-export default FlashButton;
+export default FlashButton;

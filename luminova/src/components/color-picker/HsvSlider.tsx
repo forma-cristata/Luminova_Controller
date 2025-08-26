@@ -113,4 +113,4 @@ const styles = StyleSheet.create({
 		height: 40 * DIMENSIONS.SCALE,
 		justifyContent: "center",
 	},
-});
+});

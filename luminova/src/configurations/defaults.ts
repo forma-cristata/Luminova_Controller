@@ -365,4 +365,4 @@ export const DEFAULT_SETTINGS: Setting[] = [
 		flashingPattern: "1",
 		delayTime: 3,
 	},
-];
+];

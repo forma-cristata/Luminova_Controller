@@ -105,4 +105,4 @@ const styles = StyleSheet.create({
 		minWidth: 80 * DIMENSIONS.SCALE,
 		letterSpacing: 2 * DIMENSIONS.SCALE,
 	},
-});
+});

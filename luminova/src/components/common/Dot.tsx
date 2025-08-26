@@ -20,4 +20,4 @@ export default function Dot({ color, size = 35, overlap = 0.2 }: DotProps) {
 			}}
 		/>
 	);
-}
+}

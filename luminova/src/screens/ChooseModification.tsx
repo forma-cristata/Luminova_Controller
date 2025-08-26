@@ -77,4 +77,4 @@ const styles = StyleSheet.create({
 		marginVertical: 100 * DIMENSIONS.SCALE,
 		transform: [{ scale: 2.2 * DIMENSIONS.SCALE }],
 	},
-});
+});

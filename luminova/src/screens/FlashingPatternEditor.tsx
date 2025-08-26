@@ -413,7 +413,7 @@ export default function FlashingPatternEditor({
 										: ANIMATION_PATTERNS;
 								const randomPattern =
 									patternsToChooseFrom[
-									Math.floor(Math.random() * patternsToChooseFrom.length)
+										Math.floor(Math.random() * patternsToChooseFrom.length)
 									];
 								setFlashingPattern(randomPattern);
 
@@ -634,4 +634,4 @@ const styles = StyleSheet.create({
 		marginTop: 5 * DIMENSIONS.SCALE,
 		opacity: 0.7,
 	},
-});
+});

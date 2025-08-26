@@ -101,4 +101,4 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		minHeight: 40 * DIMENSIONS.SCALE,
 	},
-});
+});

@@ -45,4 +45,4 @@ export async function getCurrentIp(): Promise<string> {
 		console.error("Failed to get current IP, using default.", error);
 		return IP;
 	}
-}
+}

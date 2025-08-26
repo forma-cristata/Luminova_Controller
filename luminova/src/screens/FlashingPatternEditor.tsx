@@ -63,6 +63,8 @@ export default function FlashingPatternEditor({
 		setLastEdited,
 		isShelfConnected,
 		setIsShelfConnected,
+		isPreviewing: globalIsPreviewing,
+		setIsPreviewing: setGlobalIsPreviewing,
 	} = useConfiguration();
 
 	const setting = route.params?.setting;
@@ -338,6 +340,12 @@ export default function FlashingPatternEditor({
 	};
 
 	const previewAPI = async () => {
+		if (globalIsPreviewing) {
+			console.warn("Cannot preview: Preview operation already in progress");
+			return;
+		}
+
+		setGlobalIsPreviewing(true);
 		try {
 			await postConfig({
 				colors: setting.colors,
@@ -351,12 +359,20 @@ export default function FlashingPatternEditor({
 		} catch (error) {
 			console.error("Preview error:", error);
 			setIsShelfConnected(false);
+		} finally {
+			setGlobalIsPreviewing(false);
 		}
 	};
 
 	const unPreviewAPI = async () => {
+		if (globalIsPreviewing) {
+			console.warn("Cannot restore: Preview operation in progress");
+			return;
+		}
+
 		setPreviewMode(false);
 		if (currentConfiguration) {
+			setGlobalIsPreviewing(true);
 			try {
 				await restoreConfiguration(currentConfiguration);
 				console.log("Configuration restored");
@@ -364,6 +380,8 @@ export default function FlashingPatternEditor({
 			} catch (error) {
 				console.error("Restore error:", error);
 				setIsShelfConnected(false);
+			} finally {
+				setGlobalIsPreviewing(false);
 			}
 		}
 	};
@@ -402,7 +420,7 @@ export default function FlashingPatternEditor({
 
 								const randomPattern =
 									patternsToChooseFrom[
-										Math.floor(Math.random() * patternsToChooseFrom.length)
+									Math.floor(Math.random() * patternsToChooseFrom.length)
 									];
 								setFlashingPattern(randomPattern);
 
@@ -516,18 +534,26 @@ export default function FlashingPatternEditor({
 
 							<ActionButton
 								title={
-									previewMode ? (hasChanges ? "Update" : "Preview") : "Preview"
+									globalIsPreviewing
+										? "Previewing..."
+										: previewMode
+											? hasChanges
+												? "Update"
+												: "Preview"
+											: "Preview"
 								}
 								onPress={() => {
-									if (isShelfConnected) {
+									if (isShelfConnected && !globalIsPreviewing) {
 										previewAPI();
 										setPreviewMode(true);
 									}
 								}}
-								disabled={!isShelfConnected}
+								disabled={!isShelfConnected || globalIsPreviewing}
 								variant={!hasChanges && previewMode ? "disabled" : "primary"}
 								opacity={
-									!isShelfConnected ? COLORS.DISABLED_OPACITY : undefined
+									!isShelfConnected || globalIsPreviewing
+										? COLORS.DISABLED_OPACITY
+										: undefined
 								}
 							/>
 						</View>

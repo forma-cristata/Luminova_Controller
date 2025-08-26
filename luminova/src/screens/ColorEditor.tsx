@@ -60,6 +60,8 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 		setLastEdited,
 		isShelfConnected,
 		setIsShelfConnected,
+		isPreviewing: globalIsPreviewing,
+		setIsPreviewing: setGlobalIsPreviewing,
 	} = useConfiguration();
 
 	const setting = route.params?.setting;
@@ -130,10 +132,10 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 		const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
 		return result
 			? {
-					r: parseInt(result[1], 16),
-					g: parseInt(result[2], 16),
-					b: parseInt(result[3], 16),
-				}
+				r: parseInt(result[1], 16),
+				g: parseInt(result[2], 16),
+				b: parseInt(result[3], 16),
+			}
 			: null;
 	}, []);
 
@@ -538,7 +540,7 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 			startY.value = event.absoluteY;
 			startX.value = event.absoluteX;
 		},
-		onActive: () => {},
+		onActive: () => { },
 		onEnd: (event) => {
 			const initY = startY.value;
 			const initX = startX.value;
@@ -573,6 +575,12 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 	});
 
 	const previewAPI = async () => {
+		if (globalIsPreviewing) {
+			console.warn("Cannot preview: Preview operation already in progress");
+			return;
+		}
+
+		setGlobalIsPreviewing(true);
 		try {
 			await previewSetting({
 				colors: colors,
@@ -584,12 +592,20 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 		} catch (error) {
 			console.error("Preview error:", error);
 			setIsShelfConnected(false);
+		} finally {
+			setGlobalIsPreviewing(false);
 		}
 	};
 
 	const unPreviewAPI = async () => {
+		if (globalIsPreviewing) {
+			console.warn("Cannot restore: Preview operation in progress");
+			return;
+		}
+
 		setPreviewMode(false);
 		if (currentConfiguration) {
+			setGlobalIsPreviewing(true);
 			try {
 				await restoreConfiguration(currentConfiguration);
 				console.log("Configuration restored");
@@ -597,6 +613,8 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 			} catch (error) {
 				console.error("Restore error:", error);
 				setIsShelfConnected(false);
+			} finally {
+				setGlobalIsPreviewing(false);
 			}
 		}
 	};
@@ -827,24 +845,28 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 
 									<ActionButton
 										title={
-											previewMode
-												? hasChanges
-													? "Update"
+											globalIsPreviewing
+												? "Previewing..."
+												: previewMode
+													? hasChanges
+														? "Update"
+														: "Preview"
 													: "Preview"
-												: "Preview"
 										}
 										onPress={() => {
-											if (isShelfConnected) {
+											if (isShelfConnected && !globalIsPreviewing) {
 												previewAPI();
 												setPreviewMode(true);
 											}
 										}}
-										disabled={!isShelfConnected}
+										disabled={!isShelfConnected || globalIsPreviewing}
 										variant={
 											!hasChanges && previewMode ? "disabled" : "primary"
 										}
 										opacity={
-											!isShelfConnected ? COLORS.DISABLED_OPACITY : undefined
+											!isShelfConnected || globalIsPreviewing
+												? COLORS.DISABLED_OPACITY
+												: undefined
 										}
 									/>
 								</View>

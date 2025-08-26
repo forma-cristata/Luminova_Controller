@@ -9,6 +9,10 @@ interface ConfigurationContextType {
 	setLastEdited: (timestamp: string | null) => void;
 	isShelfConnected: boolean;
 	setIsShelfConnected: (connected: boolean) => void;
+	isFlashing: boolean;
+	setIsFlashing: (flashing: boolean) => void;
+	isPreviewing: boolean;
+	setIsPreviewing: (previewing: boolean) => void;
 }
 
 const ConfigurationContext = createContext<
@@ -20,6 +24,8 @@ export function ConfigurationProvider({ children }: { children: ReactNode }) {
 		useState<Setting | null>(null);
 	const [lastEdited, setLastEdited] = useState<string | null>(null);
 	const [isShelfConnected, setIsShelfConnected] = useState<boolean>(false);
+	const [isFlashing, setIsFlashing] = useState<boolean>(false);
+	const [isPreviewing, setIsPreviewing] = useState<boolean>(false);
 
 	return (
 		<ConfigurationContext.Provider
@@ -30,6 +36,10 @@ export function ConfigurationProvider({ children }: { children: ReactNode }) {
 				setLastEdited,
 				isShelfConnected,
 				setIsShelfConnected,
+				isFlashing,
+				setIsFlashing,
+				isPreviewing,
+				setIsPreviewing,
 			}}
 		>
 			{children}

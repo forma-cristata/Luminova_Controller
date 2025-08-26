@@ -166,6 +166,11 @@ export default function Settings({ navigation }: SettingsProps) {
 
 	const handleProgressChange = React.useCallback(
 		(offset: number, absoluteProgress: number) => {
+			// Block all progress changes during deletion to prevent carousel interference
+			if (isDeletingRef.current) {
+				return;
+			}
+
 			// Only block during the initial positioning, not after navigation returns
 			if (isInitialRender && Math.abs(offset) < 0.1) {
 				return;
@@ -235,7 +240,7 @@ export default function Settings({ navigation }: SettingsProps) {
 							setSettingsData(deepCopy);
 							setCurrentIndex(targetIndex);
 
-							// Single carousel scroll after state is updated
+							// Wait for state updates to complete before scrolling
 							setTimeout(() => {
 								if (ref.current) {
 									ref.current.scrollTo({
@@ -243,11 +248,11 @@ export default function Settings({ navigation }: SettingsProps) {
 										animated: false,
 									});
 								}
-								// Clear deletion flag after operation is complete
+								// Clear deletion flag after carousel positioning is complete
 								setTimeout(() => {
 									isDeletingRef.current = false;
-								}, 100);
-							}, 50);
+								}, 150); // Increased timeout for stability
+							}, 100); // Increased timeout for state update completion
 						} catch (error) {
 							console.error("Error deleting setting:", error);
 							isDeletingRef.current = false;
@@ -528,4 +533,4 @@ const styles = StyleSheet.create({
 		opacity: 1,
 		transform: [{ scale: 1.2 }],
 	},
-});
+});

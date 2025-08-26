@@ -1,7 +1,5 @@
 # UI Directory
-
 ## Component Files
-
 ### AnimatedTitle.tsx
 **Purpose:** Animated text component for screen titles with smooth transitions and visual effects.
 
@@ -18,6 +16,5 @@
 **Purpose:** Interactive tutorial component guiding new users through app features and LED controller setup.
 
 ## Subdirectories
-
 ### buttons/
 **Purpose:** Directory containing reusable button components with consistent styling and SharedStyles integration.

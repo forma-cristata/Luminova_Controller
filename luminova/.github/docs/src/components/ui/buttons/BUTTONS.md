@@ -1,7 +1,5 @@
 # Buttons Directory
-
 ## Component Files
-
 ### BackButton.tsx
 **Purpose:** Navigation button component for returning to previous screens with consistent styling.
 

@@ -77,7 +77,6 @@ const Picker = forwardRef<PickerRef, PickerProps>(
 				scrollToSelectedPattern(true);
 			},
 		}));
-
 		useEffect(() => {
 			// Auto-scroll to center the selected pattern whenever it changes (with animation)
 			if (selectedPattern && scrollViewRef.current) {
@@ -133,7 +132,6 @@ const Picker = forwardRef<PickerRef, PickerProps>(
 		);
 	},
 );
-
 Picker.displayName = "Picker";
 
 const styles = StyleSheet.create({
@@ -172,4 +170,4 @@ const styles = StyleSheet.create({
 	},
 });
 
-export default Picker;
+export default Picker;

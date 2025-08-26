@@ -1,6 +1,5 @@
 import React from "react";
 import { SafeAreaView, StyleSheet, View } from "react-native";
-
 import AnimatedDots from "@/src/components/animations/AnimatedDots";
 import Button from "@/src/components/buttons/Button";
 import Header from "@/src/components/common/Header";
@@ -31,7 +30,6 @@ export default function ChooseModification({ navigation, route }: Props) {
 					variant="default"
 					style={styles.button}
 				/>
-
 				<View style={styles.animationContainer}>
 					<AnimatedDots
 						navigation={navigation}
@@ -39,7 +37,6 @@ export default function ChooseModification({ navigation, route }: Props) {
 						layout="ring"
 					/>
 				</View>
-
 				<Button
 					title="Edit Flashing Pattern"
 					onPress={() => {
@@ -80,4 +77,4 @@ const styles = StyleSheet.create({
 		marginVertical: 100 * DIMENSIONS.SCALE,
 		transform: [{ scale: 2.2 * DIMENSIONS.SCALE }],
 	},
-});
+});

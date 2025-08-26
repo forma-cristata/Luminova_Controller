@@ -32,17 +32,14 @@ export const COMMON_STYLES = StyleSheet.create({
 		backgroundColor: COLORS.BLACK,
 		alignItems: "center",
 	},
-
 	backButton: {
 		height: height / 20,
 		width: "100%",
 	},
-
 	backButtonText: {
 		color: COLORS.WHITE,
 		fontSize: 30 * scale,
 	},
-
 	whiteText: {
 		color: COLORS.WHITE,
 		fontFamily: FONTS.SIGNATURE,
@@ -55,7 +52,6 @@ export const COMMON_STYLES = StyleSheet.create({
 		fontFamily: FONTS.CLEAR,
 		opacity: 0.7,
 	},
-
 	styleAButton: {
 		backgroundColor: COLORS.BLACK,
 		borderRadius: 10,
@@ -67,7 +63,6 @@ export const COMMON_STYLES = StyleSheet.create({
 		borderBottomColor: COLORS.WHITE,
 		width: "30%",
 	},
-
 	secondaryButton: {
 		backgroundColor: COLORS.BLACK,
 		borderRadius: 10,
@@ -77,34 +72,29 @@ export const COMMON_STYLES = StyleSheet.create({
 		borderStyle: "solid",
 		width: "45%",
 	},
-
 	navButton: {
 		position: "absolute",
 		top: 60,
 		zIndex: 10,
 	},
-
 	utilityButton: {
 		justifyContent: "center",
 		alignItems: "center",
 		width: 60 * scale,
 		height: 60 * scale,
 	},
-
 	utilityButtonIcon: {
 		color: COLORS.WHITE,
 		fontSize: 35 * scale,
 		fontWeight: "ultralight",
 		textAlign: "center",
 	},
-
 	buttonText: {
 		color: COLORS.WHITE,
 		fontSize: 25 * scale,
 		fontFamily: FONTS.CLEAR,
 		letterSpacing: 2,
 	},
-
 	sliderContainer: {
 		width: width * 0.85,
 		marginTop: scale * 5,
@@ -114,19 +104,16 @@ export const COMMON_STYLES = StyleSheet.create({
 		padding: 15 * scale,
 		borderRadius: 10,
 	},
-
 	sliderText: {
 		color: COLORS.WHITE,
 		fontSize: 22 * scale,
 		fontFamily: FONTS.CLEAR,
 		letterSpacing: 2,
 	},
-
 	buttonContainer: {
 		width: width * 0.85,
 		marginTop: scale * 20,
 	},
-
 	buttonRow: {
 		flexDirection: "row",
 		justifyContent: "space-between",
@@ -144,7 +131,6 @@ export const COMMON_STYLES = StyleSheet.create({
 		borderBottomColor: COLORS.WHITE,
 		width: "45%",
 	},
-
 	welcomeButton: {
 		backgroundColor: COLORS.BLACK,
 		borderRadius: 10,
@@ -156,4 +142,4 @@ export const COMMON_STYLES = StyleSheet.create({
 		borderBottomColor: COLORS.WHITE,
 		marginBottom: height * 0.08,
 	},
-});
+});

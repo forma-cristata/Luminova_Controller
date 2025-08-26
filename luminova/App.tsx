@@ -3,7 +3,6 @@ import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useState } from "react";
 import React from "react";
 import { loadIpAddress } from "./src/services/IpConfigService";
-
 import Index from "./src/screens/index";
 
 // Completely disable LogBox and console warnings
@@ -19,7 +18,6 @@ if (__DEV__) {
 			originalWarn.apply(console, args);
 		}
 	};
-
 	console.error = (...args) => {
 		// Only log errors that don't contain LogBox-related content
 		const message = args.join(' ');
@@ -60,10 +58,8 @@ export default function App() {
 				setIpLoaded(true);
 			}
 		}
-
 		prepareApp();
 	}, []);
-
 	useEffect(() => {
 		if ((loaded || error) && ipLoaded) {
 			SplashScreen.hideAsync();
@@ -76,4 +72,4 @@ export default function App() {
 	}
 
 	return <Index />;
-}
+}

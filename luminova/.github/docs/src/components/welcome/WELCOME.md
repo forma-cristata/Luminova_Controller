@@ -1,7 +1,5 @@
 # Welcome Directory
-
 ## Component Files
-
 ### IpAddressInput.tsx
 **Purpose:** IP address input component for connecting to LED controller hardware during initial setup.
 

@@ -135,12 +135,10 @@ export default function BPMMeasurer({
 				if (!permission.granted) {
 					throw new Error("Microphone permission denied");
 				}
-
 				await Audio.setAudioModeAsync({
 					allowsRecording: true,
 					playsInSilentMode: true,
 				});
-
 				await recorder.prepareToRecordAsync({
 					isMeteringEnabled: true,
 					android: {
@@ -152,7 +150,6 @@ export default function BPMMeasurer({
 						outputFormat: Audio.IOSOutputFormat.MPEG4AAC,
 					},
 				});
-
 				await recorder.record();
 				setRecording(true);
 				setBeatTimes([]);
@@ -316,4 +313,4 @@ const styles = StyleSheet.create({
 		textAlign: "center",
 		marginVertical: 20 * scale,
 	},
-});
+});

@@ -1,7 +1,5 @@
 # Root Directory Files
-
 ## Configuration Files
-
 ### app.json
 **Purpose:** Expo app configuration defining app metadata, build settings, and platform-specific configurations.
 
@@ -33,7 +31,6 @@
 **Purpose:** TypeScript compiler configuration that ensures type safety, enables modern JavaScript features, and configures path aliases for cleaner imports.
 
 ## Data Files
-
 ### credentials.json
 **Purpose:** Stores sensitive configuration data and API credentials (should be in .gitignore for security).
 
@@ -41,7 +38,6 @@
 **Purpose:** Persistent storage for user's LED controller settings and configurations across app sessions.
 
 ## Build/Development Files
-
 ### .biomeignore
 **Purpose:** Specifies files and directories that Biome should ignore during linting and formatting.
 

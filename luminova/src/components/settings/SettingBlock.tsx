@@ -155,7 +155,6 @@ const SettingBlock = ({
 							{displayTitle || ""}
 						</Text>
 					</View>
-
 					<View style={[styles.dotsContainer, { width: containerWidth }]}>
 						{dotsRendered}
 					</View>
@@ -164,7 +163,6 @@ const SettingBlock = ({
 					</View>
 				</TouchableOpacity>
 			) : null}
-
 			{layout === "compact" ? (
 				<View style={style}>
 					{/* Constrain dots to 90% of screen width while keeping internal overlapping */}
@@ -232,4 +230,4 @@ const styles = StyleSheet.create({
 	},
 });
 
-export default React.memo(SettingBlock, areEqual);
+export default React.memo(SettingBlock, areEqual);

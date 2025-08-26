@@ -59,7 +59,6 @@ export default function LedToggle({
 			fetchInitialStatus();
 		}
 	}, [setIsEnabled, setIsShelfConnected, disableAnimation]);
-
 	useEffect(() => {
 		// Skip loading animations for tutorial demos
 		if (!disableAnimation) {
@@ -70,7 +69,6 @@ export default function LedToggle({
 			}).start();
 		}
 	}, [isLoading, toggleOpacity, disableAnimation]);
-
 	useEffect(() => {
 		// Skip connection status animations for tutorial demos
 		if (!disableAnimation && !isLoading) {
@@ -81,7 +79,6 @@ export default function LedToggle({
 			}).start();
 		}
 	}, [isShelfConnected, isLoading, toggleOpacity, disableAnimation]);
-
 	useEffect(() => {
 		const toggleWidth = DIMENSIONS.SCREEN_HEIGHT * 0.072;
 		const thumbSize = DIMENSIONS.SCREEN_HEIGHT * 0.029;
@@ -106,7 +103,6 @@ export default function LedToggle({
 			setIsEnabled(newState);
 			return;
 		}
-
 		setPendingToggle(true);
 		const newState = !isEnabled;
 		setIsEnabled(newState);
@@ -293,4 +289,4 @@ const styles = StyleSheet.create({
 		shadowRadius: 3,
 		elevation: 3,
 	},
-});
+});

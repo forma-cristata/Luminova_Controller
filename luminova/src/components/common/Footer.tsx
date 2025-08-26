@@ -37,9 +37,7 @@ export default function Footer({
 						<Ionicons name="chevron-back" size={iconSize} color="white" />
 					</TouchableOpacity>
 				</View>
-
 				<View style={styles.center} />
-
 				<View style={styles.right}>
 					<TouchableOpacity
 						style={styles.sideButton}
@@ -89,4 +87,4 @@ const styles = StyleSheet.create({
 	},
 	leftButton: {},
 	rightButton: {},
-});
+});

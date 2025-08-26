@@ -44,7 +44,6 @@ const CreateButton = React.memo(
 		);
 	},
 );
-
 CreateButton.displayName = "CreateButton";
 
-export default CreateButton;
+export default CreateButton;

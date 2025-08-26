@@ -48,7 +48,6 @@ export default function IpAddressInput({ onIpSaved }: IpAddressInputProps) {
 	const ipOctet2 = getOctetValue(octet2Chars);
 	const ipOctet3 = getOctetValue(octet3Chars);
 	const ipOctet4 = getOctetValue(octet4Chars);
-
 	const isOctet1Valid =
 		ipOctet1 === "" ||
 		(parseInt(ipOctet1, 10) >= 0 && parseInt(ipOctet1, 10) <= 255);
@@ -361,4 +360,4 @@ const styles = StyleSheet.create({
 	saveButtonInvalidText: {
 		color: COLORS.ERROR,
 	},
-});
+});

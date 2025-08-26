@@ -30,7 +30,6 @@ const EditButton = React.memo(
 			if (onPress) {
 				onPress();
 			}
-
 			setLastEdited(settingIndex?.toString() ?? null);
 			navigation.navigate("ChooseModification", {
 				setting: setting,
@@ -57,7 +56,6 @@ const EditButton = React.memo(
 		);
 	},
 );
-
 EditButton.displayName = "EditButton";
 
-export default EditButton;
+export default EditButton;

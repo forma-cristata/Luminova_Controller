@@ -76,7 +76,6 @@ export default React.memo(function HexKeyboard({
 							</Text>
 						</View>
 					</View>
-
 					{/* Hex Keys Grid */}
 					<View style={styles.keysContainer}>
 						{HEX_KEYS.map((row) => (
@@ -85,7 +84,6 @@ export default React.memo(function HexKeyboard({
 							</View>
 						))}
 					</View>
-
 					{/* Action Buttons */}
 					<View style={styles.actionsContainer}>
 						<View style={COMMON_STYLES.buttonRow}>
@@ -125,11 +123,9 @@ const styles = StyleSheet.create({
 		backgroundColor: "rgba(0, 0, 0, 0.7)",
 		justifyContent: "flex-end",
 	},
-
 	dismissArea: {
 		flex: 1,
 	},
-
 	keyboardContainer: {
 		backgroundColor: COLORS.BLACK,
 		borderTopLeftRadius: 10 * scale,
@@ -141,19 +137,16 @@ const styles = StyleSheet.create({
 		paddingBottom: 20 * scale,
 		maxHeight: height * 0.6,
 	},
-
 	header: {
 		padding: 20 * scale,
 		borderBottomWidth: 1 * scale,
 		borderBottomColor: COLORS.BORDER,
 		alignItems: "center",
 	},
-
 	headerText: {
 		marginBottom: 15 * scale,
 		fontSize: 28 * scale,
 	},
-
 	valueContainer: {
 		flexDirection: "row",
 		alignItems: "center",
@@ -164,13 +157,11 @@ const styles = StyleSheet.create({
 		borderBottomColor: COLORS.WHITE,
 		justifyContent: "center",
 	},
-
 	hashSymbol: {
 		marginRight: 5 * scale,
 		fontSize: 22 * scale,
 		fontFamily: FONTS.CLEAR,
 	},
-
 	valueText: {
 		fontSize: 22 * scale,
 		fontFamily: FONTS.CLEAR,
@@ -178,40 +169,33 @@ const styles = StyleSheet.create({
 		textAlign: "center",
 		width: 120 * scale,
 	},
-
 	keysContainer: {
 		padding: 20 * scale,
 	},
-
 	keyRow: {
 		flexDirection: "row",
 		justifyContent: "space-between",
 		marginBottom: 10 * scale,
 	},
-
 	hexKey: {
 		width: (width - 80 * scale) / 4 - 5 * scale,
 		borderBottomWidth: 2 * scale,
 		borderBottomColor: COLORS.WHITE,
 	},
-
 	hexKeyText: {
 		fontSize: 24 * scale,
 		fontWeight: "bold",
 	},
-
 	actionsContainer: {
 		paddingHorizontal: 20 * scale,
 	},
-
 	actionButton: {
 		flex: 1,
 		marginHorizontal: 5 * scale,
 		paddingHorizontal: 10 * scale,
 		paddingVertical: 8 * scale,
 	},
-
 	backspaceText: {
 		fontSize: 20 * scale,
 	},
-});
+});

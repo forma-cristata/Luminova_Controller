@@ -12,7 +12,6 @@ import {
 	TouchableOpacity,
 	View,
 } from "react-native";
-
 import AnimatedTitle from "@/src/components/common/AnimatedTitle";
 import Header from "@/src/components/common/Header";
 import { FONTS, COLORS, DIMENSIONS } from "@/src/styles/SharedStyles";
@@ -28,7 +27,6 @@ export default function Info() {
 			Platform.OS === "ios"
 				? "itms-apps://itunes.apple.com/app/viewContentsUserReviews?id=YOUR_APP_ID" // Replace YOUR_APP_ID with actual App Store ID when published
 				: "market://details?id=com.formacristata.luminovacontroller";
-
 		Linking.canOpenURL(appStoreUrl)
 			.then((supported) => {
 				if (supported) {
@@ -303,4 +301,4 @@ const styles = StyleSheet.create({
 		textAlign: "center",
 		marginBottom: 10 * DIMENSIONS.SCALE,
 	},
-});
+});

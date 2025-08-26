@@ -20,4 +20,4 @@ const RandomizeButton = ({ onPress }: RandomizeButtonProps) => {
 	);
 };
 
-export default RandomizeButton;
+export default RandomizeButton;

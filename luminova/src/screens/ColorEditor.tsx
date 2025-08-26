@@ -31,7 +31,6 @@ import Animated, {
 	useAnimatedGestureHandler,
 	useSharedValue,
 } from "react-native-reanimated";
-
 import ActionButton from "@/src/components/buttons/ActionButton";
 import Header from "@/src/components/common/Header";
 import ColorButton from "@/src/components/buttons/ColorButton";
@@ -147,13 +146,11 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 		const max = Math.max(r, g, b);
 		const min = Math.min(r, g, b);
 		const diff = max - min;
-
 		let h = 0;
 		if (diff === 0) h = 0;
 		else if (max === r) h = ((g - b) / diff) % 6;
 		else if (max === g) h = (b - r) / diff + 2;
 		else if (max === b) h = (r - g) / diff + 4;
-
 		h = Math.round(h * 60);
 		if (h < 0) h += 360;
 
@@ -167,7 +164,6 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 		h = h / 360;
 		s = s / 100;
 		v = v / 100;
-
 		let r: number = 0,
 			g: number = 0,
 			b: number = 0;
@@ -249,7 +245,6 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 			suppressDebouncedHexRef.current = false;
 			suppressTimeoutRef.current = null;
 		}, 100) as unknown as number;
-
 		setHexInput(colors[index].replace("#", ""));
 
 		const rgb = hexToRgb(colors[index]);
@@ -352,7 +347,6 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 				newColors[selectedDot as number] = color;
 				return newColors;
 			});
-
 			setHasChanges(true);
 			setHexInput(color.replace("#", ""));
 
@@ -395,7 +389,6 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 				newColors[selectedDot] = finalHex;
 				return newColors;
 			});
-
 			setHasChanges(true);
 
 			const rgb = hexToRgb(finalHex);
@@ -579,7 +572,6 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 			console.warn("Cannot preview: Preview operation already in progress");
 			return;
 		}
-
 		setGlobalIsPreviewing(true);
 		try {
 			await previewSetting({
@@ -602,7 +594,6 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 			console.warn("Cannot restore: Preview operation in progress");
 			return;
 		}
-
 		setPreviewMode(false);
 		if (currentConfiguration) {
 			setGlobalIsPreviewing(true);
@@ -691,7 +682,6 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 								layout="two-rows"
 								key={colors.join(",")}
 							/>
-
 							{/* Color Palette Section */}
 							{getPaletteColors().length > 0 ? (
 								<View
@@ -727,7 +717,6 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 									</ScrollView>
 								</View>
 							) : null}
-
 							<View
 								style={[
 									styles.hexContainer,
@@ -775,7 +764,6 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 									/>
 								</View>
 							</View>
-
 							<View
 								style={[
 									COMMON_STYLES.sliderContainer,
@@ -829,7 +817,6 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 											isNew ? 1 : hasChanges ? 1 : COLORS.DISABLED_OPACITY
 										}
 									/>
-
 									<ActionButton
 										title="Save"
 										onPress={handleSave}
@@ -842,7 +829,6 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 												: COLORS.DISABLED_OPACITY
 										}
 									/>
-
 									<ActionButton
 										title={
 											globalIsPreviewing
@@ -986,4 +972,4 @@ const styles = StyleSheet.create({
 		borderRadius: 10 * DIMENSIONS.SCALE,
 		marginHorizontal: 3 * DIMENSIONS.SCALE,
 	},
-});
+});

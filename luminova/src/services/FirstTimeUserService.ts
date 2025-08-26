@@ -33,4 +33,4 @@ export const FirstTimeUserService = {
 	isFirstTimeUser,
 	markTutorialCompleted,
 	resetFirstTimeUser,
-};
+};

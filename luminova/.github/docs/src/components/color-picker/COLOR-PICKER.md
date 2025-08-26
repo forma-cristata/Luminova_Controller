@@ -1,7 +1,5 @@
 # Color-Picker Directory
-
 ## Component Files
-
 ### ColorDots.tsx
 **Purpose:** Displays color preview dots showing current and selected colors in the color picker interface.
 

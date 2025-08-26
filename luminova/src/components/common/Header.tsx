@@ -70,9 +70,7 @@ export default function Header({
 						<BackButton {...backButtonProps} />
 					)}
 				</View>
-
 				<View style={styles.center} />
-
 				<View style={styles.right}>{showInfo ? <InfoButton /> : null}</View>
 			</View>
 		</View>
@@ -103,4 +101,4 @@ const styles = StyleSheet.create({
 		alignItems: "flex-end",
 		justifyContent: "center",
 	},
-});
+});

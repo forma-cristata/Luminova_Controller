@@ -17,4 +17,4 @@ const DismissKeyboardView: React.FC<DismissKeyboardViewProps> = ({
 	</TouchableWithoutFeedback>
 );
 
-export default DismissKeyboardView;
+export default DismissKeyboardView;

@@ -1,10 +1,7 @@
 # Components Directory
-
 ## Overview
 The `components/` directory contains all reusable React Native UI components, organized by functionality to support the LED controller app's features.
-
 ## Component Categories
-
 ### animations/
 **Purpose:** Components for LED animation rendering and preview (see [ANIMATIONS.md](animations/ANIMATIONS.md) for details).
 
@@ -24,18 +21,15 @@ The `components/` directory contains all reusable React Native UI components, or
 **Purpose:** First-time user onboarding components (see [WELCOME.md](welcome/WELCOME.md) for details).
 
 ## Component Design Principles
-
 ### Reusability
 - **Props interfaces** for customization and flexibility
 - **SharedStyles integration** for consistent theming
 - **Memoization** with React.memo() for performance
-
 ### Type Safety
 - **TypeScript interfaces** for all props and state
 - **Strict typing** for LED controller integration
 - **API-safe components** with proper error handling
-
 ### Performance
 - **Optimized rendering** for smooth LED animations
 - **Gesture handling** with React Native Reanimated
-- **Memory efficient** component lifecycle management
+- **Memory efficient** component lifecycle management

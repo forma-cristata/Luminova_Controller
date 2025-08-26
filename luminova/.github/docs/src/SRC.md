@@ -1,10 +1,7 @@
 # Source Code Directory Structure
-
 ## Overview
 The `src/` directory contains all the React Native TypeScript source code for the Luminova Controller app, organized into logical modules for LED hardware control, UI components, and app infrastructure.
-
 ## Directory Structure
-
 ### components/
 **Purpose:** Reusable React Native UI components organized by functionality (see [COMPONENTS_OVERVIEW.md](components/COMPONENTS_OVERVIEW.md) for details).
 
@@ -33,18 +30,15 @@ The `src/` directory contains all the React Native TypeScript source code for th
 **Purpose:** Pure utility functions and helper methods used throughout the application (see [UTILS_OVERVIEW.md](utils/UTILS_OVERVIEW.md) for details).
 
 ## Architecture Principles
-
 ### Component Organization
 - **Reusable components** in `/components/` folders by feature
 - **Screen-level components** in `/screens/` for navigation targets  
 - **Shared utilities** abstracted to `/utils/` and `/hooks/`
-
 ### Data Flow
 - **Global state** managed through React Context in `/context/`
 - **API communication** centralized in `/services/`
 - **Type safety** enforced through `/types/` interfaces
-
 ### Styling System
 - **Consistent theming** through `/styles/SharedStyles.ts`
 - **Component-specific styles** co-located with components
-- **Responsive design** using shared dimensions and breakpoints
+- **Responsive design** using shared dimensions and breakpoints

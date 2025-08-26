@@ -62,7 +62,6 @@ const ColorButton = React.memo(
 		);
 	},
 );
-
 ColorButton.displayName = "ColorButton";
 
-export default ColorButton;
+export default ColorButton;

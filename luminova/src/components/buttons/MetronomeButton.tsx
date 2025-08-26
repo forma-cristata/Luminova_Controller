@@ -19,4 +19,4 @@ export default function MetronomeButton({ onPress }: { onPress: () => void }) {
 			/>
 		</TouchableOpacity>
 	);
-}
+}

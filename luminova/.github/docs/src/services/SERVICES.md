@@ -1,10 +1,7 @@
 # Services Directory
-
 ## Overview
 The `services/` directory contains the business logic layer that handles API communication, data persistence, and external integrations for the LED controller app.
-
 ## Service Files
-
 ### ApiService.ts
 **Purpose:** Centralized REST API communication layer for all LED controller hardware interactions with unified error handling and response management.
 

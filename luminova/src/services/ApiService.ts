@@ -18,7 +18,6 @@ interface StatusResponse extends ApiResponse {
 }
 
 const API_TIMEOUT = 5000; // 5 seconds
-
 let baseUrl = `http://${IP}/api`;
 
 export function setBaseUrl(ip: string) {
@@ -37,7 +36,6 @@ async function request(
 			...options,
 			signal: controller.signal,
 		});
-
 		clearTimeout(timeoutId);
 
 		if (!response.ok) {
@@ -175,4 +173,4 @@ export async function restoreConfiguration(
 		brightnessValues: config?.brightnessValues,
 		colors: config?.colors,
 	});
-}
+}

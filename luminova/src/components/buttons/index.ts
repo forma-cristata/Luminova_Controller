@@ -12,4 +12,4 @@ export { default as RandomizeButton } from "./RandomizeButton";
 
 // Export types
 export type { BaseButtonProps } from "./Button";
-export type { ActionButtonVariant } from "./ActionButton";
+export type { ActionButtonVariant } from "./ActionButton";

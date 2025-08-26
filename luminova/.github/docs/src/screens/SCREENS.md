@@ -1,10 +1,7 @@
 # Screens Directory
-
 ## Overview
 The `screens/` directory contains full-screen React Native components that represent different app views and navigation destinations in the Luminova Controller app.
-
 ## Screen Files
-
 ### ChooseModification.tsx
 **Purpose:** Main navigation hub allowing users to select between different LED controller modification options and features.
 

@@ -315,7 +315,6 @@ function processSingleFile(filePath, isDryRun = false) {
         console.error(`❌ Path is not a file: ${filePath}`);
         process.exit(1);
     }
-
     console.log('');
     const wasModified = removeEmptyLinesFromFile(filePath);
 
@@ -397,4 +396,4 @@ module.exports = {
     removeEmptyLinesFromFile,
     processDirectory,
     processSingleFile
-};
+};

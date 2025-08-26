@@ -196,7 +196,6 @@ const ColorDots = React.memo(
 		);
 	},
 );
-
 ColorDots.displayName = "ColorDots";
 
-export default ColorDots;
+export default ColorDots;

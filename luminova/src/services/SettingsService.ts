@@ -35,7 +35,6 @@ export async function updateSetting(
 
 	const newSettings = [...settings];
 	newSettings[settingIndex] = updatedSetting;
-
 	await saveSettings(newSettings);
 	return newSettings;
 }
@@ -65,4 +64,4 @@ export async function deleteSettingsFile(): Promise<void> {
 		console.error("Error deleting settings file:", error);
 		Alert.alert("Error", "Failed to delete settings file.");
 	}
-}
+}

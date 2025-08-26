@@ -8,7 +8,6 @@ import {
 	ScrollView,
 	TouchableOpacity,
 } from "react-native";
-
 import AnimatedTitle from "@/src/components/common/AnimatedTitle";
 import Button from "@/src/components/buttons/Button";
 import WelcomeTutorial from "@/src/components/common/WelcomeTutorial";
@@ -50,10 +49,8 @@ export default function Welcome({ navigation }: WelcomeProps) {
 				}, 1000);
 			}
 		};
-
 		checkFirstTimeUser();
 	}, []);
-
 	useEffect(() => {
 		if (displayText.length < fullText.length) {
 			const timeout1 = setTimeout(() => {
@@ -116,7 +113,6 @@ export default function Welcome({ navigation }: WelcomeProps) {
 		<TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
 			<SafeAreaView style={styles.container}>
 				<Header isEnabled={isEnabled} setIsEnabled={setIsEnabled} />
-
 				<ScrollView
 					ref={scrollViewRef}
 					contentContainerStyle={styles.scrollContent}
@@ -152,7 +148,6 @@ export default function Welcome({ navigation }: WelcomeProps) {
 							/>
 						</TouchableOpacity>
 					</View>
-
 					{/* 30% - Create Button Section */}
 					<View
 						style={{
@@ -169,7 +164,6 @@ export default function Welcome({ navigation }: WelcomeProps) {
 							textStyle={styles.buttonText}
 						/>
 					</View>
-
 					{/* 30% - IP Inputs Section */}
 					<View
 						style={{
@@ -236,4 +230,4 @@ const styles = StyleSheet.create({
 		fontSize: DIMENSIONS.SCALE * 37,
 		fontFamily: FONTS.SIGNATURE,
 	},
-});
+});

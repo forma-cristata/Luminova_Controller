@@ -14,7 +14,6 @@ import {
 	View,
 	TouchableWithoutFeedback,
 } from "react-native";
-
 import ActionButton from "@/src/components/buttons/ActionButton";
 import AnimatedDots from "@/src/components/animations/AnimatedDots";
 import Header from "@/src/components/common/Header";
@@ -167,7 +166,6 @@ export default function FlashingPatternEditor({
 		setting.name,
 		isNew,
 	]);
-
 	useEffect(() => {
 		const initialBpm = parseFloat(calculateBPM(setting.delayTime));
 		const bpmValue = Number.isNaN(initialBpm) ? 0 : initialBpm;
@@ -273,7 +271,6 @@ export default function FlashingPatternEditor({
 
 		// Set flag to prevent conflicts during reset
 		setIsRandomizing(true);
-
 		setDelayTime(initialDelayTime);
 		const resetBpm = parseFloat(calculateBPM(initialDelayTime));
 		setBPM(resetBpm);
@@ -314,7 +311,6 @@ export default function FlashingPatternEditor({
 
 			const newIndex = updatedSettings.length - 1;
 			setLastEdited(newIndex.toString());
-
 			navigation.navigate("Settings", { setting: updatedSetting });
 		} else {
 			const updatedSetting = {
@@ -344,7 +340,6 @@ export default function FlashingPatternEditor({
 			console.warn("Cannot preview: Preview operation already in progress");
 			return;
 		}
-
 		setGlobalIsPreviewing(true);
 		try {
 			await postConfig({
@@ -369,7 +364,6 @@ export default function FlashingPatternEditor({
 			console.warn("Cannot restore: Preview operation in progress");
 			return;
 		}
-
 		setPreviewMode(false);
 		if (currentConfiguration) {
 			setGlobalIsPreviewing(true);
@@ -417,7 +411,6 @@ export default function FlashingPatternEditor({
 									availablePatterns.length > 0
 										? availablePatterns
 										: ANIMATION_PATTERNS;
-
 								const randomPattern =
 									patternsToChooseFrom[
 									Math.floor(Math.random() * patternsToChooseFrom.length)
@@ -428,7 +421,6 @@ export default function FlashingPatternEditor({
 								const randomBPM = Math.floor(Math.random() * (200 - 60) + 60);
 								setBPM(randomBPM);
 								setBpmInput(randomBPM.toString());
-
 								setHasChanges(true);
 
 								// Clear the randomizing flag after all state updates
@@ -518,7 +510,6 @@ export default function FlashingPatternEditor({
 								disabled={!isNew && !hasChanges}
 								opacity={isNew ? 1 : hasChanges ? 1 : COLORS.DISABLED_OPACITY}
 							/>
-
 							<ActionButton
 								title="Save"
 								onPress={handleSave}
@@ -531,7 +522,6 @@ export default function FlashingPatternEditor({
 										: COLORS.DISABLED_OPACITY
 								}
 							/>
-
 							<ActionButton
 								title={
 									globalIsPreviewing
@@ -644,4 +634,4 @@ const styles = StyleSheet.create({
 		marginTop: 5 * DIMENSIONS.SCALE,
 		opacity: 0.7,
 	},
-});
+});

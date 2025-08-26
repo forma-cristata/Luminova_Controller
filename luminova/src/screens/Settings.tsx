@@ -18,7 +18,6 @@ import Animated, {
 	withRepeat,
 	withTiming,
 } from "react-native-reanimated";
-
 import CreateButton from "@/src/components/buttons/CreateButton";
 import Header from "@/src/components/common/Header";
 import Footer from "@/src/components/common/Footer";
@@ -138,7 +137,6 @@ export default function Settings({ navigation }: SettingsProps) {
 					setSettingsData([]);
 				}
 			};
-
 			initializeData();
 		});
 
@@ -177,7 +175,6 @@ export default function Settings({ navigation }: SettingsProps) {
 			if (isInitialRender) {
 				setIsInitialRender(false);
 			}
-
 			progress.value = offset;
 			const newIndex = Math.round(absoluteProgress);
 
@@ -217,7 +214,6 @@ export default function Settings({ navigation }: SettingsProps) {
 							const updatedSettings = currentSettings.filter(
 								(_: Setting, i: number) => i !== currentIndex,
 							);
-
 							await saveSettings(updatedSettings);
 
 							// Calculate target index before updating state
@@ -411,7 +407,6 @@ export default function Settings({ navigation }: SettingsProps) {
 						mode="parallax"
 						style={styles.carousel}
 					/>
-
 					{/* Footer controls (replaces inline chevrons) */}
 					<Footer
 						onLeftPress={() => {
@@ -533,4 +528,4 @@ const styles = StyleSheet.create({
 		opacity: 1,
 		transform: [{ scale: 1.2 }],
 	},
-});
+});

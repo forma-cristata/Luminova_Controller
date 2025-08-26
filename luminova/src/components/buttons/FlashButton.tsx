@@ -45,7 +45,6 @@ const FlashButton = React.memo(
 			if (onPress) {
 				onPress();
 			}
-
 			setGlobalIsFlashing(true);
 			try {
 				await flashSetting(setting);
@@ -100,7 +99,6 @@ const FlashButton = React.memo(
 		);
 	},
 );
-
 FlashButton.displayName = "FlashButton";
 
-export default FlashButton;
+export default FlashButton;

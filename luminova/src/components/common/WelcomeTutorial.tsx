@@ -188,7 +188,6 @@ export default function WelcomeTutorial({
 								<Text style={styles.skipText}>Skip</Text>
 							</TouchableOpacity>
 						</View>
-
 						{/* Content Area - Dynamic Height */}
 						<View
 							style={[
@@ -219,13 +218,10 @@ export default function WelcomeTutorial({
 										) : null}
 									</View>
 								) : null}
-
 								{/* Title */}
 								<Text style={styles.title}>{currentTutorial.title}</Text>
-
 								{/* Content */}
 								<Text style={styles.content}>{currentTutorial.content}</Text>
-
 								{/* Demo Toggle - Only show on LED Toggle page (page 2, index 1) */}
 								{currentPage === 2 ? (
 									<View style={styles.demoToggleContainer}>
@@ -243,7 +239,6 @@ export default function WelcomeTutorial({
 												{getToggleStateDescription()}
 											</Text>
 										</View>
-
 										{/* Second Row - Disconnected Toggle */}
 										<View style={styles.toggleRow}>
 											<LedToggle
@@ -262,7 +257,6 @@ export default function WelcomeTutorial({
 								) : null}
 							</View>
 						</View>
-
 						{/* Navigation Footer - Fixed Position */}
 						<View style={styles.fixedFooter}>
 							<View style={styles.singleLineNavigation}>
@@ -280,7 +274,6 @@ export default function WelcomeTutorial({
 										color={isFirstPage ? "rgba(255,255,255,0.3)" : "white"}
 									/>
 								</TouchableOpacity>
-
 								{/* Progress Dots - centered */}
 								<View style={styles.dotsContainer}>
 									{tutorialPages.map((page, index) => (
@@ -293,7 +286,6 @@ export default function WelcomeTutorial({
 										/>
 									))}
 								</View>
-
 								<TouchableOpacity onPress={handleNext} style={styles.navButton}>
 									{isLastPage ? (
 										<Text style={styles.nextButtonText}>Get Started!</Text>
@@ -499,4 +491,4 @@ const styles = StyleSheet.create({
 		flex: 1,
 		paddingLeft: 10 * DIMENSIONS.SCALE,
 	},
-});
+});

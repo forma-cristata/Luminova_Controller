@@ -1,10 +1,7 @@
 import { useFocusEffect } from "@react-navigation/native";
-
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { View } from "react-native";
-
 import { SafeAreaView, StyleSheet } from "react-native";
-
 import Dot from "@/src/components/common/Dot";
 import { DIMENSIONS } from "@/src/styles/SharedStyles";
 
@@ -66,7 +63,6 @@ const AnimatedDots = React.memo(
 				for (let i = 0; i < LIGHT_COUNT; i++) {
 					const colorIndex =
 						i < setting.colors.length ? i : i % setting.colors.length;
-
 					initialColors[i] = setting.colors[colorIndex] || black;
 				}
 
@@ -80,7 +76,6 @@ const AnimatedDots = React.memo(
 
 		const clearAllTimeouts = useCallback(() => {
 			timeoutRefs.current.forEach((timeout) => clearTimeout(timeout));
-
 			timeoutRefs.current = [];
 		}, []);
 
@@ -89,16 +84,13 @@ const AnimatedDots = React.memo(
 		const createTimeout = useCallback(
 			(
 				callback: () => void,
-
 				delay: number,
 			): Promise<void> => {
 				return new Promise((resolve) => {
 					const timeout = setTimeout(() => {
 						callback();
-
 						resolve();
 					}, delay);
-
 					timeoutRefs.current.push(timeout);
 				});
 			},
@@ -110,7 +102,6 @@ const AnimatedDots = React.memo(
 		const setLedColor = useCallback(
 			(index: number, color: string) => {
 				if (!animationRef.current || !isComponentActive) return;
-
 				setDotColors((prev) => {
 					const newColors = [...prev];
 
@@ -127,7 +118,6 @@ const AnimatedDots = React.memo(
 		const setAllLeds = useCallback(
 			(color: string) => {
 				if (!animationRef.current || !isComponentActive) return;
-
 				setDotColors(new Array(LIGHT_COUNT).fill(color));
 			},
 			[isComponentActive],
@@ -159,7 +149,6 @@ const AnimatedDots = React.memo(
 					await createTimeout(() => {}, setting.delayTime);
 
 					if (!isActive()) return;
-
 					setLedColor(i, setting.colors[colorIndex]);
 				}
 			},
@@ -176,38 +165,30 @@ const AnimatedDots = React.memo(
 			async (isActive: () => boolean) => {
 				for (let xy = 0; xy < COLOR_COUNT; xy++) {
 					if (!isActive()) return;
-
 					let f = 0;
 
 					for (let j = 0; j < LIGHT_COUNT; j += 2) {
 						if (!isActive()) return;
-
 						await createTimeout(() => {}, setting.delayTime / 16);
 
 						if (!isActive()) return;
-
 						setLedColor(j % LIGHT_COUNT, setting.colors[xy]);
 
 						if (j === 8) {
 							f = (xy + 1) % COLOR_COUNT;
-
 							await createTimeout(() => {}, setting.delayTime / 16);
 
 							if (!isActive()) return;
-
 							setLedColor(j % LIGHT_COUNT, setting.colors[f]);
 						}
 
 						if (j === 12) {
 							f = (xy + 2) % COLOR_COUNT;
-
 							await createTimeout(() => {}, setting.delayTime / 16);
 
 							if (!isActive()) return;
-
 							setLedColor(j % LIGHT_COUNT, setting.colors[f]);
 						}
-
 						f = (xy + 3) % COLOR_COUNT;
 
 						const nextLed = (j + 1) % LIGHT_COUNT;
@@ -215,25 +196,20 @@ const AnimatedDots = React.memo(
 						await createTimeout(() => {}, setting.delayTime * 3);
 
 						if (!isActive()) return;
-
 						setLedColor(nextLed, setting.colors[f]);
 					}
 
 					for (let j = 1; j < LIGHT_COUNT; j += 2) {
 						if (!isActive()) return;
-
 						await createTimeout(() => {}, setting.delayTime * 3);
 
 						if (!isActive()) return;
-
 						setLedColor(j % LIGHT_COUNT, setting.colors[xy]);
-
 						f = (xy + 3) % COLOR_COUNT;
 
 						const prevLed = (j - 1 + LIGHT_COUNT) % LIGHT_COUNT;
 
 						setLedColor(prevLed, setting.colors[f]);
-
 						await createTimeout(() => {}, setting.delayTime * 3);
 					}
 				}
@@ -258,7 +234,6 @@ const AnimatedDots = React.memo(
 				const pattern3Indices = [
 					13, 14, 15, 14, 15, 14, 13, 12, 11, 12, 13, 14, 15, 14, 13, 12,
 				];
-
 				setAllLeds(black);
 
 				if (!isActive()) return;
@@ -266,11 +241,8 @@ const AnimatedDots = React.memo(
 				for (let x = 0; x < COLOR_COUNT * 2; x++) {
 					for (let i = 0; i < 2; i++) {
 						if (!isActive()) return;
-
 						let index1 = patternIndices[x % LIGHT_COUNT] % LIGHT_COUNT;
-
 						let index2 = pattern2Indices[x % LIGHT_COUNT] % LIGHT_COUNT;
-
 						let index3 = pattern3Indices[x % LIGHT_COUNT] % LIGHT_COUNT;
 
 						if (index1 < 0) index1 += LIGHT_COUNT;
@@ -278,23 +250,14 @@ const AnimatedDots = React.memo(
 						if (index2 < 0) index2 += LIGHT_COUNT;
 
 						if (index3 < 0) index3 += LIGHT_COUNT;
-
 						setLedColor(index1, setting.colors[x % LIGHT_COUNT]);
-
 						await createTimeout(() => {}, setting.delayTime * 4);
-
 						setLedColor(index1, black);
-
 						setLedColor(index2, setting.colors[x % LIGHT_COUNT]);
-
 						await createTimeout(() => {}, setting.delayTime * 4);
-
 						setLedColor(index2, black);
-
 						setLedColor(index3, setting.colors[x % LIGHT_COUNT]);
-
 						await createTimeout(() => {}, setting.delayTime * 4);
-
 						setLedColor(index3, black);
 					}
 				}
@@ -320,7 +283,6 @@ const AnimatedDots = React.memo(
 				for (let colorer = 0; colorer < COLOR_COUNT; colorer++) {
 					for (let strobe = 0; strobe < strobeCount1; strobe++) {
 						if (!isActive()) return;
-
 						await createTimeout(() => {}, setting.delayTime * 12);
 
 						for (let i = 0; i < ledsPerGroup; i++) {
@@ -328,27 +290,22 @@ const AnimatedDots = React.memo(
 
 							setLedColor(
 								(ledIndex + 1) % LIGHT_COUNT,
-
 								setting.colors[(ledIndex + colorer) % COLOR_COUNT],
 							);
-
 							await createTimeout(() => {}, setting.delayTime);
 						}
-
 						await createTimeout(() => {}, setting.delayTime * 12);
 
 						for (let i = 0; i < ledsPerGroup; i++) {
 							const ledIndex = random(0, LIGHT_COUNT);
 
 							setLedColor((ledIndex + 1) % LIGHT_COUNT, black);
-
 							await createTimeout(() => {}, setting.delayTime);
 						}
 					}
 
 					for (let strobe = 0; strobe < strobeCount2; strobe++) {
 						if (!isActive()) return;
-
 						await createTimeout(() => {}, setting.delayTime * 12);
 
 						for (let i = 0; i < ledsPerGroup; i++) {
@@ -356,20 +313,16 @@ const AnimatedDots = React.memo(
 
 							setLedColor(
 								(ledIndex + 1) % LIGHT_COUNT,
-
 								setting.colors[(ledIndex + colorer) % COLOR_COUNT],
 							);
-
 							await createTimeout(() => {}, setting.delayTime);
 						}
-
 						await createTimeout(() => {}, setting.delayTime * 12);
 
 						for (let i = 0; i < ledsPerGroup; i++) {
 							const ledIndex = random(0, LIGHT_COUNT);
 
 							setLedColor((ledIndex + 1) % LIGHT_COUNT, black);
-
 							await createTimeout(() => {}, setting.delayTime);
 						}
 					}
@@ -393,10 +346,8 @@ const AnimatedDots = React.memo(
 			for (let i = 0; i < LIGHT_COUNT; i++) {
 				const colorIndex =
 					i < setting.colors.length ? i : i % setting.colors.length;
-
 				newColors[i] = setting.colors[colorIndex] || black;
 			}
-
 			setDotColors(newColors);
 		}, [setting.colors]);
 
@@ -422,17 +373,13 @@ const AnimatedDots = React.memo(
 							const ledIndex = startIdx + i;
 
 							if (!isActive()) return;
-
 							setLedColor(
 								(ledIndex + 1) % LIGHT_COUNT,
-
 								setting.colors[ledIndex % COLOR_COUNT],
 							);
-
 							await createTimeout(() => {}, setting.delayTime / 2);
 
 							if (!isActive()) return;
-
 							setLedColor(ledIndex % LIGHT_COUNT, black);
 						}
 
@@ -451,14 +398,11 @@ const AnimatedDots = React.memo(
 
 							setLedColor(
 								(ledIndex + 1) % LIGHT_COUNT,
-
 								setting.colors[ledIndex % COLOR_COUNT],
 							);
-
 							await createTimeout(() => {}, setting.delayTime / 2);
 
 							if (!isActive()) return;
-
 							setLedColor(ledIndex % LIGHT_COUNT, black);
 						}
 
@@ -480,17 +424,13 @@ const AnimatedDots = React.memo(
 							const ledIndex = startIdx + i;
 
 							if (!isActive()) return;
-
 							setLedColor(
 								(ledIndex + 1) % LIGHT_COUNT,
-
 								setting.colors[ledIndex % COLOR_COUNT],
 							);
-
 							await createTimeout(() => {}, setting.delayTime / 2);
 
 							if (!isActive()) return;
-
 							setLedColor(ledIndex % LIGHT_COUNT, black);
 						}
 
@@ -508,17 +448,13 @@ const AnimatedDots = React.memo(
 							const ledIndex = startIdx + i;
 
 							if (!isActive()) return;
-
 							setLedColor(
 								(ledIndex + 1) % LIGHT_COUNT,
-
 								setting.colors[ledIndex % COLOR_COUNT],
 							);
-
 							await createTimeout(() => {}, setting.delayTime / 2);
 
 							if (!isActive()) return;
-
 							setLedColor(ledIndex % LIGHT_COUNT, black);
 						}
 
@@ -545,27 +481,18 @@ const AnimatedDots = React.memo(
 				for (let j = 0; j < COLOR_COUNT; j++) {
 					for (let i = 0; i < LIGHT_COUNT; i++) {
 						if (!isActive()) return;
-
 						let ledIndex = (j + i) % LIGHT_COUNT;
-
 						let ledIndex2 = (j + i + 1) % LIGHT_COUNT;
 
 						setLedColor(ledIndex, setting.colors[j]);
-
 						setLedColor(ledIndex2, setting.colors[j]);
-
 						await createTimeout(() => {}, setting.delayTime * 2);
 
 						if (!isActive()) return;
-
 						ledIndex = (j + i + 1) % LIGHT_COUNT;
-
 						ledIndex2 = (j + i + 2) % LIGHT_COUNT;
-
 						setLedColor(ledIndex, setting.colors[j]);
-
 						setLedColor(ledIndex2, setting.colors[j]);
-
 						await createTimeout(() => {}, setting.delayTime * 2);
 					}
 				}
@@ -589,19 +516,14 @@ const AnimatedDots = React.memo(
 
 						for (let k = 0; k < 4; k++) {
 							if (!isActive()) return;
-
 							setLedColor(offset, black);
-
 							await createTimeout(() => {}, setting.delayTime);
 
 							if (!isActive()) return;
-
 							setLedColor(offset, setting.colors[i]);
 						}
-
 						await createTimeout(() => {}, setting.delayTime * 2);
 					}
-
 					await createTimeout(() => {}, setting.delayTime * 2);
 				}
 			},
@@ -642,45 +564,30 @@ const AnimatedDots = React.memo(
 
 						for (let x = 0; x < 2; x++) {
 							if (!isActive()) return;
-
 							setLedColor(j, setting.colors[i]);
-
 							await createTimeout(() => {}, setting.delayTime * 2);
 
 							if (!isActive()) return;
-
 							setLedColor(j, black);
-
 							setLedColor(k, setting.colors[m]);
-
 							await createTimeout(() => {}, setting.delayTime * 2);
 
 							if (!isActive()) return;
-
 							setLedColor(k, black);
-
 							setLedColor(l, setting.colors[n]);
-
 							await createTimeout(() => {}, setting.delayTime * 2);
 
 							if (!isActive()) return;
-
 							setLedColor(l, black);
-
 							setLedColor(y, setting.colors[o]);
-
 							await createTimeout(() => {}, setting.delayTime * 2);
 
 							if (!isActive()) return;
-
 							setLedColor(y, black);
-
 							setLedColor(z, setting.colors[p]);
-
 							await createTimeout(() => {}, setting.delayTime * 2);
 
 							if (!isActive()) return;
-
 							setLedColor(z, black);
 						}
 					}
@@ -705,7 +612,6 @@ const AnimatedDots = React.memo(
 				for (let i = 0; i < LIGHT_COUNT; i++) {
 					for (let j = 0; j < LIGHT_COUNT / 2; j++) {
 						if (!isActive()) return;
-
 						let offset = (i + j * 2) % LIGHT_COUNT;
 
 						const colInd1 = (i + 1) % (COLOR_COUNT / 2);
@@ -713,15 +619,11 @@ const AnimatedDots = React.memo(
 						const colInd2 = (i + 2) % COLOR_COUNT;
 
 						setLedColor(offset, setting.colors[colInd1]);
-
 						await createTimeout(() => {}, setting.delayTime * 2);
 
 						if (!isActive()) return;
-
 						offset = (i + j * 2 + 8) % LIGHT_COUNT;
-
 						setLedColor(offset, setting.colors[colInd2]);
-
 						await createTimeout(() => {}, setting.delayTime * 2);
 					}
 				}
@@ -745,13 +647,10 @@ const AnimatedDots = React.memo(
 					for (let i = 0; i < COLOR_COUNT; i++) {
 						for (let j = 0; j < LIGHT_COUNT; j++) {
 							if (!isActive()) return;
-
 							setLedColor(j, setting.colors[(i + j) % COLOR_COUNT]);
-
 							await createTimeout(() => {}, setting.delayTime * 2);
 
 							if (!isActive()) return;
-
 							setLedColor(j, setting.colors[(kc + j) % COLOR_COUNT]);
 						}
 					}
@@ -785,13 +684,10 @@ const AnimatedDots = React.memo(
 								(li + 1) % LIGHT_COUNT,
 								setting.colors[li % COLOR_COUNT],
 							);
-
 							await createTimeout(() => {}, setting.delayTime * 4);
 
 							if (!isActive()) return;
-
 							setLedColor((li + 1) % LIGHT_COUNT, black);
-
 							await createTimeout(() => {}, setting.delayTime * 4);
 						}
 					}
@@ -804,16 +700,12 @@ const AnimatedDots = React.memo(
 
 							setLedColor(
 								(ledIndex + 1) % LIGHT_COUNT,
-
 								setting.colors[ledIndex % COLOR_COUNT],
 							);
-
 							await createTimeout(() => {}, setting.delayTime * 4);
 
 							if (!isActive()) return;
-
 							setLedColor((ledIndex + 1) % LIGHT_COUNT, black);
-
 							await createTimeout(() => {}, setting.delayTime * 4);
 						}
 					}
@@ -827,12 +719,10 @@ const AnimatedDots = React.memo(
 				COLOR_COUNT,
 			],
 		);
-
 		useEffect(() => {
 			// Reset animation state and clear any existing timeouts
 
 			animationRef.current = true;
-
 			clearAllTimeouts();
 
 			// Reset colors to proper initial state for the new setting
@@ -856,64 +746,40 @@ const AnimatedDots = React.memo(
 					switch (setting.flashingPattern) {
 						case "0": // BLENDER
 							await blenderAnimation(() => animationRef.current);
-
 							break;
-
 						case "1": // CHRISTMAS
 							await christmasAnimation(() => animationRef.current);
-
 							break;
-
 						case "2": // COMFORT SONG
 							await comfortSongAnimation(() => animationRef.current);
-
 							break;
-
 						case "3": // FUNKY
 							await funkyAnimation(() => animationRef.current);
-
 							break;
-
 						case "4": // MOLD
 							await moldAnimation(() => animationRef.current);
-
 							break;
-
 						case "5": // PROGRESSIVE
 							await progressiveAnimation(() => animationRef.current);
-
 							break;
-
 						case "6": // STILL
 							await stillAnimation();
-
 							return; // Don't repeat for still effect
-
 						case "7": // STROBE CHANGE
 							await strobeChangeAnimation(() => animationRef.current);
-
 							break;
-
 						case "8": // TECHNO
 							await technoAnimation(() => animationRef.current);
-
 							break;
-
 						case "9": // TRACE MANY
 							await traceManyAnimation(() => animationRef.current);
-
 							break;
-
 						case "10": // TRACE ONE
 							await traceOneAnimation(() => animationRef.current);
-
 							break;
-
 						case "11": // TRANCE
 							await tranceAnimation(() => animationRef.current);
-
 							break;
-
 						default:
 							setAllLeds(setting.colors[0] || black);
 
@@ -928,15 +794,12 @@ const AnimatedDots = React.memo(
 						setTimeout(animate, 0);
 					}
 				};
-
 				animate();
 			};
-
 			startAnimation();
 
 			return () => {
 				animationRef.current = false;
-
 				clearAllTimeouts();
 			};
 		}, [
@@ -1054,4 +917,4 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		alignItems: "center",
 	},
-});
+});

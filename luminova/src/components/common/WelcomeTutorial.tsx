@@ -51,7 +51,7 @@ const tutorialPages: TutorialPage[] = [
 	{
 		title: "More Information",
 		content:
-			"Tap the info button in the top-right corner anytime to learn about the app structure, read detailed instructions, and discover all available features. If you wish to return to this menu, tap `Hello` on the home screen five times.",
+			"Tap the info button in the top-right corner anytime to learn about the app structure, read detailed instructions, and discover all available features. If you wish to return to this menu, tap `Luminova` on the home screen five times.",
 	},
 	{
 		title: "Separation of Concerns",
@@ -243,9 +243,9 @@ export default function WelcomeTutorial({
 										<View style={styles.toggleRow}>
 											<LedToggle
 												isShelfConnected={false}
-												setIsShelfConnected={() => {}} // No-op for demo
+												setIsShelfConnected={() => { }} // No-op for demo
 												isEnabled={false}
-												setIsEnabled={() => {}} // No-op for demo
+												setIsEnabled={() => { }} // No-op for demo
 												disableAnimation={true}
 												containerStyle={styles.toggleInlineContainer}
 											/>
@@ -491,4 +491,4 @@ const styles = StyleSheet.create({
 		flex: 1,
 		paddingLeft: 10 * DIMENSIONS.SCALE,
 	},
-});
+});

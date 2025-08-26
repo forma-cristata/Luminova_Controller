@@ -97,7 +97,7 @@ export default function Info() {
 			title: "Welcome Screen",
 			data: [
 				"New users will see a helpful tutorial - you can skip it or follow along.",
-				"Re-access the welcome tutorial by tapping 'Hello' 5 times on the Welcome screen.",
+				"Re-access the welcome tutorial by tapping 'Luminova' 5 times on the Welcome screen.",
 				"Enter your device's IP address in the text field if it differs from the default.",
 				"Wait for the LED status toggle to synchronize with your device's state.",
 				"Use the toggle to control turning your device on and off.",
@@ -301,4 +301,4 @@ const styles = StyleSheet.create({
 		textAlign: "center",
 		marginBottom: 10 * DIMENSIONS.SCALE,
 	},
-});
+});

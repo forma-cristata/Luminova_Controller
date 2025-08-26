@@ -27,7 +27,7 @@ interface WelcomeProps {
 export default function Welcome({ navigation }: WelcomeProps) {
 	const { setLastEdited, setIsShelfConnected } = useConfiguration();
 	const [displayText, setDisplayText] = useState("");
-	const fullText = "Hello";
+	const fullText = "Luminova";
 	const [isEnabled, setIsEnabled] = useState(false);
 	const [showTutorial, setShowTutorial] = useState(false);
 	const [debugTapCount, setDebugTapCount] = useState(0);
@@ -208,10 +208,11 @@ const styles = StyleSheet.create({
 	titleContainer: {
 		alignItems: "center",
 		justifyContent: "center",
-		marginBottom: DIMENSIONS.SCREEN_HEIGHT * 0.03,
-		paddingHorizontal: DIMENSIONS.SCREEN_WIDTH * 0.05,
+		marginBottom: DIMENSIONS.SCREEN_HEIGHT * 0.02,
+		paddingHorizontal: DIMENSIONS.SCREEN_WIDTH * 0.02,
 		paddingVertical: DIMENSIONS.SCREEN_HEIGHT * 0.02,
 		minHeight: DIMENSIONS.SCREEN_HEIGHT * 0.15,
+		width: "98%",
 	},
 	middleSection: {
 		flex: 1,
@@ -230,4 +231,4 @@ const styles = StyleSheet.create({
 		fontSize: DIMENSIONS.SCALE * 37,
 		fontFamily: FONTS.SIGNATURE,
 	},
-});
+});

@@ -43,10 +43,12 @@ export default function AnimatedTitle({
 					fontSize,
 					marginBottom,
 					marginTop,
+					textAlign: "center",
+					width: "100%",
 				},
 			]}
 		>
 			{text}
 		</Text>
 	);
-}
+}

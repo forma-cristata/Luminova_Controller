@@ -43,8 +43,7 @@ async function request(
 			try {
 				const errorBody = await response.json();
 				throw new Error(
-					`HTTP error! status: ${response.status}, message: ${
-						errorBody.message || "Unknown error"
+					`HTTP error! status: ${response.status}, message: ${errorBody.message || "Unknown error"
 					}`,
 				);
 			} catch (_e) {
@@ -149,13 +148,13 @@ export async function previewSetting(
 	return postConfig({
 		colors: setting.colors,
 		effectNumber: setting.flashingPattern,
-		delayTime: setting.delayTime,
+		delayTime: Math.max(1, setting.delayTime ? Math.floor(setting.delayTime / 4) : 1),
 	});
 }
 
 export async function flashSetting(setting: Setting): Promise<ApiResponse> {
 	return postConfig({
-		delayTime: setting.delayTime,
+		delayTime: Math.max(1, Math.floor(setting.delayTime / 4)),
 		effectNumber: setting.flashingPattern,
 		whiteValues: setting.whiteValues,
 		brightnessValues: setting.brightnessValues,
@@ -167,7 +166,7 @@ export async function restoreConfiguration(
 	config: Partial<Setting>,
 ): Promise<ApiResponse> {
 	return postConfig({
-		delayTime: config?.delayTime,
+		delayTime: Math.max(1, config?.delayTime ? Math.floor(config.delayTime / 4) : 1),
 		effectNumber: config?.flashingPattern,
 		whiteValues: config?.whiteValues,
 		brightnessValues: config?.brightnessValues,

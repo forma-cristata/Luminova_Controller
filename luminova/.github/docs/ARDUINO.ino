@@ -117,9 +117,9 @@ void focalCheck(float delayTime) {
         case A0: focalPoint = 15; break;
         }
     }
-	focal = focalPoint;
-    Serial.print("Focal point: ");
-    Serial.println(focal);
+	//focal = focalPoint; uncomment to resume magnetivity
+    //Serial.print("Focal point: ");
+    //Serial.println(focal);
 }
 // 11 -> Trance
 void StateOfTrance() {
@@ -218,6 +218,7 @@ void Medusa() {
             for (int i = 0; i < focal; i++) {
                 if (effectNumber != 10) return;
                 setLed(i, colors[kc], whiteValues[kc], brightnessValues[kc]);
+                focalCheck(delayTime);
                 if (g >= focal) {
                     setLed(g, colors[kc], whiteValues[kc], brightnessValues[kc]);
                 }
@@ -309,24 +310,24 @@ void BerghainBitte() {
                 for (int x = 0; x < 2; x++) {
                     if (effectNumber != 8) return;
 					setLed(j, colors[i], whiteValues[i], brightnessValues[i]);
-                    delay(delayTime);
+                    delay(delayTime/4);
 					setLed(j, "#000000", 0, 0);
 					setLed(k, colors[m], whiteValues[m], brightnessValues[m]);
-                    delay(delayTime);
+                    delay(delayTime/4);
 					setLed(k, "#000000", 0, 0);
 					setLed(l, colors[n], whiteValues[n], brightnessValues[n]);
-                    delay(delayTime);
+                    delay(delayTime/4);
 					setLed(l, "#000000", 0, 0);
 					setLed(y, colors[o], whiteValues[o], brightnessValues[o]);
-                    delay(delayTime);
+                    delay(delayTime/4);
 					setLed(y, "#000000", 0, 0);
 					setLed(z, colors[p], whiteValues[p], brightnessValues[p]);
-                    focalCheck(delayTime);
+                    focalCheck(delayTime/4);
 					setLed(z, "#000000", 0, 0);
                 }
             }
         }
-        focalCheck(delayTime);
+        focalCheck(delayTime/4);
     }
     else {
         for (int i = 0; i < COLOR_COUNT; i++) {
@@ -350,7 +351,7 @@ void BerghainBitte() {
                     if (zz < focal) {
                         setLed(zz, colors[i], whiteValues[i], brightnessValues[i]);
                     }
-                    delay(delayTime);
+                    delay(delayTime/4);
                     setLed(j, "#000000", 0, 0);
                     if (zz < focal) {
                         setLed(zz, "#000000", 0, 0);
@@ -359,7 +360,7 @@ void BerghainBitte() {
                     if (zz < focal) {
                         setLed(k2, colors[m], whiteValues[m], brightnessValues[m]);
                     }
-                    delay(delayTime);
+                    delay(delayTime/4);
                     setLed(k, "#000000", 0, 0);
                     if (zz < focal) {
                         setLed(k2, "#000000", 0, 0);
@@ -368,7 +369,7 @@ void BerghainBitte() {
                     if (zz < focal) {
                         setLed(l2, colors[n], whiteValues[n], brightnessValues[n]);
                     }
-                    delay(delayTime);
+                    delay(delayTime/4);
                     setLed(l, "#000000", 0, 0);
                     if (zz < focal) {
                         setLed(l2, "#000000", 0, 0);
@@ -377,7 +378,7 @@ void BerghainBitte() {
                     if (zz < focal) {
                         setLed(y2, colors[o], whiteValues[o], brightnessValues[o]);
                     }
-                    delay(delayTime);
+                    delay(delayTime/4);
                     setLed(y, "#000000", 0, 0);
                     if (zz < focal) {
                         setLed(y2, "#000000", 0, 0);
@@ -386,7 +387,7 @@ void BerghainBitte() {
                     if (zz < focal) {
                         setLed(z2, colors[p], whiteValues[p], brightnessValues[p]);
                     }
-                    focalCheck(delayTime);
+                    focalCheck(delayTime/4);
                     setLed(z, "#000000", 0, 0);
                     if (zz < focal) {
                         setLed(z2, "#000000", 0, 0);
@@ -395,7 +396,7 @@ void BerghainBitte() {
                 zz++;
             }
         }
-        focalCheck(delayTime);
+        focalCheck(delayTime/4);
     }
 }
 // 7 -> Strobe Change
@@ -934,13 +935,12 @@ void Smolder() {
 void StuckInABlender() {
     unsigned long currentTime = millis(); // Randomization - Time since arduino began functioning.
 	int colorOffset = (currentTime / 100) % COLOR_COUNT; // Turn into usable random Color Index.
-    delayTime = delayTime / 4;
     if (focal == -1) {
         focalCheck(0);
 		for (int i = 0; i < LIGHT_COUNT; i++) {
             if (effectNumber != 0) return;
             int colorIndex = (i + colorOffset) % COLOR_COUNT;
-            delay(delayTime);
+            delay(delayTime/4);
 			setLed(i, colors[colorIndex], whiteValues[colorIndex], brightnessValues[colorIndex]);
 		}
     }
@@ -954,7 +954,7 @@ void StuckInABlender() {
             if (ichlibedich >= focal) {
                 setLed(ichlibedich, colors[colorIndex], whiteValues[colorIndex], brightnessValues[colorIndex]);
             }
-            delay(delayTime);
+            delay(delayTime/4);
             ichlibedich--;
         }
     }
@@ -1586,7 +1586,7 @@ void currentSettingPrint() {
 
         ////Serial.println("EffectNumber: " + String(effectNumber));
 
-        ////Serial.println("delayTime: " + String(delayTime));
+        Serial.println("delayTime: " + String(delayTime));
 
         ////Serial.println("WhiteValues: ");
 

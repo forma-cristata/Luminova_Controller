@@ -7,8 +7,8 @@
 #define LIGHT_COUNT 16
 #define COLOR_COUNT 16
 WiFiServer server(80);
-const char ssid[] = "friskyfishes";
-const char pass[] = "allthatjazz";
+const char ssid[] = "<insertWifi>";
+const char pass[] = "<InsertPassword>";
 CRGB leds[NUM_LEDS];
 int startupFocal = -1;
 bool startupShelfOn = true;

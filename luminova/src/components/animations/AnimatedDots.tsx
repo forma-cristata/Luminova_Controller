@@ -560,27 +560,27 @@ const AnimatedDots = React.memo(
 						for (let x = 0; x < 2; x++) {
 							if (!isActive()) return;
 							setLedColor(j, setting.colors[i]);
-							await createTimeout(() => { }, setting.delayTime * 2);
+							await createTimeout(() => { }, setting.delayTime * 4);
 
 							if (!isActive()) return;
 							setLedColor(j, black);
 							setLedColor(k, setting.colors[m]);
-							await createTimeout(() => { }, setting.delayTime * 2);
+							await createTimeout(() => { }, setting.delayTime * 4);
 
 							if (!isActive()) return;
 							setLedColor(k, black);
 							setLedColor(l, setting.colors[n]);
-							await createTimeout(() => { }, setting.delayTime * 2);
+							await createTimeout(() => { }, setting.delayTime * 4);
 
 							if (!isActive()) return;
 							setLedColor(l, black);
 							setLedColor(y, setting.colors[o]);
-							await createTimeout(() => { }, setting.delayTime * 2);
+							await createTimeout(() => { }, setting.delayTime * 4);
 
 							if (!isActive()) return;
 							setLedColor(y, black);
 							setLedColor(z, setting.colors[p]);
-							await createTimeout(() => { }, setting.delayTime * 2);
+							await createTimeout(() => { }, setting.delayTime * 4);
 
 							if (!isActive()) return;
 							setLedColor(z, black);

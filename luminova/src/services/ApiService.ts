@@ -153,8 +153,13 @@ export async function previewSetting(
 }
 
 export async function flashSetting(setting: Setting): Promise<ApiResponse> {
+	// For Berghain Bitte pattern (ID: "8"), divide delay time by 4 additional times
+	const isBerghainBitte = setting.flashingPattern === "8";
+	const baseDelayTime = Math.floor(setting.delayTime / 4);
+	const finalDelayTime = isBerghainBitte ? Math.floor(baseDelayTime / 4) : baseDelayTime;
+
 	return postConfig({
-		delayTime: Math.max(1, Math.floor(setting.delayTime / 4)),
+		delayTime: Math.max(1, finalDelayTime),
 		effectNumber: setting.flashingPattern,
 		whiteValues: setting.whiteValues,
 		brightnessValues: setting.brightnessValues,

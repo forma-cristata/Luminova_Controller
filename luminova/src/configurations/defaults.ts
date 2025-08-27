@@ -27,7 +27,7 @@ export const DEFAULT_SETTINGS: Setting[] = [
 			255,
 		],
 		flashingPattern: "3",
-		delayTime: 3,
+		delayTime: 6,
 	},
 	{
 		name: "Homeostasis",
@@ -55,7 +55,7 @@ export const DEFAULT_SETTINGS: Setting[] = [
 			255,
 		],
 		flashingPattern: "6",
-		delayTime: 3,
+		delayTime: 6,
 	},
 	{
 		name: "Queen of Hearts",
@@ -83,7 +83,7 @@ export const DEFAULT_SETTINGS: Setting[] = [
 			255,
 		],
 		flashingPattern: "10",
-		delayTime: 3,
+		delayTime: 10,
 	},
 	{
 		name: "Amethyst",
@@ -111,7 +111,7 @@ export const DEFAULT_SETTINGS: Setting[] = [
 			255,
 		],
 		flashingPattern: "9",
-		delayTime: 3,
+		delayTime: 6,
 	},
 	{
 		name: "Incindium",
@@ -139,7 +139,7 @@ export const DEFAULT_SETTINGS: Setting[] = [
 			255,
 		],
 		flashingPattern: "5",
-		delayTime: 3,
+		delayTime: 6,
 	},
 	{
 		name: "Toter Schmetterling",
@@ -167,7 +167,7 @@ export const DEFAULT_SETTINGS: Setting[] = [
 			255,
 		],
 		flashingPattern: "7",
-		delayTime: 3,
+		delayTime: 6,
 	},
 	{
 		name: "Velvet Static",
@@ -195,7 +195,7 @@ export const DEFAULT_SETTINGS: Setting[] = [
 			255,
 		],
 		flashingPattern: "2",
-		delayTime: 3,
+		delayTime: 6,
 	},
 	{
 		name: "Waltzer",
@@ -223,7 +223,7 @@ export const DEFAULT_SETTINGS: Setting[] = [
 			255,
 		],
 		flashingPattern: "0",
-		delayTime: 3,
+		delayTime: 7,
 	},
 	{
 		name: "Black Lotus",
@@ -307,7 +307,7 @@ export const DEFAULT_SETTINGS: Setting[] = [
 			255,
 		],
 		flashingPattern: "4",
-		delayTime: 3,
+		delayTime: 5,
 	},
 	{
 		name: "Dissonant Pulse",
@@ -335,7 +335,7 @@ export const DEFAULT_SETTINGS: Setting[] = [
 			255,
 		],
 		flashingPattern: "3",
-		delayTime: 3,
+		delayTime: 6,
 	},
 	{
 		name: "Ashes to Ashes",
@@ -363,6 +363,6 @@ export const DEFAULT_SETTINGS: Setting[] = [
 			255,
 		],
 		flashingPattern: "1",
-		delayTime: 3,
+		delayTime: 8,
 	},
 ];

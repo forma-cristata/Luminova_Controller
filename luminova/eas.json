@@ -17,8 +17,7 @@
 		"preview": {
 			"distribution": "internal",
 			"android": {
-				"buildType": "apk",
-				"gradleCommand": ":app:assembleRelease",
+				"buildType": "app-bundle",
 				"credentialsSource": "local"
 			}
 		},
@@ -28,8 +27,7 @@
 				"distribution": "store"
 			},
 			"android": {
-				"buildType": "apk",
-				"gradleCommand": ":app:assembleRelease",
+				"buildType": "app-bundle",
 				"credentialsSource": "local"
 			}
 		},
@@ -48,4 +46,4 @@
 	"submit": {
 		"production": {}
 	}
-}
+}

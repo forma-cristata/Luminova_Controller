@@ -101,7 +101,7 @@ export default function Info() {
 				"Enter your device's IP address in the text field if it differs from the default.",
 				"Wait for the LED status toggle to synchronize with your device's state.",
 				"Use the toggle to control turning your device on and off.",
-				"Access your saved settings by tapping 'Create Settings'.",
+				"Access your saved settings by tapping 'Create ⟩'.",
 			],
 		},
 		{

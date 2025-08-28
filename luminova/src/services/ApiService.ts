@@ -43,7 +43,8 @@ async function request(
 			try {
 				const errorBody = await response.json();
 				throw new Error(
-					`HTTP error! status: ${response.status}, message: ${errorBody.message || "Unknown error"
+					`HTTP error! status: ${response.status}, message: ${
+						errorBody.message || "Unknown error"
 					}`,
 				);
 			} catch (_e) {
@@ -148,7 +149,10 @@ export async function previewSetting(
 	return postConfig({
 		colors: setting.colors,
 		effectNumber: setting.flashingPattern,
-		delayTime: Math.max(1, setting.delayTime ? Math.floor(setting.delayTime / 4) : 1),
+		delayTime: Math.max(
+			1,
+			setting.delayTime ? Math.floor(setting.delayTime / 4) : 1,
+		),
 	});
 }
 
@@ -156,7 +160,9 @@ export async function flashSetting(setting: Setting): Promise<ApiResponse> {
 	// For Berghain Bitte pattern (ID: "8"), divide delay time by 4 additional times
 	const isBerghainBitte = setting.flashingPattern === "8";
 	const baseDelayTime = Math.floor(setting.delayTime / 4);
-	const finalDelayTime = isBerghainBitte ? Math.floor(baseDelayTime / 4) : baseDelayTime;
+	const finalDelayTime = isBerghainBitte
+		? Math.floor(baseDelayTime / 4)
+		: baseDelayTime;
 
 	return postConfig({
 		delayTime: Math.max(1, finalDelayTime),
@@ -171,7 +177,10 @@ export async function restoreConfiguration(
 	config: Partial<Setting>,
 ): Promise<ApiResponse> {
 	return postConfig({
-		delayTime: Math.max(1, config?.delayTime ? Math.floor(config.delayTime / 4) : 1),
+		delayTime: Math.max(
+			1,
+			config?.delayTime ? Math.floor(config.delayTime / 4) : 1,
+		),
 		effectNumber: config?.flashingPattern,
 		whiteValues: config?.whiteValues,
 		brightnessValues: config?.brightnessValues,

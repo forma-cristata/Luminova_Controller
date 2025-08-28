@@ -46,7 +46,8 @@ export default function Settings({ navigation }: SettingsProps) {
 	const [currentIndex, setCurrentIndex] = React.useState(0);
 	const [tempIndex, setTempIndex] = React.useState(0);
 	const [isInitialRender, setIsInitialRender] = React.useState(true);
-	const [isInitialSetupComplete, setIsInitialSetupComplete] = React.useState(false);
+	const [isInitialSetupComplete, setIsInitialSetupComplete] =
+		React.useState(false);
 	const isDeletingRef = React.useRef(false);
 	const previousIndexRef = React.useRef(0);
 
@@ -72,7 +73,7 @@ export default function Settings({ navigation }: SettingsProps) {
 			pulseOpacity.value = withRepeat(
 				withTiming(0.5, {
 					duration: 800,
-					easing: Easing.inOut(Easing.ease)
+					easing: Easing.inOut(Easing.ease),
 				}),
 				-1,
 				true,
@@ -80,7 +81,7 @@ export default function Settings({ navigation }: SettingsProps) {
 		} else {
 			pulseOpacity.value = withTiming(0.3, {
 				duration: 200,
-				easing: Easing.out(Easing.ease)
+				easing: Easing.out(Easing.ease),
 			});
 		}
 	}, [carouselData.length, pulseOpacity]);
@@ -102,17 +103,24 @@ export default function Settings({ navigation }: SettingsProps) {
 			focusedBlockScale.value = 0.98;
 			focusedBlockOpacity.value = withTiming(1, {
 				duration: 250,
-				easing: Easing.out(Easing.cubic)
+				easing: Easing.out(Easing.cubic),
 			});
 			focusedBlockScale.value = withTiming(1, {
 				duration: 250,
-				easing: Easing.out(Easing.cubic)
+				easing: Easing.out(Easing.cubic),
 			});
 		}
 
 		// Update the previous index reference
 		previousIndexRef.current = currentIndex;
-	}, [currentIndex, isInitialRender, isInitialSetupComplete, focusedBlockOpacity, focusedBlockScale, settingsData.length]);
+	}, [
+		currentIndex,
+		isInitialRender,
+		isInitialSetupComplete,
+		focusedBlockOpacity,
+		focusedBlockScale,
+		settingsData.length,
+	]);
 
 	const _animatedIndicatorStyle = useAnimatedStyle(() => ({
 		opacity: carouselData.length > 1 ? pulseOpacity.value : 0.3,
@@ -153,14 +161,26 @@ export default function Settings({ navigation }: SettingsProps) {
 					const loadedData = await loadSettings();
 					if (loadedData && loadedData.length > 0) {
 						const deepCopy = JSON.parse(JSON.stringify(loadedData));
-						setSettingsData(deepCopy);
-
 						const lastEditedIndex = lastEdited ? parseInt(lastEdited) : 0;
-						setCurrentIndex(lastEditedIndex);
-						setTempIndex(lastEditedIndex);
-						setIsInitialRender(true);
-						setIsInitialSetupComplete(false);
-						previousIndexRef.current = lastEditedIndex;
+
+						// Only reset carousel state if we're actually returning from an editor
+						// (data changed) or if this is the first load (no existing data)
+						const isFirstLoad = settingsData.length === 0;
+						const dataChanged =
+							JSON.stringify(settingsData) !== JSON.stringify(loadedData);
+
+						if (isFirstLoad || dataChanged) {
+							// Full reset needed - returning from editor or first load
+							setSettingsData(deepCopy);
+							setCurrentIndex(lastEditedIndex);
+							setTempIndex(lastEditedIndex);
+							setIsInitialRender(true);
+							setIsInitialSetupComplete(false);
+							previousIndexRef.current = lastEditedIndex;
+						} else {
+							// Just returning from Info screen - don't reset anything
+							// The carousel should stay exactly where it is
+						}
 					} else {
 						// Ensure settingsData is never undefined - set to empty array
 						setSettingsData([]);
@@ -175,7 +195,7 @@ export default function Settings({ navigation }: SettingsProps) {
 		});
 
 		return unsubscribe;
-	}, [navigation, lastEdited]);
+	}, [navigation, lastEdited, settingsData]);
 
 	// Handle carousel positioning when ready
 	React.useEffect(() => {
@@ -205,7 +225,11 @@ export default function Settings({ navigation }: SettingsProps) {
 
 	// Sync debounced temp index to current index for smoother boundary handling
 	React.useEffect(() => {
-		if (debouncedTempIndex !== currentIndex && !isDeletingRef.current && !isInitialRender) {
+		if (
+			debouncedTempIndex !== currentIndex &&
+			!isDeletingRef.current &&
+			!isInitialRender
+		) {
 			setCurrentIndex(debouncedTempIndex);
 		}
 	}, [debouncedTempIndex, currentIndex, isInitialRender]);

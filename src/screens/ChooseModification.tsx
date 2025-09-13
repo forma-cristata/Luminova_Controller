@@ -1,5 +1,6 @@
 import React from "react";
-import { SafeAreaView, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import AnimatedDots from "@/src/components/animations/AnimatedDots";
 import Button from "@/src/components/buttons/Button";
 import Header from "@/src/components/common/Header";

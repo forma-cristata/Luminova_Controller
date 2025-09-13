@@ -13,7 +13,6 @@ import { useState, useCallback } from "react";
 import {
 	Dimensions,
 	Keyboard,
-	SafeAreaView,
 	ScrollView,
 	StyleSheet,
 	Text,
@@ -22,15 +21,13 @@ import {
 	View,
 	TouchableWithoutFeedback,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import {
 	GestureHandlerRootView,
-	PanGestureHandler,
+	Gesture,
+	GestureDetector,
 } from "react-native-gesture-handler";
-import Animated, {
-	runOnJS,
-	useAnimatedGestureHandler,
-	useSharedValue,
-} from "react-native-reanimated";
+import Animated, { runOnJS, useSharedValue } from "react-native-reanimated";
 import ActionButton from "@/src/components/buttons/ActionButton";
 import Header from "@/src/components/common/Header";
 import ColorButton from "@/src/components/buttons/ColorButton";
@@ -131,10 +128,10 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 		const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
 		return result
 			? {
-					r: parseInt(result[1], 16),
-					g: parseInt(result[2], 16),
-					b: parseInt(result[3], 16),
-				}
+				r: parseInt(result[1], 16),
+				g: parseInt(result[2], 16),
+				b: parseInt(result[3], 16),
+			}
 			: null;
 	}, []);
 
@@ -528,13 +525,12 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 		setHasChanges(true);
 	};
 
-	const panGestureEvent = useAnimatedGestureHandler({
-		onStart: (event) => {
+	const panGesture = Gesture.Pan()
+		.onStart((event) => {
 			startY.value = event.absoluteY;
 			startX.value = event.absoluteX;
-		},
-		onActive: () => {},
-		onEnd: (event) => {
+		})
+		.onEnd((event) => {
 			const initY = startY.value;
 			const initX = startX.value;
 			const deltaY = event.absoluteY - initY;
@@ -556,16 +552,11 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 			}
 			startY.value = 0;
 			startX.value = 0;
-		},
-		onFinish: () => {
+		})
+		.onFinalize(() => {
 			startY.value = 0;
 			startX.value = 0;
-		},
-		onCancel: () => {
-			startY.value = 0;
-			startX.value = 0;
-		},
-	});
+		});
 
 	const previewAPI = async () => {
 		if (globalIsPreviewing) {
@@ -666,7 +657,7 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 	return (
 		<TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
 			<GestureHandlerRootView style={{ flex: 1 }}>
-				<PanGestureHandler onGestureEvent={panGestureEvent}>
+				<GestureDetector gesture={panGesture}>
 					<Animated.View style={{ flex: 1 }}>
 						<SafeAreaView style={COMMON_STYLES.container}>
 							<Header
@@ -859,7 +850,7 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 							</View>
 						</SafeAreaView>
 					</Animated.View>
-				</PanGestureHandler>
+				</GestureDetector>
 				<HexKeyboard
 					visible={hexKeyboardVisible}
 					onClose={() => setHexKeyboardVisible(false)}

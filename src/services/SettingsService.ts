@@ -1,15 +1,14 @@
-import * as FileSystem from "expo-file-system";
+import { File, Paths } from "expo-file-system";
 import { Alert } from "react-native";
 import type { Setting } from "@/src/types/SettingInterface";
 import { DEFAULT_SETTINGS } from "@/src/configurations/defaults";
 
-const FILE_URI = `${FileSystem.documentDirectory}settings.json`;
+const settingsFile = new File(Paths.document, "settings.json");
 
 export async function loadSettings(): Promise<Setting[]> {
 	try {
-		const fileInfo = await FileSystem.getInfoAsync(FILE_URI);
-		if (fileInfo.exists) {
-			const fileContent = await FileSystem.readAsStringAsync(FILE_URI);
+		if (settingsFile.exists) {
+			const fileContent = await settingsFile.text();
 			return JSON.parse(fileContent) as Setting[];
 		}
 		// If no file exists, initialize with default settings
@@ -41,7 +40,7 @@ export async function updateSetting(
 
 export async function saveSettings(newSettings: Setting[]): Promise<void> {
 	try {
-		await FileSystem.writeAsStringAsync(FILE_URI, JSON.stringify(newSettings));
+		settingsFile.write(JSON.stringify(newSettings));
 	} catch (e) {
 		console.error("Error saving settings:", e);
 		Alert.alert("Error", "Failed to save settings.");
@@ -50,9 +49,8 @@ export async function saveSettings(newSettings: Setting[]): Promise<void> {
 
 export async function deleteSettingsFile(): Promise<void> {
 	try {
-		const fileInfo = await FileSystem.getInfoAsync(FILE_URI);
-		if (fileInfo.exists) {
-			await FileSystem.deleteAsync(FILE_URI);
+		if (settingsFile.exists) {
+			settingsFile.delete();
 			Alert.alert(
 				"Success",
 				"Settings file has been deleted. The app will now use default settings on next launch.",

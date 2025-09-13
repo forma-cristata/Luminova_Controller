@@ -3,11 +3,11 @@ import React from "react";
 import {
 	Alert,
 	Dimensions,
-	SafeAreaView,
 	StyleSheet,
 	TouchableOpacity,
 	View,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useSharedValue } from "react-native-reanimated";
 import Carousel, {
 	type ICarouselInstance,

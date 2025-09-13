@@ -5,8 +5,6 @@ const { useEffect, useState } = React;
 import {
 	Dimensions,
 	Keyboard,
-	SafeAreaView,
-	ScrollView,
 	StyleSheet,
 	Text,
 	TextInput,
@@ -14,6 +12,7 @@ import {
 	View,
 	TouchableWithoutFeedback,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import ActionButton from "@/src/components/buttons/ActionButton";
 import AnimatedDots from "@/src/components/animations/AnimatedDots";
 import Header from "@/src/components/common/Header";
@@ -88,7 +87,6 @@ export default function FlashingPatternEditor({
 	const [showBPMMeasurer, setShowBPMMeasurer] = useState(false);
 	const [isRandomizing, setIsRandomizing] = useState(false); // Flag to prevent conflicts during randomization
 	const pickerRef = React.useRef<PickerRef>(null);
-	const scrollViewRef = React.useRef<ScrollView>(null);
 
 	// Name editing state (now used for both new and existing settings)
 	const [settingName, setSettingName] = useState(setting.name);
@@ -202,38 +200,6 @@ export default function FlashingPatternEditor({
 			setBpmInput(BPM.toFixed(0));
 		}
 	}, [BPM, bpmInput, isRandomizing]);
-
-	// Auto-scroll with keyboard show/hide for BPM input visibility
-	React.useEffect(() => {
-		const keyboardDidShowListener = Keyboard.addListener(
-			"keyboardDidShow",
-			() => {
-				// Scroll to show the BPM input area with more aggressive scrolling
-				setTimeout(() => {
-					scrollViewRef.current?.scrollToEnd({ animated: true });
-				}, 100);
-				// Also try a second scroll attempt in case the first one wasn't enough
-				setTimeout(() => {
-					scrollViewRef.current?.scrollTo({ y: 1000, animated: true });
-				}, 50);
-			},
-		);
-
-		const keyboardDidHideListener = Keyboard.addListener(
-			"keyboardDidHide",
-			() => {
-				// Scroll back to top when keyboard hides
-				setTimeout(() => {
-					scrollViewRef.current?.scrollTo({ y: 0, animated: true });
-				}, 40);
-			},
-		);
-
-		return () => {
-			keyboardDidShowListener?.remove();
-			keyboardDidHideListener?.remove();
-		};
-	}, []);
 
 	// Memoized animated dots that only updates when debounced values change
 	const modeDots = React.useMemo(() => {
@@ -388,13 +354,7 @@ export default function FlashingPatternEditor({
 						beforePress: previewMode ? unPreviewAPI : undefined,
 					}}
 				/>
-				<ScrollView
-					ref={scrollViewRef}
-					style={styles.scrollView}
-					contentContainerStyle={styles.scrollContent}
-					keyboardShouldPersistTaps="handled"
-					showsVerticalScrollIndicator={false}
-				>
+				<View style={styles.contentContainer}>
 					<View style={styles.titleContainer}>
 						<RandomizeButton
 							onPress={() => {
@@ -413,7 +373,7 @@ export default function FlashingPatternEditor({
 										: ANIMATION_PATTERNS;
 								const randomPattern =
 									patternsToChooseFrom[
-										Math.floor(Math.random() * patternsToChooseFrom.length)
+									Math.floor(Math.random() * patternsToChooseFrom.length)
 									];
 								setFlashingPattern(randomPattern);
 
@@ -550,7 +510,7 @@ export default function FlashingPatternEditor({
 					</View>
 					{/* Extra space to ensure BPM input is visible when keyboard appears */}
 					<View style={styles.keyboardSpacer} />
-				</ScrollView>
+				</View>
 				<BPMMeasurer
 					isVisible={showBPMMeasurer}
 					onClose={() => setShowBPMMeasurer(false)}
@@ -566,12 +526,10 @@ export default function FlashingPatternEditor({
 const { width, height } = Dimensions.get("window");
 
 const styles = StyleSheet.create({
-	scrollView: {
+	contentContainer: {
 		flex: 1,
-	},
-	scrollContent: {
-		flexGrow: 1,
-		paddingBottom: 200 * DIMENSIONS.SCALE, // Extra space to ensure scrolling works with keyboard
+		paddingHorizontal: 20 * DIMENSIONS.SCALE,
+		paddingBottom: 20 * DIMENSIONS.SCALE,
 	},
 	keyboardSpacer: {
 		height: 50 * DIMENSIONS.SCALE, // Additional space for keyboard visibility

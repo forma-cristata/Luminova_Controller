@@ -1,6 +1,5 @@
 import { useEffect, useState, useRef } from "react";
 import {
-	SafeAreaView,
 	StyleSheet,
 	TouchableWithoutFeedback,
 	Keyboard,
@@ -8,6 +7,7 @@ import {
 	ScrollView,
 	TouchableOpacity,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import AnimatedTitle from "@/src/components/common/AnimatedTitle";
 import Button from "@/src/components/buttons/Button";
 import WelcomeTutorial from "@/src/components/common/WelcomeTutorial";

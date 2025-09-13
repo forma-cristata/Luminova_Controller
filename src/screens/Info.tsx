@@ -5,13 +5,13 @@ import {
 	Alert,
 	Linking,
 	Platform,
-	SafeAreaView,
 	SectionList,
 	StyleSheet,
 	Text,
 	TouchableOpacity,
 	View,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import AnimatedTitle from "@/src/components/common/AnimatedTitle";
 import Header from "@/src/components/common/Header";
 import { FONTS, COLORS, DIMENSIONS } from "@/src/styles/SharedStyles";

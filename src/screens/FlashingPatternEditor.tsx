@@ -225,10 +225,6 @@ export default function FlashingPatternEditor({
 
 	const handleCancel = () => {
 		unPreviewAPI();
-		const newSettingCarouselIndex = route.params?.newSettingCarouselIndex;
-		if (newSettingCarouselIndex !== undefined) {
-			setLastEdited(newSettingCarouselIndex.toString());
-		}
 		navigation.navigate("Settings");
 	};
 
@@ -373,7 +369,7 @@ export default function FlashingPatternEditor({
 										: ANIMATION_PATTERNS;
 								const randomPattern =
 									patternsToChooseFrom[
-									Math.floor(Math.random() * patternsToChooseFrom.length)
+										Math.floor(Math.random() * patternsToChooseFrom.length)
 									];
 								setFlashingPattern(randomPattern);
 

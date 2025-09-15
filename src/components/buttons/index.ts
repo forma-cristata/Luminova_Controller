@@ -1,5 +1,6 @@
 // Button components index
 export { default as ActionButton } from "./ActionButton";
+export { default as AddButton } from "./AddButton";
 export { default as BackButton } from "./BackButton";
 export { default as Button } from "./Button";
 export { default as ColorButton } from "./ColorButton";

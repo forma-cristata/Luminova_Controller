@@ -18,7 +18,7 @@ The `screens/` directory contains full-screen React Native components that repre
 **Purpose:** Information and help screen providing user guidance, app usage instructions, and LED controller setup information.
 
 ### Settings.tsx
-**Purpose:** Configuration management screen with carousel-based interface for adjusting LED controller settings and preferences.
+**Purpose:** Configuration management screen with carousel-based interface for navigating LED settings, with header-based controls for creating new settings.
 
 ### Welcome.tsx
 **Purpose:** First-time user onboarding screen guiding new users through LED controller setup and app initialization.

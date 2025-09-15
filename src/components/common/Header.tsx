@@ -1,5 +1,6 @@
 import React from "react";
 import InfoButton from "@/src/components/buttons/InfoButton";
+import AddButton from "@/src/components/buttons/AddButton";
 import LedToggle from "@/src/components/welcome/LedToggle";
 import BackButton from "@/src/components/buttons/BackButton";
 import { useConfiguration } from "@/src/context/ConfigurationContext";
@@ -21,6 +22,7 @@ interface HeaderProps {
 	disableAnimation?: boolean;
 	containerStyle?: ViewStyle;
 	backButtonProps?: BackButtonProps;
+	onAddPress?: () => void;
 }
 export default function Header({
 	isEnabled = false,
@@ -28,6 +30,7 @@ export default function Header({
 	disableAnimation = false,
 	containerStyle,
 	backButtonProps,
+	onAddPress,
 }: HeaderProps) {
 	const { isShelfConnected, setIsShelfConnected } = useConfiguration();
 	const route = useRoute<RouteProp<RootStackParamList>>();
@@ -35,6 +38,7 @@ export default function Header({
 
 	const showToggle = routeName === "Welcome";
 	const showInfo = routeName !== "Info";
+	const showAdd = routeName === "Settings";
 
 	// Deterministic header sizing (avoid Math.min/Math.max in layout math)
 	const topOffset = DIMENSIONS.SCREEN_HEIGHT * 0.005;
@@ -71,7 +75,12 @@ export default function Header({
 					)}
 				</View>
 				<View style={styles.center} />
-				<View style={styles.right}>{showInfo ? <InfoButton /> : null}</View>
+				<View style={styles.right}>
+					{showAdd ? (
+						<AddButton onPress={onAddPress} style={styles.addButton} />
+					) : null}
+					{showInfo ? <InfoButton /> : null}
+				</View>
 			</View>
 		</View>
 	);
@@ -100,5 +109,11 @@ const styles = StyleSheet.create({
 		flex: 1,
 		alignItems: "flex-end",
 		justifyContent: "center",
+		flexDirection: "row",
+		gap: DIMENSIONS.SCREEN_WIDTH * 0.02,
+	},
+	addButton: {
+		marginRight: DIMENSIONS.SCREEN_WIDTH * 0.01,
+		paddingLeft: DIMENSIONS.SCREEN_WIDTH * 0.15,
 	},
 });

@@ -22,13 +22,11 @@ export type RootStackParamList = {
 		isNew?: boolean;
 		originalName?: string;
 		settingIndex?: number;
-		newSettingCarouselIndex?: number;
 	};
 	FlashingPatternEditor: {
 		setting: Setting;
 		isNew?: boolean;
 		settingIndex?: number;
-		newSettingCarouselIndex?: number;
 	};
 	Info: undefined;
 };

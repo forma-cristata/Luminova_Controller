@@ -19,7 +19,6 @@ import Animated, {
 	withTiming,
 	Easing,
 } from "react-native-reanimated";
-import CreateButton from "@/src/components/buttons/CreateButton";
 import Header from "@/src/components/common/Header";
 import Footer from "@/src/components/common/Footer";
 import SettingBlock from "@/src/components/settings/SettingBlock";
@@ -55,10 +54,7 @@ export default function Settings({ navigation }: SettingsProps) {
 	const debouncedTempIndex = useDebounce(tempIndex, 50);
 
 	// Memoize carousel data to prevent unnecessary re-renders
-	const carouselData = React.useMemo(
-		() => [...(settingsData || []), "new"] as (Setting | "new")[],
-		[settingsData],
-	);
+	const carouselData = React.useMemo(() => settingsData || [], [settingsData]);
 
 	// Animation for scroll indicators
 	const pulseOpacity = useReanimatedSharedValue(0.8);
@@ -149,7 +145,6 @@ export default function Settings({ navigation }: SettingsProps) {
 			setting: settingCopy,
 			isNew: true,
 			originalName: newSetting.name,
-			newSettingCarouselIndex: settingsLength,
 		});
 	};
 
@@ -391,11 +386,7 @@ export default function Settings({ navigation }: SettingsProps) {
 	}, [navigation, settingsData, currentIndex]);
 	// Memoize the render item function to prevent recreation on every render
 	const renderItem = React.useCallback(
-		({ item, index }: { item: Setting | "new"; index: number }) => {
-			if (item === "new") {
-				return <View style={styles.newSettingItem} key="new-item-unique" />;
-			}
-
+		({ item, index }: { item: Setting; index: number }) => {
 			// Generate stable ID for the setting using utility function
 			const settingId = getStableSettingId(item);
 
@@ -424,6 +415,7 @@ export default function Settings({ navigation }: SettingsProps) {
 					onPress: () => navigation.popToTop(),
 					afterPress: () => setLastEdited("0"),
 				}}
+				onAddPress={createNewSetting}
 			/>
 			<View style={styles.notBackButton}>
 				<View style={[styles.focusedItem, { position: "relative" }]}>
@@ -474,9 +466,6 @@ export default function Settings({ navigation }: SettingsProps) {
 								{focusedSettingBlock}
 							</Animated.View>
 						</React.Fragment>
-					) : null}
-					{currentIndex >= (settingsData?.length || 0) ? (
-						<CreateButton key="create-new-setting" onPress={createNewSetting} />
 					) : null}
 				</View>
 				<View style={styles.carCont}>
@@ -579,10 +568,6 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 	},
 	nothing: {
-		justifyContent: "center",
-		alignItems: "center",
-	},
-	newSettingItem: {
 		justifyContent: "center",
 		alignItems: "center",
 	},

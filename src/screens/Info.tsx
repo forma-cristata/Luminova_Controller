@@ -109,7 +109,7 @@ export default function Info() {
 			data: [
 				"Navigate settings by swiping left or right, or using the chevron arrows to switch between your saved settings.",
 				"The focused setting displays above your saved settings carousel. This can be tapped anywhere to edit that setting.",
-				"Create new settings by tapping the plus button at the end of the carousel.",
+				"Create new settings by tapping the plus button in the header (next to the info button).",
 				"Duplicate existing settings using the copy icon. From here, you can edit them further.",
 				"Delete custom settings using the trash icon",
 				"Default settings can be modified but not deleted. This behavior will be improved in the future. Feel free to edit them in the meantime.",

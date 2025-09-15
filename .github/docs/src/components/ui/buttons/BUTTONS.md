@@ -1,5 +1,8 @@
 # Buttons Directory
 ## Component Files
+### AddButton.tsx
+**Purpose:** Header button component for creating new settings, positioned in the Settings screen header next to the info button.
+
 ### BackButton.tsx
 **Purpose:** Navigation button component for returning to previous screens with consistent styling.
 
@@ -9,8 +12,6 @@
 ### ColorButton.tsx
 **Purpose:** Specialized button component for color selection and color-related actions in the LED controller.
 
-### CreateButton.tsx
-**Purpose:** Action button component for creating new LED configurations and custom settings.
 
 ### EditButton.tsx
 **Purpose:** Action button component for editing existing LED configurations and settings.

@@ -38,18 +38,12 @@ export default function Welcome({ navigation }: WelcomeProps) {
 		setLastEdited("0");
 	}, [setLastEdited]);
 
-	// Check for first-time user on component mount
+	// Show tutorial on every app startup
 	useEffect(() => {
-		const checkFirstTimeUser = async () => {
-			const isFirstTime = await FirstTimeUserService.isFirstTimeUser();
-			if (isFirstTime) {
-				// Small delay to let the screen render first
-				setTimeout(() => {
-					setShowTutorial(true);
-				}, 1000);
-			}
-		};
-		checkFirstTimeUser();
+		// Small delay to let the screen render first
+		setTimeout(() => {
+			setShowTutorial(true);
+		}, 1000);
 	}, []);
 	useEffect(() => {
 		if (displayText.length < fullText.length) {

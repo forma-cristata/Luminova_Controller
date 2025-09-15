@@ -140,12 +140,10 @@ export default function WelcomeTutorial({
 	};
 
 	const handleComplete = async () => {
-		await FirstTimeUserService.markTutorialCompleted();
 		onComplete();
 	};
 
 	const handleSkip = async () => {
-		await FirstTimeUserService.markTutorialCompleted();
 		onComplete();
 	};
 

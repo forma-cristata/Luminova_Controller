@@ -677,8 +677,8 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 										{
 											marginTop:
 												selectedDot !== null && selectedDot >= 8
-													? 25 * DIMENSIONS.SCALE // Push down for bottom row dots
-													: 15 * DIMENSIONS.SCALE, // Normal position for top row dots
+													? 12 * DIMENSIONS.SCALE // Reduced: Push down for bottom row dots
+													: 8 * DIMENSIONS.SCALE, // Reduced: Normal position for top row dots
 										},
 									]}
 								>
@@ -773,7 +773,7 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 									}}
 								/>
 							</View>
-							<View style={COMMON_STYLES.buttonContainer}>
+							<View style={styles.compactButtonContainer}>
 								<View style={COMMON_STYLES.buttonRow}>
 									<ActionButton
 										title={isNew ? "Cancel" : "Reset"}
@@ -844,9 +844,13 @@ const { width, height } = Dimensions.get("window");
 const styles = StyleSheet.create({
 	colorWheelContainer: {
 		width: width * 0.85,
-		marginTop: 5 * DIMENSIONS.SCALE, // Reduced from original sliderContainer
-		padding: 8 * DIMENSIONS.SCALE, // Reduced from 15
+		marginTop: 2 * DIMENSIONS.SCALE, // Reduced further
+		padding: 5 * DIMENSIONS.SCALE, // Reduced from 8
 		// Removed border to save space
+	},
+	compactButtonContainer: {
+		width: width * 0.85,
+		marginTop: 8 * DIMENSIONS.SCALE, // Significantly reduced from 20
 	},
 	whiteText: {
 		color: COLORS.WHITE,
@@ -857,7 +861,7 @@ const styles = StyleSheet.create({
 	hexContainer: {
 		flexDirection: "row",
 		alignItems: "center",
-		marginTop: DIMENSIONS.SCALE * 12,
+		marginTop: DIMENSIONS.SCALE * 6, // Reduced from 12
 		width: width * 0.85,
 		padding: 3 * DIMENSIONS.SCALE,
 	},
@@ -890,8 +894,8 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		justifyContent: "center",
 		width: width * 0.9,
-		marginTop: 5 * DIMENSIONS.SCALE,
-		marginBottom: height * 0.015,
+		marginTop: 2 * DIMENSIONS.SCALE, // Reduced from 5
+		marginBottom: height * 0.01, // Reduced from 0.015
 		borderStyle: "solid",
 		borderBottomWidth: 2 * DIMENSIONS.SCALE,
 		borderColor: COLORS.WHITE,
@@ -920,16 +924,16 @@ const styles = StyleSheet.create({
 	},
 	nameInput: {
 		color: COLORS.WHITE,
-		fontSize: 30 * DIMENSIONS.SCALE,
+		fontSize: 24 * DIMENSIONS.SCALE, // Reduced from 30
 		fontFamily: FONTS.SIGNATURE,
 		textAlign: "center",
 		minWidth: width * 0.6,
-		padding: 5 * DIMENSIONS.SCALE,
+		padding: 2 * DIMENSIONS.SCALE, // Reduced from 5
 	},
 	paletteContainer: {
 		alignItems: "center",
-		marginTop: 15 * DIMENSIONS.SCALE,
-		marginBottom: 3 * DIMENSIONS.SCALE,
+		marginTop: 8 * DIMENSIONS.SCALE, // Reduced from 15
+		marginBottom: 2 * DIMENSIONS.SCALE, // Reduced from 3
 		width: "100%",
 	},
 	paletteScrollContent: {

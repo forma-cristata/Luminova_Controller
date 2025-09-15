@@ -44,7 +44,7 @@ export default React.memo(function ColorWheel({
 	// Calculate wheel dimensions
 	const wheelDiameter = useMemo(() => {
 		const containerWidth = width * 0.85 - 16 * DIMENSIONS.SCALE; // Account for reduced container padding
-		return Math.min(containerWidth, 240 * DIMENSIONS.SCALE); // Reduced from 280
+		return Math.min(containerWidth, 180 * DIMENSIONS.SCALE); // Reduced from 240 to fit viewport
 	}, []);
 
 	const wheelRadius = wheelDiameter / 2;
@@ -229,8 +229,8 @@ export default React.memo(function ColorWheel({
 					style={[
 						styles.marbleContainer,
 						{
-							left: indicatorPosition.x - 12 * DIMENSIONS.SCALE,
-							top: indicatorPosition.y - 12 * DIMENSIONS.SCALE,
+							left: indicatorPosition.x - 10 * DIMENSIONS.SCALE, // Adjusted for smaller marble
+							top: indicatorPosition.y - 10 * DIMENSIONS.SCALE, // Adjusted for smaller marble
 						},
 					]}
 				>
@@ -259,7 +259,7 @@ const styles = StyleSheet.create({
 	container: {
 		alignItems: "center",
 		justifyContent: "center",
-		paddingVertical: 5 * DIMENSIONS.SCALE, // Reduced from 10
+		// Removed all padding
 	},
 	wheelContainer: {
 		position: "relative",
@@ -291,14 +291,14 @@ const styles = StyleSheet.create({
 	},
 	marbleContainer: {
 		position: "absolute",
-		width: 24 * DIMENSIONS.SCALE,
-		height: 24 * DIMENSIONS.SCALE,
+		width: 20 * DIMENSIONS.SCALE, // Reduced from 24
+		height: 20 * DIMENSIONS.SCALE, // Reduced from 24
 	},
 	marbleBase: {
 		position: "absolute",
 		width: "100%",
 		height: "100%",
-		borderRadius: 12 * DIMENSIONS.SCALE,
+		borderRadius: 10 * DIMENSIONS.SCALE, // Reduced from 12
 		opacity: 0.7,
 		shadowColor: "#000",
 		shadowOffset: {
@@ -311,28 +311,28 @@ const styles = StyleSheet.create({
 	},
 	marbleHighlight: {
 		position: "absolute",
-		top: 3 * DIMENSIONS.SCALE,
-		left: 6 * DIMENSIONS.SCALE,
-		width: 12 * DIMENSIONS.SCALE,
-		height: 8 * DIMENSIONS.SCALE,
-		borderRadius: 6 * DIMENSIONS.SCALE,
+		top: 2 * DIMENSIONS.SCALE, // Reduced from 3
+		left: 5 * DIMENSIONS.SCALE, // Reduced from 6
+		width: 10 * DIMENSIONS.SCALE, // Reduced from 12
+		height: 6 * DIMENSIONS.SCALE, // Reduced from 8
+		borderRadius: 5 * DIMENSIONS.SCALE, // Reduced from 6
 		backgroundColor: "rgba(255, 255, 255, 0.6)",
 		transform: [{ rotate: "-20deg" }],
 	},
 	marbleRefraction: {
 		position: "absolute",
-		top: 4 * DIMENSIONS.SCALE,
-		left: 7 * DIMENSIONS.SCALE,
-		width: 4 * DIMENSIONS.SCALE,
-		height: 4 * DIMENSIONS.SCALE,
-		borderRadius: 2 * DIMENSIONS.SCALE,
+		top: 3 * DIMENSIONS.SCALE, // Reduced from 4
+		left: 6 * DIMENSIONS.SCALE, // Reduced from 7
+		width: 3 * DIMENSIONS.SCALE, // Reduced from 4
+		height: 3 * DIMENSIONS.SCALE, // Reduced from 4
+		borderRadius: 1.5 * DIMENSIONS.SCALE, // Reduced from 2
 		backgroundColor: "rgba(255, 255, 255, 0.9)",
 	},
 	marbleBorder: {
 		position: "absolute",
 		width: "100%",
 		height: "100%",
-		borderRadius: 12 * DIMENSIONS.SCALE,
+		borderRadius: 10 * DIMENSIONS.SCALE, // Reduced from 12
 		borderWidth: 1 * DIMENSIONS.SCALE,
 		borderColor: "rgba(0, 0, 0, 0.2)",
 		backgroundColor: "transparent",

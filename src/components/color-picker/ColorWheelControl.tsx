@@ -83,6 +83,6 @@ const styles = StyleSheet.create({
 	},
 	brightnessContainer: {
 		width: "100%",
-		marginTop: 15 * DIMENSIONS.SCALE,
+		marginTop: 8 * DIMENSIONS.SCALE, // Reduced from 15
 	},
 });

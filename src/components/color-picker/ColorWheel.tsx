@@ -43,8 +43,8 @@ export default React.memo(function ColorWheel({
 
 	// Calculate wheel dimensions
 	const wheelDiameter = useMemo(() => {
-		const containerWidth = width * 0.85 - 30 * DIMENSIONS.SCALE; // Account for container padding
-		return Math.min(containerWidth, 280 * DIMENSIONS.SCALE);
+		const containerWidth = width * 0.85 - 16 * DIMENSIONS.SCALE; // Account for reduced container padding
+		return Math.min(containerWidth, 240 * DIMENSIONS.SCALE); // Reduced from 280
 	}, []);
 
 	const wheelRadius = wheelDiameter / 2;
@@ -150,18 +150,6 @@ export default React.memo(function ColorWheel({
 
 	return (
 		<View style={styles.container}>
-			{/* Outer 3D shadow for depth */}
-			<View
-				style={[
-					styles.wheelShadow,
-					{
-						width: wheelDiameter + 8 * DIMENSIONS.SCALE,
-						height: wheelDiameter + 8 * DIMENSIONS.SCALE,
-						borderRadius: (wheelDiameter + 8 * DIMENSIONS.SCALE) / 2,
-					},
-				]}
-			/>
-
 			{/* Main wheel container */}
 			<View
 				style={[
@@ -271,25 +259,12 @@ const styles = StyleSheet.create({
 	container: {
 		alignItems: "center",
 		justifyContent: "center",
-		paddingVertical: 10 * DIMENSIONS.SCALE,
-	},
-	wheelShadow: {
-		position: "absolute",
-		backgroundColor: "rgba(0, 0, 0, 0.3)",
-		shadowColor: "#000",
-		shadowOffset: {
-			width: 0,
-			height: 4 * DIMENSIONS.SCALE,
-		},
-		shadowOpacity: 0.3,
-		shadowRadius: 8 * DIMENSIONS.SCALE,
-		elevation: 8,
+		paddingVertical: 5 * DIMENSIONS.SCALE, // Reduced from 10
 	},
 	wheelContainer: {
 		position: "relative",
 		overflow: "hidden",
-		borderWidth: 2 * DIMENSIONS.SCALE,
-		borderColor: COLORS.WHITE,
+		// Removed border
 	},
 	hueSegment: {
 		position: "absolute",

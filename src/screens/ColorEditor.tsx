@@ -753,7 +753,7 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 							</View>
 							<View
 								style={[
-									COMMON_STYLES.sliderContainer,
+									styles.colorWheelContainer,
 									{ opacity: selectedDot !== null ? 1 : 0.5 },
 								]}
 							>
@@ -842,6 +842,12 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 const { width, height } = Dimensions.get("window");
 
 const styles = StyleSheet.create({
+	colorWheelContainer: {
+		width: width * 0.85,
+		marginTop: 5 * DIMENSIONS.SCALE, // Reduced from original sliderContainer
+		padding: 8 * DIMENSIONS.SCALE, // Reduced from 15
+		// Removed border to save space
+	},
 	whiteText: {
 		color: COLORS.WHITE,
 		fontSize: 30 * DIMENSIONS.SCALE,

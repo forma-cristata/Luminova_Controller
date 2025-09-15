@@ -20,15 +20,21 @@ interface ColorWheelProps {
 	onColorChangeComplete: (hue: number, saturation: number) => void;
 }
 
-// Generate color stops for the hue wheel
-const generateHueStops = (): string[] => {
-	const stops: string[] = [];
-	for (let i = 0; i <= 360; i += 30) {
-		const hue = i % 360;
-		stops.push(`hsl(${hue}, 100%, 50%)`);
-	}
-	return stops;
-};
+// Hard-coded 12-color wheel for even distribution
+const TWELVE_COLOR_WHEEL = [
+	{ hue: 0, color: "hsl(0, 100%, 50%)" }, // Red
+	{ hue: 30, color: "hsl(30, 100%, 50%)" }, // Red-Orange
+	{ hue: 60, color: "hsl(60, 100%, 50%)" }, // Orange/Yellow-Orange
+	{ hue: 90, color: "hsl(90, 100%, 50%)" }, // Yellow-Green
+	{ hue: 120, color: "hsl(120, 100%, 50%)" }, // Green
+	{ hue: 150, color: "hsl(150, 100%, 50%)" }, // Green-Cyan
+	{ hue: 180, color: "hsl(180, 100%, 50%)" }, // Cyan
+	{ hue: 210, color: "hsl(210, 100%, 50%)" }, // Light Blue
+	{ hue: 240, color: "hsl(240, 100%, 50%)" }, // Blue
+	{ hue: 270, color: "hsl(270, 100%, 50%)" }, // Blue-Violet
+	{ hue: 300, color: "hsl(300, 100%, 50%)" }, // Magenta
+	{ hue: 330, color: "hsl(330, 100%, 50%)" }, // Pink-Red
+];
 
 export default React.memo(function ColorWheel({
 	hue,
@@ -51,7 +57,7 @@ export default React.memo(function ColorWheel({
 	const centerX = wheelRadius;
 	const centerY = wheelRadius;
 
-	// Convert touch coordinates to polar coordinates
+	// Convert touch coordinates to polar coordinates with 12-color snapping
 	const coordinatesToPolar = useCallback(
 		(x: number, y: number) => {
 			const deltaX = x - centerX;
@@ -63,12 +69,16 @@ export default React.memo(function ColorWheel({
 			angle = (angle * 180) / Math.PI;
 			if (angle < 0) angle += 360;
 
+			// Snap to nearest 30° increment (12 color segments)
+			const snappedAngle = Math.round(angle / 30) * 30;
+			const normalizedAngle = snappedAngle % 360;
+
 			// Clamp distance to wheel radius
 			const clampedDistance = Math.min(distance, wheelRadius);
 			const saturationValue = (clampedDistance / wheelRadius) * 100;
 
 			return {
-				hue: angle,
+				hue: normalizedAngle,
 				saturation: Math.max(0, Math.min(100, saturationValue)),
 				isWithinBounds: distance <= wheelRadius,
 			};
@@ -145,8 +155,8 @@ export default React.memo(function ColorWheel({
 		return polarToCoordinates(hue, saturation);
 	}, [hue, saturation, polarToCoordinates]);
 
-	// Generate the color wheel background using multiple layers
-	const hueStops = useMemo(() => generateHueStops(), []);
+	// Generate the color wheel background using the 12-color wheel
+	const colorWheelData = useMemo(() => TWELVE_COLOR_WHEEL, []);
 
 	return (
 		<View style={styles.container}>
@@ -164,55 +174,60 @@ export default React.memo(function ColorWheel({
 				ref={wheelRef}
 				{...panResponder.panHandlers}
 			>
-			{/* Hue ring layers */}
-			{hueStops.map((color, index) => (
+				{/* 12-color wheel using thin slices instead of wedges */}
+				{Array.from({ length: 360 }, (_, degree) => {
+					// Find which 30-degree segment this degree belongs to
+					const segmentIndex = Math.floor(degree / 30);
+					const colorData = colorWheelData[segmentIndex];
+
+					return (
+						<View
+							key={`color-slice-${colorData.hue}-deg-${degree}`}
+							style={[
+								styles.degreeSlice,
+								{
+									backgroundColor: colorData.color,
+									transform: [{ rotate: `${degree}deg` }],
+								},
+							]}
+						/>
+					);
+				})}
+				{/* White center circle for saturation gradient effect */}
 				<View
-					key={`hue-segment-${color.replace(/[^\w]/g, "")}`}
 					style={[
-						styles.hueSegment,
+						styles.centerWhite,
 						{
-							backgroundColor: color,
-							transform: [{ rotate: `${index * 30}deg` }],
+							width: wheelDiameter * 0.3,
+							height: wheelDiameter * 0.3,
+							borderRadius: (wheelDiameter * 0.3) / 2,
+							top: wheelDiameter * 0.35,
+							left: wheelDiameter * 0.35,
 						},
 					]}
 				/>
-			))}
-
-			{/* White center circle for saturation gradient effect */}
-			<View
-				style={[
-					styles.centerWhite,
-					{
-						width: wheelDiameter * 0.3,
-						height: wheelDiameter * 0.3,
-						borderRadius: (wheelDiameter * 0.3) / 2,
-						top: wheelDiameter * 0.35,
-						left: wheelDiameter * 0.35,
-					},
-				]}
-			/>
-
-			{/* Multiple saturation overlay rings to simulate radial gradient */}
-			{Array.from({ length: 8 }, (_, i) => {
-				const opacity = 1 - i * 0.12;
-				const size = wheelDiameter * (0.3 + i * 0.09);
-				return (
-					<View
-						key={`saturation-ring-${size}-${opacity}`}
-						style={[
-							styles.saturationRing,
-							{
-								width: size,
-								height: size,
-								borderRadius: size / 2,
-								backgroundColor: `rgba(255, 255, 255, ${opacity})`,
-								top: (wheelDiameter - size) / 2,
-								left: (wheelDiameter - size) / 2,
-							},
-						]}
-					/>
-				);
-			})}				{/* Inner 3D highlight ring */}
+				{/* Multiple saturation overlay rings to simulate radial gradient */}
+				{Array.from({ length: 8 }, (_, i) => {
+					const opacity = 1 - i * 0.12;
+					const size = wheelDiameter * (0.3 + i * 0.09);
+					return (
+						<View
+							key={`saturation-ring-${size}-${opacity}`}
+							style={[
+								styles.saturationRing,
+								{
+									width: size,
+									height: size,
+									borderRadius: size / 2,
+									backgroundColor: `rgba(255, 255, 255, ${opacity})`,
+									top: (wheelDiameter - size) / 2,
+									left: (wheelDiameter - size) / 2,
+								},
+							]}
+						/>
+					);
+				})}{" "}
+				{/* Inner 3D highlight ring */}
 				<View
 					style={[
 						styles.innerHighlight,
@@ -223,7 +238,6 @@ export default React.memo(function ColorWheel({
 						},
 					]}
 				/>
-
 				{/* Glass marble indicator */}
 				<View
 					style={[
@@ -266,10 +280,18 @@ const styles = StyleSheet.create({
 		overflow: "hidden",
 		// Removed border
 	},
-	hueSegment: {
+	colorWedge: {
 		position: "absolute",
 		width: "50%",
 		height: "50%",
+		top: "50%",
+		left: "50%",
+		transformOrigin: "0 0",
+	},
+	degreeSlice: {
+		position: "absolute",
+		width: "50%",
+		height: 1 * DIMENSIONS.SCALE, // Very thin slice
 		top: "50%",
 		left: "50%",
 		transformOrigin: "0 0",

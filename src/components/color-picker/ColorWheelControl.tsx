@@ -10,7 +10,11 @@ interface ColorWheelControlProps {
 	brightness: number; // 0-100
 	disabled: boolean;
 	onValueChange: (hue: number, saturation: number, brightness: number) => void;
-	onSlidingComplete: (hue: number, saturation: number, brightness: number) => void;
+	onSlidingComplete: (
+		hue: number,
+		saturation: number,
+		brightness: number,
+	) => void;
 }
 
 export default React.memo(function ColorWheelControl({

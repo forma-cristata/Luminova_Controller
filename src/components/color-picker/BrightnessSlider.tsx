@@ -31,7 +31,14 @@ export default function BrightnessSlider({
 		const newValue = Math.max(min, brightness - step);
 		onValueChange(newValue);
 		onSlidingComplete(newValue);
-	}, [disabled, brightness, onValueChange, onSlidingComplete, getStep, getMinMax]);
+	}, [
+		disabled,
+		brightness,
+		onValueChange,
+		onSlidingComplete,
+		getStep,
+		getMinMax,
+	]);
 
 	const handlePlus = useCallback(() => {
 		if (disabled) return;
@@ -40,7 +47,14 @@ export default function BrightnessSlider({
 		const newValue = Math.min(max, brightness + step);
 		onValueChange(newValue);
 		onSlidingComplete(newValue);
-	}, [disabled, brightness, onValueChange, onSlidingComplete, getStep, getMinMax]);
+	}, [
+		disabled,
+		brightness,
+		onValueChange,
+		onSlidingComplete,
+		getStep,
+		getMinMax,
+	]);
 
 	const handleSliderValueChange = useCallback(
 		(newValue: number) => {

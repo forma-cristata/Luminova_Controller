@@ -7,3 +7,6 @@ export { default as ColorControl } from "./ColorControl";
 export { default as BpmSlider } from "./BpmSlider";
 export { default as BpmPlusMinusControl } from "./BpmPlusMinusControl";
 export { default as BpmControl } from "./BpmControl";
+export { default as ColorWheel } from "./ColorWheel";
+export { default as BrightnessSlider } from "./BrightnessSlider";
+export { default as ColorWheelControl } from "./ColorWheelControl";

@@ -31,7 +31,7 @@ import Animated, { runOnJS, useSharedValue } from "react-native-reanimated";
 import ActionButton from "@/src/components/buttons/ActionButton";
 import Header from "@/src/components/common/Header";
 import ColorButton from "@/src/components/buttons/ColorButton";
-import { ColorDots, ColorControl } from "@/src/components/color-picker";
+import { ColorDots, ColorWheelControl } from "@/src/components/color-picker";
 import HexKeyboard from "@/src/components/common/HexKeyboard";
 import RandomizeButton from "@/src/components/buttons/RandomizeButton";
 import {
@@ -757,40 +757,19 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 									{ opacity: selectedDot !== null ? 1 : 0.5 },
 								]}
 							>
-								<ColorControl
-									type="hue"
-									value={hue}
+								<ColorWheelControl
+									hue={hue}
+									saturation={saturation}
+									brightness={brightness}
 									disabled={selectedDot === null}
-									onValueChange={(value) => {
-										setHue(value);
-										updateColor(value, saturation, brightness);
+									onValueChange={(h: number, s: number, b: number) => {
+										setHue(h);
+										setSaturation(s);
+										setBrightness(b);
+										updateColor(h, s, b);
 									}}
-									onSlidingComplete={(value) => {
-										handleSliderComplete(value, saturation, brightness);
-									}}
-								/>
-								<ColorControl
-									type="saturation"
-									value={saturation}
-									disabled={selectedDot === null}
-									onValueChange={(value) => {
-										setSaturation(value);
-										updateColor(hue, value, brightness);
-									}}
-									onSlidingComplete={(value) => {
-										handleSliderComplete(hue, value, brightness);
-									}}
-								/>
-								<ColorControl
-									type="brightness"
-									value={brightness}
-									disabled={selectedDot === null}
-									onValueChange={(value) => {
-										setBrightness(value);
-										updateColor(hue, saturation, value);
-									}}
-									onSlidingComplete={(value) => {
-										handleSliderComplete(hue, saturation, value);
+									onSlidingComplete={(h: number, s: number, b: number) => {
+										handleSliderComplete(h, s, b);
 									}}
 								/>
 							</View>

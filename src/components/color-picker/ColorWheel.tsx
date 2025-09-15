@@ -8,6 +8,7 @@ import {
     PanResponderGestureState,
 } from "react-native";
 import { COLORS, DIMENSIONS } from "@/src/styles/SharedStyles";
+import { useDebounce } from "@/src/hooks/useDebounce";
 
 const { width } = Dimensions.get("window");
 
@@ -19,22 +20,6 @@ interface ColorWheelProps {
     onColorChange: (hue: number, saturation: number) => void;
     onColorChangeComplete: (hue: number, saturation: number) => void;
 }
-
-// Hard-coded 12-color wheel for even distribution
-const TWELVE_COLOR_WHEEL = [
-    { hue: 0, color: "hsl(0, 100%, 50%)" }, // Red
-    { hue: 30, color: "hsl(30, 100%, 50%)" }, // Red-Orange
-    { hue: 60, color: "hsl(60, 100%, 50%)" }, // Orange/Yellow-Orange
-    { hue: 90, color: "hsl(90, 100%, 50%)" }, // Yellow-Green
-    { hue: 120, color: "hsl(120, 100%, 50%)" }, // Green
-    { hue: 150, color: "hsl(150, 100%, 50%)" }, // Green-Cyan
-    { hue: 180, color: "hsl(180, 100%, 50%)" }, // Cyan
-    { hue: 210, color: "hsl(210, 100%, 50%)" }, // Light Blue
-    { hue: 240, color: "hsl(240, 100%, 50%)" }, // Blue
-    { hue: 270, color: "hsl(270, 100%, 50%)" }, // Blue-Violet
-    { hue: 300, color: "hsl(300, 100%, 50%)" }, // Magenta
-    { hue: 330, color: "hsl(330, 100%, 50%)" }, // Pink-Red
-];
 
 export default React.memo(function ColorWheel({
     hue,
@@ -57,8 +42,8 @@ export default React.memo(function ColorWheel({
     const centerX = wheelRadius;
     const centerY = wheelRadius;
 
-    // Convert touch coordinates to polar coordinates with 12-color snapping
-    const coordinatesToPolar = useCallback(
+    // Calculate the exact color at a given position using grid-based sampling
+    const calculateExactColor = useCallback(
         (x: number, y: number) => {
             const deltaX = x - centerX;
             const deltaY = y - centerY;
@@ -69,21 +54,28 @@ export default React.memo(function ColorWheel({
             angle = (angle * 180) / Math.PI;
             if (angle < 0) angle += 360;
 
-            // Snap to nearest 30° increment (12 color segments)
-            const snappedAngle = Math.round(angle / 30) * 30;
-            const normalizedAngle = snappedAngle % 360;
+            // Calculate the exact hue based on continuous color space (0-360)
+            const exactHue = angle % 360;
 
-            // Clamp distance to wheel radius
+            // Calculate saturation based on distance from center
             const clampedDistance = Math.min(distance, wheelRadius);
-            const saturationValue = (clampedDistance / wheelRadius) * 100;
+            const exactSaturation = (clampedDistance / wheelRadius) * 100;
 
             return {
-                hue: normalizedAngle,
-                saturation: Math.max(0, Math.min(100, saturationValue)),
+                hue: exactHue,
+                saturation: Math.max(0, Math.min(100, exactSaturation)),
                 isWithinBounds: distance <= wheelRadius,
             };
         },
         [centerX, centerY, wheelRadius],
+    );
+
+    // Convert touch coordinates to polar coordinates with smooth, continuous color calculation
+    const coordinatesToPolar = useCallback(
+        (x: number, y: number) => {
+            return calculateExactColor(x, y);
+        },
+        [calculateExactColor],
     );
 
     // Convert polar coordinates to cartesian for indicator positioning
@@ -98,7 +90,6 @@ export default React.memo(function ColorWheel({
         },
         [centerX, centerY, wheelRadius],
     );
-
     // Handle touch events
     const handleTouch = useCallback(
         (x: number, y: number, isComplete = false) => {
@@ -155,9 +146,6 @@ export default React.memo(function ColorWheel({
         return polarToCoordinates(hue, saturation);
     }, [hue, saturation, polarToCoordinates]);
 
-    // Generate the color wheel background using the 12-color wheel
-    const colorWheelData = useMemo(() => TWELVE_COLOR_WHEEL, []);
-
     return (
         <View style={styles.container}>
             {/* Main wheel container */}
@@ -174,19 +162,18 @@ export default React.memo(function ColorWheel({
                 ref={wheelRef}
                 {...panResponder.panHandlers}
             >
-                {/* 12-color wheel using thin slices instead of wedges */}
+                {/* Continuous color wheel using fine-grained degree slices */}
                 {Array.from({ length: 360 }, (_, degree) => {
-                    // Find which 30-degree segment this degree belongs to
-                    const segmentIndex = Math.floor(degree / 30);
-                    const colorData = colorWheelData[segmentIndex];
+                    // Use the exact degree for continuous color transitions
+                    const hue = degree;
 
                     return (
                         <View
-                            key={`color-slice-${colorData.hue}-deg-${degree}`}
+                            key={`color-slice-hue-${hue}`}
                             style={[
                                 styles.degreeSlice,
                                 {
-                                    backgroundColor: colorData.color,
+                                    backgroundColor: `hsl(${hue}, 100%, 50%)`,
                                     transform: [{ rotate: `${degree}deg` }],
                                 },
                             ]}

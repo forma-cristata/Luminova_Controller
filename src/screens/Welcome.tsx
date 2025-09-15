@@ -43,8 +43,9 @@ export default function Welcome({ navigation }: WelcomeProps) {
 		// Small delay to let the screen render first
 		setTimeout(() => {
 			setShowTutorial(true);
-		}, 1000);
+		}, 3450);
 	}, []);
+
 	useEffect(() => {
 		if (displayText.length < fullText.length) {
 			const timeout1 = setTimeout(() => {
@@ -170,6 +171,7 @@ export default function Welcome({ navigation }: WelcomeProps) {
 						<IpAddressInput onIpSaved={handleIpSaved} />
 					</View>
 				</ScrollView>
+
 				{/* Welcome Tutorial Modal */}
 				<WelcomeTutorial
 					visible={showTutorial}

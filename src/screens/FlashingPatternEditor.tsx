@@ -98,6 +98,7 @@ export default function FlashingPatternEditor({
 	const debouncedSettingName = useDebounce(settingName, 300);
 	const [nameError, setNameError] = useState<string | null>(null);
 	const [hasChanges, setHasChanges] = useState(isNew);
+	const nameInputRef = React.useRef<TextInput>(null);
 
 	const handleNameChange = (text: string) => {
 		// Apply real-time filtering to prevent harmful input
@@ -413,6 +414,7 @@ export default function FlashingPatternEditor({
 						<View style={styles.nameInputContainer}>
 							<Text style={COMMON_STYLES.sliderText}>Setting Name:</Text>
 							<TextInput
+								ref={nameInputRef}
 								style={[
 									styles.nameInput,
 									nameError ? { color: COLORS.ERROR } : null,
@@ -431,6 +433,7 @@ export default function FlashingPatternEditor({
 								autoCorrect={false}
 								importantForAutofill="no"
 								textContentType="none"
+								selectTextOnFocus={true}
 							/>
 						</View>
 						<MetronomeButton

@@ -99,6 +99,7 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 	const [settingName, setSettingName] = useState(setting.name);
 	const debouncedSettingName = useDebounce(settingName, 300);
 	const [nameError, setNameError] = useState<string | null>(null);
+	const nameInputRef = React.useRef<TextInput>(null);
 
 	const handleNameChange = (text: string) => {
 		// Apply real-time filtering to prevent harmful input
@@ -652,6 +653,7 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 				<View style={styles.nameInputContainer}>
 					<Text style={COMMON_STYLES.sliderText}>Setting Name:</Text>
 					<TextInput
+						ref={nameInputRef}
 						style={[
 							styles.nameInput,
 							nameError ? { color: COLORS.ERROR } : null,
@@ -667,6 +669,7 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 						autoCorrect={false}
 						importantForAutofill="no"
 						textContentType="none"
+						selectTextOnFocus={true}
 					/>
 				</View>
 				<TouchableOpacity style={styles.sortButton} onPress={sortColorsByHue}>

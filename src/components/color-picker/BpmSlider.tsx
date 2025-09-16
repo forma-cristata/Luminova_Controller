@@ -16,7 +16,6 @@ export default function BpmSlider({
 }: BpmSliderProps) {
 	return (
 		<View style={styles.sliderRow}>
-			<Text style={COMMON_STYLES.sliderText}>Speed: {Math.round(bpm)} bpm</Text>
 			<Slider
 				style={[styles.slider, { opacity: disabled ? 0.5 : 1 }]}
 				minimumValue={60}

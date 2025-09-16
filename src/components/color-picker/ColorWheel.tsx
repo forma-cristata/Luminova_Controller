@@ -57,9 +57,24 @@ export default React.memo(function ColorWheel({
             // Calculate the exact hue based on continuous color space (0-360)
             const exactHue = angle % 360;
 
-            // Calculate saturation based on distance from center
+            // Calculate saturation based on distance from center with hard-coded ring boundaries
+            // Match the visual ring layout where outer rings are much larger
             const clampedDistance = Math.min(distance, wheelRadius);
-            const exactSaturation = (clampedDistance / wheelRadius) * 100;
+            const distanceRatio = clampedDistance / wheelRadius;
+
+            // Hard-coded boundaries matching the visual rings (as fractions of wheel radius)
+            const ringBoundaries = [0.05, 0.06, 0.08, 0.11, 0.15, 0.20, 0.28, 0.40, 0.55, 0.70, 0.85, 0.95, 1.0];
+
+            // Find which ring the distance falls into and calculate saturation
+            let exactSaturation = 0;
+            for (let i = 0; i < ringBoundaries.length - 1; i++) {
+                if (distanceRatio >= ringBoundaries[i] && distanceRatio <= ringBoundaries[i + 1]) {
+                    // Linear interpolation within the ring
+                    const ringProgress = (distanceRatio - ringBoundaries[i]) / (ringBoundaries[i + 1] - ringBoundaries[i]);
+                    exactSaturation = (i + ringProgress) * (100 / (ringBoundaries.length - 2));
+                    break;
+                }
+            }
 
             return {
                 hue: exactHue,
@@ -82,10 +97,24 @@ export default React.memo(function ColorWheel({
     const polarToCoordinates = useCallback(
         (hueValue: number, saturationValue: number) => {
             const angleRad = (hueValue * Math.PI) / 180;
-            const radius = (saturationValue / 100) * wheelRadius;
+
+            // Hard-coded ring boundaries matching the visual layout
+            const ringBoundaries = [0.05, 0.06, 0.08, 0.11, 0.15, 0.20, 0.28, 0.40, 0.55, 0.70, 0.85, 0.95, 1.0];
+
+            // Map saturation to the correct ring boundary
+            const saturationRatio = saturationValue / 100;
+            const ringIndex = saturationRatio * (ringBoundaries.length - 2);
+            const lowerIndex = Math.floor(ringIndex);
+            const upperIndex = Math.min(lowerIndex + 1, ringBoundaries.length - 2);
+            const ringProgress = ringIndex - lowerIndex;
+
+            // Interpolate between ring boundaries
+            const radiusRatio = ringBoundaries[lowerIndex] + ringProgress * (ringBoundaries[upperIndex] - ringBoundaries[lowerIndex]);
+            const effectiveRadius = radiusRatio * wheelRadius;
+
             return {
-                x: centerX + radius * Math.cos(angleRad),
-                y: centerY + radius * Math.sin(angleRad),
+                x: centerX + effectiveRadius * Math.cos(angleRad),
+                y: centerY + effectiveRadius * Math.sin(angleRad),
             };
         },
         [centerX, centerY, wheelRadius],
@@ -180,40 +209,48 @@ export default React.memo(function ColorWheel({
                         />
                     );
                 })}
-                {/* White center circle for saturation gradient effect */}
+                {/* White center circle for saturation gradient effect - minimal size */}
                 <View
                     style={[
                         styles.centerWhite,
                         {
-                            width: wheelDiameter * 0.3,
-                            height: wheelDiameter * 0.3,
-                            borderRadius: (wheelDiameter * 0.3) / 2,
-                            top: wheelDiameter * 0.35,
-                            left: wheelDiameter * 0.35,
+                            width: wheelDiameter * 0.05,
+                            height: wheelDiameter * 0.05,
+                            borderRadius: (wheelDiameter * 0.05) / 2,
+                            top: wheelDiameter * 0.475,
+                            left: wheelDiameter * 0.475,
                         },
                     ]}
                 />
-                {/* Multiple saturation overlay rings to simulate radial gradient */}
-                {Array.from({ length: 8 }, (_, i) => {
-                    const opacity = 1 - i * 0.12;
-                    const size = wheelDiameter * (0.3 + i * 0.09);
-                    return (
-                        <View
-                            key={`saturation-ring-${size}-${opacity}`}
-                            style={[
-                                styles.saturationRing,
-                                {
-                                    width: size,
-                                    height: size,
-                                    borderRadius: size / 2,
-                                    backgroundColor: `rgba(255, 255, 255, ${opacity})`,
-                                    top: (wheelDiameter - size) / 2,
-                                    left: (wheelDiameter - size) / 2,
-                                },
-                            ]}
-                        />
-                    );
-                })}{" "}
+                {/* Hard-coded saturation rings - inner rings small, outer rings much larger */}
+                {[
+                    { size: 0.06, opacity: 0.9 },   // Tiny inner ring
+                    { size: 0.08, opacity: 0.8 },   // Small
+                    { size: 0.11, opacity: 0.7 },   // Small
+                    { size: 0.15, opacity: 0.6 },   // Medium-small
+                    { size: 0.20, opacity: 0.5 },   // Medium
+                    { size: 0.28, opacity: 0.4 },   // Medium-large
+                    { size: 0.40, opacity: 0.3 },   // Large
+                    { size: 0.55, opacity: 0.25 },  // Larger
+                    { size: 0.70, opacity: 0.2 },   // Much larger
+                    { size: 0.85, opacity: 0.15 },  // Very large
+                    { size: 0.95, opacity: 0.1 },   // Huge outer ring
+                ].map((ring, i) => (
+                    <View
+                        key={`saturation-ring-${i}-${ring.size}-${ring.opacity}`}
+                        style={[
+                            styles.saturationRing,
+                            {
+                                width: wheelDiameter * ring.size,
+                                height: wheelDiameter * ring.size,
+                                borderRadius: (wheelDiameter * ring.size) / 2,
+                                backgroundColor: `rgba(255, 255, 255, ${ring.opacity})`,
+                                top: (wheelDiameter - wheelDiameter * ring.size) / 2,
+                                left: (wheelDiameter - wheelDiameter * ring.size) / 2,
+                            },
+                        ]}
+                    />
+                ))}{" "}
                 {/* Inner 3D highlight ring */}
                 <View
                     style={[

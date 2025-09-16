@@ -15,7 +15,6 @@ const { width } = Dimensions.get("window");
 interface ColorWheelProps {
     hue: number; // 0-360
     saturation: number; // 0-100
-    brightness: number; // 0-100 (for display purposes)
     disabled: boolean;
     onColorChange: (hue: number, saturation: number) => void;
     onColorChangeComplete: (hue: number, saturation: number) => void;
@@ -24,7 +23,6 @@ interface ColorWheelProps {
 export default React.memo(function ColorWheel({
     hue,
     saturation,
-    brightness,
     disabled,
     onColorChange,
     onColorChangeComplete,
@@ -272,15 +270,8 @@ export default React.memo(function ColorWheel({
                         },
                     ]}
                 >
-                    {/* Base marble circle with current color */}
-                    <View
-                        style={[
-                            styles.marbleBase,
-                            {
-                                backgroundColor: `hsl(${hue}, ${saturation}%, ${brightness}%)`,
-                            },
-                        ]}
-                    />
+                    {/* Transparent base marble circle - shows color wheel behind it */}
+                    <View style={styles.marbleBase} />
                     {/* Glass highlight layer */}
                     <View style={styles.marbleHighlight} />
                     {/* Refraction dot */}
@@ -345,7 +336,7 @@ const styles = StyleSheet.create({
         width: "100%",
         height: "100%",
         borderRadius: 10 * DIMENSIONS.SCALE, // Reduced from 12
-        opacity: 0.7,
+        backgroundColor: "transparent", // Transparent to show wheel color behind
         shadowColor: "#000",
         shadowOffset: {
             width: 0,
@@ -362,7 +353,7 @@ const styles = StyleSheet.create({
         width: 10 * DIMENSIONS.SCALE, // Reduced from 12
         height: 6 * DIMENSIONS.SCALE, // Reduced from 8
         borderRadius: 5 * DIMENSIONS.SCALE, // Reduced from 6
-        backgroundColor: "rgba(255, 255, 255, 0.6)",
+        backgroundColor: "rgba(255, 255, 255, 0.8)", // Increased opacity for better glass effect
         transform: [{ rotate: "-20deg" }],
     },
     marbleRefraction: {
@@ -372,15 +363,15 @@ const styles = StyleSheet.create({
         width: 3 * DIMENSIONS.SCALE, // Reduced from 4
         height: 3 * DIMENSIONS.SCALE, // Reduced from 4
         borderRadius: 1.5 * DIMENSIONS.SCALE, // Reduced from 2
-        backgroundColor: "rgba(255, 255, 255, 0.9)",
+        backgroundColor: "rgba(255, 255, 255, 0.95)", // Increased opacity for better visibility
     },
     marbleBorder: {
         position: "absolute",
         width: "100%",
         height: "100%",
         borderRadius: 10 * DIMENSIONS.SCALE, // Reduced from 12
-        borderWidth: 1 * DIMENSIONS.SCALE,
-        borderColor: "rgba(0, 0, 0, 0.2)",
+        borderWidth: 1 * DIMENSIONS.SCALE, // Slightly thicker for better definition
+        borderColor: "rgba(0, 0, 0, 0.2)", // Slightly darker for better contrast
         backgroundColor: "transparent",
     },
 });

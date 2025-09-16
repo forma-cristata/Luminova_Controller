@@ -59,7 +59,6 @@ export default React.memo(function ColorWheelControl({
 			<ColorWheel
 				hue={hue}
 				saturation={saturation}
-				brightness={brightness}
 				disabled={disabled}
 				onColorChange={handleColorWheelChange}
 				onColorChangeComplete={handleColorWheelComplete}

@@ -149,23 +149,13 @@ export async function previewSetting(
 	return postConfig({
 		colors: setting.colors,
 		effectNumber: setting.flashingPattern,
-		delayTime: Math.max(
-			1,
-			setting.delayTime ? Math.floor(setting.delayTime / 4) : 1,
-		),
+		delayTime: setting.delayTime || 1,
 	});
 }
 
 export async function flashSetting(setting: Setting): Promise<ApiResponse> {
-	// For Berghain Bitte pattern (ID: "8"), divide delay time by 4 additional times
-	const isBerghainBitte = setting.flashingPattern === "8";
-	const baseDelayTime = Math.floor(setting.delayTime / 4);
-	const finalDelayTime = isBerghainBitte
-		? Math.floor(baseDelayTime / 4)
-		: baseDelayTime;
-
 	return postConfig({
-		delayTime: Math.max(1, finalDelayTime),
+		delayTime: setting.delayTime,
 		effectNumber: setting.flashingPattern,
 		whiteValues: setting.whiteValues,
 		brightnessValues: setting.brightnessValues,
@@ -177,10 +167,7 @@ export async function restoreConfiguration(
 	config: Partial<Setting>,
 ): Promise<ApiResponse> {
 	return postConfig({
-		delayTime: Math.max(
-			1,
-			config?.delayTime ? Math.floor(config.delayTime / 4) : 1,
-		),
+		delayTime: config?.delayTime || 1,
 		effectNumber: config?.flashingPattern,
 		whiteValues: config?.whiteValues,
 		brightnessValues: config?.brightnessValues,

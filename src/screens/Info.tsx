@@ -96,8 +96,8 @@ export default function Info() {
 		{
 			title: "Welcome Screen",
 			data: [
-				"New users will see a helpful tutorial - you can skip it or follow along.",
-				"Re-access the welcome tutorial by tapping 'Luminova' 5 times on the Welcome screen.",
+				"The welcome tutorial appears automatically on every app startup and can be skipped or followed along.",
+				"Re-access the welcome tutorial by tapping the 'Luminova' title 5 times on the Welcome screen.",
 				"Enter your device's IP address in the text field if it differs from the default.",
 				"Wait for the LED status toggle to synchronize with your device's state.",
 				"Use the toggle to control turning your device on and off.",
@@ -107,11 +107,11 @@ export default function Info() {
 		{
 			title: "Settings Screen",
 			data: [
-				"Navigate settings by swiping left or right, or using the chevron arrows to switch between your saved settings.",
+				"Navigate settings by swiping left or right, or using the chevron arrows in the footer to switch between your saved settings.",
 				"The focused setting displays above your saved settings carousel. This can be tapped anywhere to edit that setting.",
-				"Create new settings by tapping the plus button in the header (next to the info button).",
-				"Duplicate existing settings using the copy icon. From here, you can edit them further.",
-				"Delete custom settings using the trash icon",
+				"Create new settings by tapping the plus button in the header.",
+				"Duplicate existing settings using the copy icon on the focused setting. From here, you can edit them further.",
+				"Delete custom settings using the trash icon on the focused setting.",
 				"Default settings can be modified but not deleted. This behavior will be improved in the future. Feel free to edit them in the meantime.",
 				"Send settings to your device by tapping 'Flash' on carousel items.",
 				"The app automatically disables Flash/Preview when your device is not connected.",
@@ -159,7 +159,7 @@ export default function Info() {
 		<SafeAreaView style={styles.container}>
 			<Header />
 			<AnimatedTitle
-				text="How to Use This App"
+				text="Using Luminova"
 				fontSize={45 * DIMENSIONS.SCALE}
 				marginBottom={15 * DIMENSIONS.SCALE}
 				marginTop={50 * DIMENSIONS.SCALE}

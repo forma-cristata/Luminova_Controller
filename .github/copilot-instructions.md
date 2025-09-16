@@ -207,31 +207,50 @@ import { getStableSettingId } from "@/src/utils/settingUtils";
 2. **Never use array indices** as keys when list order can change
 3. **Ensure keys persist** across re-renders
 4. **Use content-based hashing** for deterministic key generation
-#### **🚨 CRITICAL: "Text strings must be rendered within a <Text> component" Error Prevention**
-This error is caused by TWO issues that must BOTH be fixed:
-1. **Logical AND (`&&`) in JSX conditional rendering** 
-2. **Array indices used in React component keys**
-**DEBUGGING LESSON (August 2025):** Previous AI spent extensive time overcomplicating key generation while ignoring the existing `getStableSettingId` utility. 
+#### **🚨 CRITICAL: "Text strings must be rendered within a <Text> component" Error Debugging Protocol**
+**When user reports this error, follow this EXACT search methodology:**
 
-**The Simple Solution:**
-- Replace all logical AND (`&&`) with ternary operators (`? :`)
-- Use `getStableSettingId(setting)` for ALL component keys
-- Remove unnecessary `id` props (React Native has no DOM IDs)
-- Don't create complex key generation - the utility exists for a reason
-**Example Fix:**
-```tsx
-// ❌ WRONG (causes errors)
-{dotColors && dotColors.map((color, index) => (
-  <Dot key={index} color={color} id={`dot_${index}`} />
-))}
+1. **DON'T look for logical AND (`&&`) operators first** - they're rarely the cause
+2. **DON'T assume it's array indices in React keys** - that's a different issue
+3. **DO search for stray characters/text outside JSX elements** using these patterns:
 
-// ✅ CORRECT
-{dotColors 
-  ? dotColors.map((color, index) => (
-      <Dot key={getStableSettingId(setting)} color={color} />
-    ))
-  : null}
+**Search Commands to Run:**
+```bash
+# Look for stray text/characters between JSX closing and opening tags
+grep -r "\}[^;}\s\)]+[^<]*\{" src/
+
+# Look for direct text content in JSX that isn't wrapped in Text components  
+grep -r "\>[^<\{\s][^<\{]*[a-zA-Z][^<\{]*\<" src/
+
+# Look for string interpolations that might render as text
+grep -r "\{[^}]*[\"'`][^\"'`}]*[\"'`][^}]*\}" src/components/
 ```
+
+**Common Culprits:**
+- **Stray space characters**: `{" "}` rendered directly in JSX
+- **Template literals in JSX**: `` {`some text`} `` without Text wrapper
+- **String expressions**: `{someString}` rendered directly
+- **Comments that become text**: Malformed comment syntax
+
+**Real Example (September 2025):**
+Found `{" "}` stray space in ColorWheel.tsx line 251:
+```tsx
+// ❌ WRONG (causes error)
+                ))}{" "}
+                {/* comment */}
+
+// ✅ CORRECT  
+                ))}
+                {/* comment */}
+```
+
+**Priority Search Areas:**
+1. Components used in the screen with the error
+2. Child components of those components  
+3. Any components with complex JSX structure
+4. Recently modified files
+
+**DEBUGGING LESSON (September 2025):** The error is almost always caused by **stray text characters or strings rendered directly in JSX** without proper Text component wrapping, NOT logical operators or React keys.
 ### �🔧 **Common Tasks Reference**
 #### **Adding New Features:**
 1. Scan existing similar implementations
@@ -270,4 +289,4 @@ When creating new components:
 - Document purpose and usage patterns
 - Integrate with existing state management
 - **Use ternary operators (`? :`) for all conditional rendering instead of logical AND (`&&`)**
-This instruction set ensures consistent, informed development while maintaining the high-quality architecture already established in the Luminova Controller codebase.
+This instruction set ensures consistent, informed development while maintaining the high-quality architecture already established in the Luminova Controller codebase.

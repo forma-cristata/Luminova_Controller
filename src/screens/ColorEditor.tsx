@@ -128,10 +128,10 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 		const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
 		return result
 			? {
-					r: parseInt(result[1], 16),
-					g: parseInt(result[2], 16),
-					b: parseInt(result[3], 16),
-				}
+				r: parseInt(result[1], 16),
+				g: parseInt(result[2], 16),
+				b: parseInt(result[3], 16),
+			}
 			: null;
 	}, []);
 
@@ -676,9 +676,10 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 										styles.paletteContainer,
 										{
 											marginTop:
-												selectedDot !== null && selectedDot >= 8
+												selectedDot !== null ? (selectedDot >= 8
 													? 12 * DIMENSIONS.SCALE // Reduced: Push down for bottom row dots
-													: 8 * DIMENSIONS.SCALE, // Reduced: Normal position for top row dots
+													: 8 * DIMENSIONS.SCALE) // Reduced: Normal position for top row dots
+													: 8 * DIMENSIONS.SCALE, // Default position when no dot selected
 										},
 									]}
 								>

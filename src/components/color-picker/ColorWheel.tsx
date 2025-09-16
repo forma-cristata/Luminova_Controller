@@ -248,7 +248,7 @@ export default React.memo(function ColorWheel({
                             },
                         ]}
                     />
-                ))}{" "}
+                ))}
                 {/* Inner 3D highlight ring */}
                 <View
                     style={[

@@ -128,10 +128,26 @@ export default function Settings({ navigation }: SettingsProps) {
 	}));
 
 	const createNewSetting = () => {
-		const settingsLength = settingsData?.length || 0;
 		const newSetting: Setting = {
-			name: `Setting ${settingsLength + 1}`,
-			colors: Array(16).fill("#FFFFFF"),
+			name: "Edit me!",
+			colors: [
+				"#ff0000",
+				"#ff4400",
+				"#ff6a00",
+				"#ff9100",
+				"#ffee00",
+				"#00ff1e",
+				"#00ff44",
+				"#00ff95",
+				"#00ffff",
+				"#0088ff",
+				"#0000ff",
+				"#8800ff",
+				"#ff00ff",
+				"#ff00bb",
+				"#ff0088",
+				"#ff0044",
+			],
 			whiteValues: Array(16).fill(0),
 			brightnessValues: Array(16).fill(255),
 			flashingPattern: "6",

@@ -9,6 +9,11 @@ import {
 	saveSettings,
 	updateSetting,
 } from "@/src/services/SettingsService";
+import {
+	sanitizeSettingName,
+	validateSettingName,
+	filterSettingNameInput,
+} from "@/src/utils/inputSecurity";
 import { useState, useCallback } from "react";
 import {
 	Dimensions,
@@ -96,15 +101,27 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 	const [nameError, setNameError] = useState<string | null>(null);
 
 	const handleNameChange = (text: string) => {
-		setSettingName(text);
+		// Apply real-time filtering to prevent harmful input
+		const filteredText = filterSettingNameInput(text);
+		setSettingName(filteredText);
 		setHasChanges(true);
 	};
 
 	// Debounced name validation
 	React.useEffect(() => {
 		const validateName = async () => {
-			if (debouncedSettingName === setting.name) {
+			// Sanitize the debounced input before validation
+			const sanitizedName = sanitizeSettingName(debouncedSettingName);
+
+			if (sanitizedName === setting.name) {
 				setNameError(null);
+				return;
+			}
+
+			// Apply security validation first
+			const securityValidation = validateSettingName(sanitizedName);
+			if (!securityValidation.isValid) {
+				setNameError(securityValidation.error);
 				return;
 			}
 
@@ -112,7 +129,7 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 			const settings = await loadSettings();
 			const nameExists = settings?.some(
 				(s: Setting, index: number) =>
-					s.name.toLowerCase() === debouncedSettingName.toLowerCase() &&
+					s.name.toLowerCase() === sanitizedName.toLowerCase() &&
 					s.name !== originalName &&
 					(!isNew || index !== settingIndex), // Exclude current setting for existing settings
 			);
@@ -437,10 +454,13 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 	};
 
 	const handleSave = async () => {
+		// Sanitize the setting name before saving
+		const sanitizedName = sanitizeSettingName(settingName);
+
 		// Create a new setting object instead of modifying the original
 		const updatedSetting = {
 			...setting,
-			name: settingName,
+			name: sanitizedName,
 			colors: [...colors],
 		};
 
@@ -641,6 +661,12 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 						placeholder="Enter setting name"
 						placeholderTextColor={COLORS.PLACEHOLDER}
 						maxLength={20}
+						autoCapitalize="words"
+						keyboardAppearance="dark"
+						spellCheck={false}
+						autoCorrect={false}
+						importantForAutofill="no"
+						textContentType="none"
 					/>
 				</View>
 				<TouchableOpacity style={styles.sortButton} onPress={sortColorsByHue}>

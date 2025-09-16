@@ -30,6 +30,11 @@ import {
 import { ANIMATION_PATTERNS } from "@/src/configurations/patterns";
 import { useConfiguration } from "@/src/context/ConfigurationContext";
 import { useDebounce } from "@/src/hooks/useDebounce";
+import {
+	sanitizeSettingName,
+	validateSettingName,
+	filterSettingNameInput,
+} from "@/src/utils/inputSecurity";
 import type { Setting } from "@/src/types/SettingInterface";
 import { postConfig, restoreConfiguration } from "@/src/services/ApiService";
 import {
@@ -95,15 +100,27 @@ export default function FlashingPatternEditor({
 	const [hasChanges, setHasChanges] = useState(isNew);
 
 	const handleNameChange = (text: string) => {
-		setSettingName(text);
+		// Apply real-time filtering to prevent harmful input
+		const filteredText = filterSettingNameInput(text);
+		setSettingName(filteredText);
 		setHasChanges(true);
 	};
 
 	// Debounced name validation
 	React.useEffect(() => {
 		const validateName = async () => {
-			if (debouncedSettingName === setting.name) {
+			// Sanitize the debounced input before validation
+			const sanitizedName = sanitizeSettingName(debouncedSettingName);
+
+			if (sanitizedName === setting.name) {
 				setNameError(null);
+				return;
+			}
+
+			// Apply security validation first
+			const securityValidation = validateSettingName(sanitizedName);
+			if (!securityValidation.isValid) {
+				setNameError(securityValidation.error);
 				return;
 			}
 
@@ -111,7 +128,7 @@ export default function FlashingPatternEditor({
 			const settings = await loadSettings();
 			const nameExists = settings?.some(
 				(s: Setting, index: number) =>
-					s.name.toLowerCase() === debouncedSettingName.toLowerCase() &&
+					s.name.toLowerCase() === sanitizedName.toLowerCase() &&
 					s.name !== setting.name &&
 					(!isNew || index !== settingIndex), // Exclude current setting for existing settings
 			);
@@ -258,12 +275,15 @@ export default function FlashingPatternEditor({
 	};
 
 	const handleSave = async () => {
+		// Sanitize the setting name before saving
+		const sanitizedName = sanitizeSettingName(settingName);
+
 		// Create a new setting object to avoid mutating the original
 		const updatedSetting = {
 			...setting,
 			delayTime: Math.round(delayTime),
 			flashingPattern: flashingPattern,
-			name: settingName,
+			name: sanitizedName,
 		};
 
 		if (isNew) {
@@ -277,7 +297,7 @@ export default function FlashingPatternEditor({
 		} else {
 			const updatedSetting = {
 				...setting,
-				name: settingName,
+				name: sanitizedName,
 				delayTime: Math.round(delayTime),
 				flashingPattern: flashingPattern,
 			};
@@ -407,6 +427,10 @@ export default function FlashingPatternEditor({
 								}}
 								autoCapitalize="words"
 								keyboardAppearance="dark"
+								spellCheck={false}
+								autoCorrect={false}
+								importantForAutofill="no"
+								textContentType="none"
 							/>
 						</View>
 						<MetronomeButton

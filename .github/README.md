@@ -1,6 +1,8 @@
 # Luminova Controller
 React Native LED controller app for managing custom lighting patterns through REST API.
+
 [Download for iOS](https://apps.apple.com/us/app/luminova-interface/id6751150571)
+
 [Download for Android](https://expo.dev/accounts/forma-cristata/projects/Luminova_Controller/builds/38d59bc2-59c8-45bb-918e-5621e26b41a1)
 
 ## Features
@@ -184,3 +186,4 @@ For detailed contribution guidelines, see [CONTRIBUTING.md](./CONTRIBUTING.md).
 - **Android/iOS Device** for running the React Native application
 ## License
 This project is part of the Luminova Controller system. See project documentation for licensing information.
+

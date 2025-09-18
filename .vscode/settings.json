@@ -13,5 +13,14 @@
 	},
 	"[javascriptreact]": {
 		"editor.defaultFormatter": "vscode.typescript-language-features"
+	},
+	"[c]": {
+		"editor.defaultFormatter": "ms-vscode.cpptools"
+	},
+	"[cpp]": {
+		"editor.defaultFormatter": "ms-vscode.cpptools"
+	},
+	"[arduino]": {
+		"editor.defaultFormatter": "ms-vscode.cpptools"
 	}
-}
+}

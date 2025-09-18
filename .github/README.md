@@ -148,16 +148,25 @@ luminova/
 - Prevention of "Text strings must be rendered within a <Text> component" errors
 ## Development Workflow
 ### **Available Scripts**
-- `npm run format-lint` - Run Biome linter and formatter with fixes
-- `npm run format` - Format code with Biome
+#### **Primary Tooling**
+- `npm run format` - Format code with Prettier
+- `npm run lint` - Run ESLint for code quality checks
+- `npm run lint:fix` - Run ESLint with automatic fixes
+- `npm run format:check` - Check code formatting without writing changes
+#### **Biome Scripts (Legacy)**
+- `npm run biome:format-lint` - Run Biome linter and formatter with fixes
+- `npm run biome:format` - Format code with Biome
+- `npm run biome:format-lint-org` - Run Biome check with organization
+#### **Development**
 - `npm start` - Start Expo development server
 - `npm run android` - Run on Android device/emulator
 - `npm run ios` - Run on iOS device/simulator
-### **CI/CD Pipeline**
-- **Automated quality checks** on every push
-- **TypeScript compilation** validation
-- **Biome linting** and formatting checks
-- **Dependency analysis** and security scanning
+### **Linting and Formatting**
+The project uses ESLint and Prettier as the primary code quality tools:
+- **ESLint Configuration**: `.eslintrc` with TypeScript, React, and React Native rules
+- **Prettier Configuration**: `.prettierrc.yaml` with consistent formatting rules
+- **VS Code Integration**: Automatic format-on-save and lint-on-save enabled
+- **Biome Support**: Legacy Biome tooling maintained for compatibility
 ## Recent Optimizations
 ### **Component Consolidation**
 - **Button Architecture Refactoring**: Organized button system with base component
@@ -171,7 +180,9 @@ luminova/
 - **Debounced Input Handling**: Optimized user interaction response
 ### **Code Quality**
 - **TypeScript Integration**: Comprehensive type safety throughout codebase
-- **Linting Pipeline**: Automated code quality enforcement
+- **ESLint Pipeline**: Automated code quality enforcement with React and React Native rules
+- **Prettier Formatting**: Consistent code style across the entire project
+- **VS Code Integration**: Format-on-save and lint-on-save configuration
 - **Documentation**: Comprehensive guides and inline documentation
 - **Testing Standards**: Component validation and integration testing
 ## Getting Started
@@ -186,4 +197,3 @@ For detailed contribution guidelines, see [CONTRIBUTING.md](./CONTRIBUTING.md).
 - **Android/iOS Device** for running the React Native application
 ## License
 This project is part of the Luminova Controller system. See project documentation for licensing information.
-

@@ -1,7 +1,7 @@
-import React, { useCallback, useMemo } from "react";
-import { Platform, Keyboard } from "react-native";
-import HsvSlider from "./HsvSlider";
-import PlusMinusControl from "./PlusMinusControl";
+import React, { useCallback, useMemo } from 'react';
+import { Keyboard, Platform } from 'react-native';
+import HsvSlider from './HsvSlider';
+import PlusMinusControl from './PlusMinusControl';
 
 interface BrightnessSliderProps {
 	brightness: number; // 0-100
@@ -14,8 +14,6 @@ interface BrightnessSliderProps {
 
 export default function BrightnessSlider({
 	brightness,
-	hue: _hue, // For future gradient implementation
-	saturation: _saturation, // For future gradient implementation
 	disabled,
 	onValueChange,
 	onSlidingComplete,
@@ -31,14 +29,7 @@ export default function BrightnessSlider({
 		const newValue = Math.max(min, brightness - step);
 		onValueChange(newValue);
 		onSlidingComplete(newValue);
-	}, [
-		disabled,
-		brightness,
-		onValueChange,
-		onSlidingComplete,
-		getStep,
-		getMinMax,
-	]);
+	}, [disabled, brightness, onValueChange, onSlidingComplete, getStep, getMinMax]);
 
 	const handlePlus = useCallback(() => {
 		if (disabled) return;
@@ -47,14 +38,7 @@ export default function BrightnessSlider({
 		const newValue = Math.min(max, brightness + step);
 		onValueChange(newValue);
 		onSlidingComplete(newValue);
-	}, [
-		disabled,
-		brightness,
-		onValueChange,
-		onSlidingComplete,
-		getStep,
-		getMinMax,
-	]);
+	}, [disabled, brightness, onValueChange, onSlidingComplete, getStep, getMinMax]);
 
 	const handleSliderValueChange = useCallback(
 		(newValue: number) => {
@@ -77,7 +61,7 @@ export default function BrightnessSlider({
 		[disabled, onSlidingComplete],
 	);
 
-	if (Platform.OS === "android") {
+	if (Platform.OS === 'android') {
 		return (
 			<PlusMinusControl
 				type="brightness"

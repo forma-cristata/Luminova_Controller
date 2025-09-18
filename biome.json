@@ -10,12 +10,12 @@
 		"includes": ["src/**/*"]
 	},
 	"formatter": {
-		"enabled": false,
+		"enabled": true,
 		"indentStyle": "tab",
 		"lineEnding": "lf"
 	},
 	"linter": {
-		"enabled": false,
+		"enabled": true,
 		"rules": {
 			"recommended": true,
 			"correctness": {
@@ -39,7 +39,7 @@
 		}
 	},
 	"assist": {
-		"enabled": false,
+		"enabled": true,
 		"actions": {
 			"source": {
 				"organizeImports": "off"

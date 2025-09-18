@@ -1,7 +1,7 @@
-import React from "react";
-import { View, TouchableOpacity, StyleSheet } from "react-native";
-import Ionicons from "@expo/vector-icons/Ionicons";
-import { DIMENSIONS } from "@/src/styles/SharedStyles";
+import { DIMENSIONS } from '@/src/styles/SharedStyles';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import React from 'react';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
 interface FooterProps {
 	onLeftPress?: () => void;
@@ -23,9 +23,7 @@ export default function Footer({
 	const footerHeight = topOffset * 2 + iconSize;
 
 	return (
-		<View
-			style={[styles.footerWrapper, { height: footerHeight }, containerStyle]}
-		>
+		<View style={[styles.footerWrapper, { height: footerHeight }, containerStyle]}>
 			<View style={styles.footerBar}>
 				<View style={styles.left}>
 					<TouchableOpacity
@@ -55,36 +53,34 @@ export default function Footer({
 
 const styles = StyleSheet.create({
 	footerWrapper: {
-		width: "100%",
-		position: "absolute",
+		width: '100%',
+		position: 'absolute',
 		bottom: 0,
 	},
 	footerBar: {
 		flex: 0.7 * DIMENSIONS.SCALE,
-		flexDirection: "row",
-		alignItems: "center",
-		justifyContent: "space-between",
+		flexDirection: 'row',
+		alignItems: 'center',
+		justifyContent: 'space-between',
 		paddingHorizontal: DIMENSIONS.SCREEN_WIDTH * 0.05,
 	},
 	left: {
 		flex: 1,
-		alignItems: "flex-start",
-		justifyContent: "center",
+		alignItems: 'flex-start',
+		justifyContent: 'center',
 	},
 	center: {
 		flex: 1,
 	},
 	right: {
 		flex: 1,
-		alignItems: "flex-end",
-		justifyContent: "center",
+		alignItems: 'flex-end',
+		justifyContent: 'center',
 	},
 	sideButton: {
 		width: 40 * DIMENSIONS.SCALE,
 		height: 40 * DIMENSIONS.SCALE,
-		justifyContent: "center",
-		alignItems: "center",
+		justifyContent: 'center',
+		alignItems: 'center',
 	},
-	leftButton: {},
-	rightButton: {},
 });

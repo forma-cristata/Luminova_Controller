@@ -1,9 +1,8 @@
-import { useFonts } from "expo-font";
-import * as SplashScreen from "expo-splash-screen";
-import { useEffect, useState } from "react";
-import React from "react";
-import { loadIpAddress } from "./src/services/IpConfigService";
-import Index from "./src/screens/index";
+import { useFonts } from 'expo-font';
+import * as SplashScreen from 'expo-splash-screen';
+import React, { useEffect, useState } from 'react';
+import Index from './src/screens/index';
+import { loadIpAddress } from './src/services/IpConfigService';
 
 // Completely disable LogBox and console warnings
 if (__DEV__) {
@@ -32,7 +31,7 @@ if (__DEV__) {
 		if (LogBox && LogBox.ignoreAllLogs) {
 			LogBox.ignoreAllLogs(true);
 		}
-	} catch (e) {
+	} catch {
 		// LogBox not available, which is fine
 	}
 }
@@ -42,8 +41,8 @@ SplashScreen.preventAutoHideAsync();
 
 export default function App() {
 	const [loaded, error] = useFonts({
-		Thesignature: require("./assets/fonts/Thesignature.ttf"),
-		"Clearlight": require("./assets/fonts/Clearlight-lJlq.ttf"),
+		Thesignature: require('./assets/fonts/Thesignature.ttf'),
+		Clearlight: require('./assets/fonts/Clearlight-lJlq.ttf'),
 	});
 	const [ipLoaded, setIpLoaded] = useState(false);
 
@@ -53,7 +52,7 @@ export default function App() {
 				// Load the IP address at startup
 				await loadIpAddress();
 			} catch (e) {
-				console.warn("Failed to load IP on startup", e);
+				console.warn('Failed to load IP on startup', e);
 			} finally {
 				setIpLoaded(true);
 			}
@@ -72,4 +71,4 @@ export default function App() {
 	}
 
 	return <Index />;
-}
+}

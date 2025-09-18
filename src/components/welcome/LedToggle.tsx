@@ -1,12 +1,11 @@
-import React from "react";
-import { useState, useEffect, useRef } from "react";
-import { View, TouchableOpacity, Animated, StyleSheet } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { getStatus, toggleLed } from "@/src/services/ApiService";
-import { useConfiguration } from "@/src/context/ConfigurationContext";
-import { useDebounce } from "@/src/hooks/useDebounce";
-import { COMMON_STYLES, DIMENSIONS } from "@/src/styles/SharedStyles";
-import type { Setting } from "@/src/types/SettingInterface";
+import { useConfiguration } from '@/src/context/ConfigurationContext';
+import { useDebounce } from '@/src/hooks/useDebounce';
+import { getStatus, toggleLed } from '@/src/services/ApiService';
+import { DIMENSIONS } from '@/src/styles/SharedStyles';
+import type { Setting } from '@/src/types/SettingInterface';
+import { Ionicons } from '@expo/vector-icons';
+import React, { useEffect, useRef, useState } from 'react';
+import { Animated, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 interface LedToggleProps {
 	isShelfConnected: boolean;
@@ -30,9 +29,7 @@ export default function LedToggle({
 	const [pendingToggle, setPendingToggle] = useState(false);
 	const debouncedPendingToggle = useDebounce(pendingToggle, 300);
 
-	const toggleOpacity = useRef(
-		new Animated.Value(disableAnimation ? 1 : 0.3),
-	).current;
+	const toggleOpacity = useRef(new Animated.Value(disableAnimation ? 1 : 0.3)).current;
 	const thumbPosition = useRef(new Animated.Value(0)).current;
 
 	// Deterministic sizes for header layout (avoid Math.min for predictable results)
@@ -47,7 +44,7 @@ export default function LedToggle({
 				setIsEnabled(data.shelfOn);
 				setIsShelfConnected(true);
 			} catch (error) {
-				console.error("Error fetching status:", error);
+				console.error('Error fetching status:', error);
 				setIsShelfConnected(false);
 			} finally {
 				setIsLoading(false);
@@ -110,31 +107,28 @@ export default function LedToggle({
 
 		if (!currentConfiguration) {
 			const startConfig: Setting = {
-				name: "still",
+				name: 'still',
 				colors: [
-					"#ff0000",
-					"#ff4400",
-					"#ff6a00",
-					"#ff9100",
-					"#ffee00",
-					"#00ff1e",
-					"#00ff44",
-					"#00ff95",
-					"#00ffff",
-					"#0088ff",
-					"#0000ff",
-					"#8800ff",
-					"#ff00ff",
-					"#ff00bb",
-					"#ff0088",
-					"#ff0044",
+					'#ff0000',
+					'#ff4400',
+					'#ff6a00',
+					'#ff9100',
+					'#ffee00',
+					'#00ff1e',
+					'#00ff44',
+					'#00ff95',
+					'#00ffff',
+					'#0088ff',
+					'#0000ff',
+					'#8800ff',
+					'#ff00ff',
+					'#ff00bb',
+					'#ff0088',
+					'#ff0044',
 				],
 				whiteValues: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-				brightnessValues: [
-					255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-					255, 255,
-				],
-				flashingPattern: "6",
+				brightnessValues: [255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255],
+				flashingPattern: '6',
 				delayTime: 3,
 			};
 			setCurrentConfiguration(startConfig);
@@ -154,7 +148,7 @@ export default function LedToggle({
 			if (newState) {
 				// When turning on, send the current configuration
 				if (currentConfiguration) {
-					await toggleLed("on", {
+					await toggleLed('on', {
 						colors: currentConfiguration.colors,
 						whiteValues: currentConfiguration.whiteValues,
 						brightnessValues: currentConfiguration.brightnessValues,
@@ -163,15 +157,15 @@ export default function LedToggle({
 					});
 				} else {
 					// Use default homeostasis configuration
-					await toggleLed("on");
+					await toggleLed('on');
 				}
 			} else {
-				await toggleLed("off");
+				await toggleLed('off');
 			}
-			console.log(`LED toggled ${newState ? "on" : "off"}`);
+			console.log(`LED toggled ${newState ? 'on' : 'off'}`);
 			setIsShelfConnected(true);
 		} catch (error) {
-			console.error("Error toggling LED:", error);
+			console.error('Error toggling LED:', error);
 			setIsShelfConnected(false);
 		} finally {
 			setIsLoading(false);
@@ -180,9 +174,7 @@ export default function LedToggle({
 	};
 
 	return (
-		<Animated.View
-			style={[styles.wrapper, { opacity: toggleOpacity }, containerStyle]}
-		>
+		<Animated.View style={[styles.wrapper, { opacity: toggleOpacity }, containerStyle]}>
 			<View style={styles.toggleContainer}>
 				<TouchableOpacity
 					style={[
@@ -191,11 +183,7 @@ export default function LedToggle({
 							width: toggleWidth,
 							height: DIMENSIONS.SCREEN_HEIGHT * 0.039,
 							borderRadius: DIMENSIONS.SCREEN_HEIGHT * 0.0195,
-							backgroundColor: isEnabled
-								? "#ffffff"
-								: isShelfConnected
-									? "#665e73"
-									: "#444",
+							backgroundColor: isEnabled ? '#ffffff' : isShelfConnected ? '#665e73' : '#444',
 						},
 					]}
 					onPress={toggleSwitch}
@@ -208,27 +196,11 @@ export default function LedToggle({
 						right: DIMENSIONS.SCREEN_WIDTH * 0.025,
 					}}
 				>
-					<View
-						style={[
-							styles.iconContainer,
-							styles.sunContainer,
-							{ opacity: isEnabled ? 1 : 0.3 },
-						]}
-					>
+					<View style={[styles.iconContainer, styles.sunContainer, { opacity: isEnabled ? 1 : 0.3 }]}>
 						<Ionicons name="sunny" size={iconSize} color="#000000" />
 					</View>
-					<View
-						style={[
-							styles.iconContainer,
-							styles.moonContainer,
-							{ opacity: !isEnabled ? 1 : 0.3 },
-						]}
-					>
-						<Ionicons
-							name="moon"
-							size={iconSize}
-							color={isShelfConnected ? "#00ff00" : "#ff4444"}
-						/>
+					<View style={[styles.iconContainer, styles.moonContainer, { opacity: !isEnabled ? 1 : 0.3 }]}>
+						<Ionicons name="moon" size={iconSize} color={isShelfConnected ? '#00ff00' : '#ff4444'} />
 					</View>
 					<Animated.View
 						style={[
@@ -237,11 +209,7 @@ export default function LedToggle({
 								width: thumbSize,
 								height: thumbSize,
 								borderRadius: thumbSize / 2,
-								backgroundColor: !isShelfConnected
-									? "#666"
-									: isEnabled
-										? "#665e73"
-										: "#f4f3f4",
+								backgroundColor: !isShelfConnected ? '#666' : isEnabled ? '#665e73' : '#f4f3f4',
 								transform: [{ translateX: thumbPosition }],
 							},
 						]}
@@ -254,24 +222,24 @@ export default function LedToggle({
 
 const styles = StyleSheet.create({
 	toggleContainer: {
-		position: "relative",
-		alignItems: "center",
-		justifyContent: "center",
+		position: 'relative',
+		alignItems: 'center',
+		justifyContent: 'center',
 	},
 	wrapper: {
-		alignItems: "flex-start",
-		justifyContent: "center",
+		alignItems: 'flex-start',
+		justifyContent: 'center',
 	},
 	customToggle: {
-		position: "relative",
-		justifyContent: "center",
+		position: 'relative',
+		justifyContent: 'center',
 		borderWidth: 2,
-		borderColor: "#333",
+		borderColor: '#333',
 	},
 	iconContainer: {
-		position: "absolute",
-		alignItems: "center",
-		justifyContent: "center",
+		position: 'absolute',
+		alignItems: 'center',
+		justifyContent: 'center',
 		width: DIMENSIONS.SCREEN_HEIGHT * 0.022,
 		height: DIMENSIONS.SCREEN_HEIGHT * 0.022,
 	},
@@ -282,8 +250,8 @@ const styles = StyleSheet.create({
 		left: DIMENSIONS.SCREEN_HEIGHT * 0.007,
 	},
 	toggleThumb: {
-		position: "absolute",
-		shadowColor: "#000",
+		position: 'absolute',
+		shadowColor: '#000',
 		shadowOffset: { width: 0, height: 2 },
 		shadowOpacity: 0.3,
 		shadowRadius: 3,

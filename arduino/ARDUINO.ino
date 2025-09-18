@@ -462,13 +462,13 @@ void BerghainBitte() {
 void TheUnderground() {
     if (focal == -1) {
         for (int i = 0; i < COLOR_COUNT; i++) {
+            delay(delayTime * 8);
             for (int j = 0; j < LIGHT_COUNT / 2; j++) {
                 int offset = (i + j * 2) % LIGHT_COUNT;
                 if (effectNumber != 7) return;
                 for (int k = 0; k < 2; k++) {
                     setLed(offset, "#000000", 0, 0);
                     FastLED.show();
-                    delay(delayTime * 8);
                     setLed(offset, colors[i], whiteValues[i], brightnessValues[i]);
                     FastLED.show();
                 }
@@ -479,6 +479,7 @@ void TheUnderground() {
     else {
         for (int i = 0; i < COLOR_COUNT; i++) {
             int j2 = 15;
+            delay(delayTime * 8);
             for (int j = 0; j < focal; j++) {
                 int offset = (i + j * 2) % LIGHT_COUNT;
                 int offset2 = (i + j2 * 2) % LIGHT_COUNT;
@@ -490,7 +491,6 @@ void TheUnderground() {
                         setLed(offset2, "#000000", 0, 0);
                         FastLED.show();
                     }
-                    delay(delayTime * 8);
                     setLed(offset, colors[i], whiteValues[i], brightnessValues[i]);
                     FastLED.show();
 					if (j2 >= focal) {

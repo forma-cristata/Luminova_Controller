@@ -85,11 +85,7 @@ jest.config.js
 coverage/
 
 # Development tools
-.husky/
 .prettierrc.*
 .eslintrc.*
 biome.json
 eslint.config.mjs
-
-# Misc
-height_calculation.md

@@ -1,0 +1,30 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Luminova Production Script Pre-Push Hook
+# Automatically increments version before push
+
+echo "🔧 Running Luminova production version increment..."
+
+# Run the production script with patch increment by default
+node scripts/production.js patch
+
+# Check if version was updated
+if git diff --quiet app.json; then
+  echo "✅ No version changes detected"
+else
+  echo "📦 Version updated in app.json"
+
+  # Stage the updated app.json
+  git add app.json
+
+  # Get the new version for commit message
+  NEW_VERSION=$(node -e "console.log(require('./app.json').expo.version)")
+
+  # Commit the version change
+  git commit -m "chore: bump version to ${NEW_VERSION} [automated]"
+
+  echo "✅ Version ${NEW_VERSION} committed and ready for push"
+fi
+
+echo "🚀 Pre-push checks completed successfully!"

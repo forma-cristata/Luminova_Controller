@@ -5,8 +5,9 @@ import WelcomeTutorial from "@/src/components/common/WelcomeTutorial";
 import IpAddressInput from "@/src/components/welcome/IpAddressInput";
 import { useConfiguration } from "@/src/context/ConfigurationContext";
 import { COLORS, DIMENSIONS, FONTS } from "@/src/styles/SharedStyles";
+import { useFocusEffect } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
 	Keyboard,
 	ScrollView,
@@ -31,18 +32,36 @@ export default function Welcome({ navigation }: WelcomeProps) {
 	const [debugTapCount, setDebugTapCount] = useState(0);
 
 	const scrollViewRef = useRef<ScrollView>(null);
+	const tutorialTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
 	useEffect(() => {
 		setLastEdited("0");
 	}, [setLastEdited]);
 
-	// Show tutorial on every app startup
-	useEffect(() => {
-		// Small delay to let the screen render first
-		setTimeout(() => {
-			setShowTutorial(true);
-		}, 3450);
-	}, []);
+	// Show tutorial only when screen is focused and after delay
+	useFocusEffect(
+		useCallback(() => {
+			// Clear any existing timeout
+			if (tutorialTimeoutRef.current) {
+				clearTimeout(tutorialTimeoutRef.current);
+			}
+
+			// Set tutorial to show after delay, but only if screen is still focused
+			tutorialTimeoutRef.current = setTimeout(() => {
+				setShowTutorial(true);
+			}, 3450);
+
+			// Cleanup function - clear timeout when screen loses focus
+			return () => {
+				if (tutorialTimeoutRef.current) {
+					clearTimeout(tutorialTimeoutRef.current);
+					tutorialTimeoutRef.current = null;
+				}
+				// Hide tutorial if user navigates away
+				setShowTutorial(false);
+			};
+		}, []),
+	);
 
 	useEffect(() => {
 		if (displayText.length < fullText.length) {

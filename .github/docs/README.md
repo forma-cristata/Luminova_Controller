@@ -2,13 +2,17 @@
 ## Overview
 This documentation provides comprehensive coverage of the Luminova Controller React Native app architecture, organized to mirror the actual project file structure for easy navigation and reference.
 ## Documentation Structure
+
+### Project Management
+- **[WORKFLOWS.md](WORKFLOWS.md)**: GitHub Actions CI/CD pipeline documentation and setup guides
+
 ### Root Level Documentation
 - **[ROOT.md](ROOT.md)**: Documentation for all root-level configuration and project files
 ### Source Code Documentation
 - **[src/SRC_OVERVIEW.md](src/SRC_OVERVIEW.md)**: Overview of the entire source code architecture and organization
 #### Component Documentation
 - **[src/components/COMPONENTS_OVERVIEW.md](src/components/COMPONENTS_OVERVIEW.md)**: All reusable UI components organized by functionality
-#### Configuration Documentation  
+#### Configuration Documentation
 - **[src/configurations/CONFIGURATIONS_OVERVIEW.md](src/configurations/CONFIGURATIONS_OVERVIEW.md)**: App-wide constants, defaults, and LED pattern definitions
 #### Context Documentation
 - **[src/context/CONTEXT_OVERVIEW.md](src/context/CONTEXT_OVERVIEW.md)**: Global state management and React Context providers
@@ -29,7 +33,7 @@ This documentation provides comprehensive coverage of the Luminova Controller Re
 The Luminova Controller is a React Native app built with Expo SDK 53 that communicates with LED hardware via REST API. The app features:
 - **16-dot LED grid** representation (2 rows of 8)
 - **12 animation patterns** with real-time preview
-- **HSV color picker** with gesture controls  
+- **HSV color picker** with gesture controls
 - **Carousel-based settings** management
 - **TypeScript throughout** for type safety
 - **Centralized styling** system
@@ -57,4 +61,4 @@ The Luminova Controller is a React Native app built with Expo SDK 53 that commun
 - Check **SERVICES_OVERVIEW.md** for business logic and API patterns
 - Reference **STYLES_OVERVIEW.md** for design system usage
 - Consult **ROOT.md** for build and configuration understanding
-This documentation system ensures that developers can quickly understand any part of the Luminova Controller codebase by following the same organizational structure used in the actual project files.
+This documentation system ensures that developers can quickly understand any part of the Luminova Controller codebase by following the same organizational structure used in the actual project files.

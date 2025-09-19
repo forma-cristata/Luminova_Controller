@@ -61,7 +61,7 @@ luminova/
 │   └── images/                  # App icons and images
 ├── android/                      # Android build configuration
 ├── .github/                      # GitHub configuration
-│   ├── workflows/               # CI/CD pipelines
+│   ├── workflows/               # CI/CD pipelines (iOS build automation)
 │   ├── docs/                    # Documentation
 │   ├── README.md               # This file
 │   └── CONTRIBUTING.md         # Contribution guidelines
@@ -194,10 +194,31 @@ The project uses ESLint and Prettier as the primary code quality tools:
 - **Documentation**: Comprehensive guides and inline documentation
 - **Testing Standards**: Component validation and integration testing
 ## Getting Started
+
+### **Development Setup**
 1. **Clone the repository**
 2. **Install dependencies**: `npm install`
 3. **Start development server**: `npm start`
 4. **Run on device**: `npm run android` or `npm run ios`
+
+### **iOS Build Pipeline Setup**
+The repository includes automated iOS build and submission workflow via GitHub Actions.
+
+**Prerequisites:**
+1. **Expo Account**: Ensure project is linked to Expo account
+2. **App Store Connect**: Configure app in Apple Developer Console
+3. **GitHub Secrets**: Add `EXPO_TOKEN` to repository secrets
+
+**Workflow Configuration:**
+- **Automatic Builds**: Triggered on pushes to `main` branch
+- **Manual Builds**: Available via GitHub Actions tab with custom options
+- **Build Profiles**: Support for `production`, `preview`, and `development`
+- **Store Submission**: Optional automatic submission to App Store
+
+**Usage:**
+- **Manual Trigger**: Go to Actions > iOS Build and Submit > Run workflow
+- **Automatic**: Push to main branch triggers build
+- **Store Submit**: Enable submission checkbox for App Store release
 For detailed contribution guidelines, see [CONTRIBUTING.md](./CONTRIBUTING.md).
 ## Hardware Requirements
 - **LED Controller Hardware** compatible with REST API

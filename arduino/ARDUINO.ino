@@ -91,8 +91,8 @@ void focalCheck(float delayTime)
     delay(delayTime);
     const byte HALL_PINS[] = {A0, A1, A2, A3, A4};
     const int NUM_PINS = 5;
-    const int BASE_READINGS[] = {500, 509, 506, 500, 514};
-    const float THRESHOLDS[] = {3.0, 2.9, 2.8, 2.5, 2.5};
+    const int BASE_READINGS[] = {500, 509, 506, 500, 514}; // You will need to calibrate these yourself. It's very trial and error. Copilot can whip up a measuring script quickly or you can message me and I'll send mine.
+    const float THRESHOLDS[] = {3.0, 2.9, 2.8, 2.5, 2.5}; // Same with these, they are how much the readings change when a magnet is applied
     float highestVal = 0;
     int highestPin = -1;
     for (int i = 0; i < NUM_PINS; i++)
@@ -139,7 +139,7 @@ void focalCheck(float delayTime)
             break;
         }
     }
-    // focal = focalPoint; uncomment to resume magnetivity
+    focal = focalPoint;
     // Serial.print("Focal point: ");
     // Serial.println(focal);
 }
@@ -560,7 +560,6 @@ void Still()
         if (i % 8 == 0)
             focalCheck(delayTime);
     }
-    delay(2000);
 }
 // 5 -> Progressive
 void Cortez()

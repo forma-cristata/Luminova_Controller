@@ -27,7 +27,7 @@
 				"distribution": "store"
 			},
 			"android": {
-				"buildType": "app-bundle",
+				"buildType": "apk",
 				"credentialsSource": "local"
 			}
 		},

@@ -154,9 +154,9 @@ luminova/
 - `npm run lint:fix` - Run ESLint with automatic fixes
 - `npm run format:check` - Check code formatting without writing changes
 #### **Biome Scripts (Legacy)**
-- `npm run biome:format-lint` - Run Biome linter and formatter with fixes
-- `npm run biome:format` - Format code with Biome
-- `npm run biome:format-lint-org` - Run Biome check with organization
+- `npm run format-lint` - Run Biome and ES linter and Biome auto-formatter with safe fixes
+- `npm run format` - Format all files
+- `npm run format-lint-org` - Run Biome's full suite including organizing imports
 #### **Development**
 - `npm start` - Start Expo development server
 - `npm run android` - Run on Android device/emulator

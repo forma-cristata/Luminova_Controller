@@ -10,13 +10,10 @@
 **Purpose:** Configures Babel to transform modern JavaScript/TypeScript code for React Native compatibility and enables React Native Reanimated animations.
 
 ### biome.json
-**Purpose:** Legacy Biome configuration (disabled) that previously provided all-in-one code formatting and linting. Now replaced by ESLint and Prettier for better tooling integration.
+**Purpose:** Biome configuration that provides all-in-one code formatting and linting. Used in combination with ESLint for thoroughness.
 
 ### .eslintrc
 **Purpose:** ESLint configuration with TypeScript, React, and React Native rules for comprehensive code quality checks and error detection.
-
-### .prettierrc.yaml
-**Purpose:** Prettier configuration for consistent code formatting with tab indentation, 120-character line width, and React Native optimized settings.
 
 ### eas.json
 **Purpose:** EAS (Expo Application Services) configuration for building, submitting, and distributing your Luminova Controller app across different environments.
@@ -47,9 +44,7 @@
 ### savedSettings.json
 **Purpose:** Persistent storage for user's LED controller settings and configurations across app sessions.
 
-## Build/Development Files
-### .biomeignore
-**Purpose:** Specifies files and directories that Biome should ignore during legacy linting and formatting operations.
+## Development Files
 
 ### README.md
 **Purpose:** Project documentation with setup instructions, usage guidelines, and development information.

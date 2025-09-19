@@ -14,7 +14,7 @@
 - THIS CODEBASE USES EXPO-AUDIO, DO NOT SUGGEST USING EXPO-AV AS IT IS DEPRECATED BY SDK 53.
 - Your terminal default path is C:/Users/frisk/Documents/T6_25/Capstone/Luminova_Controller/luminova>
     - You do not need to navigate to this path to suggest commands.
-- **LINTER COMMAND**: Use `npm run biome:format-lint` to run the linter and formatter
+- **LINTER COMMAND**: Use `npm run format-lint` to run the linters and formatter
 - IF I TELL YOU SOMETHING IS BROKEN, YOU MUST FIX IT. THE SOLUTION IS NEVER EVER EVER TO DELETE IT.
 - **PROMPT FOR REBUILD**: If you make changes to native code (`android`/`ios` directories) or build configurations (`eas.json`, `app.json`, `*.config.js`), you must prompt me to rebuild the app.
 ### 🔍 **Codebase Scanning Authority**
@@ -116,7 +116,7 @@
 - Follow navigation parameter typing in index.tsx
 ### 🔧 **LINT FIX Protocol**
 #### **Protocol Steps:**
-1. **Run linter** to identify all issues in src directory using `npx @biomejs/biome lint src/screens/<fileName>.<fileExtension>` one at a time until there are no errors when you run `npm run biome:format-lint-org` and 'npm run lint'
+1. **Run linter** to identify all issues in src directory using `npx @biomejs/biome lint src/screens/<fileName>.<fileExtension>` one at a time until there are no errors when you run `npm run format-lint`
 2. **Group issues by file** to fix them systematically
 3. **Fix one file at a time** with the following priority:
    - Remove unused imports (safest fixes first)

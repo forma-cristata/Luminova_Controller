@@ -55,7 +55,14 @@ export default [
 			'no-control-regex': 'off', // Allow control characters in regex for input validation
 
 			// TypeScript rules
-			'@typescript-eslint/no-unused-vars': 'warn',
+			'@typescript-eslint/no-unused-vars': [
+				'warn',
+				{
+					argsIgnorePattern: '^_',
+					varsIgnorePattern: '^_',
+					caughtErrorsIgnorePattern: '^_',
+				},
+			],
 			'@typescript-eslint/no-explicit-any': 'warn',
 			'@typescript-eslint/no-require-imports': 'off', // Allow require() in React Native
 

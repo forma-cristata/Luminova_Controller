@@ -5,7 +5,7 @@
 
 **Recent Changes:** Animation function names updated to match pattern names from configurations/patterns.ts for consistency:
 - blenderAnimation → stuckInABlender
-- christmasAnimation → smolder  
+- christmasAnimation → smolder
 - comfortSongAnimation → thePianoMan
 - funkyAnimation → feelTheFunk
 - stillAnimation → still

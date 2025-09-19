@@ -117,7 +117,7 @@ const AnimatedDots = React.memo(
 
 		// Animation patterns with proper cleanup
 
-		const blenderAnimation = useCallback(
+		const stuckInABlender = useCallback(
 			async (isActive: () => boolean) => {
 				const currentTime = Date.now();
 
@@ -137,7 +137,7 @@ const AnimatedDots = React.memo(
 			[setting.delayTime, setting.colors, setLedColor, createTimeout, COLOR_COUNT],
 		);
 
-		const christmasAnimation = useCallback(
+		const smolder = useCallback(
 			async (isActive: () => boolean) => {
 				for (let xy = 0; xy < COLOR_COUNT; xy++) {
 					if (!isActive()) return;
@@ -193,7 +193,7 @@ const AnimatedDots = React.memo(
 			[setting.delayTime, setting.colors, setLedColor, createTimeout, COLOR_COUNT],
 		);
 
-		const comfortSongAnimation = useCallback(
+		const thePianoMan = useCallback(
 			async (isActive: () => boolean) => {
 				const patternIndices = [1, 2, 3, 2, 4, 3, 2, 1, 0, 1, 2, 1, 3, 2, 1, 0];
 
@@ -231,7 +231,7 @@ const AnimatedDots = React.memo(
 			[setting.delayTime, setting.colors, setAllLeds, setLedColor, createTimeout, COLOR_COUNT],
 		);
 
-		const funkyAnimation = useCallback(
+		const feelTheFunk = useCallback(
 			async (isActive: () => boolean) => {
 				const strobeCount1 = 12;
 
@@ -290,7 +290,7 @@ const AnimatedDots = React.memo(
 			[setting.delayTime, setting.colors, setLedColor, createTimeout, random, COLOR_COUNT],
 		);
 
-		const stillAnimation = useCallback(async () => {
+		const still = useCallback(async () => {
 			// Static colors - set once and don't animate
 
 			const newColors = new Array(LIGHT_COUNT).fill(black);
@@ -302,7 +302,7 @@ const AnimatedDots = React.memo(
 			setDotColors(newColors);
 		}, [setting.colors]);
 
-		const moldAnimation = useCallback(
+		const decay = useCallback(
 			async (isActive: () => boolean) => {
 				const strobeCount1 = 2;
 
@@ -408,7 +408,7 @@ const AnimatedDots = React.memo(
 			[setting.delayTime, setting.colors, setAllLeds, setLedColor, createTimeout, COLOR_COUNT],
 		);
 
-		const progressiveAnimation = useCallback(
+		const cortez = useCallback(
 			async (isActive: () => boolean) => {
 				for (let j = 0; j < COLOR_COUNT; j++) {
 					for (let i = 0; i < LIGHT_COUNT; i++) {
@@ -432,7 +432,7 @@ const AnimatedDots = React.memo(
 			[setting.delayTime, setting.colors, setLedColor, createTimeout, COLOR_COUNT],
 		);
 
-		const strobeChangeAnimation = useCallback(
+		const theUnderground = useCallback(
 			async (isActive: () => boolean) => {
 				for (let i = 0; i < COLOR_COUNT; i++) {
 					for (let j = 0; j < LIGHT_COUNT / 2; j++) {
@@ -454,7 +454,7 @@ const AnimatedDots = React.memo(
 			[setting.delayTime, setting.colors, setLedColor, createTimeout, COLOR_COUNT],
 		);
 
-		const technoAnimation = useCallback(
+		const berghainBitte = useCallback(
 			async (isActive: () => boolean) => {
 				setAllLeds(black);
 
@@ -514,7 +514,7 @@ const AnimatedDots = React.memo(
 			[setting.delayTime, setting.colors, setAllLeds, setLedColor, createTimeout, COLOR_COUNT],
 		);
 
-		const traceManyAnimation = useCallback(
+		const lapisLazuli = useCallback(
 			async (isActive: () => boolean) => {
 				for (let i = 0; i < LIGHT_COUNT; i++) {
 					setLedColor(i, setting.colors[0]);
@@ -542,7 +542,7 @@ const AnimatedDots = React.memo(
 			[setting.delayTime, setting.colors, setLedColor, createTimeout, COLOR_COUNT],
 		);
 
-		const traceOneAnimation = useCallback(
+		const medusa = useCallback(
 			async (isActive: () => boolean) => {
 				for (let kc = 0; kc < LIGHT_COUNT; kc++) {
 					for (let i = 0; i < LIGHT_COUNT; i++) {
@@ -564,7 +564,7 @@ const AnimatedDots = React.memo(
 			[setting.delayTime, setting.colors, setLedColor, createTimeout, COLOR_COUNT],
 		);
 
-		const tranceAnimation = useCallback(
+		const stateOfTrance = useCallback(
 			async (isActive: () => boolean) => {
 				const sc1 = 2;
 
@@ -631,41 +631,41 @@ const AnimatedDots = React.memo(
 					if (!animationRef.current) return;
 
 					switch (setting.flashingPattern) {
-						case '0': // BLENDER
-							await blenderAnimation(() => animationRef.current);
+						case '0': // STUCK IN A BLENDER
+							await stuckInABlender(() => animationRef.current);
 							break;
-						case '1': // CHRISTMAS
-							await christmasAnimation(() => animationRef.current);
+						case '1': // SMOLDER
+							await smolder(() => animationRef.current);
 							break;
 						case '2': // COMFORT SONG
-							await comfortSongAnimation(() => animationRef.current);
+							await thePianoMan(() => animationRef.current);
 							break;
-						case '3': // FUNKY
-							await funkyAnimation(() => animationRef.current);
+						case '3': // FUNKY - FEEL THE FUNK
+							await feelTheFunk(() => animationRef.current);
 							break;
-						case '4': // MOLD
-							await moldAnimation(() => animationRef.current);
+						case '4': // MOLD - DECAY
+							await decay(() => animationRef.current);
 							break;
-						case '5': // PROGRESSIVE
-							await progressiveAnimation(() => animationRef.current);
+						case '5': // PROGRESSIVE - CORTEZ
+							await cortez(() => animationRef.current);
 							break;
 						case '6': // STILL
-							await stillAnimation();
+							await still();
 							return; // Don't repeat for still effect
-						case '7': // STROBE CHANGE
-							await strobeChangeAnimation(() => animationRef.current);
+						case '7': // STROBE CHANGE - THE UNDERGROUND
+							await theUnderground(() => animationRef.current);
 							break;
-						case '8': // TECHNO
-							await technoAnimation(() => animationRef.current);
+						case '8': // TECHNO - BERGHAIN BITTE
+							await berghainBitte(() => animationRef.current);
 							break;
-						case '9': // TRACE MANY
-							await traceManyAnimation(() => animationRef.current);
+						case '9': // TRACE MANY - LAPIS LAZULI
+							await lapisLazuli(() => animationRef.current);
 							break;
-						case '10': // TRACE ONE
-							await traceOneAnimation(() => animationRef.current);
+						case '10': // TRACE ONE - MEDUSA
+							await medusa(() => animationRef.current);
 							break;
-						case '11': // TRANCE
-							await tranceAnimation(() => animationRef.current);
+						case '11': // STATE OF TRANCE
+							await stateOfTrance(() => animationRef.current);
 							break;
 						default:
 							setAllLeds(setting.colors[0] || black);
@@ -691,21 +691,21 @@ const AnimatedDots = React.memo(
 			};
 		}, [
 			setting,
-			blenderAnimation,
-			christmasAnimation,
+			stuckInABlender,
+			smolder,
 			clearAllTimeouts,
-			comfortSongAnimation,
-			funkyAnimation,
+			thePianoMan,
+			feelTheFunk,
 			initializeColors,
-			moldAnimation,
-			progressiveAnimation,
+			decay,
+			cortez,
 			setAllLeds,
-			stillAnimation,
-			strobeChangeAnimation,
-			technoAnimation,
-			traceManyAnimation,
-			traceOneAnimation,
-			tranceAnimation,
+			still,
+			theUnderground,
+			berghainBitte,
+			lapisLazuli,
+			medusa,
+			stateOfTrance,
 		]);
 
 		return (

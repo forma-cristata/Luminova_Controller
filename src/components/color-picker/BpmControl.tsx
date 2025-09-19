@@ -1,13 +1,13 @@
-import React, { useCallback } from "react";
-import { Platform, View, Text, TextInput, StyleSheet } from "react-native";
-import BpmSlider from "./BpmSlider";
-import BpmPlusMinusControl from "./BpmPlusMinusControl";
 import {
 	COLORS,
 	COMMON_STYLES,
-	FONTS,
 	DIMENSIONS,
+	FONTS,
 } from "@/src/styles/SharedStyles";
+import React, { useCallback } from "react";
+import { Platform, StyleSheet, Text, TextInput, View } from "react-native";
+import BpmPlusMinusControl from "./BpmPlusMinusControl";
+import BpmSlider from "./BpmSlider";
 
 interface BpmControlProps {
 	bpm: number;

@@ -4,7 +4,6 @@ export { default as AddButton } from "./AddButton";
 export { default as BackButton } from "./BackButton";
 export { default as Button } from "./Button";
 export { default as ColorButton } from "./ColorButton";
-export { default as CreateButton } from "./CreateButton";
 export { default as EditButton } from "./EditButton";
 export { default as FlashButton } from "./FlashButton";
 export { default as InfoButton } from "./InfoButton";

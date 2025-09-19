@@ -1,19 +1,31 @@
-import ActionButton from '@/src/components/buttons/ActionButton';
-import ColorButton from '@/src/components/buttons/ColorButton';
-import RandomizeButton from '@/src/components/buttons/RandomizeButton';
-import { ColorDots, ColorWheelControl } from '@/src/components/color-picker';
-import Header from '@/src/components/common/Header';
-import HexKeyboard from '@/src/components/common/HexKeyboard';
-import { useConfiguration } from '@/src/context/ConfigurationContext';
-import { useDebounce } from '@/src/hooks/useDebounce';
-import type { RootStackParamList } from '@/src/screens/index';
-import { previewSetting, restoreConfiguration } from '@/src/services/ApiService';
-import { loadSettings, updateSetting } from '@/src/services/SettingsService';
-import { COLORS, COMMON_STYLES, DIMENSIONS, FONTS } from '@/src/styles/SharedStyles';
-import type { Setting } from '@/src/types/SettingInterface';
-import { filterSettingNameInput, sanitizeSettingName, validateSettingName } from '@/src/utils/inputSecurity';
-import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import React, { useCallback, useState } from 'react';
+import ActionButton from "@/src/components/buttons/ActionButton";
+import ColorButton from "@/src/components/buttons/ColorButton";
+import RandomizeButton from "@/src/components/buttons/RandomizeButton";
+import { ColorDots, ColorWheelControl } from "@/src/components/color-picker";
+import Header from "@/src/components/common/Header";
+import HexKeyboard from "@/src/components/common/HexKeyboard";
+import { useConfiguration } from "@/src/context/ConfigurationContext";
+import { useDebounce } from "@/src/hooks/useDebounce";
+import type { RootStackParamList } from "@/src/screens/index";
+import {
+	previewSetting,
+	restoreConfiguration,
+} from "@/src/services/ApiService";
+import { loadSettings, updateSetting } from "@/src/services/SettingsService";
+import {
+	COLORS,
+	COMMON_STYLES,
+	DIMENSIONS,
+	FONTS,
+} from "@/src/styles/SharedStyles";
+import type { Setting } from "@/src/types/SettingInterface";
+import {
+	filterSettingNameInput,
+	sanitizeSettingName,
+	validateSettingName,
+} from "@/src/utils/inputSecurity";
+import type { NativeStackScreenProps } from "@react-navigation/native-stack";
+import React, { useCallback, useState } from "react";
 import {
 	Dimensions,
 	Keyboard,
@@ -24,12 +36,19 @@ import {
 	TouchableOpacity,
 	TouchableWithoutFeedback,
 	View,
-} from 'react-native';
-import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
-import Animated, { runOnJS, useSharedValue } from 'react-native-reanimated';
-import { SafeAreaView } from 'react-native-safe-area-context';
+} from "react-native";
+import {
+	Gesture,
+	GestureDetector,
+	GestureHandlerRootView,
+} from "react-native-gesture-handler";
+import Animated, { runOnJS, useSharedValue } from "react-native-reanimated";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-type ColorEditorProps = NativeStackScreenProps<RootStackParamList, 'ColorEditor'>;
+type ColorEditorProps = NativeStackScreenProps<
+	RootStackParamList,
+	"ColorEditor"
+>;
 
 export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 	const {
@@ -52,7 +71,7 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 	const [brightness, setBrightness] = useState(100);
 	const [saturation, setSaturation] = useState(0);
 
-	const [hexInput, setHexInput] = useState('');
+	const [hexInput, setHexInput] = useState("");
 	const debouncedHexInput = useDebounce(hexInput, 200);
 	// When a dot is selected we set hexInput from the existing color value.
 	// That can race with the debounced-hex effect and cause the previous
@@ -110,7 +129,7 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 					s.name !== originalName &&
 					(!isNew || index !== settingIndex), // Exclude current setting for existing settings
 			);
-			setNameError(nameExists ? 'Name already exists.' : null);
+			setNameError(nameExists ? "Name already exists." : null);
 		};
 
 		if (debouncedSettingName.trim()) {
@@ -200,7 +219,7 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 		const toHex = (n: number) =>
 			Math.round(n * 255)
 				.toString(16)
-				.padStart(2, '0');
+				.padStart(2, "0");
 		return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
 	}, []);
 
@@ -208,11 +227,11 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 		(h: number, s: number, v: number) => {
 			if (selectedDot !== null) {
 				const newColor = hsvToHex(h, s, v);
-				setColorHistory(prev => [...prev, [...colors]]);
+				setColorHistory((prev) => [...prev, [...colors]]);
 				const newColors = [...colors];
 				newColors[selectedDot] = newColor;
 				setColors(newColors);
-				setHexInput(newColor.replace('#', ''));
+				setHexInput(newColor.replace("#", ""));
 				setHasChanges(true);
 			}
 		},
@@ -236,7 +255,7 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 			suppressDebouncedHexRef.current = false;
 			suppressTimeoutRef.current = null;
 		}, 100) as unknown as number;
-		setHexInput(colors[index].replace('#', ''));
+		setHexInput(colors[index].replace("#", ""));
 
 		const rgb = hexToRgb(colors[index]);
 		if (rgb) {
@@ -269,7 +288,7 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 	};
 
 	const handleHexClear = () => {
-		setHexInput('');
+		setHexInput("");
 	};
 
 	const openHexKeyboard = () => {
@@ -282,8 +301,8 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 	const applyHexColor = useCallback(
 		(hexValue: string) => {
 			if (selectedDot !== null) {
-				const finalHex = hexValue.startsWith('#') ? hexValue : `#${hexValue}`;
-				setColorHistory(prev => [...prev, [...colors]]);
+				const finalHex = hexValue.startsWith("#") ? hexValue : `#${hexValue}`;
+				setColorHistory((prev) => [...prev, [...colors]]);
 				const newColors = [...colors];
 				newColors[selectedDot] = finalHex;
 				setColors(newColors);
@@ -303,19 +322,19 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 	// Get unique colors from palette (excluding white and black), always sorted by hue
 	const getPaletteColors = useCallback(() => {
 		// Normalize colors to uppercase and ensure they start with #
-		const normalizedColors = colors.map(color => {
+		const normalizedColors = colors.map((color) => {
 			const normalized = color.toUpperCase();
-			return normalized.startsWith('#') ? normalized : `#${normalized}`;
+			return normalized.startsWith("#") ? normalized : `#${normalized}`;
 		});
 
 		// Create set for uniqueness, then filter out white and black
 		const uniqueColors = [...new Set(normalizedColors)];
-		const filteredColors = uniqueColors.filter(color => {
-			return color !== '#FFFFFF' && color !== '#000000';
+		const filteredColors = uniqueColors.filter((color) => {
+			return color !== "#FFFFFF" && color !== "#000000";
 		});
 
 		// Sort by hue regardless of main colors array order
-		const colorsWithHSV = filteredColors.map(color => {
+		const colorsWithHSV = filteredColors.map((color) => {
 			const rgb = hexToRgb(color);
 			if (rgb) {
 				const hsv = rgbToHsv(rgb.r, rgb.g, rgb.b);
@@ -324,7 +343,7 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 			return { color, h: 0, s: 0, v: 0 };
 		});
 		colorsWithHSV.sort((a, b) => a.h - b.h);
-		return colorsWithHSV.map(item => item.color);
+		return colorsWithHSV.map((item) => item.color);
 	}, [colors, hexToRgb, rgbToHsv]);
 
 	const handlePaletteColorSelect = useCallback(
@@ -332,14 +351,14 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 			if (selectedDot === null) return;
 
 			// Save to history and update the selected dot atomically
-			setColors(prevColors => {
-				setColorHistory(prevHistory => [...prevHistory, [...prevColors]]);
+			setColors((prevColors) => {
+				setColorHistory((prevHistory) => [...prevHistory, [...prevColors]]);
 				const newColors = [...prevColors];
 				newColors[selectedDot as number] = color;
 				return newColors;
 			});
 			setHasChanges(true);
-			setHexInput(color.replace('#', ''));
+			setHexInput(color.replace("#", ""));
 
 			const rgb = hexToRgb(color);
 			if (rgb) {
@@ -361,14 +380,20 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 		// newly-selected dot.
 		if (suppressDebouncedHexRef.current) return;
 		const hexRegex = /^#?([A-Fa-f0-9]{6})$/;
-		const hexValue = debouncedHexInput.startsWith('#') ? debouncedHexInput : `#${debouncedHexInput}`;
+		const hexValue = debouncedHexInput.startsWith("#")
+			? debouncedHexInput
+			: `#${debouncedHexInput}`;
 
-		if (hexRegex.test(hexValue) && selectedDot !== null && debouncedHexInput.length === 6) {
-			const finalHex = hexValue.startsWith('#') ? hexValue : `#${hexValue}`;
+		if (
+			hexRegex.test(hexValue) &&
+			selectedDot !== null &&
+			debouncedHexInput.length === 6
+		) {
+			const finalHex = hexValue.startsWith("#") ? hexValue : `#${hexValue}`;
 
-			setColors(prevColors => {
+			setColors((prevColors) => {
 				// Save to history before updating
-				setColorHistory(prevHistory => [...prevHistory, [...prevColors]]);
+				setColorHistory((prevHistory) => [...prevHistory, [...prevColors]]);
 
 				const newColors = [...prevColors];
 				newColors[selectedDot] = finalHex;
@@ -397,7 +422,7 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 
 	const handleCancel = () => {
 		unPreviewAPI();
-		navigation.navigate('Settings');
+		navigation.navigate("Settings");
 	};
 
 	const handleReset = () => {
@@ -412,7 +437,7 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 			setNameError(null);
 
 			if (selectedDot !== null) {
-				setHexInput(setting.colors[selectedDot].replace('#', ''));
+				setHexInput(setting.colors[selectedDot].replace("#", ""));
 				const rgb = hexToRgb(setting.colors[selectedDot]);
 				if (rgb) {
 					const hsv = rgbToHsv(rgb.r, rgb.g, rgb.b);
@@ -436,7 +461,7 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 		};
 
 		if (isNew) {
-			navigation.navigate('FlashingPatternEditor', {
+			navigation.navigate("FlashingPatternEditor", {
 				setting: updatedSetting,
 				isNew: true,
 			});
@@ -450,7 +475,7 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 				}
 
 				// Navigate directly to Settings
-				navigation.navigate('Settings');
+				navigation.navigate("Settings");
 			}
 		}
 	};
@@ -458,12 +483,12 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 	const handleSliderComplete = useCallback(
 		(h: number, s: number, v: number) => {
 			if (selectedDot !== null) {
-				setColorHistory(prev => [...prev, [...colors]]);
+				setColorHistory((prev) => [...prev, [...colors]]);
 				const newColor = hsvToHex(h, s, v);
 				const newColors = [...colors];
 				newColors[selectedDot] = newColor;
 				setColors(newColors);
-				setHexInput(newColor.replace('#', ''));
+				setHexInput(newColor.replace("#", ""));
 			}
 		},
 		[selectedDot, colors, hsvToHex],
@@ -475,7 +500,7 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 			newColors[i + 8] = newColors[i];
 		}
 		setColors(newColors);
-		setColorHistory(prev => [...prev, [...colors]]);
+		setColorHistory((prev) => [...prev, [...colors]]);
 		setHasChanges(true);
 	};
 
@@ -485,7 +510,7 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 			newColors[i - 8] = newColors[i];
 		}
 		setColors(newColors);
-		setColorHistory(prev => [...prev, [...colors]]);
+		setColorHistory((prev) => [...prev, [...colors]]);
 		setHasChanges(true);
 	};
 
@@ -495,7 +520,7 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 			newColors[i] = colors[7 - i];
 		}
 		setColors(newColors);
-		setColorHistory(prev => [...prev, [...colors]]);
+		setColorHistory((prev) => [...prev, [...colors]]);
 		setHasChanges(true);
 	};
 
@@ -505,16 +530,16 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 			newColors[i + 8] = colors[15 - i];
 		}
 		setColors(newColors);
-		setColorHistory(prev => [...prev, [...colors]]);
+		setColorHistory((prev) => [...prev, [...colors]]);
 		setHasChanges(true);
 	};
 
 	const panGesture = Gesture.Pan()
-		.onStart(event => {
+		.onStart((event) => {
 			startY.value = event.absoluteY;
 			startX.value = event.absoluteX;
 		})
-		.onEnd(event => {
+		.onEnd((event) => {
 			const initY = startY.value;
 			const initX = startX.value;
 			const deltaY = event.absoluteY - initY;
@@ -544,7 +569,7 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 
 	const previewAPI = async () => {
 		if (globalIsPreviewing) {
-			console.warn('Cannot preview: Preview operation already in progress');
+			console.warn("Cannot preview: Preview operation already in progress");
 			return;
 		}
 		setGlobalIsPreviewing(true);
@@ -554,10 +579,10 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 				flashingPattern: setting.flashingPattern,
 				delayTime: setting.delayTime,
 			});
-			console.log('Preview successful');
+			console.log("Preview successful");
 			setIsShelfConnected(true);
 		} catch (error) {
-			console.error('Preview error:', error);
+			console.error("Preview error:", error);
 			setIsShelfConnected(false);
 		} finally {
 			setGlobalIsPreviewing(false);
@@ -566,7 +591,7 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 
 	const unPreviewAPI = async () => {
 		if (globalIsPreviewing) {
-			console.warn('Cannot restore: Preview operation in progress');
+			console.warn("Cannot restore: Preview operation in progress");
 			return;
 		}
 		setPreviewMode(false);
@@ -574,10 +599,10 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 			setGlobalIsPreviewing(true);
 			try {
 				await restoreConfiguration(currentConfiguration);
-				console.log('Configuration restored');
+				console.log("Configuration restored");
 				setIsShelfConnected(true);
 			} catch (error) {
-				console.error('Restore error:', error);
+				console.error("Restore error:", error);
 				setIsShelfConnected(false);
 			} finally {
 				setGlobalIsPreviewing(false);
@@ -586,7 +611,7 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 	};
 
 	const sortColorsByHue = () => {
-		const colorsWithHSV = colors.map(color => {
+		const colorsWithHSV = colors.map((color) => {
 			const rgb = hexToRgb(color);
 			if (rgb) {
 				const hsv = rgbToHsv(rgb.r, rgb.g, rgb.b);
@@ -595,8 +620,8 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 			return { color, h: 0, s: 0, v: 0 };
 		});
 		colorsWithHSV.sort((a, b) => a.h - b.h);
-		const sortedColors = colorsWithHSV.map(item => item.color);
-		setColorHistory(prev => [...prev, [...colors]]);
+		const sortedColors = colorsWithHSV.map((item) => item.color);
+		setColorHistory((prev) => [...prev, [...colors]]);
 		setColors(sortedColors);
 		setHasChanges(true);
 	};
@@ -621,7 +646,10 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 					<Text style={COMMON_STYLES.sliderText}>Setting Name:</Text>
 					<TextInput
 						ref={nameInputRef}
-						style={[styles.nameInput, nameError ? { color: COLORS.ERROR } : null]}
+						style={[
+							styles.nameInput,
+							nameError ? { color: COLORS.ERROR } : null,
+						]}
 						value={settingName}
 						onChangeText={handleNameChange}
 						placeholder="Enter setting name"
@@ -660,7 +688,7 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 								onDotSelect={handleDotSelect}
 								selectedDot={selectedDot}
 								layout="two-rows"
-								key={colors.join(',')}
+								key={colors.join(",")}
 							/>
 							{/* Color Palette Section */}
 							{getPaletteColors().length > 0 ? (
@@ -681,9 +709,9 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 										horizontal
 										showsHorizontalScrollIndicator={true}
 										contentContainerStyle={styles.paletteScrollContent}
-										style={{ width: '100%' }}
+										style={{ width: "100%" }}
 									>
-										{getPaletteColors().map(color => (
+										{getPaletteColors().map((color) => (
 											<TouchableOpacity
 												key={color}
 												style={[
@@ -699,7 +727,12 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 									</ScrollView>
 								</View>
 							) : null}
-							<View style={[styles.hexContainer, { opacity: selectedDot !== null ? 1 : 0.5 }]}>
+							<View
+								style={[
+									styles.hexContainer,
+									{ opacity: selectedDot !== null ? 1 : 0.5 },
+								]}
+							>
 								<Text style={COMMON_STYLES.sliderText}>Hex: #</Text>
 								<TouchableOpacity
 									style={[styles.hexInput]}
@@ -713,7 +746,7 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 											{ color: hexInput ? COLORS.WHITE : COLORS.PLACEHOLDER },
 										]}
 									>
-										{hexInput.toUpperCase() || 'FFFFFF'}
+										{hexInput.toUpperCase() || "FFFFFF"}
 									</Text>
 								</TouchableOpacity>
 								<View style={styles.colorButtons}>
@@ -722,8 +755,8 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 										disabled={selectedDot === null}
 										onPress={() => {
 											if (selectedDot !== null) {
-												setHexInput('FFFFFF');
-												applyHexColor('#FFFFFF');
+												setHexInput("FFFFFF");
+												applyHexColor("#FFFFFF");
 											}
 										}}
 										scale={DIMENSIONS.SCALE}
@@ -733,15 +766,20 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 										disabled={selectedDot === null}
 										onPress={() => {
 											if (selectedDot !== null) {
-												setHexInput('000000');
-												applyHexColor('#000000');
+												setHexInput("000000");
+												applyHexColor("#000000");
 											}
 										}}
 										scale={DIMENSIONS.SCALE}
 									/>
 								</View>
 							</View>
-							<View style={[styles.colorWheelContainer, { opacity: selectedDot !== null ? 1 : 0.5 }]}>
+							<View
+								style={[
+									styles.colorWheelContainer,
+									{ opacity: selectedDot !== null ? 1 : 0.5 },
+								]}
+							>
 								<ColorWheelControl
 									hue={hue}
 									saturation={saturation}
@@ -761,10 +799,12 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 							<View style={styles.compactButtonContainer}>
 								<View style={COMMON_STYLES.buttonRow}>
 									<ActionButton
-										title={isNew ? 'Cancel' : 'Reset'}
+										title={isNew ? "Cancel" : "Reset"}
 										onPress={isNew ? handleCancel : handleReset}
 										disabled={!isNew && !hasChanges}
-										opacity={isNew ? 1 : hasChanges ? 1 : COLORS.DISABLED_OPACITY}
+										opacity={
+											isNew ? 1 : hasChanges ? 1 : COLORS.DISABLED_OPACITY
+										}
 									/>
 									<ActionButton
 										title="Save"
@@ -781,12 +821,12 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 									<ActionButton
 										title={
 											globalIsPreviewing
-												? 'Previewing...'
+												? "Previewing..."
 												: previewMode
 													? hasChanges
-														? 'Update'
-														: 'Preview'
-													: 'Preview'
+														? "Update"
+														: "Preview"
+													: "Preview"
 										}
 										onPress={() => {
 											if (isShelfConnected && !globalIsPreviewing) {
@@ -795,7 +835,9 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 											}
 										}}
 										disabled={!isShelfConnected || globalIsPreviewing}
-										variant={!hasChanges && previewMode ? 'disabled' : 'primary'}
+										variant={
+											!hasChanges && previewMode ? "disabled" : "primary"
+										}
 										opacity={
 											!isShelfConnected || globalIsPreviewing
 												? COLORS.DISABLED_OPACITY
@@ -820,7 +862,7 @@ export default function ColorEditor({ navigation, route }: ColorEditorProps) {
 	);
 }
 
-const { width, height } = Dimensions.get('window');
+const { width, height } = Dimensions.get("window");
 
 const styles = StyleSheet.create({
 	colorWheelContainer: {
@@ -834,8 +876,8 @@ const styles = StyleSheet.create({
 		marginTop: 8 * DIMENSIONS.SCALE, // Significantly reduced from 20
 	},
 	hexContainer: {
-		flexDirection: 'row',
-		alignItems: 'center',
+		flexDirection: "row",
+		alignItems: "center",
 		marginTop: DIMENSIONS.SCALE * 6, // Reduced from 12
 		width: width * 0.85,
 		padding: 3 * DIMENSIONS.SCALE,
@@ -844,40 +886,40 @@ const styles = StyleSheet.create({
 		color: COLORS.WHITE,
 		fontSize: 22 * DIMENSIONS.SCALE,
 		fontFamily: FONTS.CLEAR,
-		textTransform: 'uppercase',
+		textTransform: "uppercase",
 		letterSpacing: 2 * DIMENSIONS.SCALE,
 		borderBottomWidth: 1 * DIMENSIONS.SCALE,
 		borderBottomColor: COLORS.WHITE,
 		paddingVertical: 4 * DIMENSIONS.SCALE,
 		paddingHorizontal: 8 * DIMENSIONS.SCALE,
 		width: 120 * DIMENSIONS.SCALE,
-		textAlign: 'center',
-		backgroundColor: 'transparent',
-		justifyContent: 'center',
-		alignItems: 'center',
+		textAlign: "center",
+		backgroundColor: "transparent",
+		justifyContent: "center",
+		alignItems: "center",
 	},
 	hexInputText: {
 		color: COLORS.WHITE,
 		fontSize: 22 * DIMENSIONS.SCALE,
 		fontFamily: FONTS.CLEAR,
-		textTransform: 'uppercase',
+		textTransform: "uppercase",
 		letterSpacing: 2 * DIMENSIONS.SCALE,
-		textAlign: 'center',
+		textAlign: "center",
 	},
 	titleContainer: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		justifyContent: 'center',
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "center",
 		width: width * 0.9,
 		marginTop: 2 * DIMENSIONS.SCALE, // Reduced from 5
 		marginBottom: height * 0.01, // Reduced from 0.015
-		borderStyle: 'solid',
+		borderStyle: "solid",
 		borderBottomWidth: 2 * DIMENSIONS.SCALE,
 		borderColor: COLORS.WHITE,
 	},
 	sortButton: {
-		justifyContent: 'center',
-		alignItems: 'center',
+		justifyContent: "center",
+		alignItems: "center",
 		marginLeft: 20 * DIMENSIONS.SCALE,
 		width: Math.max(60 * DIMENSIONS.SCALE, width * 0.12),
 		height: Math.max(60 * DIMENSIONS.SCALE, width * 0.12),
@@ -885,36 +927,36 @@ const styles = StyleSheet.create({
 	sortIcon: {
 		color: COLORS.WHITE,
 		fontSize: Math.max(20 * DIMENSIONS.SCALE, width * 0.04),
-		fontWeight: 'ultralight',
-		textAlign: 'center',
+		fontWeight: "ultralight",
+		textAlign: "center",
 	},
 	colorButtons: {
-		flexDirection: 'row',
+		flexDirection: "row",
 		marginLeft: 30 * DIMENSIONS.SCALE,
 	},
 	nameInputContainer: {
 		flex: 1,
-		justifyContent: 'center',
-		alignItems: 'center',
+		justifyContent: "center",
+		alignItems: "center",
 	},
 	nameInput: {
 		color: COLORS.WHITE,
 		fontSize: 24 * DIMENSIONS.SCALE, // Reduced from 30
 		fontFamily: FONTS.SIGNATURE,
-		textAlign: 'center',
+		textAlign: "center",
 		minWidth: width * 0.6,
 		padding: 2 * DIMENSIONS.SCALE, // Reduced from 5
 	},
 	paletteContainer: {
-		alignItems: 'center',
+		alignItems: "center",
 		marginTop: 8 * DIMENSIONS.SCALE, // Reduced from 15
 		marginBottom: 2 * DIMENSIONS.SCALE, // Reduced from 3
-		width: '100%',
+		width: "100%",
 	},
 	paletteScrollContent: {
 		paddingHorizontal: 20 * DIMENSIONS.SCALE,
 		paddingVertical: 8 * DIMENSIONS.SCALE,
-		alignItems: 'center',
+		alignItems: "center",
 		flexGrow: 1,
 	},
 	paletteColorButton: {

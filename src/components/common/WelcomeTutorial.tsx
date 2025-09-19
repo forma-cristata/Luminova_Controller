@@ -1,9 +1,22 @@
-import LedToggle from '@/src/components/welcome/LedToggle';
-import { COLORS, COMMON_STYLES, DIMENSIONS, FONTS } from '@/src/styles/SharedStyles';
-import { Ionicons } from '@expo/vector-icons';
-import React, { useEffect, useState } from 'react';
-import { Image, Modal, PanResponder, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import LedToggle from "@/src/components/welcome/LedToggle";
+import {
+	COLORS,
+	COMMON_STYLES,
+	DIMENSIONS,
+	FONTS,
+} from "@/src/styles/SharedStyles";
+import { Ionicons } from "@expo/vector-icons";
+import React, { useEffect, useState } from "react";
+import {
+	Image,
+	Modal,
+	PanResponder,
+	StyleSheet,
+	Text,
+	TouchableOpacity,
+	View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 interface WelcomeTutorialProps {
 	visible: boolean;
@@ -19,34 +32,37 @@ interface TutorialPage {
 
 const tutorialPages: TutorialPage[] = [
 	{
-		title: 'Welcome to Luminova',
+		title: "Welcome to Luminova",
 		content:
 			"Let's get you started with your LED controller! This quick tutorial will help you understand how to connect and control your LEDs.",
-		icon: 'sparkles',
+		icon: "sparkles",
 	},
 	{
-		title: 'IP Address Setup',
+		title: "IP Address Setup",
 		content:
-			'The IP input field on the home screen correlates to LED device. For best results, assign your device a static IP, then enter that IP here.',
+			"The IP input field on the home screen correlates to LED device. For best results, assign your device a static IP, then enter that IP here.",
 	},
 	{
-		title: 'Power',
+		title: "Power",
 		content:
 			"The toggle switch shows your device's status. Tap the toggle below to learn the different states of the toggler and their meanings:",
 	},
 	{
-		title: 'More Information',
+		title: "More Information",
 		content:
-			'Tap the info button in the top-right corner anytime to learn about the app structure, read detailed instructions, and discover all available features. If you wish to return to this menu, tap `Luminova` on the home screen five times.',
+			"Tap the info button in the top-right corner anytime to learn about the app structure, read detailed instructions, and discover all available features. If you wish to return to this menu, tap `Luminova` on the home screen five times.",
 	},
 	{
-		title: 'Separation of Concerns',
+		title: "Separation of Concerns",
 		content:
 			"You don't need a connected device to start editing settings! Jump into 'Create' to explore animations, colors, and patterns. Your settings will be saved and ready when you connect your device and emulated here in the meantime.",
 	},
 ];
 
-export default function WelcomeTutorial({ visible, onComplete }: WelcomeTutorialProps) {
+export default function WelcomeTutorial({
+	visible,
+	onComplete,
+}: WelcomeTutorialProps) {
 	const [currentPage, setCurrentPage] = useState(0);
 	const [isAnimating, setIsAnimating] = useState(false);
 	const [imageLoaded, setImageLoaded] = useState(false);
@@ -85,12 +101,12 @@ export default function WelcomeTutorial({ visible, onComplete }: WelcomeTutorial
 	// Demo toggle state descriptions
 	const getToggleStateDescription = () => {
 		if (!demoIsShelfConnected) {
-			return 'Device not found at the IP given';
+			return "Device not found at the IP given";
 		}
 		if (demoIsEnabled) {
-			return 'Device is connected and on';
+			return "Device is connected and on";
 		}
-		return 'Device available and off';
+		return "Device available and off";
 	};
 
 	// Reset to first page whenever modal opens
@@ -135,7 +151,12 @@ export default function WelcomeTutorial({ visible, onComplete }: WelcomeTutorial
 	const isFirstPage = currentPage === 0;
 
 	return (
-		<Modal visible={visible} animationType="fade" transparent={true} statusBarTranslucent={true}>
+		<Modal
+			visible={visible}
+			animationType="fade"
+			transparent={true}
+			statusBarTranslucent={true}
+		>
 			<View style={styles.overlay} {...panResponder.panHandlers}>
 				<SafeAreaView style={styles.container}>
 					<View style={styles.modalContent}>
@@ -152,21 +173,30 @@ export default function WelcomeTutorial({ visible, onComplete }: WelcomeTutorial
 						<View
 							style={[
 								styles.dynamicContentArea,
-								currentPage === 0 ? styles.contentAreaWithIcon : styles.contentAreaNoIcon,
+								currentPage === 0
+									? styles.contentAreaWithIcon
+									: styles.contentAreaNoIcon,
 							]}
 						>
-							<View style={[styles.pageContent, isAnimating && styles.animating]}>
+							<View
+								style={[styles.pageContent, isAnimating && styles.animating]}
+							>
 								{/* Icon - Only show on first page */}
 								{currentPage === 0 && currentTutorial.icon ? (
 									<View style={styles.iconContainer}>
 										<Image
-											source={require('@/assets/images/icon.png')}
-											style={[styles.appIcon, !imageLoaded && styles.hiddenImage]}
+											source={require("@/assets/images/icon.png")}
+											style={[
+												styles.appIcon,
+												!imageLoaded && styles.hiddenImage,
+											]}
 											resizeMode="contain"
 											onLoad={() => setImageLoaded(true)}
 											onError={() => setImageLoaded(true)}
 										/>
-										{!imageLoaded ? <View style={styles.imagePlaceholder} /> : null}
+										{!imageLoaded ? (
+											<View style={styles.imagePlaceholder} />
+										) : null}
 									</View>
 								) : null}
 								{/* Title */}
@@ -186,7 +216,9 @@ export default function WelcomeTutorial({ visible, onComplete }: WelcomeTutorial
 												disableAnimation={true}
 												containerStyle={styles.toggleInlineContainer}
 											/>
-											<Text style={styles.toggleRowText}>{getToggleStateDescription()}</Text>
+											<Text style={styles.toggleRowText}>
+												{getToggleStateDescription()}
+											</Text>
 										</View>
 										{/* Second Row - Disconnected Toggle */}
 										<View style={styles.toggleRow}>
@@ -198,7 +230,9 @@ export default function WelcomeTutorial({ visible, onComplete }: WelcomeTutorial
 												disableAnimation={true}
 												containerStyle={styles.toggleInlineContainer}
 											/>
-											<Text style={styles.toggleRowText}>Device not found at the given IP</Text>
+											<Text style={styles.toggleRowText}>
+												Device not found at the given IP
+											</Text>
 										</View>
 									</View>
 								) : null}
@@ -209,13 +243,16 @@ export default function WelcomeTutorial({ visible, onComplete }: WelcomeTutorial
 							<View style={styles.singleLineNavigation}>
 								<TouchableOpacity
 									onPress={handlePrevious}
-									style={[styles.navButton, isFirstPage && styles.navButtonDisabled]}
+									style={[
+										styles.navButton,
+										isFirstPage && styles.navButtonDisabled,
+									]}
 									disabled={isFirstPage}
 								>
 									<Ionicons
 										name="chevron-back-circle-outline"
 										size={32 * DIMENSIONS.SCALE}
-										color={isFirstPage ? 'rgba(255,255,255,0.3)' : 'white'}
+										color={isFirstPage ? "rgba(255,255,255,0.3)" : "white"}
 									/>
 								</TouchableOpacity>
 								{/* Progress Dots - centered */}
@@ -223,7 +260,10 @@ export default function WelcomeTutorial({ visible, onComplete }: WelcomeTutorial
 									{tutorialPages.map((page, index) => (
 										<View
 											key={`tutorial-dot-${page.title}-${index}`}
-											style={[styles.dot, index === currentPage && styles.activeDot]}
+											style={[
+												styles.dot,
+												index === currentPage && styles.activeDot,
+											]}
 										/>
 									))}
 								</View>
@@ -250,14 +290,14 @@ export default function WelcomeTutorial({ visible, onComplete }: WelcomeTutorial
 const styles = StyleSheet.create({
 	overlay: {
 		flex: 1,
-		backgroundColor: 'rgba(0, 0, 0, 0.9)',
-		justifyContent: 'center',
-		alignItems: 'center',
+		backgroundColor: "rgba(0, 0, 0, 0.9)",
+		justifyContent: "center",
+		alignItems: "center",
 	},
 	container: {
 		flex: 1,
-		justifyContent: 'center',
-		alignItems: 'center',
+		justifyContent: "center",
+		alignItems: "center",
 		paddingHorizontal: 20 * DIMENSIONS.SCALE,
 	},
 	modalContent: {
@@ -270,12 +310,12 @@ const styles = StyleSheet.create({
 		height: Math.max(450 * DIMENSIONS.SCALE, DIMENSIONS.SCREEN_HEIGHT * 0.6),
 		maxHeight: DIMENSIONS.SCREEN_HEIGHT * 0.85,
 		padding: 20 * DIMENSIONS.SCALE,
-		position: 'relative',
+		position: "relative",
 	},
 	header: {
-		flexDirection: 'row',
-		justifyContent: 'space-between',
-		alignItems: 'center',
+		flexDirection: "row",
+		justifyContent: "space-between",
+		alignItems: "center",
 		marginBottom: 20 * DIMENSIONS.SCALE,
 	},
 	pageIndicator: {
@@ -292,12 +332,12 @@ const styles = StyleSheet.create({
 		opacity: 0.8,
 	},
 	pageContent: {
-		alignItems: 'center',
-		justifyContent: 'flex-start',
+		alignItems: "center",
+		justifyContent: "flex-start",
 		paddingVertical: 10 * DIMENSIONS.SCALE,
 	},
 	dynamicContentArea: {
-		justifyContent: 'flex-start',
+		justifyContent: "flex-start",
 		marginBottom: 80 * DIMENSIONS.SCALE, // Space for fixed footer
 	},
 	contentAreaWithIcon: {
@@ -315,10 +355,10 @@ const styles = StyleSheet.create({
 		borderRadius: 50 * DIMENSIONS.SCALE,
 		borderWidth: 1 * DIMENSIONS.SCALE,
 		borderColor: COLORS.WHITE,
-		borderStyle: 'dashed',
+		borderStyle: "dashed",
 		opacity: 0.8,
-		alignItems: 'center',
-		justifyContent: 'center',
+		alignItems: "center",
+		justifyContent: "center",
 		width: 90 * DIMENSIONS.SCALE,
 		height: 90 * DIMENSIONS.SCALE,
 	},
@@ -330,46 +370,46 @@ const styles = StyleSheet.create({
 		opacity: 0,
 	},
 	imagePlaceholder: {
-		position: 'absolute',
+		position: "absolute",
 		width: 60 * DIMENSIONS.SCALE,
 		height: 60 * DIMENSIONS.SCALE,
-		backgroundColor: 'rgba(255, 255, 255, 0.1)',
+		backgroundColor: "rgba(255, 255, 255, 0.1)",
 		borderRadius: 30 * DIMENSIONS.SCALE,
 	},
 	title: {
 		...COMMON_STYLES.whiteText,
 		fontSize: 34 * DIMENSIONS.SCALE,
 		marginBottom: 20 * DIMENSIONS.SCALE,
-		textAlign: 'center',
+		textAlign: "center",
 	},
 	content: {
 		color: COLORS.WHITE,
 		fontFamily: FONTS.CLEAR,
 		fontSize: 22 * DIMENSIONS.SCALE,
 		lineHeight: 30 * DIMENSIONS.SCALE,
-		textAlign: 'center',
+		textAlign: "center",
 		marginBottom: 20 * DIMENSIONS.SCALE,
 		paddingHorizontal: 10 * DIMENSIONS.SCALE,
 	},
 	// removed unused styles: pageContentWithIcon, pageContentNoIcon, highlightContainer, highlightText, arrowIcon
 	fixedFooter: {
-		position: 'absolute',
+		position: "absolute",
 		bottom: 20 * DIMENSIONS.SCALE,
 		left: 20 * DIMENSIONS.SCALE,
 		right: 20 * DIMENSIONS.SCALE,
 		height: 60 * DIMENSIONS.SCALE,
-		justifyContent: 'center',
+		justifyContent: "center",
 	},
 	singleLineNavigation: {
-		flexDirection: 'row',
-		justifyContent: 'space-between',
-		alignItems: 'center',
+		flexDirection: "row",
+		justifyContent: "space-between",
+		alignItems: "center",
 	},
 	navButton: {
 		padding: 12 * DIMENSIONS.SCALE,
 		borderRadius: 50 * DIMENSIONS.SCALE,
-		alignItems: 'center',
-		justifyContent: 'center',
+		alignItems: "center",
+		justifyContent: "center",
 		minWidth: 44 * DIMENSIONS.SCALE,
 		minHeight: 44 * DIMENSIONS.SCALE,
 	},
@@ -382,9 +422,9 @@ const styles = StyleSheet.create({
 		fontFamily: FONTS.CLEAR,
 	},
 	dotsContainer: {
-		flexDirection: 'row',
-		justifyContent: 'center',
-		alignItems: 'center',
+		flexDirection: "row",
+		justifyContent: "center",
+		alignItems: "center",
 		flex: 1,
 	},
 	dot: {
@@ -400,25 +440,25 @@ const styles = StyleSheet.create({
 		transform: [{ scale: 1.2 * DIMENSIONS.SCALE }],
 	},
 	demoToggleContainer: {
-		alignItems: 'center',
-		width: '100%',
+		alignItems: "center",
+		width: "100%",
 	},
 	toggleRow: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		width: '100%',
+		flexDirection: "row",
+		alignItems: "center",
+		width: "100%",
 		paddingHorizontal: 20 * DIMENSIONS.SCALE,
 		marginBottom: 6 * DIMENSIONS.SCALE,
 	},
 	toggleInlineContainer: {
-		position: 'relative',
+		position: "relative",
 		marginRight: 15 * DIMENSIONS.SCALE,
 	},
 	toggleRowText: {
 		color: COLORS.WHITE,
 		fontFamily: FONTS.CLEAR,
 		fontSize: 16 * DIMENSIONS.SCALE,
-		textAlign: 'left',
+		textAlign: "left",
 		lineHeight: 20 * DIMENSIONS.SCALE,
 		flex: 1,
 		paddingLeft: 10 * DIMENSIONS.SCALE,

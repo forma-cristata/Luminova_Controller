@@ -1,16 +1,22 @@
-import Footer from '@/src/components/common/Footer';
-import Header from '@/src/components/common/Header';
-import SettingBlock from '@/src/components/settings/SettingBlock';
-import { useConfiguration } from '@/src/context/ConfigurationContext';
-import { useDebounce } from '@/src/hooks/useDebounce';
-import type { RootStackParamList } from '@/src/screens/index';
-import { loadSettings, saveSettings } from '@/src/services/SettingsService';
-import type { Setting } from '@/src/types/SettingInterface';
-import { getStableSettingId } from '@/src/utils/settingUtils';
-import { Ionicons, MaterialIcons } from '@expo/vector-icons';
-import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import React from 'react';
-import { Alert, Dimensions, StyleSheet, TouchableOpacity, View } from 'react-native';
+import Footer from "@/src/components/common/Footer";
+import Header from "@/src/components/common/Header";
+import SettingBlock from "@/src/components/settings/SettingBlock";
+import { useConfiguration } from "@/src/context/ConfigurationContext";
+import { useDebounce } from "@/src/hooks/useDebounce";
+import type { RootStackParamList } from "@/src/screens/index";
+import { loadSettings, saveSettings } from "@/src/services/SettingsService";
+import type { Setting } from "@/src/types/SettingInterface";
+import { getStableSettingId } from "@/src/utils/settingUtils";
+import { Ionicons, MaterialIcons } from "@expo/vector-icons";
+import type { NativeStackScreenProps } from "@react-navigation/native-stack";
+import React from "react";
+import {
+	Alert,
+	Dimensions,
+	StyleSheet,
+	TouchableOpacity,
+	View,
+} from "react-native";
 import Animated, {
 	Easing,
 	useAnimatedStyle,
@@ -18,14 +24,16 @@ import Animated, {
 	useSharedValue,
 	withRepeat,
 	withTiming,
-} from 'react-native-reanimated';
-import Carousel, { type ICarouselInstance } from 'react-native-reanimated-carousel';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { COLORS, DIMENSIONS } from '../styles/SharedStyles';
+} from "react-native-reanimated";
+import Carousel, {
+	type ICarouselInstance,
+} from "react-native-reanimated-carousel";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { COLORS, DIMENSIONS } from "../styles/SharedStyles";
 
-type SettingsProps = NativeStackScreenProps<RootStackParamList, 'Settings'>;
+type SettingsProps = NativeStackScreenProps<RootStackParamList, "Settings">;
 
-const width = Dimensions.get('window').width;
+const width = Dimensions.get("window").width;
 
 export default function Settings({ navigation }: SettingsProps) {
 	const { lastEdited, setLastEdited } = useConfiguration();
@@ -36,7 +44,8 @@ export default function Settings({ navigation }: SettingsProps) {
 	const [currentIndex, setCurrentIndex] = React.useState(0);
 	const [tempIndex, setTempIndex] = React.useState(0);
 	const [isInitialRender, setIsInitialRender] = React.useState(true);
-	const [isInitialSetupComplete, setIsInitialSetupComplete] = React.useState(false);
+	const [isInitialSetupComplete, setIsInitialSetupComplete] =
+		React.useState(false);
 	const isDeletingRef = React.useRef(false);
 	const previousIndexRef = React.useRef(0);
 
@@ -115,35 +124,35 @@ export default function Settings({ navigation }: SettingsProps) {
 
 	const createNewSetting = () => {
 		const newSetting: Setting = {
-			name: 'Edit me!',
+			name: "Edit me!",
 			colors: [
-				'#ff0000',
-				'#ff4400',
-				'#ff6a00',
-				'#ff9100',
-				'#ffee00',
-				'#00ff1e',
-				'#00ff44',
-				'#00ff95',
-				'#00ffff',
-				'#0088ff',
-				'#0000ff',
-				'#8800ff',
-				'#ff00ff',
-				'#ff00bb',
-				'#ff0088',
-				'#ff0044',
+				"#ff0000",
+				"#ff4400",
+				"#ff6a00",
+				"#ff9100",
+				"#ffee00",
+				"#00ff1e",
+				"#00ff44",
+				"#00ff95",
+				"#00ffff",
+				"#0088ff",
+				"#0000ff",
+				"#8800ff",
+				"#ff00ff",
+				"#ff00bb",
+				"#ff0088",
+				"#ff0044",
 			],
 			whiteValues: Array(16).fill(0),
 			brightnessValues: Array(16).fill(255),
-			flashingPattern: '6',
+			flashingPattern: "6",
 			delayTime: 100,
 		};
 
 		// Create a deep copy to avoid Reanimated shareable object issues
 		const settingCopy = JSON.parse(JSON.stringify(newSetting));
 
-		navigation.navigate('ColorEditor', {
+		navigation.navigate("ColorEditor", {
 			setting: settingCopy,
 			isNew: true,
 			originalName: newSetting.name,
@@ -152,7 +161,7 @@ export default function Settings({ navigation }: SettingsProps) {
 
 	// Add focus listener to handle returning from ColorEditor
 	React.useEffect(() => {
-		const unsubscribe = navigation.addListener('focus', () => {
+		const unsubscribe = navigation.addListener("focus", () => {
 			const initializeData = async () => {
 				try {
 					const loadedData = await loadSettings();
@@ -163,7 +172,8 @@ export default function Settings({ navigation }: SettingsProps) {
 						// Only reset carousel state if we're actually returning from an editor
 						// (data changed) or if this is the first load (no existing data)
 						const isFirstLoad = settingsData.length === 0;
-						const dataChanged = JSON.stringify(settingsData) !== JSON.stringify(loadedData);
+						const dataChanged =
+							JSON.stringify(settingsData) !== JSON.stringify(loadedData);
 
 						if (isFirstLoad || dataChanged) {
 							// Full reset needed - returning from editor or first load
@@ -182,7 +192,7 @@ export default function Settings({ navigation }: SettingsProps) {
 						setSettingsData([]);
 					}
 				} catch (error) {
-					console.error('Error initializing data:', error);
+					console.error("Error initializing data:", error);
 					// Ensure settingsData is never undefined - set to empty array on error
 					setSettingsData([]);
 				}
@@ -221,7 +231,11 @@ export default function Settings({ navigation }: SettingsProps) {
 
 	// Sync debounced temp index to current index for smoother boundary handling
 	React.useEffect(() => {
-		if (debouncedTempIndex !== currentIndex && !isDeletingRef.current && !isInitialRender) {
+		if (
+			debouncedTempIndex !== currentIndex &&
+			!isDeletingRef.current &&
+			!isInitialRender
+		) {
 			setCurrentIndex(debouncedTempIndex);
 		}
 	}, [debouncedTempIndex, currentIndex, isInitialRender]);
@@ -273,61 +287,70 @@ export default function Settings({ navigation }: SettingsProps) {
 		if (currentIndex < 13) {
 			return; // Simply do nothing for default settings
 		}
-		Alert.alert('Delete Setting', 'Are you sure you want to delete this setting?', [
-			{
-				text: 'Cancel',
-				style: 'cancel',
-			},
-			{
-				text: 'Delete',
-				style: 'destructive',
-				onPress: async () => {
-					try {
-						// Set deletion flag to prevent other effects from interfering
-						isDeletingRef.current = true;
-
-						const currentSettings = await loadSettings();
-
-						const updatedSettings = currentSettings.filter((_: Setting, i: number) => i !== currentIndex);
-						await saveSettings(updatedSettings);
-
-						// Calculate target index before updating state
-						let targetIndex = currentIndex - 1;
-						targetIndex = Math.max(0, Math.min(targetIndex, updatedSettings.length - 1));
-
-						// Update lastEdited based on deletion position
-						if (lastEdited === currentIndex.toString()) {
-							setLastEdited(targetIndex.toString());
-						} else if (lastEdited && parseInt(lastEdited) > currentIndex) {
-							setLastEdited((parseInt(lastEdited) - 1).toString());
-						}
-
-						// Single, coordinated state update
-						const deepCopy = JSON.parse(JSON.stringify(updatedSettings));
-						setSettingsData(deepCopy);
-						setCurrentIndex(targetIndex);
-						setTempIndex(targetIndex);
-
-						// Wait for state updates to complete before scrolling
-						setTimeout(() => {
-							if (ref.current) {
-								ref.current.scrollTo({
-									index: targetIndex,
-									animated: false,
-								});
-							}
-							// Clear deletion flag after carousel positioning is complete
-							setTimeout(() => {
-								isDeletingRef.current = false;
-							}, 150); // Increased timeout for stability
-						}, 100); // Increased timeout for state update completion
-					} catch (error) {
-						console.error('Error deleting setting:', error);
-						isDeletingRef.current = false;
-					}
+		Alert.alert(
+			"Delete Setting",
+			"Are you sure you want to delete this setting?",
+			[
+				{
+					text: "Cancel",
+					style: "cancel",
 				},
-			},
-		]);
+				{
+					text: "Delete",
+					style: "destructive",
+					onPress: async () => {
+						try {
+							// Set deletion flag to prevent other effects from interfering
+							isDeletingRef.current = true;
+
+							const currentSettings = await loadSettings();
+
+							const updatedSettings = currentSettings.filter(
+								(_: Setting, i: number) => i !== currentIndex,
+							);
+							await saveSettings(updatedSettings);
+
+							// Calculate target index before updating state
+							let targetIndex = currentIndex - 1;
+							targetIndex = Math.max(
+								0,
+								Math.min(targetIndex, updatedSettings.length - 1),
+							);
+
+							// Update lastEdited based on deletion position
+							if (lastEdited === currentIndex.toString()) {
+								setLastEdited(targetIndex.toString());
+							} else if (lastEdited && parseInt(lastEdited) > currentIndex) {
+								setLastEdited((parseInt(lastEdited) - 1).toString());
+							}
+
+							// Single, coordinated state update
+							const deepCopy = JSON.parse(JSON.stringify(updatedSettings));
+							setSettingsData(deepCopy);
+							setCurrentIndex(targetIndex);
+							setTempIndex(targetIndex);
+
+							// Wait for state updates to complete before scrolling
+							setTimeout(() => {
+								if (ref.current) {
+									ref.current.scrollTo({
+										index: targetIndex,
+										animated: false,
+									});
+								}
+								// Clear deletion flag after carousel positioning is complete
+								setTimeout(() => {
+									isDeletingRef.current = false;
+								}, 150); // Increased timeout for stability
+							}, 100); // Increased timeout for state update completion
+						} catch (error) {
+							console.error("Error deleting setting:", error);
+							isDeletingRef.current = false;
+						}
+					},
+				},
+			],
+		);
 	};
 
 	const handleDuplicate = async () => {
@@ -399,23 +422,23 @@ export default function Settings({ navigation }: SettingsProps) {
 		<SafeAreaView style={styles.container}>
 			<Header
 				backButtonProps={{
-					beforePress: () => setLastEdited('0'),
+					beforePress: () => setLastEdited("0"),
 					onPress: () => navigation.popToTop(),
-					afterPress: () => setLastEdited('0'),
+					afterPress: () => setLastEdited("0"),
 				}}
 				onAddPress={createNewSetting}
 			/>
 			<View style={styles.notBackButton}>
-				<View style={[styles.focusedItem, { position: 'relative' }]}>
+				<View style={[styles.focusedItem, { position: "relative" }]}>
 					{currentIndex < 0 ? <View key="negative-index" /> : null}
 					{currentIndex < (settingsData?.length || 0) ? (
 						<React.Fragment
-							key={`setting-controls-${currentIndex < (settingsData?.length || 0) ? getStableSettingId(settingsData?.[currentIndex]) : 'no-setting'}`}
+							key={`setting-controls-${currentIndex < (settingsData?.length || 0) ? getStableSettingId(settingsData?.[currentIndex]) : "no-setting"}`}
 						>
 							<TouchableOpacity
-								key={`duplicate-${currentIndex < (settingsData?.length || 0) ? getStableSettingId(settingsData?.[currentIndex]) : 'no-setting'}`}
+								key={`duplicate-${currentIndex < (settingsData?.length || 0) ? getStableSettingId(settingsData?.[currentIndex]) : "no-setting"}`}
 								style={{
-									position: 'absolute',
+									position: "absolute",
 									top: 10 * DIMENSIONS.SCALE,
 									left: 10 * DIMENSIONS.SCALE,
 									zIndex: 1,
@@ -424,13 +447,17 @@ export default function Settings({ navigation }: SettingsProps) {
 									handleDuplicate();
 								}}
 							>
-								<MaterialIcons name="content-copy" size={24 * DIMENSIONS.SCALE} color="white" />
+								<MaterialIcons
+									name="content-copy"
+									size={24 * DIMENSIONS.SCALE}
+									color="white"
+								/>
 							</TouchableOpacity>
 							<Animated.View style={focusedBlockAnimatedStyle}>
 								<TouchableOpacity
-									key={`delete-${currentIndex < (settingsData?.length || 0) ? getStableSettingId(settingsData?.[currentIndex]) : 'no-setting'}`}
+									key={`delete-${currentIndex < (settingsData?.length || 0) ? getStableSettingId(settingsData?.[currentIndex]) : "no-setting"}`}
 									style={{
-										position: 'absolute',
+										position: "absolute",
 										top: 10 * DIMENSIONS.SCALE,
 										right: 10 * DIMENSIONS.SCALE,
 										zIndex: 1,
@@ -441,7 +468,11 @@ export default function Settings({ navigation }: SettingsProps) {
 										handleDelete();
 									}}
 								>
-									<Ionicons name="trash-outline" size={24 * DIMENSIONS.SCALE} color={'white'} />
+									<Ionicons
+										name="trash-outline"
+										size={24 * DIMENSIONS.SCALE}
+										color={"white"}
+									/>
 								</TouchableOpacity>
 								{focusedSettingBlock}
 							</Animated.View>
@@ -496,49 +527,49 @@ export default function Settings({ navigation }: SettingsProps) {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		alignItems: 'center',
-		justifyContent: 'center',
-		backgroundColor: '#000000',
+		alignItems: "center",
+		justifyContent: "center",
+		backgroundColor: "#000000",
 	},
 	notBackButton: {
 		flex: 1,
 		paddingTop: 20 * DIMENSIONS.SCALE,
-		justifyContent: 'space-between',
+		justifyContent: "space-between",
 	},
 	renderItem: {
-		borderStyle: 'solid',
+		borderStyle: "solid",
 		borderWidth: 2 * DIMENSIONS.SCALE,
-		justifyContent: 'center',
-		alignItems: 'center',
-		shadowColor: '#000',
+		justifyContent: "center",
+		alignItems: "center",
+		shadowColor: "#000",
 	},
 	carCont: {
 		flex: 0.7 * DIMENSIONS.SCALE,
-		justifyContent: 'center',
-		alignItems: 'center',
+		justifyContent: "center",
+		alignItems: "center",
 		minHeight: DIMENSIONS.SCREEN_HEIGHT / 5,
 	},
 	carousel: {
 		width: width * 0.9 - 20 * DIMENSIONS.SCALE,
 		height: DIMENSIONS.SCREEN_HEIGHT / 5,
-		justifyContent: 'center',
+		justifyContent: "center",
 	},
 	focusedItem: {
 		flex: 3 * DIMENSIONS.SCALE,
-		width: '90%',
-		borderStyle: 'solid',
+		width: "90%",
+		borderStyle: "solid",
 		borderWidth: 2 * DIMENSIONS.SCALE,
-		borderBottomColor: 'white',
-		borderTopColor: 'white',
-		borderLeftColor: 'white',
-		borderRightColor: 'white',
-		justifyContent: 'center',
-		alignItems: 'center',
+		borderBottomColor: "white",
+		borderTopColor: "white",
+		borderLeftColor: "white",
+		borderRightColor: "white",
+		justifyContent: "center",
+		alignItems: "center",
 		marginVertical: 10 * DIMENSIONS.SCALE,
 		paddingHorizontal: 8 * DIMENSIONS.SCALE,
 	},
 	nothing: {
-		justifyContent: 'center',
-		alignItems: 'center',
+		justifyContent: "center",
+		alignItems: "center",
 	},
 });

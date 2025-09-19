@@ -1,8 +1,8 @@
-import { DIMENSIONS } from '@/src/styles/SharedStyles';
-import { Ionicons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
-import React from 'react';
-import { StyleSheet, TouchableOpacity, type ViewStyle } from 'react-native';
+import { DIMENSIONS } from "@/src/styles/SharedStyles";
+import { Ionicons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
+import React from "react";
+import { StyleSheet, TouchableOpacity, type ViewStyle } from "react-native";
 
 interface BackButtonProps {
 	beforePress?: () => void | Promise<void>;
@@ -11,7 +11,12 @@ interface BackButtonProps {
 	style?: ViewStyle;
 }
 
-export default function BackButton({ beforePress, afterPress, onPress, style }: BackButtonProps) {
+export default function BackButton({
+	beforePress,
+	afterPress,
+	onPress,
+	style,
+}: BackButtonProps) {
 	const navigation = useNavigation();
 
 	const handlePress = async () => {
@@ -41,14 +46,18 @@ export default function BackButton({ beforePress, afterPress, onPress, style }: 
 				right: DIMENSIONS.SCREEN_WIDTH * 0.025,
 			}}
 		>
-			<Ionicons name="chevron-back-circle-outline" size={iconSize} color="white" />
+			<Ionicons
+				name="chevron-back-circle-outline"
+				size={iconSize}
+				color="white"
+			/>
 		</TouchableOpacity>
 	);
 }
 
 const styles = StyleSheet.create({
 	container: {
-		alignItems: 'center',
-		justifyContent: 'center',
+		alignItems: "center",
+		justifyContent: "center",
 	},
 });

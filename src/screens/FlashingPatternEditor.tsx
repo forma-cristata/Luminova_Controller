@@ -2,48 +2,47 @@ import * as React from "react";
 
 const { useEffect, useState } = React;
 
-import {
-	Dimensions,
-	Keyboard,
-	StyleSheet,
-	Text,
-	TextInput,
-	TouchableOpacity,
-	View,
-	TouchableWithoutFeedback,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import ActionButton from "@/src/components/buttons/ActionButton";
 import AnimatedDots from "@/src/components/animations/AnimatedDots";
-import Header from "@/src/components/common/Header";
 import BPMMeasurer from "@/src/components/audio/BPMMeasurer";
+import ActionButton from "@/src/components/buttons/ActionButton";
 import MetronomeButton from "@/src/components/buttons/MetronomeButton";
-import { Picker, BpmControl } from "@/src/components/color-picker";
-import type { PickerRef } from "@/src/components/color-picker/Picker";
 import RandomizeButton from "@/src/components/buttons/RandomizeButton";
-import {
-	COLORS,
-	COMMON_STYLES,
-	FONTS,
-	DIMENSIONS,
-} from "@/src/styles/SharedStyles";
+import { BpmControl, Picker } from "@/src/components/color-picker";
+import type { PickerRef } from "@/src/components/color-picker/Picker";
+import Header from "@/src/components/common/Header";
 import { ANIMATION_PATTERNS } from "@/src/configurations/patterns";
 import { useConfiguration } from "@/src/context/ConfigurationContext";
 import { useDebounce } from "@/src/hooks/useDebounce";
-import {
-	sanitizeSettingName,
-	validateSettingName,
-	filterSettingNameInput,
-} from "@/src/utils/inputSecurity";
-import type { Setting } from "@/src/types/SettingInterface";
+import type { RootStackParamList } from "@/src/screens/index";
 import { postConfig, restoreConfiguration } from "@/src/services/ApiService";
 import {
 	loadSettings,
 	saveSettings,
 	updateSetting,
 } from "@/src/services/SettingsService";
+import {
+	COLORS,
+	COMMON_STYLES,
+	DIMENSIONS,
+	FONTS,
+} from "@/src/styles/SharedStyles";
+import type { Setting } from "@/src/types/SettingInterface";
+import {
+	filterSettingNameInput,
+	sanitizeSettingName,
+	validateSettingName,
+} from "@/src/utils/inputSecurity";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import type { RootStackParamList } from "@/src/screens/index";
+import {
+	Dimensions,
+	Keyboard,
+	StyleSheet,
+	Text,
+	TextInput,
+	TouchableWithoutFeedback,
+	View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 type FlashingPatternEditorProps = NativeStackScreenProps<
 	RootStackParamList,
@@ -79,6 +78,8 @@ export default function FlashingPatternEditor({
 
 	const [BPM, setBPM] = React.useState(0);
 	const debouncedBPM = useDebounce(BPM, 100);
+	const [bpmSliderValue, setBpmSliderValue] = React.useState(0); // Separate state for slider to throttle it
+	const debouncedBpmSliderValue = useDebounce(bpmSliderValue, 50); // Fast debounce for smooth slider
 	const [bpmInput, setBpmInput] = React.useState("");
 	const debouncedBpmInput = useDebounce(bpmInput, 300);
 	const [delayTime, setDelayTime] = React.useState(setting.delayTime);
@@ -98,6 +99,7 @@ export default function FlashingPatternEditor({
 	const debouncedSettingName = useDebounce(settingName, 300);
 	const [nameError, setNameError] = useState<string | null>(null);
 	const [hasChanges, setHasChanges] = useState(isNew);
+	const [hasBPMBeenManuallySet, setHasBPMBeenManuallySet] = useState(false); // Track if BPM was set by user
 	const nameInputRef = React.useRef<TextInput>(null);
 
 	const handleNameChange = (text: string) => {
@@ -183,11 +185,26 @@ export default function FlashingPatternEditor({
 		isNew,
 	]);
 	useEffect(() => {
-		const initialBpm = parseFloat(calculateBPM(setting.delayTime));
-		const bpmValue = Number.isNaN(initialBpm) ? 0 : initialBpm;
-		setBPM(bpmValue);
-		setBpmInput(bpmValue.toFixed(0));
-	}, [setting.delayTime]); // Only depend on setting.delayTime, not calculateBPM
+		// Only initialize BPM if it hasn't been manually set by user
+		if (!hasBPMBeenManuallySet) {
+			const initialBpm = parseFloat(calculateBPM(setting.delayTime));
+			const bpmValue = Number.isNaN(initialBpm) ? 0 : initialBpm;
+			setBPM(bpmValue);
+			setBpmSliderValue(bpmValue); // Also set slider value
+			setBpmInput(bpmValue.toFixed(0));
+		}
+	}, [setting.delayTime, hasBPMBeenManuallySet]); // Only depend on setting.delayTime, not calculateBPM
+
+	// Handle debounced slider value changes
+	useEffect(() => {
+		if (debouncedBpmSliderValue > 0 && !isRandomizing) {
+			const roundedValue = Math.round(debouncedBpmSliderValue);
+			setBPM(roundedValue);
+			setBpmInput(roundedValue.toString());
+			setHasBPMBeenManuallySet(true);
+			setHasChanges(true);
+		}
+	}, [debouncedBpmSliderValue, isRandomizing]);
 
 	// Handle BPM text input changes
 	useEffect(() => {
@@ -200,24 +217,11 @@ export default function FlashingPatternEditor({
 			// Only update if significantly different to avoid slider conflicts
 			if (Math.abs(clampedValue - BPM) > 0.5) {
 				setBPM(clampedValue);
+				setHasBPMBeenManuallySet(true); // Mark BPM as manually set
 				setHasChanges(true);
 			}
 		}
-	}, [debouncedBpmInput, flashingPattern, isRandomizing]); // Added isRandomizing dependency
-
-	// Update text input when BPM slider changes
-	useEffect(() => {
-		if (isRandomizing) return; // Don't interfere during randomization
-
-		const currentInputValue = parseFloat(bpmInput);
-		// Only update if the input is significantly different or invalid
-		if (
-			Number.isNaN(currentInputValue) ||
-			Math.abs(currentInputValue - BPM) > 1
-		) {
-			setBpmInput(BPM.toFixed(0));
-		}
-	}, [BPM, bpmInput, isRandomizing]);
+	}, [debouncedBpmInput, flashingPattern, isRandomizing, BPM]); // Added isRandomizing dependency
 
 	// Memoized animated dots that only updates when debounced values change
 	const modeDots = React.useMemo(() => {
@@ -233,13 +237,7 @@ export default function FlashingPatternEditor({
 				setting={newSetting}
 			/>
 		);
-	}, [
-		debouncedDelayTime,
-		debouncedFlashingPattern,
-		setting.colors,
-		navigation,
-		setting,
-	]);
+	}, [debouncedDelayTime, debouncedFlashingPattern, navigation, setting]);
 
 	const handleCancel = () => {
 		unPreviewAPI();
@@ -254,7 +252,9 @@ export default function FlashingPatternEditor({
 		setDelayTime(initialDelayTime);
 		const resetBpm = parseFloat(calculateBPM(initialDelayTime));
 		setBPM(resetBpm);
+		setBpmSliderValue(resetBpm); // Also reset slider value
 		setBpmInput(resetBpm.toFixed(0));
+		setHasBPMBeenManuallySet(false); // Reset manual BPM flag
 		setFlashingPattern(initialFlashingPattern);
 		setSettingName(setting.name); // Reset name
 		setNameError(null); // Clear name error
@@ -304,10 +304,7 @@ export default function FlashingPatternEditor({
 			};
 
 			if (settingIndex !== undefined) {
-				const _updatedSettings = await updateSetting(
-					settingIndex,
-					updatedSetting,
-				);
+				await updateSetting(settingIndex, updatedSetting);
 
 				const currentIndex = settingIndex; // Use the existing index
 				if (currentIndex !== undefined) {
@@ -390,13 +387,14 @@ export default function FlashingPatternEditor({
 										: ANIMATION_PATTERNS;
 								const randomPattern =
 									patternsToChooseFrom[
-									Math.floor(Math.random() * patternsToChooseFrom.length)
+										Math.floor(Math.random() * patternsToChooseFrom.length)
 									];
 								setFlashingPattern(randomPattern);
 
 								// Random BPM within 60-200 range
 								const randomBPM = Math.floor(Math.random() * (200 - 60) + 60);
 								setBPM(randomBPM);
+								setBpmSliderValue(randomBPM); // Also set slider value
 								setBpmInput(randomBPM.toString());
 								setHasChanges(true);
 
@@ -454,16 +452,14 @@ export default function FlashingPatternEditor({
 					<View style={styles.sliderPadding}>
 						<View style={COMMON_STYLES.sliderContainer}>
 							<BpmControl
-								bpm={BPM}
+								bpm={bpmSliderValue} // Use slider value for smoother display
 								bpmInput={bpmInput}
 								disabled={false}
 								onBpmChange={(value) => {
-									const roundedValue = Math.round(value);
-									setBPM(roundedValue);
-									setBpmInput(roundedValue.toString());
-									setHasChanges(true);
+									// Just update the slider value, let debouncing handle the rest
+									setBpmSliderValue(value);
 								}}
-								onBpmInputChange={setBpmInput}
+								onBpmInputChange={(text) => setBpmInput(text)}
 								onBpmInputBlur={() => {
 									// Ensure the input is properly formatted when user finishes editing
 									const inputValue = parseFloat(bpmInput);
@@ -475,6 +471,8 @@ export default function FlashingPatternEditor({
 										setBpmInput(clampedValue.toFixed(0));
 										if (clampedValue !== BPM) {
 											setBPM(clampedValue);
+											setBpmSliderValue(clampedValue); // Also set slider value
+											setHasBPMBeenManuallySet(true); // Mark BPM as manually set
 											setHasChanges(true);
 										}
 									} else if (bpmInput.trim() === "") {
@@ -539,6 +537,8 @@ export default function FlashingPatternEditor({
 					onClose={() => setShowBPMMeasurer(false)}
 					onBPMDetected={(bpm) => {
 						setBPM(bpm);
+						setBpmSliderValue(bpm); // Also set slider value
+						setHasBPMBeenManuallySet(true); // Mark BPM as manually set
 						setHasChanges(true);
 					}}
 				/>
@@ -567,13 +567,6 @@ const styles = StyleSheet.create({
 		borderStyle: "solid",
 		borderBottomWidth: 2 * DIMENSIONS.SCALE,
 		borderColor: COLORS.WHITE,
-	},
-	whiteText: {
-		color: COLORS.WHITE,
-		fontSize: 30 * DIMENSIONS.SCALE,
-		fontFamily: FONTS.SIGNATURE,
-		textAlign: "center",
-		flex: 1,
 	},
 	fpContainer: {
 		flexDirection: "row",
@@ -606,13 +599,5 @@ const styles = StyleSheet.create({
 		textAlign: "center",
 		minWidth: width * 0.6,
 		padding: 10 * DIMENSIONS.SCALE,
-	},
-	bpmRangeText: {
-		color: COLORS.WHITE,
-		fontSize: 14 * DIMENSIONS.SCALE,
-		fontFamily: FONTS.CLEAR,
-		textAlign: "center",
-		marginTop: 5 * DIMENSIONS.SCALE,
-		opacity: 0.7,
 	},
 });

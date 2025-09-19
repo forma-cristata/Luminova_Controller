@@ -1,5 +1,5 @@
-import { COLORS, DIMENSIONS } from '@/src/styles/SharedStyles';
-import React, { useCallback, useMemo, useRef } from 'react';
+import { COLORS, DIMENSIONS } from "@/src/styles/SharedStyles";
+import React, { useCallback, useMemo, useRef } from "react";
 import {
 	Dimensions,
 	GestureResponderEvent,
@@ -7,9 +7,9 @@ import {
 	PanResponderGestureState,
 	StyleSheet,
 	View,
-} from 'react-native';
+} from "react-native";
 
-const { width } = Dimensions.get('window');
+const { width } = Dimensions.get("window");
 
 interface ColorWheelProps {
 	hue: number; // 0-360
@@ -60,16 +60,24 @@ export default React.memo(function ColorWheel({
 			const distanceRatio = clampedDistance / wheelRadius;
 
 			// Hard-coded boundaries matching the visual rings (as fractions of wheel radius)
-			const ringBoundaries = [0.05, 0.06, 0.08, 0.11, 0.15, 0.2, 0.28, 0.4, 0.55, 0.7, 0.85, 0.95, 1.0];
+			const ringBoundaries = [
+				0.05, 0.06, 0.08, 0.11, 0.15, 0.2, 0.28, 0.4, 0.55, 0.7, 0.85, 0.95,
+				1.0,
+			];
 
 			// Find which ring the distance falls into and calculate saturation
 			let exactSaturation = 0;
 			for (let i = 0; i < ringBoundaries.length - 1; i++) {
-				if (distanceRatio >= ringBoundaries[i] && distanceRatio <= ringBoundaries[i + 1]) {
+				if (
+					distanceRatio >= ringBoundaries[i] &&
+					distanceRatio <= ringBoundaries[i + 1]
+				) {
 					// Linear interpolation within the ring
 					const ringProgress =
-						(distanceRatio - ringBoundaries[i]) / (ringBoundaries[i + 1] - ringBoundaries[i]);
-					exactSaturation = (i + ringProgress) * (100 / (ringBoundaries.length - 2));
+						(distanceRatio - ringBoundaries[i]) /
+						(ringBoundaries[i + 1] - ringBoundaries[i]);
+					exactSaturation =
+						(i + ringProgress) * (100 / (ringBoundaries.length - 2));
 					break;
 				}
 			}
@@ -97,7 +105,10 @@ export default React.memo(function ColorWheel({
 			const angleRad = (hueValue * Math.PI) / 180;
 
 			// Hard-coded ring boundaries matching the visual layout
-			const ringBoundaries = [0.05, 0.06, 0.08, 0.11, 0.15, 0.2, 0.28, 0.4, 0.55, 0.7, 0.85, 0.95, 1.0];
+			const ringBoundaries = [
+				0.05, 0.06, 0.08, 0.11, 0.15, 0.2, 0.28, 0.4, 0.55, 0.7, 0.85, 0.95,
+				1.0,
+			];
 
 			// Map saturation to the correct ring boundary
 			const saturationRatio = saturationValue / 100;
@@ -108,7 +119,9 @@ export default React.memo(function ColorWheel({
 
 			// Interpolate between ring boundaries
 			const radiusRatio =
-				ringBoundaries[lowerIndex] + ringProgress * (ringBoundaries[upperIndex] - ringBoundaries[lowerIndex]);
+				ringBoundaries[lowerIndex] +
+				ringProgress *
+					(ringBoundaries[upperIndex] - ringBoundaries[lowerIndex]);
 			const effectiveRadius = radiusRatio * wheelRadius;
 
 			return {
@@ -146,7 +159,10 @@ export default React.memo(function ColorWheel({
 					const { locationX, locationY } = evt.nativeEvent;
 					handleTouch(locationX, locationY, false);
 				},
-				onPanResponderMove: (evt: GestureResponderEvent, _gestureState: PanResponderGestureState) => {
+				onPanResponderMove: (
+					evt: GestureResponderEvent,
+					_gestureState: PanResponderGestureState,
+				) => {
 					if (isDragging.current) {
 						const { locationX, locationY } = evt.nativeEvent;
 						handleTouch(locationX, locationY, false);
@@ -284,58 +300,58 @@ export default React.memo(function ColorWheel({
 
 const styles = StyleSheet.create({
 	container: {
-		alignItems: 'center',
-		justifyContent: 'center',
+		alignItems: "center",
+		justifyContent: "center",
 		// Removed all padding
 	},
 	wheelContainer: {
-		position: 'relative',
-		overflow: 'hidden',
+		position: "relative",
+		overflow: "hidden",
 		// Removed border
 	},
 	colorWedge: {
-		position: 'absolute',
-		width: '50%',
-		height: '50%',
-		top: '50%',
-		left: '50%',
-		transformOrigin: '0 0',
+		position: "absolute",
+		width: "50%",
+		height: "50%",
+		top: "50%",
+		left: "50%",
+		transformOrigin: "0 0",
 	},
 	degreeSlice: {
-		position: 'absolute',
-		width: '50%',
+		position: "absolute",
+		width: "50%",
 		height: 1 * DIMENSIONS.SCALE, // Very thin slice
-		top: '50%',
-		left: '50%',
-		transformOrigin: '0 0',
+		top: "50%",
+		left: "50%",
+		transformOrigin: "0 0",
 	},
 	centerWhite: {
-		position: 'absolute',
+		position: "absolute",
 		backgroundColor: COLORS.WHITE,
 	},
 	saturationRing: {
-		position: 'absolute',
+		position: "absolute",
 	},
 	innerHighlight: {
-		position: 'absolute',
+		position: "absolute",
 		top: 6 * DIMENSIONS.SCALE,
 		left: 6 * DIMENSIONS.SCALE,
 		borderWidth: 1 * DIMENSIONS.SCALE,
-		borderColor: 'rgba(255, 255, 255, 0.3)',
-		backgroundColor: 'transparent',
+		borderColor: "rgba(255, 255, 255, 0.3)",
+		backgroundColor: "transparent",
 	},
 	marbleContainer: {
-		position: 'absolute',
+		position: "absolute",
 		width: 20 * DIMENSIONS.SCALE, // Reduced from 24
 		height: 20 * DIMENSIONS.SCALE, // Reduced from 24
 	},
 	marbleBase: {
-		position: 'absolute',
-		width: '100%',
-		height: '100%',
+		position: "absolute",
+		width: "100%",
+		height: "100%",
 		borderRadius: 10 * DIMENSIONS.SCALE, // Reduced from 12
-		backgroundColor: 'transparent', // Transparent to show wheel color behind
-		shadowColor: '#000',
+		backgroundColor: "transparent", // Transparent to show wheel color behind
+		shadowColor: "#000",
 		shadowOffset: {
 			width: 0,
 			height: 2 * DIMENSIONS.SCALE,
@@ -345,31 +361,31 @@ const styles = StyleSheet.create({
 		elevation: 4,
 	},
 	marbleHighlight: {
-		position: 'absolute',
+		position: "absolute",
 		top: 2 * DIMENSIONS.SCALE, // Reduced from 3
 		left: 5 * DIMENSIONS.SCALE, // Reduced from 6
 		width: 10 * DIMENSIONS.SCALE, // Reduced from 12
 		height: 6 * DIMENSIONS.SCALE, // Reduced from 8
 		borderRadius: 5 * DIMENSIONS.SCALE, // Reduced from 6
-		backgroundColor: 'rgba(255, 255, 255, 0.8)', // Increased opacity for better glass effect
-		transform: [{ rotate: '-20deg' }],
+		backgroundColor: "rgba(255, 255, 255, 0.8)", // Increased opacity for better glass effect
+		transform: [{ rotate: "-20deg" }],
 	},
 	marbleRefraction: {
-		position: 'absolute',
+		position: "absolute",
 		top: 3 * DIMENSIONS.SCALE, // Reduced from 4
 		left: 6 * DIMENSIONS.SCALE, // Reduced from 7
 		width: 3 * DIMENSIONS.SCALE, // Reduced from 4
 		height: 3 * DIMENSIONS.SCALE, // Reduced from 4
 		borderRadius: 1.5 * DIMENSIONS.SCALE, // Reduced from 2
-		backgroundColor: 'rgba(255, 255, 255, 0.95)', // Increased opacity for better visibility
+		backgroundColor: "rgba(255, 255, 255, 0.95)", // Increased opacity for better visibility
 	},
 	marbleBorder: {
-		position: 'absolute',
-		width: '100%',
-		height: '100%',
+		position: "absolute",
+		width: "100%",
+		height: "100%",
 		borderRadius: 10 * DIMENSIONS.SCALE, // Reduced from 12
 		borderWidth: 1 * DIMENSIONS.SCALE, // Slightly thicker for better definition
-		borderColor: 'rgba(0, 0, 0, 0.2)', // Slightly darker for better contrast
-		backgroundColor: 'transparent',
+		borderColor: "rgba(0, 0, 0, 0.2)", // Slightly darker for better contrast
+		backgroundColor: "transparent",
 	},
 });

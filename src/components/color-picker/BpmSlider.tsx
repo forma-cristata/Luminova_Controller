@@ -1,7 +1,7 @@
-import { COLORS, DIMENSIONS } from '@/src/styles/SharedStyles';
-import Slider from '@react-native-community/slider';
-import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { COLORS, DIMENSIONS } from "@/src/styles/SharedStyles";
+import Slider from "@react-native-community/slider";
+import React from "react";
+import { StyleSheet, View } from "react-native";
 
 interface BpmSliderProps {
 	bpm: number;
@@ -9,7 +9,11 @@ interface BpmSliderProps {
 	onValueChange: (value: number) => void;
 }
 
-export default function BpmSlider({ bpm, disabled, onValueChange }: BpmSliderProps) {
+export default function BpmSlider({
+	bpm,
+	disabled,
+	onValueChange,
+}: BpmSliderProps) {
 	return (
 		<View style={styles.sliderRow}>
 			<Slider
@@ -32,7 +36,7 @@ const styles = StyleSheet.create({
 		marginVertical: 5 * DIMENSIONS.SCALE,
 	},
 	slider: {
-		width: '100%',
+		width: "100%",
 		height: 30 * DIMENSIONS.SCALE,
 	},
 });

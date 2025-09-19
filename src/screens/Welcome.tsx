@@ -1,15 +1,22 @@
-import Button from '@/src/components/buttons/Button';
-import AnimatedTitle from '@/src/components/common/AnimatedTitle';
-import Header from '@/src/components/common/Header';
-import WelcomeTutorial from '@/src/components/common/WelcomeTutorial';
-import IpAddressInput from '@/src/components/welcome/IpAddressInput';
-import { useConfiguration } from '@/src/context/ConfigurationContext';
-import { COLORS, DIMENSIONS, FONTS } from '@/src/styles/SharedStyles';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import React, { useEffect, useRef, useState } from 'react';
-import { Keyboard, ScrollView, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import type { RootStackParamList } from './index';
+import Button from "@/src/components/buttons/Button";
+import AnimatedTitle from "@/src/components/common/AnimatedTitle";
+import Header from "@/src/components/common/Header";
+import WelcomeTutorial from "@/src/components/common/WelcomeTutorial";
+import IpAddressInput from "@/src/components/welcome/IpAddressInput";
+import { useConfiguration } from "@/src/context/ConfigurationContext";
+import { COLORS, DIMENSIONS, FONTS } from "@/src/styles/SharedStyles";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import React, { useEffect, useRef, useState } from "react";
+import {
+	Keyboard,
+	ScrollView,
+	StyleSheet,
+	TouchableOpacity,
+	TouchableWithoutFeedback,
+	View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import type { RootStackParamList } from "./index";
 
 interface WelcomeProps {
 	navigation: NativeStackNavigationProp<RootStackParamList>;
@@ -17,8 +24,8 @@ interface WelcomeProps {
 
 export default function Welcome({ navigation }: WelcomeProps) {
 	const { setLastEdited, setIsShelfConnected } = useConfiguration();
-	const [displayText, setDisplayText] = useState('');
-	const fullText = 'Luminova';
+	const [displayText, setDisplayText] = useState("");
+	const fullText = "Luminova";
 	const [isEnabled, setIsEnabled] = useState(false);
 	const [showTutorial, setShowTutorial] = useState(false);
 	const [debugTapCount, setDebugTapCount] = useState(0);
@@ -26,7 +33,7 @@ export default function Welcome({ navigation }: WelcomeProps) {
 	const scrollViewRef = useRef<ScrollView>(null);
 
 	useEffect(() => {
-		setLastEdited('0');
+		setLastEdited("0");
 	}, [setLastEdited]);
 
 	// Show tutorial on every app startup
@@ -50,19 +57,25 @@ export default function Welcome({ navigation }: WelcomeProps) {
 	}, [displayText]);
 
 	function createButtonPressed() {
-		navigation.navigate('Settings');
+		navigation.navigate("Settings");
 	}
 
 	// Auto-scroll with keyboard show/hide
 	useEffect(() => {
-		const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
-			const scrollDistance = DIMENSIONS.SCREEN_HEIGHT * 0.37; // Scroll 31% (61.75% / 2) to move inputs from 81.75% to 20%
-			scrollViewRef.current?.scrollTo({ y: scrollDistance, animated: true });
-		});
+		const keyboardDidShowListener = Keyboard.addListener(
+			"keyboardDidShow",
+			() => {
+				const scrollDistance = DIMENSIONS.SCREEN_HEIGHT * 0.37; // Scroll 31% (61.75% / 2) to move inputs from 81.75% to 20%
+				scrollViewRef.current?.scrollTo({ y: scrollDistance, animated: true });
+			},
+		);
 
-		const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
-			scrollViewRef.current?.scrollTo({ y: 0, animated: true });
-		});
+		const keyboardDidHideListener = Keyboard.addListener(
+			"keyboardDidHide",
+			() => {
+				scrollViewRef.current?.scrollTo({ y: 0, animated: true });
+			},
+		);
 
 		return () => {
 			keyboardDidShowListener?.remove();
@@ -105,9 +118,9 @@ export default function Welcome({ navigation }: WelcomeProps) {
 					<View
 						style={{
 							height: DIMENSIONS.SCREEN_HEIGHT * 0.25,
-							width: '100%',
-							justifyContent: 'center',
-							alignItems: 'center',
+							width: "100%",
+							justifyContent: "center",
+							alignItems: "center",
 						}}
 					>
 						<TouchableOpacity
@@ -132,9 +145,9 @@ export default function Welcome({ navigation }: WelcomeProps) {
 					<View
 						style={{
 							height: DIMENSIONS.SCREEN_HEIGHT * 0.3,
-							width: '100%',
-							justifyContent: 'center',
-							alignItems: 'center',
+							width: "100%",
+							justifyContent: "center",
+							alignItems: "center",
 						}}
 					>
 						<Button
@@ -148,9 +161,9 @@ export default function Welcome({ navigation }: WelcomeProps) {
 					<View
 						style={{
 							height: DIMENSIONS.SCREEN_HEIGHT * 0.3,
-							width: '100%',
-							justifyContent: 'center',
-							alignItems: 'center',
+							width: "100%",
+							justifyContent: "center",
+							alignItems: "center",
 						}}
 					>
 						<IpAddressInput onIpSaved={handleIpSaved} />
@@ -158,7 +171,10 @@ export default function Welcome({ navigation }: WelcomeProps) {
 				</ScrollView>
 
 				{/* Welcome Tutorial Modal */}
-				<WelcomeTutorial visible={showTutorial} onComplete={handleTutorialComplete} />
+				<WelcomeTutorial
+					visible={showTutorial}
+					onComplete={handleTutorialComplete}
+				/>
 			</SafeAreaView>
 		</TouchableWithoutFeedback>
 	);
@@ -167,30 +183,30 @@ export default function Welcome({ navigation }: WelcomeProps) {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		alignItems: 'center',
-		justifyContent: 'center',
+		alignItems: "center",
+		justifyContent: "center",
 		backgroundColor: COLORS.BLACK,
 	},
 	scrollContent: {
 		flexGrow: 1,
-		alignItems: 'center',
-		justifyContent: 'flex-start',
+		alignItems: "center",
+		justifyContent: "flex-start",
 		paddingBottom: DIMENSIONS.SCREEN_HEIGHT * 0.4, // Extra padding for scroll space
 		paddingTop: DIMENSIONS.SCREEN_HEIGHT * 0.1, // 10% for toggle/info area
 		minHeight: DIMENSIONS.SCREEN_HEIGHT, // Content fits in 100% screen height
 	},
 	scrollView: {
 		flex: 1,
-		width: '100%',
+		width: "100%",
 	},
 	titleContainer: {
-		alignItems: 'center',
-		justifyContent: 'center',
+		alignItems: "center",
+		justifyContent: "center",
 		marginBottom: DIMENSIONS.SCREEN_HEIGHT * 0.02,
 		paddingHorizontal: DIMENSIONS.SCREEN_WIDTH * 0.02,
 		paddingVertical: DIMENSIONS.SCREEN_HEIGHT * 0.02,
 		minHeight: DIMENSIONS.SCREEN_HEIGHT * 0.15,
-		width: '98%',
+		width: "98%",
 	},
 	buttonText: {
 		color: COLORS.WHITE,

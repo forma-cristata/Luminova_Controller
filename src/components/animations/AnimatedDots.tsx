@@ -1,28 +1,32 @@
-import Dot from '@/src/components/common/Dot';
-import { DIMENSIONS } from '@/src/styles/SharedStyles';
-import { useFocusEffect } from '@react-navigation/native';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import Dot from "@/src/components/common/Dot";
+import { DIMENSIONS } from "@/src/styles/SharedStyles";
+import { useFocusEffect } from "@react-navigation/native";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { StyleSheet, View } from "react-native";
 
-import type { RootStackParamList } from '@/src/screens/index';
-import type { Setting } from '@/src/types/SettingInterface';
-import { getStableSettingId } from '@/src/utils/settingUtils';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import type { RootStackParamList } from "@/src/screens/index";
+import type { Setting } from "@/src/types/SettingInterface";
+import { getStableSettingId } from "@/src/utils/settingUtils";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 interface AnimatedDotsProps {
 	navigation?: NativeStackNavigationProp<RootStackParamList>;
 	setting: Setting;
-	layout?: 'ring' | 'linear';
+	layout?: "ring" | "linear";
 	// Optional container width to allow parent sizing (pixels)
 	containerWidth?: number;
 }
 
 const LIGHT_COUNT = 16;
 
-const black = '#000000';
+const black = "#000000";
 
 const AnimatedDots = React.memo(
-	function AnimatedDots({ setting, layout = 'linear', containerWidth }: AnimatedDotsProps) {
+	function AnimatedDots({
+		setting,
+		layout = "linear",
+		containerWidth,
+	}: AnimatedDotsProps) {
 		const COLOR_COUNT = setting.colors.length;
 
 		const animationRef = useRef<boolean>(false);
@@ -33,7 +37,9 @@ const AnimatedDots = React.memo(
 
 		// Initialize all 16 dot colors as an array - this will be reset when setting changes
 
-		const [dotColors, setDotColors] = useState<string[]>(new Array(LIGHT_COUNT).fill(black));
+		const [dotColors, setDotColors] = useState<string[]>(
+			new Array(LIGHT_COUNT).fill(black),
+		);
 
 		// Handle navigation focus - restart animations when screen becomes focused
 
@@ -50,11 +56,12 @@ const AnimatedDots = React.memo(
 		// Helper function to initialize colors based on current setting
 
 		const initializeColors = useCallback(() => {
-			if (setting.flashingPattern === '6') {
+			if (setting.flashingPattern === "6") {
 				const initialColors = new Array(LIGHT_COUNT).fill(black);
 
 				for (let i = 0; i < LIGHT_COUNT; i++) {
-					const colorIndex = i < setting.colors.length ? i : i % setting.colors.length;
+					const colorIndex =
+						i < setting.colors.length ? i : i % setting.colors.length;
 					initialColors[i] = setting.colors[colorIndex] || black;
 				}
 
@@ -67,28 +74,31 @@ const AnimatedDots = React.memo(
 		// Clear all timeouts helper
 
 		const clearAllTimeouts = useCallback(() => {
-			timeoutRefs.current.forEach(timeout => clearTimeout(timeout));
+			timeoutRefs.current.forEach((timeout) => clearTimeout(timeout));
 			timeoutRefs.current = [];
 		}, []);
 
 		// Helper function to create a managed timeout
 
-		const createTimeout = useCallback((callback: () => void, delay: number): Promise<void> => {
-			return new Promise(resolve => {
-				const timeout = setTimeout(() => {
-					callback();
-					resolve();
-				}, delay);
-				timeoutRefs.current.push(timeout);
-			});
-		}, []);
+		const createTimeout = useCallback(
+			(callback: () => void, delay: number): Promise<void> => {
+				return new Promise((resolve) => {
+					const timeout = setTimeout(() => {
+						callback();
+						resolve();
+					}, delay);
+					timeoutRefs.current.push(timeout);
+				});
+			},
+			[],
+		);
 
 		// Helper function to update a specific LED color
 
 		const setLedColor = useCallback(
 			(index: number, color: string) => {
 				if (!animationRef.current || !isComponentActive) return;
-				setDotColors(prev => {
+				setDotColors((prev) => {
 					const newColors = [...prev];
 
 					newColors[index] = color;
@@ -134,7 +144,13 @@ const AnimatedDots = React.memo(
 					setLedColor(i, setting.colors[colorIndex]);
 				}
 			},
-			[setting.delayTime, setting.colors, setLedColor, createTimeout, COLOR_COUNT],
+			[
+				setting.delayTime,
+				setting.colors,
+				setLedColor,
+				createTimeout,
+				COLOR_COUNT,
+			],
 		);
 
 		const smolder = useCallback(
@@ -190,16 +206,26 @@ const AnimatedDots = React.memo(
 					}
 				}
 			},
-			[setting.delayTime, setting.colors, setLedColor, createTimeout, COLOR_COUNT],
+			[
+				setting.delayTime,
+				setting.colors,
+				setLedColor,
+				createTimeout,
+				COLOR_COUNT,
+			],
 		);
 
 		const thePianoMan = useCallback(
 			async (isActive: () => boolean) => {
 				const patternIndices = [1, 2, 3, 2, 4, 3, 2, 1, 0, 1, 2, 1, 3, 2, 1, 0];
 
-				const pattern2Indices = [7, 8, 9, 8, 10, 9, 8, 7, 6, 7, 8, 7, 9, 8, 7, 6];
+				const pattern2Indices = [
+					7, 8, 9, 8, 10, 9, 8, 7, 6, 7, 8, 7, 9, 8, 7, 6,
+				];
 
-				const pattern3Indices = [13, 14, 15, 14, 15, 14, 13, 12, 11, 12, 13, 14, 15, 14, 13, 12];
+				const pattern3Indices = [
+					13, 14, 15, 14, 15, 14, 13, 12, 11, 12, 13, 14, 15, 14, 13, 12,
+				];
 				setAllLeds(black);
 
 				if (!isActive()) return;
@@ -228,7 +254,14 @@ const AnimatedDots = React.memo(
 					}
 				}
 			},
-			[setting.delayTime, setting.colors, setAllLeds, setLedColor, createTimeout, COLOR_COUNT],
+			[
+				setting.delayTime,
+				setting.colors,
+				setAllLeds,
+				setLedColor,
+				createTimeout,
+				COLOR_COUNT,
+			],
 		);
 
 		const feelTheFunk = useCallback(
@@ -287,7 +320,14 @@ const AnimatedDots = React.memo(
 					}
 				}
 			},
-			[setting.delayTime, setting.colors, setLedColor, createTimeout, random, COLOR_COUNT],
+			[
+				setting.delayTime,
+				setting.colors,
+				setLedColor,
+				createTimeout,
+				random,
+				COLOR_COUNT,
+			],
 		);
 
 		const still = useCallback(async () => {
@@ -296,7 +336,8 @@ const AnimatedDots = React.memo(
 			const newColors = new Array(LIGHT_COUNT).fill(black);
 
 			for (let i = 0; i < LIGHT_COUNT; i++) {
-				const colorIndex = i < setting.colors.length ? i : i % setting.colors.length;
+				const colorIndex =
+					i < setting.colors.length ? i : i % setting.colors.length;
 				newColors[i] = setting.colors[colorIndex] || black;
 			}
 			setDotColors(newColors);
@@ -324,7 +365,10 @@ const AnimatedDots = React.memo(
 							const ledIndex = startIdx + i;
 
 							if (!isActive()) return;
-							setLedColor((ledIndex + 1) % LIGHT_COUNT, setting.colors[ledIndex % COLOR_COUNT]);
+							setLedColor(
+								(ledIndex + 1) % LIGHT_COUNT,
+								setting.colors[ledIndex % COLOR_COUNT],
+							);
 							await createTimeout(() => {}, setting.delayTime / 2);
 
 							if (!isActive()) return;
@@ -344,7 +388,10 @@ const AnimatedDots = React.memo(
 						for (let i = 0; i < ledsPerGroup; i++) {
 							const ledIndex = startIdx + i;
 
-							setLedColor((ledIndex + 1) % LIGHT_COUNT, setting.colors[ledIndex % COLOR_COUNT]);
+							setLedColor(
+								(ledIndex + 1) % LIGHT_COUNT,
+								setting.colors[ledIndex % COLOR_COUNT],
+							);
 							await createTimeout(() => {}, setting.delayTime / 2);
 
 							if (!isActive()) return;
@@ -369,7 +416,10 @@ const AnimatedDots = React.memo(
 							const ledIndex = startIdx + i;
 
 							if (!isActive()) return;
-							setLedColor((ledIndex + 1) % LIGHT_COUNT, setting.colors[ledIndex % COLOR_COUNT]);
+							setLedColor(
+								(ledIndex + 1) % LIGHT_COUNT,
+								setting.colors[ledIndex % COLOR_COUNT],
+							);
 							await createTimeout(() => {}, setting.delayTime / 2);
 
 							if (!isActive()) return;
@@ -390,7 +440,10 @@ const AnimatedDots = React.memo(
 							const ledIndex = startIdx + i;
 
 							if (!isActive()) return;
-							setLedColor((ledIndex + 1) % LIGHT_COUNT, setting.colors[ledIndex % COLOR_COUNT]);
+							setLedColor(
+								(ledIndex + 1) % LIGHT_COUNT,
+								setting.colors[ledIndex % COLOR_COUNT],
+							);
 							await createTimeout(() => {}, setting.delayTime / 2);
 
 							if (!isActive()) return;
@@ -405,7 +458,14 @@ const AnimatedDots = React.memo(
 					}
 				}
 			},
-			[setting.delayTime, setting.colors, setAllLeds, setLedColor, createTimeout, COLOR_COUNT],
+			[
+				setting.delayTime,
+				setting.colors,
+				setAllLeds,
+				setLedColor,
+				createTimeout,
+				COLOR_COUNT,
+			],
 		);
 
 		const cortez = useCallback(
@@ -429,7 +489,13 @@ const AnimatedDots = React.memo(
 					}
 				}
 			},
-			[setting.delayTime, setting.colors, setLedColor, createTimeout, COLOR_COUNT],
+			[
+				setting.delayTime,
+				setting.colors,
+				setLedColor,
+				createTimeout,
+				COLOR_COUNT,
+			],
 		);
 
 		const theUnderground = useCallback(
@@ -451,7 +517,13 @@ const AnimatedDots = React.memo(
 					}
 				}
 			},
-			[setting.delayTime, setting.colors, setLedColor, createTimeout, COLOR_COUNT],
+			[
+				setting.delayTime,
+				setting.colors,
+				setLedColor,
+				createTimeout,
+				COLOR_COUNT,
+			],
 		);
 
 		const berghainBitte = useCallback(
@@ -482,7 +554,7 @@ const AnimatedDots = React.memo(
 
 						for (let x = 0; x < 2; x++) {
 							if (!isActive()) return;
-							setLedColor(j, setting.colors[i]);
+							setLedColor(j, setting.colors[i]); // this one
 							await createTimeout(() => {}, setting.delayTime * 4);
 
 							if (!isActive()) return;
@@ -511,7 +583,14 @@ const AnimatedDots = React.memo(
 					}
 				}
 			},
-			[setting.delayTime, setting.colors, setAllLeds, setLedColor, createTimeout, COLOR_COUNT],
+			[
+				setting.delayTime,
+				setting.colors,
+				setAllLeds,
+				setLedColor,
+				createTimeout,
+				COLOR_COUNT,
+			],
 		);
 
 		const lapisLazuli = useCallback(
@@ -539,7 +618,13 @@ const AnimatedDots = React.memo(
 					}
 				}
 			},
-			[setting.delayTime, setting.colors, setLedColor, createTimeout, COLOR_COUNT],
+			[
+				setting.delayTime,
+				setting.colors,
+				setLedColor,
+				createTimeout,
+				COLOR_COUNT,
+			],
 		);
 
 		const medusa = useCallback(
@@ -561,7 +646,13 @@ const AnimatedDots = React.memo(
 					}
 				}
 			},
-			[setting.delayTime, setting.colors, setLedColor, createTimeout, COLOR_COUNT],
+			[
+				setting.delayTime,
+				setting.colors,
+				setLedColor,
+				createTimeout,
+				COLOR_COUNT,
+			],
 		);
 
 		const stateOfTrance = useCallback(
@@ -579,7 +670,10 @@ const AnimatedDots = React.memo(
 
 							const li = j + i;
 
-							setLedColor((li + 1) % LIGHT_COUNT, setting.colors[li % COLOR_COUNT]);
+							setLedColor(
+								(li + 1) % LIGHT_COUNT,
+								setting.colors[li % COLOR_COUNT],
+							);
 							await createTimeout(() => {}, setting.delayTime * 4);
 
 							if (!isActive()) return;
@@ -594,7 +688,10 @@ const AnimatedDots = React.memo(
 
 							const ledIndex = j + i;
 
-							setLedColor((ledIndex + 1) % LIGHT_COUNT, setting.colors[ledIndex % COLOR_COUNT]);
+							setLedColor(
+								(ledIndex + 1) % LIGHT_COUNT,
+								setting.colors[ledIndex % COLOR_COUNT],
+							);
 							await createTimeout(() => {}, setting.delayTime * 4);
 
 							if (!isActive()) return;
@@ -604,7 +701,13 @@ const AnimatedDots = React.memo(
 					}
 				}
 			},
-			[setting.delayTime, setting.colors, setLedColor, createTimeout, COLOR_COUNT],
+			[
+				setting.delayTime,
+				setting.colors,
+				setLedColor,
+				createTimeout,
+				COLOR_COUNT,
+			],
 		);
 		useEffect(() => {
 			// Reset animation state and clear any existing timeouts
@@ -623,7 +726,7 @@ const AnimatedDots = React.memo(
 			const startAnimation = async () => {
 				// Wait a tick to ensure state has been set
 
-				await new Promise(resolve => setTimeout(resolve, 0));
+				await new Promise((resolve) => setTimeout(resolve, 0));
 
 				if (!animationRef.current) return;
 
@@ -631,40 +734,40 @@ const AnimatedDots = React.memo(
 					if (!animationRef.current) return;
 
 					switch (setting.flashingPattern) {
-						case '0': // STUCK IN A BLENDER
+						case "0": // STUCK IN A BLENDER
 							await stuckInABlender(() => animationRef.current);
 							break;
-						case '1': // SMOLDER
+						case "1": // SMOLDER
 							await smolder(() => animationRef.current);
 							break;
-						case '2': // COMFORT SONG
+						case "2": // COMFORT SONG
 							await thePianoMan(() => animationRef.current);
 							break;
-						case '3': // FUNKY - FEEL THE FUNK
+						case "3": // FUNKY - FEEL THE FUNK
 							await feelTheFunk(() => animationRef.current);
 							break;
-						case '4': // MOLD - DECAY
+						case "4": // MOLD - DECAY
 							await decay(() => animationRef.current);
 							break;
-						case '5': // PROGRESSIVE - CORTEZ
+						case "5": // PROGRESSIVE - CORTEZ
 							await cortez(() => animationRef.current);
 							break;
-						case '6': // STILL
+						case "6": // STILL
 							await still();
 							return; // Don't repeat for still effect
-						case '7': // STROBE CHANGE - THE UNDERGROUND
+						case "7": // STROBE CHANGE - THE UNDERGROUND
 							await theUnderground(() => animationRef.current);
 							break;
-						case '8': // TECHNO - BERGHAIN BITTE
+						case "8": // TECHNO - BERGHAIN BITTE
 							await berghainBitte(() => animationRef.current);
 							break;
-						case '9': // TRACE MANY - LAPIS LAZULI
+						case "9": // TRACE MANY - LAPIS LAZULI
 							await lapisLazuli(() => animationRef.current);
 							break;
-						case '10': // TRACE ONE - MEDUSA
+						case "10": // TRACE ONE - MEDUSA
 							await medusa(() => animationRef.current);
 							break;
-						case '11': // STATE OF TRANCE
+						case "11": // STATE OF TRANCE
 							await stateOfTrance(() => animationRef.current);
 							break;
 						default:
@@ -675,7 +778,7 @@ const AnimatedDots = React.memo(
 
 					// Only continue looping for non-still patterns if still active
 
-					const isStillPattern = (setting.flashingPattern as string) === '6';
+					const isStillPattern = (setting.flashingPattern as string) === "6";
 
 					if (animationRef.current && !isStillPattern) {
 						setTimeout(animate, 0);
@@ -710,14 +813,14 @@ const AnimatedDots = React.memo(
 
 		return (
 			<View style={styles.background}>
-				{layout === 'ring' ? (
+				{layout === "ring" ? (
 					<View style={styles.ringContainer}>
 						{dotColors
 							? dotColors.map((color, index) => {
 									const stableKey = `${getStableSettingId(setting)}-dot-${index}`;
 									const angle = (index * 360) / LIGHT_COUNT; // Calculate angle for each dot
 									const ringStyle = {
-										position: 'absolute' as const,
+										position: "absolute" as const,
 										transform: [
 											{ rotate: `${angle}deg` },
 											{ translateX: 50 }, // Radius of the ring
@@ -733,18 +836,25 @@ const AnimatedDots = React.memo(
 							: null}
 					</View>
 				) : (
-					<View style={[styles.linearContainer, { width: containerWidth ?? DIMENSIONS.SCREEN_WIDTH * 0.85 }]}>
+					<View
+						style={[
+							styles.linearContainer,
+							{ width: containerWidth ?? DIMENSIONS.SCREEN_WIDTH * 0.85 },
+						]}
+					>
 						{dotColors
 							? (() => {
 									// Compute dot size so 16 dots with overlap fill the container width
-									const containerW = containerWidth ?? DIMENSIONS.SCREEN_WIDTH * 0.85;
+									const containerW =
+										containerWidth ?? DIMENSIONS.SCREEN_WIDTH * 0.85;
 									// Let overlap be 0.2 (20% of dot width) as a default
 									const overlapFraction = 0.2;
 									// Effective horizontal step per dot = size - 2*overlap*size = size*(1 - 2*overlap)
 									// For n dots: containerW ≈ size + (n - 1) * step
 									const n = dotColors.length || 16;
 									const stepFraction = 1 - 2 * overlapFraction;
-									const sizeEstimate = containerW / (1 + (n - 1) * stepFraction);
+									const sizeEstimate =
+										containerW / (1 + (n - 1) * stepFraction);
 									const dotSize = Math.max(12, Math.round(sizeEstimate));
 
 									return dotColors.map((color, index) => {
@@ -770,7 +880,8 @@ const AnimatedDots = React.memo(
 		return (
 			prevProps.setting.delayTime === nextProps.setting.delayTime &&
 			prevProps.setting.flashingPattern === nextProps.setting.flashingPattern &&
-			JSON.stringify(prevProps.setting.colors) === JSON.stringify(nextProps.setting.colors) &&
+			JSON.stringify(prevProps.setting.colors) ===
+				JSON.stringify(nextProps.setting.colors) &&
 			prevProps.layout === nextProps.layout
 		);
 	},
@@ -780,20 +891,20 @@ export default AnimatedDots;
 
 const styles = StyleSheet.create({
 	background: {
-		justifyContent: 'center',
-		alignItems: 'center',
+		justifyContent: "center",
+		alignItems: "center",
 		paddingVertical: DIMENSIONS.SCREEN_HEIGHT * 0.01,
 	},
 	ringContainer: {
 		width: 120,
 		height: 120,
-		justifyContent: 'center',
-		alignItems: 'center',
-		position: 'relative',
+		justifyContent: "center",
+		alignItems: "center",
+		position: "relative",
 	},
 	linearContainer: {
-		flexDirection: 'row',
-		justifyContent: 'center',
-		alignItems: 'center',
+		flexDirection: "row",
+		justifyContent: "center",
+		alignItems: "center",
 	},
 });

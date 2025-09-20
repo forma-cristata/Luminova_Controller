@@ -76,7 +76,7 @@ jobs:
       - name: Run Expo Doctor
         run: |
           echo "Running Expo Doctor to check for potential build issues..."
-          npx expo doctor || {
+          npx expo-doctor || {
             echo "Expo Doctor found issues that may cause build failures"
             echo "Please review and fix the issues above before proceeding"
             exit 1

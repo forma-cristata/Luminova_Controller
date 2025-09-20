@@ -30,6 +30,7 @@ jobs:
   build:
     name: Build iOS App
     runs-on: ubuntu-latest
+    environment: production  # Use GitHub environment for additional security
     outputs:
       build-id: ${{ steps.eas-build.outputs.build-id }}
     steps:
@@ -60,14 +61,30 @@ jobs:
 
       - name: Build iOS app
         id: eas-build
+        env:
+          EAS_NO_VCS: 1  # Reduce verbose output
         run: |
           echo "Building iOS app with profile: ${{ github.event.inputs.build_profile || 'production' }}"
-          eas build --platform ios --profile ${{ github.event.inputs.build_profile || 'production' }} --non-interactive --no-wait
 
-          # Get the build ID from the last build
-          BUILD_ID=$(eas build:list --platform ios --status in-progress --limit 1 --json | jq -r '.[0].id')
+          # Start the build and capture output, filtering sensitive information
+          BUILD_OUTPUT=$(eas build --platform ios --profile ${{ github.event.inputs.build_profile || 'production' }} --non-interactive --no-wait 2>&1 | \
+            sed 's/Serial Number.*/Serial Number             [REDACTED]/g' | \
+            sed 's/Apple Team.*/Apple Team                [REDACTED]/g' | \
+            sed 's/Developer Portal ID.*/Developer Portal ID       [REDACTED]/g')
+
+          # Extract build ID from the build output URL
+          BUILD_ID=$(echo "$BUILD_OUTPUT" | grep -o 'builds/[a-f0-9-]*' | head -1 | cut -d'/' -f2)
+
+          if [ -z "$BUILD_ID" ]; then
+            echo "Failed to extract build ID from output"
+            echo "Build output (sanitized, last 10 lines):"
+            echo "$BUILD_OUTPUT" | tail -10
+            exit 1
+          fi
+
           echo "build-id=$BUILD_ID" >> $GITHUB_OUTPUT
           echo "Build started with ID: $BUILD_ID"
+          echo "::add-mask::$BUILD_ID"  # Mask build ID in subsequent logs
 
       - name: Wait for build completion
         run: |
@@ -77,6 +94,7 @@ jobs:
   submit:
     name: Submit to App Store
     runs-on: ubuntu-latest
+    environment: production  # Use GitHub environment for additional security
     needs: build
     if: ${{ github.event.inputs.submit_to_store == 'true' || github.ref == 'refs/heads/main' }}
     steps:
@@ -103,6 +121,15 @@ jobs:
           token: ${{ secrets.EXPO_TOKEN }}
 
       - name: Submit to App Store
+        env:
+          EAS_NO_VCS: 1  # Reduce verbose output
         run: |
           echo "Submitting build ${{ needs.build.outputs.build-id }} to App Store..."
-          eas submit --platform ios --id ${{ needs.build.outputs.build-id }} --non-interactive
+          echo "::add-mask::${{ needs.build.outputs.build-id }}"  # Mask build ID
+
+          # Submit with filtered output to avoid exposing sensitive information
+          eas submit --platform ios --id ${{ needs.build.outputs.build-id }} --non-interactive 2>&1 | \
+            sed 's/Serial Number.*/Serial Number             [REDACTED]/g' | \
+            sed 's/Apple Team.*/Apple Team                [REDACTED]/g' | \
+            sed 's/Developer Portal ID.*/Developer Portal ID       [REDACTED]/g' | \
+            sed 's/Bundle Identifier.*/Bundle Identifier         [REDACTED]/g'

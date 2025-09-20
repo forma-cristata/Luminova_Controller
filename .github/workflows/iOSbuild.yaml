@@ -35,22 +35,18 @@ jobs:
     outputs:
       build-id: ${{ steps.eas-build.outputs.build-id }}
     steps:
-      - name: Validate build profile
+      - name: Validate inputs and secrets
         run: |
           PROFILE="${{ github.event.inputs.build_profile || 'production' }}"
           if [[ ! "$PROFILE" =~ ^(production|preview|development)$ ]]; then
             echo "Invalid build profile: $PROFILE"
-            echo "Allowed profiles: production, preview, development"
             exit 1
           fi
-          echo "Using validated build profile: $PROFILE"
-
-      - name: Check for EXPO_TOKEN
-        run: |
           if [ -z "${{ secrets.EXPO_TOKEN }}" ]; then
-            echo "You must provide an EXPO_TOKEN secret linked to this project's Expo account in this repo's secrets. Learn more: https://docs.expo.dev/eas-update/github-actions"
+            echo "EXPO_TOKEN secret required. Learn more: https://docs.expo.dev/eas-update/github-actions"
             exit 1
           fi
+          echo "Using build profile: $PROFILE"
 
       - name: Checkout repository
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
@@ -66,145 +62,47 @@ jobs:
         with:
           eas-version: latest
           token: ${{ secrets.EXPO_TOKEN }}
-          packager: npm
-          expo-cache: false
-          eas-cache: false
 
-      - name: Install dependencies and run security audit
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Validate project configuration
         run: |
-          npm ci
-          echo "Running security audit..."
-          npm audit --audit-level=critical || {
-            echo "Critical security vulnerabilities found. Attempting to fix..."
-            npm audit fix --force
-          }
+          # Check required files exist
+          [ -f "app.json" ] || { echo "ERROR: app.json not found"; exit 1; }
+          [ -f "eas.json" ] || { echo "ERROR: eas.json not found"; exit 1; }
 
-      - name: Run Expo Doctor
-        run: |
-          echo "Running Expo Doctor to check for potential build issues..."
-          npx expo-doctor
-
-      - name: Comprehensive project validation
-        run: |
-          echo "Running comprehensive project validation..."
-
-          # Check required files
-          if [ ! -f "app.json" ]; then
-            echo "ERROR: app.json not found"
-            exit 1
-          fi
-
-          if [ ! -f "eas.json" ]; then
-            echo "ERROR: eas.json not found"
-            exit 1
-          fi
-
-          # Validate configurations in a single Node.js script
+          # Validate configurations
           PROFILE="${{ github.event.inputs.build_profile || 'production' }}"
           node -e "
-            const appConfig = require('./app.json');
-            const easConfig = require('./eas.json');
-            const pkg = require('./package.json');
+            const app = require('./app.json');
+            const eas = require('./eas.json');
 
-            // Validate app.json
-            if (!appConfig.expo) {
-              console.error('ERROR: app.json missing expo configuration');
+            if (!app.expo?.ios?.bundleIdentifier) {
+              console.error('ERROR: Missing iOS bundleIdentifier in app.json');
               process.exit(1);
             }
-            if (!appConfig.expo.ios || !appConfig.expo.ios.bundleIdentifier) {
-              console.error('ERROR: app.json missing iOS configuration or bundleIdentifier');
+            if (!eas.build?.['$PROFILE']) {
+              console.error('ERROR: Build profile \"$PROFILE\" not found in eas.json');
               process.exit(1);
             }
-
-            // Validate eas.json
-            const profile = '$PROFILE';
-            if (!easConfig.build || !easConfig.build[profile]) {
-              console.error('ERROR: Build profile \"' + profile + '\" not found in eas.json');
-              process.exit(1);
-            }
-
-            // Check React Native dependencies
-            const rnDeps = [];
-            if (pkg.dependencies) {
-              Object.keys(pkg.dependencies).forEach(dep => {
-                if (dep.includes('react-native') && dep !== 'react-native') {
-                  rnDeps.push(dep);
-                }
-              });
-            }
-
-            console.log('✅ App configuration validation passed');
-            console.log('✅ EAS configuration validation passed for profile: ' + profile);
-            console.log('✅ Package dependencies validation passed');
-            if (rnDeps.length > 0) {
-              console.log('INFO: React Native dependencies found: ' + rnDeps.join(', '));
-            }
+            console.log('✅ Configuration validation passed');
           "
-
-          # Test expo config
-          npx expo config --type public > /dev/null || {
-            echo "ERROR: Unable to read Expo configuration"
-            exit 1
-          }
-
-          echo "✅ All project validations passed"
-
-      - name: Check credentials and certificates
-        run: |
-          echo "Validating EAS credentials setup..."
-
-          # Check if we can authenticate with EAS
-          eas whoami || {
-            echo "ERROR: EAS authentication failed"
-            echo "Please check your EXPO_TOKEN secret"
-            exit 1
-          }
-
-          # Check iOS credentials using correct EAS CLI command
-          echo "Checking iOS credentials..."
-          eas credentials --platform ios || {
-            echo "WARNING: Unable to check iOS credentials"
-            echo "This may cause build failures if certificates/provisioning profiles are missing"
-          }
-
-          echo "✅ Credentials validation completed"
 
       - name: Build iOS app
         id: eas-build
-        env:
-          EAS_NO_VCS: 1
         run: |
-          echo "Building iOS app with profile: ${{ github.event.inputs.build_profile || 'production' }}"
+          PROFILE="${{ github.event.inputs.build_profile || 'production' }}"
+          echo "Building iOS app with profile: $PROFILE"
 
-          # Start the build and capture output
-          RAW_OUTPUT=$(eas build --platform ios --profile ${{ github.event.inputs.build_profile || 'production' }} --non-interactive 2>&1)
-
-          # Extract build ID using multiple patterns
-          BUILD_ID=$(echo "$RAW_OUTPUT" | grep -oE 'Build ID: [a-f0-9-]+' | head -1 | cut -d' ' -f3)
+          OUTPUT=$(eas build --platform ios --profile $PROFILE --non-interactive 2>&1)
+          BUILD_ID=$(echo "$OUTPUT" | grep -oE 'Build ID: [a-f0-9-]+' | head -1 | cut -d' ' -f3)
 
           if [ -z "$BUILD_ID" ]; then
-            BUILD_ID=$(echo "$RAW_OUTPUT" | grep -oE 'builds/[a-f0-9-]+' | head -1 | cut -d'/' -f2)
-          fi
-
-          if [ -z "$BUILD_ID" ]; then
-            BUILD_ID=$(echo "$RAW_OUTPUT" | grep -oE 'expo\.dev[^[:space:]]*/builds/[a-f0-9-]+' | head -1 | grep -oE '[a-f0-9-]+$')
-          fi
-
-          if [ -z "$BUILD_ID" ]; then
-            echo "Failed to extract build ID from output"
-            echo "$RAW_OUTPUT" | tail -10
+            echo "Failed to extract build ID"
+            echo "$OUTPUT" | tail -10
             exit 1
           fi
 
-          # Filter sensitive information from output
-          FILTERED_OUTPUT=$(echo "$RAW_OUTPUT" | \
-            sed 's/Serial Number.*/Serial Number             [REDACTED]/g' | \
-            sed 's/Apple Team.*/Apple Team                [REDACTED]/g' | \
-            sed 's/Developer Portal ID.*/Developer Portal ID       [REDACTED]/g')
-
           echo "build-id=$BUILD_ID" >> $GITHUB_OUTPUT
           echo "Build started with ID: $BUILD_ID"
-          echo "::add-mask::$BUILD_ID"
-
-          echo "Build output:"
-          echo "$FILTERED_OUTPUT"

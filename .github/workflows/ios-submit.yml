@@ -37,11 +37,7 @@ jobs:
           echo "Checking for available iOS production builds..."
           eas build:list --platform ios --limit 10 --non-interactive
 
-      - name: Submit latest successful production build to App Store
-        env:
-          APPLE_ID: ${{ secrets.APPLE_ID }}
-          ASC_APP_ID: ${{ secrets.ASC_APP_ID }}
-          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+      - name: Build and Submit to App Store
         run: |
-          echo "Submitting latest successful iOS production build to App Store..."
-          eas submit --platform ios --latest --non-interactive --verbose
+          echo "Building and submitting latest iOS production build to App Store..."
+          eas build --platform ios --non-interactive --profile production --auto-submit

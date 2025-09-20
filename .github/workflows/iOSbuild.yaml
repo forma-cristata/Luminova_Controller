@@ -86,11 +86,6 @@ jobs:
           echo "Build started with ID: $BUILD_ID"
           echo "::add-mask::$BUILD_ID"  # Mask build ID in subsequent logs
 
-      - name: Wait for build completion
-        run: |
-          echo "Waiting for build ${{ steps.eas-build.outputs.build-id }} to complete..."
-          eas build:wait ${{ steps.eas-build.outputs.build-id }}
-
   submit:
     name: Submit to App Store
     runs-on: ubuntu-latest

@@ -23,9 +23,26 @@ jobs:
         with:
           expo-token: ${{ secrets.EXPO_TOKEN }}
 
-      - name: Submit latest production build to App Store
+      - name: Check for available builds
         env:
           EAS_NO_VCS: 1
         run: |
-          echo "Submitting latest iOS production build to App Store..."
-          eas submit --platform ios --latest --non-interactive
+          echo "Checking for available iOS production builds..."
+          eas build:list --platform ios --limit 10 --non-interactive
+
+      - name: Submit latest successful production build to App Store
+        env:
+          EAS_NO_VCS: 1
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          ASC_APP_ID: ${{ secrets.ASC_APP_ID }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          echo "Finding latest successful iOS production build..."
+          BUILD_ID=$(eas build:list --platform ios --status finished --limit 1 --json --non-interactive | jq -r '.[0].id')
+          if [ "$BUILD_ID" = "null" ] || [ -z "$BUILD_ID" ]; then
+            echo "❌ No successful builds found"
+            exit 1
+          fi
+          echo "✅ Found successful build: $BUILD_ID"
+          echo "Submitting build $BUILD_ID to App Store..."
+          eas submit --platform ios --id "$BUILD_ID" --non-interactive --verbose

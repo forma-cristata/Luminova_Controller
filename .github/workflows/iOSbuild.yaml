@@ -1,5 +1,11 @@
 name: iOS Build and Submit
 
+# Explicit permissions for security
+permissions:
+  contents: read
+  actions: read
+  id-token: write
+
 on:
   workflow_dispatch:
     inputs:
@@ -34,6 +40,16 @@ jobs:
     outputs:
       build-id: ${{ steps.eas-build.outputs.build-id }}
     steps:
+      - name: Validate build profile
+        run: |
+          PROFILE="${{ github.event.inputs.build_profile || 'production' }}"
+          if [[ ! "$PROFILE" =~ ^(production|preview|development)$ ]]; then
+            echo "Invalid build profile: $PROFILE"
+            echo "Allowed profiles: production, preview, development"
+            exit 1
+          fi
+          echo "Using validated build profile: $PROFILE"
+
       - name: Check for EXPO_TOKEN
         run: |
           if [ -z "${{ secrets.EXPO_TOKEN }}" ]; then
@@ -42,19 +58,22 @@ jobs:
           fi
 
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@11254d802c3a8cfbf7cd85c99359c125e7119460
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@11254d802c3a8cfbf7cd85c99359c125e7119460
         with:
           node-version: 'lts/*'
           cache: npm
 
       - name: Setup EAS
-        uses: expo/expo-github-action@v8
+        uses: expo/expo-github-action@2e8558e4c7ab4b434c0cb7bbda81ba86c11c26b3 # v8
         with:
           eas-version: latest
           token: ${{ secrets.EXPO_TOKEN }}
+          packager: npm
+          expo-cache: false
+          eas-cache: false
 
       - name: Install dependencies
         run: npm ci
@@ -67,13 +86,18 @@ jobs:
           echo "Building iOS app with profile: ${{ github.event.inputs.build_profile || 'production' }}"
 
           # Start the build and capture output, filtering sensitive information
-          BUILD_OUTPUT=$(eas build --platform ios --profile ${{ github.event.inputs.build_profile || 'production' }} --non-interactive --no-wait 2>&1 | \
+          BUILD_OUTPUT=$(eas build --platform ios --profile ${{ github.event.inputs.build_profile || 'production' }} --non-interactive 2>&1 | \
             sed 's/Serial Number.*/Serial Number             [REDACTED]/g' | \
             sed 's/Apple Team.*/Apple Team                [REDACTED]/g' | \
             sed 's/Developer Portal ID.*/Developer Portal ID       [REDACTED]/g')
 
-          # Extract build ID from the build output URL
-          BUILD_ID=$(echo "$BUILD_OUTPUT" | grep -o 'builds/[a-f0-9-]*' | head -1 | cut -d'/' -f2)
+          # Extract build ID from the build output
+          BUILD_ID=$(echo "$BUILD_OUTPUT" | grep -o 'Build ID: [a-f0-9-]*' | head -1 | cut -d' ' -f3)
+
+          # Fallback: try to extract from URL format if Build ID format not found
+          if [ -z "$BUILD_ID" ]; then
+            BUILD_ID=$(echo "$BUILD_OUTPUT" | grep -o 'builds/[a-f0-9-]*' | head -1 | cut -d'/' -f2)
+          fi
 
           if [ -z "$BUILD_ID" ]; then
             echo "Failed to extract build ID from output"
@@ -101,19 +125,22 @@ jobs:
           fi
 
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4.0.2
         with:
           node-version: 'lts/*'
           cache: npm
 
       - name: Setup EAS
-        uses: expo/expo-github-action@v8
+        uses: expo/expo-github-action@2e8558e4c7ab4b434c0cb7bbda81ba86c11c26b3 # v8
         with:
           eas-version: latest
           token: ${{ secrets.EXPO_TOKEN }}
+          packager: npm
+          expo-cache: false
+          eas-cache: false
 
       - name: Submit to App Store
         env:

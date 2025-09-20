@@ -18,21 +18,27 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
 
+      - name: Setup Node.js
+        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4.0.2
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
       - name: Setup EAS
         uses: ./.github/actions/setup-eas
         with:
           expo-token: ${{ secrets.EXPO_TOKEN }}
 
       - name: Check for available builds
-        env:
-          EAS_NO_VCS: 1
         run: |
           echo "Checking for available iOS production builds..."
           eas build:list --platform ios --limit 10 --non-interactive
 
       - name: Submit latest successful production build to App Store
         env:
-          EAS_NO_VCS: 1
           APPLE_ID: ${{ secrets.APPLE_ID }}
           ASC_APP_ID: ${{ secrets.ASC_APP_ID }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}

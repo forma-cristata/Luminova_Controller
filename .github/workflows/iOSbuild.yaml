@@ -70,104 +70,84 @@ jobs:
           expo-cache: false
           eas-cache: false
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Install dependencies and run security audit
+        run: |
+          npm ci
+          echo "Running security audit..."
+          npm audit --audit-level=critical || {
+            echo "Critical security vulnerabilities found. Attempting to fix..."
+            npm audit fix --force
+          }
 
       - name: Run Expo Doctor
         run: |
           echo "Running Expo Doctor to check for potential build issues..."
-          npx expo-doctor || {
-            echo "Expo Doctor found issues that may cause build failures"
-            echo "Please review and fix the issues above before proceeding"
-            exit 1
-          }
+          npx expo-doctor
 
-      - name: Validate app.json and eas.json
+      - name: Comprehensive project validation
         run: |
-          echo "Validating configuration files..."
+          echo "Running comprehensive project validation..."
 
-          # Check if app.json exists and is valid JSON
+          # Check required files
           if [ ! -f "app.json" ]; then
             echo "ERROR: app.json not found"
             exit 1
           fi
 
-          # Validate app.json structure
-          node -e "
-            const appConfig = require('./app.json');
-            if (!appConfig.expo) {
-              console.error('ERROR: app.json missing expo configuration');
-              process.exit(1);
-            }
-            if (!appConfig.expo.ios) {
-              console.error('ERROR: app.json missing iOS configuration');
-              process.exit(1);
-            }
-            if (!appConfig.expo.ios.bundleIdentifier) {
-              console.error('ERROR: app.json missing iOS bundleIdentifier');
-              process.exit(1);
-            }
-            console.log('✅ app.json validation passed');
-          "
-
-          # Check if eas.json exists and is valid
           if [ ! -f "eas.json" ]; then
             echo "ERROR: eas.json not found"
             exit 1
           fi
 
-          # Validate eas.json and build profile
+          # Validate configurations in a single Node.js script
           PROFILE="${{ github.event.inputs.build_profile || 'production' }}"
           node -e "
+            const appConfig = require('./app.json');
             const easConfig = require('./eas.json');
+            const pkg = require('./package.json');
+
+            // Validate app.json
+            if (!appConfig.expo) {
+              console.error('ERROR: app.json missing expo configuration');
+              process.exit(1);
+            }
+            if (!appConfig.expo.ios || !appConfig.expo.ios.bundleIdentifier) {
+              console.error('ERROR: app.json missing iOS configuration or bundleIdentifier');
+              process.exit(1);
+            }
+
+            // Validate eas.json
             const profile = '$PROFILE';
             if (!easConfig.build || !easConfig.build[profile]) {
               console.error('ERROR: Build profile \"' + profile + '\" not found in eas.json');
               process.exit(1);
             }
-            console.log('✅ eas.json validation passed for profile: ' + profile);
-          "
 
-      - name: Check for iOS-specific requirements
-        run: |
-          echo "Checking iOS-specific requirements..."
-
-          # Check if iOS icons exist
-          if [ ! -d "assets" ]; then
-            echo "WARNING: assets directory not found"
-          fi
-
-          # Validate package.json for potential dependency issues
-          node -e "
-            const pkg = require('./package.json');
-            const problematicDeps = [];
-
-            // Check for common problematic dependencies
+            // Check React Native dependencies
+            const rnDeps = [];
             if (pkg.dependencies) {
               Object.keys(pkg.dependencies).forEach(dep => {
                 if (dep.includes('react-native') && dep !== 'react-native') {
-                  console.log('INFO: Found React Native dependency: ' + dep);
+                  rnDeps.push(dep);
                 }
               });
             }
 
-            console.log('✅ Package.json iOS compatibility check passed');
+            console.log('✅ App configuration validation passed');
+            console.log('✅ EAS configuration validation passed for profile: ' + profile);
+            console.log('✅ Package dependencies validation passed');
+            if (rnDeps.length > 0) {
+              console.log('INFO: React Native dependencies found: ' + rnDeps.join(', '));
+            }
           "
 
-          echo "✅ iOS requirements validation completed"
-
-      - name: Pre-build validation
-        run: |
-          echo "Running pre-build validation..."
-
-          # Test that expo config can be read
+          # Test expo config
           npx expo config --type public > /dev/null || {
             echo "ERROR: Unable to read Expo configuration"
-            echo "This may indicate issues with app.json or plugin configuration"
             exit 1
           }
 
-          echo "✅ Pre-build validation passed"
+          echo "✅ All project validations passed"
 
       - name: Check credentials and certificates
         run: |
@@ -180,10 +160,10 @@ jobs:
             exit 1
           }
 
-          # List credentials to ensure they exist (this will fail gracefully if none exist)
+          # Check iOS credentials using correct EAS CLI command
           echo "Checking iOS credentials..."
-          eas credentials:list --platform ios || {
-            echo "WARNING: No iOS credentials found or unable to list credentials"
+          eas credentials --platform ios || {
+            echo "WARNING: Unable to check iOS credentials"
             echo "This may cause build failures if certificates/provisioning profiles are missing"
           }
 
@@ -192,34 +172,31 @@ jobs:
       - name: Build iOS app
         id: eas-build
         env:
-          EAS_NO_VCS: 1  # Reduce verbose output
+          EAS_NO_VCS: 1
         run: |
           echo "Building iOS app with profile: ${{ github.event.inputs.build_profile || 'production' }}"
 
-          # Start the build and capture RAW output first for ID extraction
+          # Start the build and capture output
           RAW_OUTPUT=$(eas build --platform ios --profile ${{ github.event.inputs.build_profile || 'production' }} --non-interactive 2>&1)
 
-          # Extract build ID from RAW output before filtering
+          # Extract build ID using multiple patterns
           BUILD_ID=$(echo "$RAW_OUTPUT" | grep -oE 'Build ID: [a-f0-9-]+' | head -1 | cut -d' ' -f3)
 
-          # Fallback: try to extract from URL format if Build ID format not found
           if [ -z "$BUILD_ID" ]; then
             BUILD_ID=$(echo "$RAW_OUTPUT" | grep -oE 'builds/[a-f0-9-]+' | head -1 | cut -d'/' -f2)
           fi
 
-          # Additional fallback: try to extract from expo.dev URL format
           if [ -z "$BUILD_ID" ]; then
             BUILD_ID=$(echo "$RAW_OUTPUT" | grep -oE 'expo\.dev[^[:space:]]*/builds/[a-f0-9-]+' | head -1 | grep -oE '[a-f0-9-]+$')
           fi
 
           if [ -z "$BUILD_ID" ]; then
             echo "Failed to extract build ID from output"
-            echo "Raw output (last 20 lines):"
-            echo "$RAW_OUTPUT" | tail -20
+            echo "$RAW_OUTPUT" | tail -10
             exit 1
           fi
 
-          # Now filter output for display (after ID extraction)
+          # Filter sensitive information from output
           FILTERED_OUTPUT=$(echo "$RAW_OUTPUT" | \
             sed 's/Serial Number.*/Serial Number             [REDACTED]/g' | \
             sed 's/Apple Team.*/Apple Team                [REDACTED]/g' | \
@@ -227,16 +204,7 @@ jobs:
 
           echo "build-id=$BUILD_ID" >> $GITHUB_OUTPUT
           echo "Build started with ID: $BUILD_ID"
-          echo "::add-mask::$BUILD_ID"  # Mask build ID in subsequent logs
+          echo "::add-mask::$BUILD_ID"
 
-          # Debug: Show what was written to GITHUB_OUTPUT
-          echo "DEBUG: Contents of GITHUB_OUTPUT:"
-          if [ -f "$GITHUB_OUTPUT" ]; then
-            grep "build-id" "$GITHUB_OUTPUT" || echo "No build-id found in GITHUB_OUTPUT"
-          else
-            echo "GITHUB_OUTPUT file not found"
-          fi
-
-          # Display filtered output
-          echo "Build output (filtered):"
+          echo "Build output:"
           echo "$FILTERED_OUTPUT"

@@ -1,0 +1,35 @@
+name: 'Build with EAS'
+description: 'Build iOS or Android app using EAS Build'
+inputs:
+  platform:
+    description: 'Platform to build for (ios, android, all)'
+    required: true
+  profile:
+    description: 'Build profile to use'
+    required: true
+outputs:
+  build-id:
+    description: 'The ID of the created build'
+    value: ${{ steps.eas-build.outputs.build-id }}
+runs:
+  using: 'composite'
+  steps:
+    - name: Build app
+      id: eas-build
+      shell: bash
+      run: |
+        PROFILE="${{ inputs.profile }}"
+        PLATFORM="${{ inputs.platform }}"
+        echo "Building $PLATFORM app with profile: $PROFILE"
+
+        OUTPUT=$(eas build --platform $PLATFORM --profile $PROFILE --non-interactive 2>&1)
+        BUILD_ID=$(echo "$OUTPUT" | grep -oE 'Build ID: [a-f0-9-]+' | head -1 | cut -d' ' -f3)
+
+        if [ -z "$BUILD_ID" ]; then
+          echo "Failed to extract build ID"
+          echo "$OUTPUT" | tail -10
+          exit 1
+        fi
+
+        echo "build-id=$BUILD_ID" >> $GITHUB_OUTPUT
+        echo "Build started with ID: $BUILD_ID"

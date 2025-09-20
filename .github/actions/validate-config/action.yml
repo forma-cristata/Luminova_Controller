@@ -1,0 +1,42 @@
+name: 'Validate EAS Configuration'
+description: 'Validate project configuration files and build profile'
+inputs:
+  build-profile:
+    description: 'Build profile to validate'
+    required: true
+runs:
+  using: 'composite'
+  steps:
+    - name: Validate build profile
+      shell: bash
+      run: |
+        PROFILE="${{ inputs.build-profile }}"
+        if [[ ! "$PROFILE" =~ ^(production|preview|development)$ ]]; then
+          echo "Invalid build profile: $PROFILE"
+          exit 1
+        fi
+        echo "Using build profile: $PROFILE"
+
+    - name: Validate project configuration
+      shell: bash
+      run: |
+        # Check required files exist
+        [ -f "app.json" ] || { echo "ERROR: app.json not found"; exit 1; }
+        [ -f "eas.json" ] || { echo "ERROR: eas.json not found"; exit 1; }
+
+        # Validate configurations
+        PROFILE="${{ inputs.build-profile }}"
+        node -e "
+          const app = require('./app.json');
+          const eas = require('./eas.json');
+
+          if (!app.expo?.ios?.bundleIdentifier) {
+            console.error('ERROR: Missing iOS bundleIdentifier in app.json');
+            process.exit(1);
+          }
+          if (!eas.build?.['$PROFILE']) {
+            console.error('ERROR: Build profile \"$PROFILE\" not found in eas.json');
+            process.exit(1);
+          }
+          console.log('✅ Configuration validation passed');
+        "

@@ -1,0 +1,32 @@
+name: 'Check EAS Builds'
+description: 'Check for available EAS builds for a specific platform'
+inputs:
+  platform:
+    description: 'Platform to check builds for (ios, android)'
+    required: true
+  limit:
+    description: 'Number of builds to list'
+    required: false
+    default: '10'
+  profile:
+    description: 'Build profile to filter by'
+    required: false
+    default: ''
+runs:
+  using: 'composite'
+  steps:
+    - name: Check for available builds
+      shell: bash
+      run: |
+        echo "Checking for available ${{ inputs.platform }} builds..."
+
+        PROFILE_FILTER=""
+        if [ -n "${{ inputs.profile }}" ]; then
+          PROFILE_FILTER="--buildProfile ${{ inputs.profile }}"
+        fi
+
+        eas build:list \
+          --platform ${{ inputs.platform }} \
+          --limit ${{ inputs.limit }} \
+          $PROFILE_FILTER \
+          --non-interactive

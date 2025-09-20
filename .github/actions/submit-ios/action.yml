@@ -1,0 +1,55 @@
+name: 'Submit iOS Build to App Store'
+description: 'Submit latest iOS build to App Store Connect'
+inputs:
+  profile:
+    description: 'EAS submit profile to use'
+    required: false
+    default: 'production'
+  build-id:
+    description: 'Specific build ID to submit (if not using latest)'
+    required: false
+    default: ''
+  apple-id:
+    description: 'Apple ID for submission'
+    required: false
+    default: ''
+  asc-app-id:
+    description: 'App Store Connect app ID'
+    required: false
+    default: ''
+  apple-team-id:
+    description: 'Apple Team ID'
+    required: false
+    default: ''
+runs:
+  using: 'composite'
+  steps:
+    - name: Submit Build to App Store
+      shell: bash
+      run: |
+        echo "Submitting iOS build to App Store..."
+
+        SUBMIT_ARGS="--platform ios --profile ${{ inputs.profile }} --non-interactive"
+
+        # Use specific build ID if provided, otherwise use latest
+        if [ -n "${{ inputs.build-id }}" ]; then
+          SUBMIT_ARGS="$SUBMIT_ARGS --id ${{ inputs.build-id }}"
+        else
+          SUBMIT_ARGS="$SUBMIT_ARGS --latest"
+        fi
+
+        # Add optional Apple credentials if provided
+        if [ -n "${{ inputs.apple-id }}" ]; then
+          SUBMIT_ARGS="$SUBMIT_ARGS --apple-id ${{ inputs.apple-id }}"
+        fi
+
+        if [ -n "${{ inputs.asc-app-id }}" ]; then
+          SUBMIT_ARGS="$SUBMIT_ARGS --asc-app-id ${{ inputs.asc-app-id }}"
+        fi
+
+        if [ -n "${{ inputs.apple-team-id }}" ]; then
+          SUBMIT_ARGS="$SUBMIT_ARGS --apple-team-id ${{ inputs.apple-team-id }}"
+        fi
+
+        echo "Running: eas submit $SUBMIT_ARGS"
+        eas submit $SUBMIT_ARGS

@@ -15,29 +15,21 @@ jobs:
     runs-on: ubuntu-latest
     environment: production
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
-
-      - name: Setup Node.js
-        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4.0.2
+      - name: Setup environment
+        uses: ./.github/actions/setup-environment
         with:
+          expo-token: ${{ secrets.EXPO_TOKEN }}
           node-version: '20'
           cache: 'npm'
 
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Setup EAS
-        uses: ./.github/actions/setup-eas
-        with:
-          expo-token: ${{ secrets.EXPO_TOKEN }}
-
       - name: Check for available builds
-        run: |
-          echo "Checking for available iOS production builds..."
-          eas build:list --platform ios --limit 10 --non-interactive
+        uses: ./.github/actions/check-builds
+        with:
+          platform: ios
+          limit: '10'
+          profile: production
 
       - name: Submit Latest Build to App Store
-        run: |
-          echo "Submitting latest iOS production build to App Store..."
-          eas submit --platform ios --latest --profile production
+        uses: ./.github/actions/submit-ios
+        with:
+          profile: production

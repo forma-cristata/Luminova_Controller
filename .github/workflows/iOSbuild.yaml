@@ -85,30 +85,50 @@ jobs:
         run: |
           echo "Building iOS app with profile: ${{ github.event.inputs.build_profile || 'production' }}"
 
-          # Start the build and capture output, filtering sensitive information
-          BUILD_OUTPUT=$(eas build --platform ios --profile ${{ github.event.inputs.build_profile || 'production' }} --non-interactive 2>&1 | \
-            sed 's/Serial Number.*/Serial Number             [REDACTED]/g' | \
-            sed 's/Apple Team.*/Apple Team                [REDACTED]/g' | \
-            sed 's/Developer Portal ID.*/Developer Portal ID       [REDACTED]/g')
+          # Start the build and capture RAW output first for ID extraction
+          RAW_OUTPUT=$(eas build --platform ios --profile ${{ github.event.inputs.build_profile || 'production' }} --non-interactive 2>&1)
 
-          # Extract build ID from the build output
-          BUILD_ID=$(echo "$BUILD_OUTPUT" | grep -o 'Build ID: [a-f0-9-]*' | head -1 | cut -d' ' -f3)
+          # Extract build ID from RAW output before filtering
+          BUILD_ID=$(echo "$RAW_OUTPUT" | grep -oE 'Build ID: [a-f0-9-]+' | head -1 | cut -d' ' -f3)
 
           # Fallback: try to extract from URL format if Build ID format not found
           if [ -z "$BUILD_ID" ]; then
-            BUILD_ID=$(echo "$BUILD_OUTPUT" | grep -o 'builds/[a-f0-9-]*' | head -1 | cut -d'/' -f2)
+            BUILD_ID=$(echo "$RAW_OUTPUT" | grep -oE 'builds/[a-f0-9-]+' | head -1 | cut -d'/' -f2)
+          fi
+
+          # Additional fallback: try to extract from expo.dev URL format
+          if [ -z "$BUILD_ID" ]; then
+            BUILD_ID=$(echo "$RAW_OUTPUT" | grep -oE 'expo\.dev[^[:space:]]*/builds/[a-f0-9-]+' | head -1 | grep -oE '[a-f0-9-]+$')
           fi
 
           if [ -z "$BUILD_ID" ]; then
             echo "Failed to extract build ID from output"
-            echo "Build output (sanitized, last 10 lines):"
-            echo "$BUILD_OUTPUT" | tail -10
+            echo "Raw output (last 20 lines):"
+            echo "$RAW_OUTPUT" | tail -20
             exit 1
           fi
+
+          # Now filter output for display (after ID extraction)
+          FILTERED_OUTPUT=$(echo "$RAW_OUTPUT" | \
+            sed 's/Serial Number.*/Serial Number             [REDACTED]/g' | \
+            sed 's/Apple Team.*/Apple Team                [REDACTED]/g' | \
+            sed 's/Developer Portal ID.*/Developer Portal ID       [REDACTED]/g')
 
           echo "build-id=$BUILD_ID" >> $GITHUB_OUTPUT
           echo "Build started with ID: $BUILD_ID"
           echo "::add-mask::$BUILD_ID"  # Mask build ID in subsequent logs
+
+          # Debug: Show what was written to GITHUB_OUTPUT
+          echo "DEBUG: Contents of GITHUB_OUTPUT:"
+          if [ -f "$GITHUB_OUTPUT" ]; then
+            grep "build-id" "$GITHUB_OUTPUT" || echo "No build-id found in GITHUB_OUTPUT"
+          else
+            echo "GITHUB_OUTPUT file not found"
+          fi
+
+          # Display filtered output
+          echo "Build output (filtered):"
+          echo "$FILTERED_OUTPUT"
 
   submit:
     name: Submit to App Store
@@ -146,11 +166,20 @@ jobs:
         env:
           EAS_NO_VCS: 1  # Reduce verbose output
         run: |
-          echo "Submitting build ${{ needs.build.outputs.build-id }} to App Store..."
-          echo "::add-mask::${{ needs.build.outputs.build-id }}"  # Mask build ID
+          BUILD_ID="${{ needs.build.outputs.build-id }}"
+
+          # Validate that build ID was passed from previous job
+          if [ -z "$BUILD_ID" ]; then
+            echo "ERROR: Build ID is empty or missing from build job output"
+            echo "This indicates the build job failed to extract or set the build ID properly"
+            exit 1
+          fi
+
+          echo "Submitting build $BUILD_ID to App Store..."
+          echo "::add-mask::$BUILD_ID"  # Mask build ID
 
           # Submit with filtered output to avoid exposing sensitive information
-          eas submit --platform ios --id ${{ needs.build.outputs.build-id }} --non-interactive 2>&1 | \
+          eas submit --platform ios --id "$BUILD_ID" --non-interactive 2>&1 | \
             sed 's/Serial Number.*/Serial Number             [REDACTED]/g' | \
             sed 's/Apple Team.*/Apple Team                [REDACTED]/g' | \
             sed 's/Developer Portal ID.*/Developer Portal ID       [REDACTED]/g' | \

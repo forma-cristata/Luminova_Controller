@@ -1,0 +1,27 @@
+name: 'Setup EAS CLI'
+description: 'Validates EXPO_TOKEN and sets up Expo Application Services CLI'
+inputs:
+  expo-token:
+    description: 'EXPO_TOKEN secret value'
+    required: true
+  eas-version:
+    description: 'EAS CLI version to install'
+    required: false
+    default: 'latest'
+runs:
+  using: 'composite'
+  steps:
+    - name: Validate EXPO_TOKEN
+      shell: bash
+      run: |
+        if [ -z "${{ inputs.expo-token }}" ]; then
+          echo "EXPO_TOKEN secret required. Learn more: https://docs.expo.dev/eas-update/github-actions"
+          exit 1
+        fi
+        echo "✅ EXPO_TOKEN validation passed"
+
+    - name: Setup EAS
+      uses: expo/expo-github-action@c7b66a9c327a43a8fa7c0158e7f30d6040d2481e # v8.2.1
+      with:
+        eas-version: ${{ inputs.eas-version }}
+        token: ${{ inputs.expo-token }}

@@ -1,0 +1,31 @@
+name: iOS Submit to App Store
+
+# Explicit permissions for security
+permissions:
+  contents: read
+  actions: read
+  id-token: write
+
+on:
+  workflow_dispatch:
+
+jobs:
+  submit:
+    name: Submit Latest Production Build to App Store
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+
+      - name: Setup EAS
+        uses: ./.github/actions/setup-eas.yml
+        with:
+          expo-token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Submit latest production build to App Store
+        env:
+          EAS_NO_VCS: 1
+        run: |
+          echo "Submitting latest iOS production build to App Store..."
+          eas submit --platform ios --latest --non-interactive

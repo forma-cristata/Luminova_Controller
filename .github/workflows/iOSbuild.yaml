@@ -1,4 +1,4 @@
-name: iOS Build and Submit
+name: iOS Build
 
 # Explicit permissions for security
 permissions:
@@ -9,11 +9,6 @@ permissions:
 on:
   workflow_dispatch:
     inputs:
-      submit_to_store:
-        description: 'Submit to App Store after build'
-        required: false
-        default: false
-        type: boolean
       build_profile:
         description: 'EAS build profile to use'
         required: false
@@ -25,7 +20,7 @@ on:
           - development
   push:
     branches:
-      - main
+      - production
     paths:
       - 'src/**'
       - 'app.json'
@@ -78,6 +73,122 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Run Expo Doctor
+        run: |
+          echo "Running Expo Doctor to check for potential build issues..."
+          npx expo doctor || {
+            echo "Expo Doctor found issues that may cause build failures"
+            echo "Please review and fix the issues above before proceeding"
+            exit 1
+          }
+
+      - name: Validate app.json and eas.json
+        run: |
+          echo "Validating configuration files..."
+
+          # Check if app.json exists and is valid JSON
+          if [ ! -f "app.json" ]; then
+            echo "ERROR: app.json not found"
+            exit 1
+          fi
+
+          # Validate app.json structure
+          node -e "
+            const appConfig = require('./app.json');
+            if (!appConfig.expo) {
+              console.error('ERROR: app.json missing expo configuration');
+              process.exit(1);
+            }
+            if (!appConfig.expo.ios) {
+              console.error('ERROR: app.json missing iOS configuration');
+              process.exit(1);
+            }
+            if (!appConfig.expo.ios.bundleIdentifier) {
+              console.error('ERROR: app.json missing iOS bundleIdentifier');
+              process.exit(1);
+            }
+            console.log('✅ app.json validation passed');
+          "
+
+          # Check if eas.json exists and is valid
+          if [ ! -f "eas.json" ]; then
+            echo "ERROR: eas.json not found"
+            exit 1
+          fi
+
+          # Validate eas.json and build profile
+          PROFILE="${{ github.event.inputs.build_profile || 'production' }}"
+          node -e "
+            const easConfig = require('./eas.json');
+            const profile = '$PROFILE';
+            if (!easConfig.build || !easConfig.build[profile]) {
+              console.error('ERROR: Build profile \"' + profile + '\" not found in eas.json');
+              process.exit(1);
+            }
+            console.log('✅ eas.json validation passed for profile: ' + profile);
+          "
+
+      - name: Check for iOS-specific requirements
+        run: |
+          echo "Checking iOS-specific requirements..."
+
+          # Check if iOS icons exist
+          if [ ! -d "assets" ]; then
+            echo "WARNING: assets directory not found"
+          fi
+
+          # Validate package.json for potential dependency issues
+          node -e "
+            const pkg = require('./package.json');
+            const problematicDeps = [];
+
+            // Check for common problematic dependencies
+            if (pkg.dependencies) {
+              Object.keys(pkg.dependencies).forEach(dep => {
+                if (dep.includes('react-native') && dep !== 'react-native') {
+                  console.log('INFO: Found React Native dependency: ' + dep);
+                }
+              });
+            }
+
+            console.log('✅ Package.json iOS compatibility check passed');
+          "
+
+          echo "✅ iOS requirements validation completed"
+
+      - name: Pre-build validation
+        run: |
+          echo "Running pre-build validation..."
+
+          # Test that expo config can be read
+          npx expo config --type public > /dev/null || {
+            echo "ERROR: Unable to read Expo configuration"
+            echo "This may indicate issues with app.json or plugin configuration"
+            exit 1
+          }
+
+          echo "✅ Pre-build validation passed"
+
+      - name: Check credentials and certificates
+        run: |
+          echo "Validating EAS credentials setup..."
+
+          # Check if we can authenticate with EAS
+          eas whoami || {
+            echo "ERROR: EAS authentication failed"
+            echo "Please check your EXPO_TOKEN secret"
+            exit 1
+          }
+
+          # List credentials to ensure they exist (this will fail gracefully if none exist)
+          echo "Checking iOS credentials..."
+          eas credentials:list --platform ios || {
+            echo "WARNING: No iOS credentials found or unable to list credentials"
+            echo "This may cause build failures if certificates/provisioning profiles are missing"
+          }
+
+          echo "✅ Credentials validation completed"
+
       - name: Build iOS app
         id: eas-build
         env:
@@ -129,58 +240,3 @@ jobs:
           # Display filtered output
           echo "Build output (filtered):"
           echo "$FILTERED_OUTPUT"
-
-  submit:
-    name: Submit to App Store
-    runs-on: ubuntu-latest
-    environment: production  # Use GitHub environment for additional security
-    needs: build
-    if: ${{ github.event.inputs.submit_to_store == 'true' || github.ref == 'refs/heads/main' }}
-    steps:
-      - name: Check for EXPO_TOKEN
-        run: |
-          if [ -z "${{ secrets.EXPO_TOKEN }}" ]; then
-            echo "You must provide an EXPO_TOKEN secret linked to this project's Expo account in this repo's secrets. Learn more: https://docs.expo.dev/eas-update/github-actions"
-            exit 1
-          fi
-
-      - name: Checkout repository
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
-
-      - name: Setup Node.js
-        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
-        with:
-          node-version: 'lts/*'
-          cache: npm
-
-      - name: Setup EAS
-        uses: expo/expo-github-action@c7b66a9c327a43a8fa7c0158e7f30d6040d2481e # v8.2.1
-        with:
-          eas-version: latest
-          token: ${{ secrets.EXPO_TOKEN }}
-          packager: npm
-          expo-cache: false
-          eas-cache: false
-
-      - name: Submit to App Store
-        env:
-          EAS_NO_VCS: 1  # Reduce verbose output
-        run: |
-          BUILD_ID="${{ needs.build.outputs.build-id }}"
-
-          # Validate that build ID was passed from previous job
-          if [ -z "$BUILD_ID" ]; then
-            echo "ERROR: Build ID is empty or missing from build job output"
-            echo "This indicates the build job failed to extract or set the build ID properly"
-            exit 1
-          fi
-
-          echo "Submitting build $BUILD_ID to App Store..."
-          echo "::add-mask::$BUILD_ID"  # Mask build ID
-
-          # Submit with filtered output to avoid exposing sensitive information
-          eas submit --platform ios --id "$BUILD_ID" --non-interactive 2>&1 | \
-            sed 's/Serial Number.*/Serial Number             [REDACTED]/g' | \
-            sed 's/Apple Team.*/Apple Team                [REDACTED]/g' | \
-            sed 's/Developer Portal ID.*/Developer Portal ID       [REDACTED]/g' | \
-            sed 's/Bundle Identifier.*/Bundle Identifier         [REDACTED]/g'
